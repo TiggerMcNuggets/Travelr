@@ -1,0 +1,17 @@
+@(travellerTypes: Seq[TravellerType])
+
+<div>
+    <h1>
+        TravellerTypes
+    </h1>
+    @for(t <- travellerTypes) {
+        <div>
+            <h2>
+            @t.id
+            </h2>
+        <h2>
+                @t.tType
+            </h2>
+        </div>
+    }
+</div>

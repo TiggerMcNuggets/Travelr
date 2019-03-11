@@ -3,25 +3,48 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.HomeController.index
+GET         /                            controllers.TravellerController.index
 
-# Widgets
-GET     /widgets                    controllers.WidgetController.listWidgets(request: Request)
-POST    /widgets                    controllers.WidgetController.createWidget(request: Request)
+#trip destination routes, subroute of trips
+GET         /trips/destination          controllers.TripDestinationsController.list(request: Request)
+POST        /trips/destination          controllers.TripDestinationsController.add(request: Request)
+DELETE      /trips/destination/:id/:orderNo          controllers.TripDestinationsController.delete(id: Long, orderNo: Int)
+PUT         /trips/destination/:id/swap          controllers.TripDestinationsController.swap(request: Request, id: Long)
+PUT         /trips/destination/:id/:orderNo      controllers.TripDestinationsController.update(request: Request, id: Long, orderNo: Int)
 
-# Computers list (look at the default values for pagination parameters)
-GET     /computers                  controllers.HomeController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+# nationalities routes
+GET         /travellers/:id/nationalities          controllers.NationalityController.list(request: Request, id: Long)
+POST        /travellers/:id/nationalities          controllers.NationalityController.add(request: Request, id: Long)
+DELETE      /travellers/:id/nationalities          controllers.NationalityController.delete(request: Request, id: Long)
 
-# Add computer
-GET     /computers/new              controllers.HomeController.create(request: Request)
-POST    /computers                  controllers.HomeController.save(request: Request)
+# travellers routes
 
-# Edit existing computer
-GET     /computers/:id              controllers.HomeController.edit(request: Request, id:Long)
-POST    /computers/:id              controllers.HomeController.update(request: Request, id:Long)
+#traveller type routes
+GET         /travellers/:id/travellers_type        controllers.TravellerTypeController.list(request: Request, id:Long)
+POST        /travellers/:id/travellers_type        controllers.TravellerTypeController.add(request: Request, id:Long)
+DELETE      /travellers/:id/travellers_type        controllers.TravellerTypeController.delete(request: Request, id:Long)
 
-# Delete a computer
-POST    /computers/:id/delete       controllers.HomeController.delete(id:Long)
+# usage --> http://localhost:9000/travellers?gender=f&name=Lorenzo&minAge=10&maxAge=20&nationality=Italy&nationality=Mexico&t_type=Thrillseeker&t_type=quiete
+GET         /travellers                     controllers.TravellerController.list(request: Request, fname: String ?= null, lname: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,t_type: java.util.List[String] ?= null, orderBy: String ?= null)
+GET         /travellers/:id                 controllers.TravellerController.showProfile(request: Request, id: Long)
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+POST        /travellers                            controllers.TravellerController.add(request: Request)
+PUT         /travellers/:id                 controllers.TravellerController.update(request: Request, id: Long)
+DELETE      /travellers/:id                 controllers.TravellerController.delete(request: Request, id: Long)
+
+
+# destinations routes
+POST        /destinations                   controllers.DestinationController.add(request: Request)
+DELETE      /destinations/:id               controllers.DestinationController.delete(request: Request, id: Long)
+PUT         /destinations/:id               controllers.DestinationController.update(request: Request, id: Long)
+GET        /destinations                   controllers.DestinationController.list(request: Request)
+
+POST        /login                          controllers.LoginController.login(request: Request)
+GET         /logout                         controllers.LoginController.logout()
+
+#trip type routes
+POST        /trips                      controllers.TripController.add(request: Request)
+PUT         /trips/:id                  controllers.TripController.update(request: Request, id: Long)
+DELETE      /trips/:id                  controllers.TripController.delete(id: Long)
+GET         /trips                      controllers.TripController.list(request: Request)

@@ -1,0 +1,20 @@
+@(trips: Seq[Trip])
+
+<div>
+    <h1>
+        Trips
+    </h1>
+    @for(t <- trips) {
+        <div>
+            <h2>
+            @t.id
+            </h2>
+            <h2>
+            @t.name
+            </h2>
+            <h2>
+            @t.traveller.getFname()
+            </h2>
+        </div>
+    }
+</div>

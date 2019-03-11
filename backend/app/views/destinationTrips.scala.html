@@ -1,0 +1,26 @@
+@(dtrips: Seq[TripDestination])
+
+<div>
+    <h1>
+        Trip destinations
+    </h1>
+    @for(t <- dtrips) {
+        <div>
+            <h2>
+            @t.trip.getName()
+            </h2>
+            <h2>
+            @t.destination.getName()
+            </h2>
+            <h2>
+            @t.arrivalDate
+            </h2>
+            <h2>
+            @t.departureDate
+            </h2>
+            <h2>
+            @t.orderNo
+            </h2>
+        </div>
+    }
+</div>

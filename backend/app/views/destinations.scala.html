@@ -1,0 +1,20 @@
+@(destinations: Seq[Destination])
+
+<div>
+    <h1>
+        Destinations
+    </h1>
+    @for(d <- destinations) {
+        <div>
+            <h2>
+                Id: @d.id <br>
+                Name: @d.name <br>
+                Type: @d.destination_type <br>
+                District; @d.district <br>
+                Latitude: @d.crd_latitude <br>
+                Longitude: @d.crd_longitude <br>
+                Country: @d.country <br>
+            </h2>
+        </div>
+    }
+</div>
