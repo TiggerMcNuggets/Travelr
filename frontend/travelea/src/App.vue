@@ -18,7 +18,7 @@
       <v-toolbar-title>TravelEA</v-toolbar-title>
     </v-toolbar>
     <v-content>
-    <v-container fluid>
+    <v-container fluid pa-0>
       <router-view></router-view>
     </v-container>
   </v-content>
