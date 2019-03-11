@@ -48,3 +48,9 @@ POST        /trips                      controllers.TripController.add(request: 
 PUT         /trips/:id                  controllers.TripController.update(request: Request, id: Long)
 DELETE      /trips/:id                  controllers.TripController.delete(id: Long)
 GET         /trips                      controllers.TripController.list(request: Request)
+
+
+
+
+
+

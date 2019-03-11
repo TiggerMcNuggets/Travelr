@@ -27,7 +27,7 @@ public class Traveller extends BaseModel {
 
     @NotNull
     @Constraints.Required
-    public String fname;
+    public String fName;
 
     public String mname;
 
