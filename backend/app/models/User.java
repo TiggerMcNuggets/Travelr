@@ -81,20 +81,6 @@ public class User extends Model {
         this.emailAddress = email;
     }
 
-    public static final Finder<Long, User> find = new Finder<>(User.class);
-
-
-    public static User findByAuthToken(String authToken) {
-        if (authToken == null) {
-            return null;
-        }
-        try  {
-            return find.query().where().eq("authToken", authToken).findOne()
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
 
 
 }
