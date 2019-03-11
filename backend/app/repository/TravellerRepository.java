@@ -51,6 +51,9 @@ public class TravellerRepository {
                     return null;
                 }
                 traveller.save();
+
+
+
                 this.nationalityRepository.add(traveller.getId(), data);
                 this.travellerTypeRepository.add(data, traveller.getId());
                 transaction.commit();
