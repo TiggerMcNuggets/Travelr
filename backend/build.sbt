@@ -8,8 +8,7 @@ lazy val myProject = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 libraryDependencies += guice
 libraryDependencies += jdbc
-libraryDependencies += javaJdbc
-libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.41"
+libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "org.glassfish.jaxb" % "jaxb-core" % "2.3.0.1"
 libraryDependencies += "org.glassfish.jaxb" % "jaxb-runtime" % "2.3.2"
 
@@ -19,4 +18,3 @@ libraryDependencies += "org.mockito" % "mockito-core" % "2.1.0" % Test
 testOptions in Test += Tests.Argument(TestFrameworks.JUnit, "-a", "-v")
 
 javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
-
