@@ -38,6 +38,8 @@ public class TravellerTypeController extends Controller {
     /**
      * Displays traveller types for a specific user
      *
+     * @param request the http request
+     * @param id the traveller id
      * @return 200 response and traveller types json object if successful, 401 if unauthorized
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
