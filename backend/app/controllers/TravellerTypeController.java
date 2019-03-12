@@ -36,9 +36,9 @@ public class TravellerTypeController extends Controller {
     }
 
     /**
-     * Renders travellersTypes.scala.html and sends 200 response
+     * Displays traveller types for a specific user
      *
-     * @return CompletionStage<Result>
+     * @return 200 response and traveller types json object if successful, 401 if unauthorized
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
