@@ -35,7 +35,7 @@ public class DestinationController extends Controller {
 
     /**
      * Allows user to see a display of all the destinations.
-     * @return A response which renders a view of all the destinations in the database.
+     * @return 200 response and list of destinations in JSON format when successful, 401 in case user is not authorised
      */
 
     public CompletionStage<Result> list(Http.Request request) {
