@@ -1,6 +1,8 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.Ebean;
+import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -39,7 +41,8 @@ public class TravellerController extends Controller {
     public CompletionStage<Result> list(Http.Request request, String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities,List<String> traveller_types, String orderBy) {
         if (controllers.LoginController.isLoggedIn(request)) {
             return travellerRepository.list(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy).thenApplyAsync((travellers) -> {
-                return ok(views.html.travellers.render(asScala(travellers)));
+                PathProperties pathProperties = PathProperties.parse("fname,mname,lname,dob,gender,nationalities(*),types(*)");
+                return ok(Ebean.json().toJson(travellers, pathProperties));
             });
         } else {
             return travellerRepository.list(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy).thenApplyAsync((travellers) -> {
@@ -70,7 +73,8 @@ public class TravellerController extends Controller {
         }
         else if (controllers.LoginController.isLoggedIn(request)) {
             return travellerRepository.profile(id).thenApplyAsync((travellers) -> {
-                return ok(views.html.profile.render(asScala(travellers)));
+                PathProperties pathProperties = PathProperties.parse("fname,mname,lname,dob,email,gender,nationalities(*),types(*)");
+                return ok(Ebean.json().toJson(travellers, pathProperties));
             });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
@@ -87,7 +91,7 @@ public class TravellerController extends Controller {
     public CompletionStage<Result> add(Http.Request request) {
         return travellerRepository.add(request).thenApplyAsync((traveller) -> {
             if (traveller == null) {
-                return badRequest("Bad Request - Failed to add " + traveller);
+                return badRequest("Bad Request - Failed to add traveller");
             }
             return ok("Traveller: " + traveller + " added");
         });
