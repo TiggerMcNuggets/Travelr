@@ -56,7 +56,7 @@ public class TripController extends Controller {
             if (trips == null) {
                 return notFound("List of trips not found");
             }
-            return ok();
+            return ok(views.html.trips.render(asScala(trips)));
         });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));

@@ -135,9 +135,4 @@ public class TravellerController extends Controller {
         }
 
     }
-
-    public Result index() {
-        return ok("TravelEA Home Page");
-    }
-
 }

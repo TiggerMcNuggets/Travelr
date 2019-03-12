@@ -3,7 +3,36 @@
 # ~~~~
 
 # Home page
-GET         /                            controllers.TravellerController.index
+GET         /                            controllers.HomeController.index
+
+#+nocsrf
+#POST        /login                     controllers.AuthController.authorize()
+
+# Widgets
+GET         /widgets                     controllers.WidgetController.listWidgets(request: Request)
+POST        /widgets                     controllers.WidgetController.createWidget(request: Request)
+
+# Computers list (look at the default values for pagination parameters)
+GET         /computers                   controllers.HomeController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
+
+# Add computer
+GET         /computers/new               controllers.HomeController.create(request: Request)
+POST        /computers                   controllers.HomeController.save(request: Request)
+
+# Edit existing computer
+GET         /computers/:id               controllers.HomeController.edit(request: Request, id:Long)
+POST        /computers/:id               controllers.HomeController.update(request: Request, id:Long)
+
+# Delete a computer
+POST        /computers/:id/delete        controllers.HomeController.delete(id:Long)
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                controllers.Assets.at(path="/public", file)
+
+GET         /about                       controllers.HomeController.about
+
+
+
 
 #trip destination routes, subroute of trips
 GET         /trips/destination          controllers.TripDestinationsController.list(request: Request)
@@ -48,9 +77,3 @@ POST        /trips                      controllers.TripController.add(request: 
 PUT         /trips/:id                  controllers.TripController.update(request: Request, id: Long)
 DELETE      /trips/:id                  controllers.TripController.delete(id: Long)
 GET         /trips                      controllers.TripController.list(request: Request)
-
-
-
-
-
-

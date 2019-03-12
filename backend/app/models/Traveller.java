@@ -1,6 +1,5 @@
 package models;
 
-import io.ebean.Finder;
 import io.ebean.annotation.NotNull;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
@@ -23,21 +22,23 @@ public class Traveller extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final Finder<Long, Traveller> find = new Finder<>(Traveller.class);
+    // finder linked as a public static field
+    public static final TravellerFinder find = new TravellerFinder();
 
     @NotNull
     @Constraints.Required
-    public String firstName;
+    public String fname;
 
-    public String middleName;
-
-    @NotNull
-    @Constraints.Required
-    public String lastName;
+    public String mname;
 
     @NotNull
     @Constraints.Required
-    public int dateOfBirth;
+    public String lname;
+
+    @NotNull
+    @Constraints.Required
+    @Formats.DateTime(pattern = "yyyy-MM-dd")
+    public Date dob;
 
     @NotNull
     @Constraints.Required
@@ -45,7 +46,17 @@ public class Traveller extends BaseModel {
 
     @NotNull
     @Constraints.Required
-    public int timestamp;
+    @Constraints.Email
+    public String email;
+
+    @NotNull
+    @Constraints.Required
+    public String password;
+
+    @NotNull
+    @Constraints.Required
+    @Formats.DateTime(pattern = "YYYY-MM-DD HH:MM:SS")
+    public Date timestamp;
 
     @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)
     public List<Nationality> nationalities;
@@ -56,56 +67,56 @@ public class Traveller extends BaseModel {
     @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)
     public List<Trip> trips;
 
-    public Traveller(@Constraints.Required String firstName, String middleName, @Constraints.Required String lastName, @Constraints.Required int dateOfBirth, @Constraints.Required String gender, @Constraints.Required int timestamp, List<Nationality> nationalities, List<TravellerType> types, List<Trip> trips) {
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
+    public Traveller(
+            @Constraints.Required String fname,
+            String mname,
+            @Constraints.Required String lname,
+            @Constraints.Required Date dob,
+            @Constraints.Required String gender,
+            @Constraints.Required @Constraints.Email String email,
+            @Constraints.Required String password,
+            @Constraints.Required Date timestamp) {
+        this.fname = fname;
+        this.mname = mname;
+        this.lname = lname;
+        this.dob = dob;
         this.gender = gender;
+        this.email = email;
+        this.password = password;
         this.timestamp = timestamp;
-        this.nationalities = nationalities;
-        this.types = types;
-        this.trips = trips;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+
+    public String getFname() {
+        return fname;
     }
 
-    public static Finder<Long, Traveller> getFind() {
-        return find;
+    public void setFname(String fname) {
+        this.fname = fname;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getMname() {
+        return mname;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setMname(String mname) {
+        this.mname = mname;
     }
 
-    public String getMiddleName() {
-        return middleName;
+    public String getLname() {
+        return lname;
     }
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
+    public void setLname(String lname) {
+        this.lname = lname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Date getDob() {
+        return dob;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public int getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(int dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 
     public String getGender() {
@@ -116,11 +127,27 @@ public class Traveller extends BaseModel {
         this.gender = gender;
     }
 
-    public int getTimestamp() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -138,13 +165,5 @@ public class Traveller extends BaseModel {
 
     public void setTypes(List<TravellerType> types) {
         this.types = types;
-    }
-
-    public List<Trip> getTrips() {
-        return trips;
-    }
-
-    public void setTrips(List<Trip> trips) {
-        this.trips = trips;
     }
 }

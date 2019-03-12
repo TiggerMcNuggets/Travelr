@@ -15,7 +15,6 @@ public class LoginController extends Controller {
     private final TravellerRepository travellerRepository;
 
 
-
     /**
      * The constructor for the Login Controller.
      * @param travellerRepository
