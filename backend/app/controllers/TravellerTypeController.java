@@ -1,6 +1,8 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.Ebean;
+import io.ebean.text.PathProperties;
 import models.Traveller;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
@@ -40,9 +42,10 @@ public class TravellerTypeController extends Controller {
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
-        return travellerTypeRepository.list(id).thenApplyAsync((travellerTypes) ->
-                ok(views.html.travellerTypes.render(asScala(travellerTypes)))
-        );
+        return travellerTypeRepository.list(id).thenApplyAsync((travellerTypes) -> {
+            PathProperties pathProperties = PathProperties.parse("id,tType");
+            return ok(Ebean.json().toJson(travellerTypes, pathProperties));
+        });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
