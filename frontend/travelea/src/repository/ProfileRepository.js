@@ -1,13 +1,11 @@
-import Repository from "./Repository";
-
 
 export default {
-    getProfile(id) {
+    getProfile() {
         let data = {
             "profile": {
                 "firstName": "Adam",
                 "lastName": "Conway",
-                "date_of_birth": "17-08-1998",
+                "dateOfBirth": "17-08-1998",
                 "nationality": [
                     "New Zealander",
                     "Australian"

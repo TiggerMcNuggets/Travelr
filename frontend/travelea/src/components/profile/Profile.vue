@@ -3,14 +3,11 @@
 <template>
     <v-container ma-0 >
         <v-layout row >
-            <v-flex xs2>
-                <v-card color="green">
-                    <v-card-text>
-                            Nav
-                    </v-card-text>                
-                </v-card>
+            <v-flex xs3 mr-5>
+                <profileNav>
+                </profileNav>
             </v-flex>
-            <v-flex xs10>
+            <v-flex xs9 ml-5>
                 <v-card color="blue">
                     <v-card-text>
                             Data
@@ -33,13 +30,16 @@
 <script>
 
 import {RepositoryFactory} from "../../repository/RepositoryFactory"
+import profileNav from "./profileNav"
 let profileRepository = RepositoryFactory.get("profile")
 
 export default {
-    el: '#profile',
     data () {
         return {     
-    }
+        }
+    },
+    components: {
+        profileNav
     },
     created: function() {  
         profileRepository      
