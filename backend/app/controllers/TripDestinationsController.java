@@ -1,6 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.Ebean;
 import io.ebean.Transaction;
 import models.Destination;
 import models.TripDestination;
@@ -55,8 +56,10 @@ public class TripDestinationsController extends Controller {
     }
 
     /**
-     * renders the display page for all trip destinations and calls a function in TripDestinationsRepository for a query of all TripDestination objects
-     * @return the list of all TripDestination to be displayed
+     * Displays all combinations of destinations associated with their trip
+     *
+     * @param request the http request
+     * @return 200 response and trip destinations json object
      */
     public CompletionStage<Result> list(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
@@ -64,7 +67,7 @@ public class TripDestinationsController extends Controller {
             if (tripDestinations == null) {
                 return notFound("Trip Destinations not found");
             }
-            return ok(views.html.destinationTrips.render(asScala(tripDestinations)));
+            return ok(Ebean.json().toJson(tripDestinations));
         });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
