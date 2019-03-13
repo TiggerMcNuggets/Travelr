@@ -59,14 +59,11 @@ public class TripDestinationsController extends Controller {
      * Displays all combinations of destinations associated with their trip
      *
      * @param request the http request
-     * @return 200 response and trip destinations json object
+     * @return 200 response and trip destinations json object if successful, 401 if user is not authorised
      */
     public CompletionStage<Result> list(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
         return tripDestinationsRepository.list().thenApplyAsync((tripDestinations) -> {
-            if (tripDestinations == null) {
-                return notFound("Trip Destinations not found");
-            }
             return ok(Ebean.json().toJson(tripDestinations));
         });
         } else {
