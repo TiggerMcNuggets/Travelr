@@ -8,6 +8,7 @@ lazy val myProject = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 libraryDependencies += guice
 libraryDependencies += jdbc
+libraryDependencies += filters
 libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "org.glassfish.jaxb" % "jaxb-core" % "2.3.0.1"
 libraryDependencies += "org.glassfish.jaxb" % "jaxb-runtime" % "2.3.2"
