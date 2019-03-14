@@ -1,6 +1,8 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.Ebean;
+import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -38,8 +40,10 @@ public class NationalityController extends Controller {
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
-        return nationalityRepository.list(id).thenApplyAsync((nationalities) ->
-                ok(views.html.traveller_nationalitites.render(asScala(nationalities)))
+        return nationalityRepository.list(id).thenApplyAsync((nationalities) -> {
+                    PathProperties pathProperties = PathProperties.parse("id,nationality,hasPassport");
+                    return ok(Ebean.json().toJson(nationalities, pathProperties));
+                }
         );
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
