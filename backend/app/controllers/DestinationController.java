@@ -1,5 +1,6 @@
 package controllers;
 
+import io.ebean.Ebean;
 import play.i18n.MessagesApi;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -34,13 +35,13 @@ public class DestinationController extends Controller {
 
     /**
      * Allows user to see a display of all the destinations.
-     * @return A response which renders a view of all the destinations in the database.
+     * @return 200 response and list of destinations in JSON format when successful, 401 in case user is not authorised
      */
 
     public CompletionStage<Result> list(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
         return destinationRepository.list().thenApplyAsync((destinations) -> {
-            return ok(views.html.destinations.render(asScala(destinations)));
+            return ok(Ebean.json().toJson(destinations));
         });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
