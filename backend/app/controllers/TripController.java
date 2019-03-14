@@ -1,6 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.ebean.Ebean;
 import models.Trip;
 import play.data.Form;
 import play.data.FormFactory;
@@ -47,17 +48,16 @@ public class TripController extends Controller {
     }
 
     /**
-     * renders the display page for all trips and calls a function in TripRepository for a query of all Trip objects
-     * @return a 200 http response if successful, 404 otherwise for not found
+     * Allows a user to display all of the trips
+     *
+     * @param request the http request
+     * @return a 200 http response and trips object if successful, 401 in case user is not authorised
      */
     public CompletionStage<Result> list(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
-        return tripRepository.list().thenApplyAsync((trips) -> {
-            if (trips == null) {
-                return notFound("List of trips not found");
-            }
-            return ok(views.html.trips.render(asScala(trips)));
-        });
+            return tripRepository.list().thenApplyAsync((trips) -> {
+                return ok(Ebean.json().toJson(trips));
+            });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
