@@ -1,183 +1,113 @@
 /* eslint-disable */
 
 <template>
-    
-    <div class='outer-container'>
-       <div class='banner'>
-        <h1>CREATE DESTINATION</h1>
-        <hr>
-        </div>
+  <v-container grid-list-xl v-if="showAddDestination">
+    <v-layout justify-space-around="true">
+      <v-flex xs12 md6 class="row-input-margin">
+        <v-text-field
+          v-model="destination.name"
+          :rules="nameRules"
+          :counter="10"
+          label="Destination Name"
+          required
+        ></v-text-field>
+      </v-flex>
 
-    <div class="container">
-  
-      <v-layout>
-        <v-flex
-          xs12
-          md6
-        >
-          <v-text-field
-            v-model="destination.name"
-            :rules="nameRules"
-            :counter="10"
-            label="Destination Name"
-            required
-          ></v-text-field>
-        </v-flex>
+      <v-flex xs12 md6>
+        <v-text-field
+          v-model="destination.destination_type"
+          :rules="nameRules"
+          :counter="10"
+          label="Destination Type"
+          required
+        ></v-text-field>
+      </v-flex>
+    </v-layout>
 
-        <v-flex
-          xs12
-          md6
-        >
-          <v-text-field
-            v-model="destination.destination_type"
-            :rules="nameRules"
-            :counter="10"
-            label="Destination Type"
-            required
-          ></v-text-field>
-        </v-flex>
+    <v-layout>
+      <v-flex xs12 md6>
+        <v-text-field
+          v-model="destination.district"
+          :rules="nameRules"
+          :counter="10"
+          label="Destination District"
+          required
+        ></v-text-field>
+      </v-flex>
 
-      
-      </v-layout>
+      <v-flex xs12 md6>
+        <v-text-field
+          v-model="destination.country"
+          :rules="nameRules"
+          :counter="10"
+          label="Country"
+          required
+        ></v-text-field>
+      </v-flex>
+    </v-layout>
 
-      <v-layout>
-        <v-flex
-          xs12
-          md6
-        >
-          <v-text-field
-            v-model="destination.district"
-            :rules="nameRules"
-            :counter="10"
-            label="Destination District"
-            required
-          ></v-text-field>
-        </v-flex>
+    <v-layout>
+      <v-flex xs12 md6>
+        <v-text-field
+          v-model="destination.crd_latitude"
+          :rules="nameRules"
+          :counter="10"
+          label="Latitude"
+          required
+        ></v-text-field>
+      </v-flex>
 
-        <v-flex
-          xs12
-          md6
-        >
-          <v-text-field
-            v-model="destination.country"
-            :rules="nameRules"
-            :counter="10"
-            label="Country"
-            required
-          ></v-text-field>
-        </v-flex>
-
-      
-      </v-layout>
-
-        <v-layout>
-        <v-flex
-          xs12
-          md6
-        >
-          <v-text-field
-            v-model="destination.crd_latitude"
-            :rules="nameRules"
-            :counter="10"
-            label="Latitude"
-            required
-          ></v-text-field>
-        </v-flex>
-
-        <v-flex
-          xs12
-          md6
-        >
-          <v-text-field
-            v-model="destination.crd_longitude"
-            :rules="nameRules"
-            :counter="10"
-            label="Longitude"
-            required
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-      <v-btn class='update-button' v-on:click="createDestination">CREATE DESTINATION</v-btn>
-    </div>
-</div>
+      <v-flex xs12 md6>
+        <v-text-field v-model="destination.crd_longitude" :rules="nameResult < 20">
+          :counter="10"
+          label="Longitude"
+          required
+          >
+        </v-text-field>
+      </v-flex>
+    </v-layout>
+    <v-btn class="update-button" v-on:click="createDestination">CREATE DESTINATION</v-btn>
+  </v-container>
 </template>
 
 <style>
-
-@import url('https://fonts.googleapis.com/css?family=Karla:400,700');
+@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
 .outer-container {
-   text-align: center;
+  text-align: center;
 }
 
-.update-button {
-    margin-top: 50px;
-    width: 100%;
-}
+/* .container {
+  background-color: white;
 
-.container {
-    margin: 10px 100px;
-    align-self: center;
-    display: inline-block;
-    text-align: left;
-}
-
-.banner {
-    height: 300px;
-    width: 100%;
-    
-    background-image: linear-gradient(
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0.5)
-    ),
-    url("https://gallery.yopriceville.com/var/albums/Backgrounds/Autumn_Landscape_Background.jpg?m=1442666745");
-    background-position: center; 
-}
-
-.banner h1{
-    font-family: 'Karla', sans-serif;
-    text-align: center;
-    color: white;
-    padding-top: 60px;
-    font-size: 65px;
-    font-weight: bold;
-
-}
-
-.banner hr{
-    margin: 10px 200px;
-    margin-top: 30px;
-    color: white;
-    opacity: 0.5;
-}
-
-
+  align-self: center;
+  display: inline-block;
+  text-align: left;
+} */
 </style>
 
 
 <script>
-
-import {RepositoryFactory} from "../../repository/RepositoryFactory"
-let destinationRepostory = RepositoryFactory.get("destination")
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let destinationRepostory = RepositoryFactory.get("destination");
 
 export default {
-    data () {
-        return {   
-            destination:{} 
+  props: {
+    showAddDestination: Boolean,
+    toggleShowCreateDestination: Function
+  },
+  data() {
+    return {
+      destination: {}
+    };
+  },
+  methods: {
+    createDestination: function() {
+      destinationRepostory.createDestination(this.destination).then(result => {
+        console.log(result);
+        this.toggleShowCreateDestination();
+      });
     }
-    },
-    methods: {
-        createDestination: function() {
-
-            destinationRepostory.createDestination(this.destination).then((result) => {
-                console.log(result)
-        }) 
-
-        }
-    },
-
-    created: function() {  
-       
-    }
-}
+  }
+};
 </script>
