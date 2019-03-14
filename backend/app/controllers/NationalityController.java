@@ -36,7 +36,8 @@ public class NationalityController extends Controller {
     /**
      * Renders traveller_nationalitites.scala.html and sends 200 response
      *
-     * @return CompletionStage<Result>
+     * @return 200 response and nationalities JSON body if successful.
+     *         401 response if unauthorised.
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
