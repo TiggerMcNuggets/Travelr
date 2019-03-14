@@ -1,12 +1,14 @@
 import AuthRepository from "./AuthRepository"
 import ProfileRepository from "./ProfileRepository"
+import DestinationEditRepository from "./DestinationEditRepository"
 
 
 
 // Add all repositories here to access from anywhere
 const repositories = {
     auth: AuthRepository,
-    profile: ProfileRepository
+    profile: ProfileRepository,
+    destination: DestinationEditRepository
 };
 
 
