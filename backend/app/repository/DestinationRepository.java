@@ -70,6 +70,19 @@ public class DestinationRepository {
     }
 
     /**
+     * Deletes a destination from the database.
+     * @param dest_id The id of the destination to be deleted.
+     * @return The deleted destination.
+     */
+    public CompletionStage<Destination> getOne(Long dest_id) {
+        return supplyAsync(() -> {
+            Destination dest = Destination.find.byId(dest_id);
+            return dest;
+        }, executionContext);
+    }
+
+
+    /**
      * Updates a destination based on data from a HTTP POST request.
      * @param req The HTTP Post Request.
      * @param dest_id The destination id to be deleted.
@@ -94,6 +107,8 @@ public class DestinationRepository {
             dest.setCrd_longitude(lng);
             dest.setCountry(country);
             dest.save();
+
+
 
             return dest;
         }, executionContext);
