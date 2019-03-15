@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 // Components
 import Profile from "../components/profile/Profile"
-import profileSearch from "../components/profileSearch/profileSearch"
+import userSearch from "../components/userSearch/userSearch"
 
 
 Vue.use(Router)
@@ -16,9 +16,9 @@ export default new Router({
       component: Profile
     },
     {
-      path: '/profile/search',
-      name: 'profileSearch',
-      component: profileSearch
+      path: '/users',
+      name: 'userSearch',
+      component: userSearch
     }
   ]
 })

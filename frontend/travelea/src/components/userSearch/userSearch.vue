@@ -5,10 +5,10 @@
         <h1>Hello World</h1>
         <v-layout row wrap>
         <v-flex xs12 sm5 md9>
-            <profileTable/>
+            <userTable/>
         </v-flex>
       <v-flex xs8 sm5 md3>
-            <profileFilter/>
+            <searchFilter/>
       </v-flex>
     </v-layout>
     </v-container>
@@ -20,8 +20,8 @@
 
 <script>
 
-import profileTable from "./profileTable"
-import profileFilter from "./searchFilter"
+import userTable from "./userTable"
+import searchFilter from "./searchFilter"
 
 export default {
     data () {
@@ -29,8 +29,8 @@ export default {
     }
     },
     components: {
-        profileTable,
-        profileFilter
+        userTable,
+        searchFilter
     }
 }
 </script>
