@@ -40,9 +40,9 @@ public class DestinationController extends Controller {
 
     public CompletionStage<Result> list(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
-        return destinationRepository.list().thenApplyAsync((destinations) -> {
-            return ok(Ebean.json().toJson(destinations));
-        });
+            return destinationRepository.list().thenApplyAsync((destinations) -> {
+                return ok(Ebean.json().toJson(destinations));
+            });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
@@ -56,14 +56,13 @@ public class DestinationController extends Controller {
      */
     public CompletionStage<Result> add(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
+            return destinationRepository.add(request).thenApplyAsync((destination) -> {
+                if (destination == null) {
+                    return badRequest("Bad Request - Failed to add the destination");
+                }
 
-        return destinationRepository.add(request).thenApplyAsync((destination) -> {
-            if (destination == null) {
-                return badRequest("Bad Request - Failed to add the destination");
-            }
-
-            return ok("Destination: " + destination + " added");
-        });
+                return ok("Destination: " + destination + " added");
+            });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
@@ -77,10 +76,9 @@ public class DestinationController extends Controller {
      */
     public CompletionStage<Result> delete(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
-
-        return destinationRepository.delete(id).thenApplyAsync((destination) ->
-            ok("Destination: " + destination +  "deleted")
-        );
+            return destinationRepository.delete(id).thenApplyAsync((destination) ->
+                ok("Destination: " + destination +  "deleted")
+            );
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
@@ -95,15 +93,19 @@ public class DestinationController extends Controller {
      */
     public CompletionStage<Result> update(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
-        return destinationRepository.update(request, id).thenApplyAsync((destination) ->
-                ok("Destination: " + destination +  "updated")
-        );
+            return destinationRepository.update(request, id).thenApplyAsync((destination) ->
+                    ok("Destination: " + destination +  "updated")
+            );
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
     }
 
-
-
-
+    /**
+     * A dummy home page
+     * @return 200
+     */
+    public Result index() {
+        return ok("Travel EA - Home");
+    }
 }
