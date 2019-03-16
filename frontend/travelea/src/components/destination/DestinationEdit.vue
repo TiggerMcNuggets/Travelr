@@ -129,15 +129,11 @@
   opacity: 0.5;
 }
 
-.no-text-decoration {
-  text-decoration: none
-}
 </style>
 
 
 <script>
 import {getOneDestination, updateDestination} from "../../repository/DestinationEditRepository";
-
 
 export default {
   data() {
@@ -148,7 +144,7 @@ export default {
   methods: {
     updateDestination: function() {
         updateDestination(this.$route.params.id, this.destination)
-        .then(result => {
+        .then(() => {
           this.routeBackToPrevPage();
         });
     },
@@ -159,9 +155,9 @@ export default {
 
   created: function() {
     getOneDestination(this.$route.params.id)
-      .then(result => {
+      .then((result) => {
         this.destination = result;
       });
-  }
+    }
 };
 </script>

@@ -72,20 +72,11 @@
 .outer-container {
   text-align: center;
 }
-
-/* .container {
-  background-color: white;
-
-  align-self: center;
-  display: inline-block;
-  text-align: left;
-} */
 </style>
 
 
 <script>
 import {createDestination} from "../../repository/DestinationEditRepository";
-import destinations from '../../store/destinations/destinations';
 
 export default {
   props: {
@@ -99,10 +90,8 @@ export default {
   },
   methods: {
     createDestination: function() {
-      console.log(this.destination.crd_latitude);
       console.log("Destination to create", this.destination);
-      createDestination(this.destination).then(result => {
-        console.log(result);
+      createDestination(this.destination).then(() => {
         this.toggleShowCreateDestination();
       });
     }

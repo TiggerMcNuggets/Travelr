@@ -1,3 +1,6 @@
+/**
+ * retrieves the list of all the destinations stored in the database 
+ */
 export const getDestination = async () => {
 
     let url = "http://localhost:9000/destinations";

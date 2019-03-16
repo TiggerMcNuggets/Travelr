@@ -1,6 +1,5 @@
 import AuthRepository from "./AuthRepository"
 import ProfileRepository from "./ProfileRepository"
-import DestinationEditRepository from "./DestinationEditRepository"
 
 
 
@@ -8,7 +7,6 @@ import DestinationEditRepository from "./DestinationEditRepository"
 const repositories = {
     auth: AuthRepository,
     profile: ProfileRepository,
-    destination: DestinationEditRepository
 };
 
 

@@ -1,5 +1,8 @@
 import { getDestination } from "../../repository/DestinationEditRepository";
 
+/**
+ * Destinations store sub-module
+ */
 export default {
     state: {
         destinations: []
