@@ -7,77 +7,77 @@
       <hr>
     </div>
 
-    <div class="container">
-      <v-layout>
-        <v-flex xs12 md6>
-          <v-text-field
-            v-model="destination.name"
-            :rules="nameRules"
-            :counter="10"
-            label="Destination Name"
-            required
-          ></v-text-field>
-        </v-flex>
+    <v-form ref="form" lazy-validation>
+      <div class="container">
+        <v-layout>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model="destination.name"
+              :rules="nameRules"
+              :counter="10"
+              label="Destination Name"
+              required
+            ></v-text-field>
+          </v-flex>
 
-        <v-flex xs12 md6>
-          <v-text-field
-            v-model="destination.destination_type"
-            :rules="nameRules"
-            :counter="10"
-            label="Destination Type"
-            required
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model="destination.destination_type"
+              :rules="nameRules"
+              :counter="10"
+              label="Destination Type"
+              required
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
 
-      <v-layout>
-        <v-flex xs12 md6>
-          <v-text-field
-            v-model="destination.district"
-            :rules="nameRules"
-            :counter="10"
-            label="Destination District"
-            required
-          ></v-text-field>
-        </v-flex>
+        <v-layout>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model="destination.district"
+              :rules="nameRules"
+              :counter="10"
+              label="Destination District"
+              required
+            ></v-text-field>
+          </v-flex>
 
-        <v-flex xs12 md6>
-          <v-text-field
-            v-model="destination.country"
-            :rules="nameRules"
-            :counter="10"
-            label="Country"
-            required
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model="destination.country"
+              :rules="nameRules"
+              :counter="10"
+              label="Country"
+              required
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
 
-      <v-layout>
-        <v-flex xs12 md6>
-          <v-text-field
-            v-model="destination.crd_latitude"
-            :rules="nameRules"
-            :counter="10"
-            label="Latitude"
-            required
-          ></v-text-field>
-        </v-flex>
+        <v-layout>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model.number="destination.crd_latitude"
+              :rules="numberRules"
+              label="Latitude"
+              required
+            ></v-text-field>
+          </v-flex>
 
-        <v-flex xs12 md6>
-          <v-text-field
-            v-model="destination.crd_longitude"
-            :rules="nameRules"
-            :counter="10"
-            label="Longitude"
-            required
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-      <div class="buttons-div">
-        <v-btn color="red" class="update-button" v-on:click="routeBackToPrevPage">CANCEL</v-btn>
-        <v-btn class="update-button" v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model.number="destination.crd_longitude"
+              :rules="numberRules"
+              label="Longitude"
+              required
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
+        <div class="buttons-div">
+          <v-btn color="red" class="update-button" v-on:click="routeBackToPrevPage">CANCEL</v-btn>
+          <v-btn class="update-button" v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
+        </div>
       </div>
-    </div>
+    </v-form>
   </div>
 </template>
 
@@ -89,7 +89,7 @@
 }
 
 .buttons-div {
-  margin-top: 2em
+  margin-top: 2em;
 }
 
 .update-button {
@@ -128,25 +128,31 @@
   color: white;
   opacity: 0.5;
 }
-
 </style>
 
 
 <script>
-import {getOneDestination, updateDestination} from "../../repository/DestinationEditRepository";
+import {
+  getOneDestination,
+  updateDestination
+} from "../../repository/DestinationEditRepository";
+import rules from "./destinations_rules";
 
 export default {
   data() {
     return {
-      destination: {}
+      destination: {},
+      ...rules
     };
   },
   methods: {
     updateDestination: function() {
-        updateDestination(this.$route.params.id, this.destination)
-        .then(() => {
+      if (this.$refs.form.validate()) {
+        updateDestination(this.$route.params.id, this.destination).then(() => {
+          this.$refs.form.reset();
           this.routeBackToPrevPage();
         });
+      }
     },
     routeBackToPrevPage: function() {
       this.$router.go(-1); // sends you back to the previous page
@@ -154,10 +160,9 @@ export default {
   },
 
   created: function() {
-    getOneDestination(this.$route.params.id)
-      .then((result) => {
-        this.destination = result;
-      });
-    }
+    getOneDestination(this.$route.params.id).then(result => {
+      this.destination = result;
+    });
+  }
 };
 </script>

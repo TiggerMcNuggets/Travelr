@@ -34,7 +34,7 @@
             <!-- item.id -->
             <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
               <a>Edit</a>
-            </router-link> 
+            </router-link>
             <a v-on:click="deleteDestination(item.id)">Delete</a>
           </span>
         </div>
@@ -126,7 +126,10 @@ ul {
 <script>
 import { store } from "../../store/index";
 import DestinationCreate from "./DestinationCreate.vue";
-import { getDestination, deleteDestination } from "../../repository/DestinationEditRepository";
+import {
+  getDestination,
+  deleteDestination
+} from "../../repository/DestinationEditRepository";
 
 export default {
   store,
@@ -134,7 +137,7 @@ export default {
     return {
       showCreateDestination: false,
       showEditDestination: false,
-      destination: store.state.destinations.destinations
+      destination: store.getDestination
     };
   },
   components: {
@@ -155,7 +158,7 @@ export default {
       });
     }
   },
-  created: function() {
+  created: async function() {
     getDestination().then(result => {
       this.destination = result;
     });
