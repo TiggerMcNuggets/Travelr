@@ -6,7 +6,6 @@
       <v-flex xs12 md6 class="row-input-margin">
         <v-text-field
           v-model="destination.name"
-          :rules="nameRules"
           :counter="10"
           label="Destination Name"
           required
@@ -16,7 +15,6 @@
       <v-flex xs12 md6>
         <v-text-field
           v-model="destination.destination_type"
-          :rules="nameRules"
           :counter="10"
           label="Destination Type"
           required
@@ -28,7 +26,6 @@
       <v-flex xs12 md6>
         <v-text-field
           v-model="destination.district"
-          :rules="nameRules"
           :counter="10"
           label="Destination District"
           required
@@ -38,7 +35,6 @@
       <v-flex xs12 md6>
         <v-text-field
           v-model="destination.country"
-          :rules="nameRules"
           :counter="10"
           label="Country"
           required
@@ -50,7 +46,6 @@
       <v-flex xs12 md6>
         <v-text-field
           v-model="destination.crd_latitude"
-          :rules="nameRules"
           :counter="10"
           label="Latitude"
           required
@@ -58,9 +53,10 @@
       </v-flex>
 
       <v-flex xs12 md6>
-        <v-text-field v-model="destination.crd_longitude" :rules="nameResult < 20">
+        <v-text-field v-model="destination.crd_longitude">
           :counter="10"
           label="Longitude"
+          type="number"
           required
           >
         </v-text-field>
@@ -88,8 +84,8 @@
 
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let destinationRepostory = RepositoryFactory.get("destination");
+import {createDestination} from "../../repository/DestinationEditRepository";
+import destinations from '../../store/destinations/destinations';
 
 export default {
   props: {
@@ -103,7 +99,9 @@ export default {
   },
   methods: {
     createDestination: function() {
-      destinationRepostory.createDestination(this.destination).then(result => {
+      console.log(this.destination.crd_latitude);
+      console.log("Destination to create", this.destination);
+      createDestination(this.destination).then(result => {
         console.log(result);
         this.toggleShowCreateDestination();
       });

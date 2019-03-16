@@ -32,7 +32,9 @@
           <h2>{{ item.name }}</h2>
           <span>
             <!-- item.id -->
-            <a :href="'http://localhost:8080/#/destination/edit/' + item.id">Edit</a>
+            <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
+              <a>Edit</a>
+            </router-link> 
             <a v-on:click="deleteDestination(item.id)">Delete</a>
           </span>
         </div>
@@ -123,9 +125,8 @@ ul {
 
 <script>
 import { store } from "../../store/index";
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import DestinationCreate from "./DestinationCreate.vue";
-import { getDestination } from "../../repository/DestinationEditRepository";
+import { getDestination, deleteDestination } from "../../repository/DestinationEditRepository";
 
 export default {
   store,
@@ -149,7 +150,7 @@ export default {
           this.destination.splice(i, 1);
         }
       }
-      destinationRepostory.deleteDestination(id).then(result => {
+      deleteDestination(id).then(result => {
         console.log(result);
       });
     }

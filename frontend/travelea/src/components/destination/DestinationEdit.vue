@@ -73,8 +73,10 @@
           ></v-text-field>
         </v-flex>
       </v-layout>
-      <v-btn class="update-button" v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
-      <v-btn color="red" class="update-button" v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
+      <div class="buttons-div">
+        <v-btn color="red" class="update-button" v-on:click="routeBackToPrevPage">CANCEL</v-btn>
+        <v-btn class="update-button" v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -86,9 +88,13 @@
   text-align: center;
 }
 
+.buttons-div {
+  margin-top: 2em
+}
+
 .update-button {
-  margin-top: 50px;
-  width: 100%;
+  margin-top: 1em;
+  width: 49%;
 }
 
 .container {
@@ -122,12 +128,16 @@
   color: white;
   opacity: 0.5;
 }
+
+.no-text-decoration {
+  text-decoration: none
+}
 </style>
 
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let destinationRepostory = RepositoryFactory.get("destination");
+import {getOneDestination, updateDestination} from "../../repository/DestinationEditRepository";
+
 
 export default {
   data() {
@@ -137,17 +147,18 @@ export default {
   },
   methods: {
     updateDestination: function() {
-      destinationRepostory
-        .updateDestination(this.$route.params.id, this.destination)
+        updateDestination(this.$route.params.id, this.destination)
         .then(result => {
-          console.log(result);
+          this.routeBackToPrevPage();
         });
+    },
+    routeBackToPrevPage: function() {
+      this.$router.go(-1); // sends you back to the previous page
     }
   },
 
   created: function() {
-    destinationRepostory
-      .getOneDestination(this.$route.params.id)
+    getOneDestination(this.$route.params.id)
       .then(result => {
         this.destination = result;
       });

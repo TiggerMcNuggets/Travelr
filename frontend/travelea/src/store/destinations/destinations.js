@@ -7,7 +7,7 @@ export default {
     mutations: {
         async setDestinations() {
             const destinations = await getDestination();
-            state.destinations = destinations;
+            this.state.destinations = destinations;
         }
     },
     actions: {
