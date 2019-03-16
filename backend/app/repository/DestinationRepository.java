@@ -44,10 +44,10 @@ public class DestinationRepository {
         return supplyAsync(() -> {
             JsonNode data = req.body().asJson();
             String name = data.at("/name").asText();
-            String dest_type = data.at("/type").asText();
+            String dest_type = data.at("/destination_type").asText();
             String district = data.at("/district").asText();
-            Double lat = data.at("/lat").asDouble();
-            Double lng = data.at("/lng").asDouble();
+            Double lat = data.at("/crd_latitude").asDouble();
+            Double lng = data.at("/crd_longitude").asDouble();
             String country = data.at("/country").asText();
 
             Destination destination = new Destination(name, dest_type, district, lat, lng, country);
@@ -94,10 +94,10 @@ public class DestinationRepository {
 
             JsonNode data = req.body().asJson();
             String name = data.at("/name").asText();
-            String dest_type = data.at("/type").asText();
+            String dest_type = data.at("/destination_type").asText();
             String district = data.at("/district").asText();
-            Double lat = data.at("/lat").asDouble();
-            Double lng = data.at("/lng").asDouble();
+            Double lat = data.at("/crd_latitude").asDouble();
+            Double lng = data.at("/crd_longitude").asDouble();
             String country = data.at("/country").asText();
 
             dest.setName(name);
