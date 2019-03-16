@@ -50,8 +50,9 @@ public class DestinationController extends Controller {
     }
 
     /**
-     * Allows user to see a display of all the destinations.
-     * @return 200 response and list of destinations in JSON format when successful, 401 in case user is not authorised
+     * @param request the http request
+     * @param id the destination id
+     * @return 200 response and JSON format when successful, 401 in case user is not authorised
      */
     public CompletionStage<Result> getOne(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {

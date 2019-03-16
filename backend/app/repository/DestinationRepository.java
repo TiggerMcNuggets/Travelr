@@ -70,9 +70,9 @@ public class DestinationRepository {
     }
 
     /**
-     * Deletes a destination from the database.
-     * @param dest_id The id of the destination to be deleted.
-     * @return The deleted destination.
+     * Looks for a destination with dest_id as id
+     * @param dest_id The id of the destination
+     * @return The deleted destination as a JSON object
      */
     public CompletionStage<Destination> getOne(Long dest_id) {
         return supplyAsync(() -> {
