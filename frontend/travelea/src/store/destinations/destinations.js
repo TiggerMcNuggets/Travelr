@@ -8,10 +8,10 @@ export default {
         destinations: []
     },
     mutations: {
-        async setDestinations() {
+        async setDestinations(state) {
             const destinations = await getDestination();
-            this.state.destinations = destinations;
-        }
+            state.destinations = destinations;
+        },
     },
     actions: {
 

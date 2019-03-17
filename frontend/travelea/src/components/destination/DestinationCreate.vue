@@ -94,9 +94,10 @@
 <script>
 import { createDestination } from "../../repository/DestinationEditRepository";
 import rules from "./destinations_rules";
-import * as _ from "lodash";
+import { store } from "../../store/index";
 
 export default {
+  store,
   props: {
     showAddDestination: Boolean,
     toggleShowCreateDestination: Function
@@ -114,6 +115,7 @@ export default {
         createDestination(this.destination).then(() => {
           this.$refs.form.reset();
           this.toggleShowCreateDestination();
+          store.commit("setDestinations");
         });
       }
     },

@@ -24,7 +24,7 @@
       <h2>Public destinations</h2>
       <li
         class="destination-list-element"
-        v-for="item in destination"
+        v-for="item in destinations"
         :value="item.value"
         :key="item.value"
       >
@@ -126,20 +126,24 @@ ul {
 <script>
 import { store } from "../../store/index";
 import DestinationCreate from "./DestinationCreate.vue";
-import {
-  getDestination,
-  deleteDestination
-} from "../../repository/DestinationEditRepository";
+import { deleteDestination } from "../../repository/DestinationEditRepository";
 
 export default {
   store,
+  // local variables
   data() {
     return {
       showCreateDestination: false,
-      showEditDestination: false,
-      destination: store.getDestination
+      showEditDestination: false
     };
   },
+  // the place where you want to make the store values readable
+  computed: {
+    destinations() {
+      return store.state.destinations.destinations;
+    }
+  },
+  // child components
   components: {
     DestinationCreate: DestinationCreate
   },
@@ -148,9 +152,9 @@ export default {
       this.showCreateDestination = !this.showCreateDestination;
     },
     deleteDestination: function(id) {
-      for (var i = 0; i < this.destination.length; i++) {
-        if (this.destination[i].id === id) {
-          this.destination.splice(i, 1);
+      for (var i = 0; i < this.destinations.length; i++) {
+        if (this.destinations[i].id === id) {
+          this.destinations.splice(i, 1);
         }
       }
       deleteDestination(id).then(result => {
@@ -159,9 +163,8 @@ export default {
     }
   },
   created: async function() {
-    getDestination().then(result => {
-      this.destination = result;
-    });
+    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
+    store.commit("setDestinations");
   }
 };
 </script>
