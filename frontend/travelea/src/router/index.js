@@ -3,6 +3,8 @@ import Router from 'vue-router'
 
 // Components
 import Profile from "../components/profile/Profile"
+import Destination from "../components/destination/Destination"
+import DestinationEdit from "../components/destination/DestinationEdit"
 
 
 Vue.use(Router)
@@ -13,6 +15,18 @@ export default new Router({
       path: '/profile',
       name: 'profile',
       component: Profile
-    }
+    },
+
+    {
+      path: '/destination',
+      name: 'destination',
+      component: Destination
+    },
+
+    {
+      path: '/destination/edit/:id',
+      name: 'edit-destination',
+      component: DestinationEdit
+    },
   ]
 })

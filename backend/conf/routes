@@ -39,6 +39,7 @@ POST        /destinations                   controllers.DestinationController.ad
 DELETE      /destinations/:id               controllers.DestinationController.delete(request: Request, id: Long)
 PUT         /destinations/:id               controllers.DestinationController.update(request: Request, id: Long)
 GET        /destinations                   controllers.DestinationController.list(request: Request)
+GET        /destinations/:id                   controllers.DestinationController.getOne(request: Request, id: Long)
 
 #trip type routes
 POST        /trips                      controllers.TripController.add(request: Request)
