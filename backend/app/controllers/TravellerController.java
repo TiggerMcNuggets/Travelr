@@ -3,12 +3,14 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
+import models.PersonalPhoto;
 import play.i18n.MessagesApi;
 import play.libs.Files;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import repository.PersonalPhotoRepository;
 import repository.TravellerRepository;
 import utils.FileHelper;
 
@@ -25,14 +27,17 @@ public class TravellerController extends Controller {
     private final HttpExecutionContext httpExecutionContext;
     private final MessagesApi messagesApi;
     private final TravellerRepository travellerRepository;
+    private final PersonalPhotoRepository personalPhotoRepository;
 
     @Inject
     public TravellerController(
             TravellerRepository travellerRepository,
             HttpExecutionContext httpExecutionContext,
-            MessagesApi messagesApi
+            MessagesApi messagesApi,
+            PersonalPhotoRepository personalPhotoRepository
     ) {
         this.travellerRepository = travellerRepository;
+        this.personalPhotoRepository = personalPhotoRepository;
         this.httpExecutionContext = httpExecutionContext;
         this.messagesApi = messagesApi;
     }
@@ -150,20 +155,5 @@ public class TravellerController extends Controller {
     }
 
 
-    public Result upload(Http.Request request, Long id) {
-        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
-        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-        if (picture != null) {
-            String fileName = picture.getFilename();
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
-            Files.TemporaryFile file = picture.getRef();
-            FileHelper fh = new FileHelper();
-            fh.make_directory("resources/images");
-            file.copyTo(Paths.get("resources/images/destination.jpg"), true);
-            return ok("File uploaded");
-        } else {
-            return badRequest().flashing("error", "Missing file");
-        }
-    }
+
 }
