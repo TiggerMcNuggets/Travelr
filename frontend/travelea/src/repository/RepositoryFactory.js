@@ -6,7 +6,7 @@ import ProfileRepository from "./ProfileRepository"
 // Add all repositories here to access from anywhere
 const repositories = {
     auth: AuthRepository,
-    profile: ProfileRepository
+    profile: ProfileRepository,
 };
 
 

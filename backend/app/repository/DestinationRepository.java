@@ -44,10 +44,10 @@ public class DestinationRepository {
         return supplyAsync(() -> {
             JsonNode data = req.body().asJson();
             String name = data.at("/name").asText();
-            String dest_type = data.at("/type").asText();
+            String dest_type = data.at("/destination_type").asText();
             String district = data.at("/district").asText();
-            Double lat = data.at("/lat").asDouble();
-            Double lng = data.at("/lng").asDouble();
+            Double lat = data.at("/crd_latitude").asDouble();
+            Double lng = data.at("/crd_longitude").asDouble();
             String country = data.at("/country").asText();
 
             Destination destination = new Destination(name, dest_type, district, lat, lng, country);
@@ -70,6 +70,19 @@ public class DestinationRepository {
     }
 
     /**
+     * Looks for a destination with dest_id as id
+     * @param dest_id The id of the destination
+     * @return The deleted destination as a JSON object
+     */
+    public CompletionStage<Destination> getOne(Long dest_id) {
+        return supplyAsync(() -> {
+            Destination dest = Destination.find.byId(dest_id);
+            return dest;
+        }, executionContext);
+    }
+
+
+    /**
      * Updates a destination based on data from a HTTP POST request.
      * @param req The HTTP Post Request.
      * @param dest_id The destination id to be deleted.
@@ -81,10 +94,10 @@ public class DestinationRepository {
 
             JsonNode data = req.body().asJson();
             String name = data.at("/name").asText();
-            String dest_type = data.at("/type").asText();
+            String dest_type = data.at("/destination_type").asText();
             String district = data.at("/district").asText();
-            Double lat = data.at("/lat").asDouble();
-            Double lng = data.at("/lng").asDouble();
+            Double lat = data.at("/crd_latitude").asDouble();
+            Double lng = data.at("/crd_longitude").asDouble();
             String country = data.at("/country").asText();
 
             dest.setName(name);
@@ -94,6 +107,8 @@ public class DestinationRepository {
             dest.setCrd_longitude(lng);
             dest.setCountry(country);
             dest.save();
+
+
 
             return dest;
         }, executionContext);

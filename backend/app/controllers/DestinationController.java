@@ -50,6 +50,22 @@ public class DestinationController extends Controller {
     }
 
     /**
+     * @param request the http request
+     * @param id the destination id
+     * @return 200 response and JSON format when successful, 401 in case user is not authorised
+     */
+    public CompletionStage<Result> getOne(Http.Request request, Long id) {
+        if (controllers.LoginController.isLoggedIn(request)) {
+            return destinationRepository.getOne(id).thenApplyAsync((destination) -> {
+                return ok(Ebean.json().toJson(destination));
+            });
+        } else {
+            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+        }
+
+    }
+
+    /**
      * Allows the user to add a destination to the database directly by POST request.
      * @param request The HTTP POST request which contains information about the destination to be added.
      * @return A response message which describes if the insert was successful.
@@ -92,6 +108,7 @@ public class DestinationController extends Controller {
      * @return A response message describing if the destination was updated successfully.
      */
     public CompletionStage<Result> update(Http.Request request, Long id) {
+        System.out.println("Here");
         if (controllers.LoginController.isLoggedIn(request)) {
             return destinationRepository.update(request, id).thenApplyAsync((destination) ->
                     ok("Destination: " + destination +  "updated")
