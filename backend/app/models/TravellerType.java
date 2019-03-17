@@ -16,29 +16,9 @@ public class TravellerType extends BaseModel {
 
     @NotNull
     @Constraints.Required
-    public String tType;
+    public String name;
 
-    @ManyToOne
-    public Traveller traveller;
-
-    public TravellerType(@Constraints.Required String tType, Traveller traveller) {
-        this.tType = tType;
-        this.traveller = traveller;
-    }
-
-    public String getType() {
-        return tType;
-    }
-
-    public void setType(String type) {
-        this.tType = type;
-    }
-
-    public Traveller getTraveller() {
-        return traveller;
-    }
-
-    public void setTraveller(Traveller traveller) {
-        this.traveller = traveller;
+    public TravellerType(String name) {
+        this.name = name;
     }
 }

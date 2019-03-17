@@ -63,6 +63,26 @@ public class UserController extends Controller {
     }
 
 
+//    public CompletionStage<Result> updateUser(Http.Request request) {
+//        // Turns the post data into a form object
+//        Form<UpdateUserRequest> userRequestForm = formFactory.form(UpdateUserRequest.class).bindFromRequest(request);
+//
+//        // Checks if the data matches all the constraints - if not, return bad request
+//        if (userRequestForm.hasErrors()) {
+//            return CompletableFuture.completedFuture(badRequest());
+//        }
+//
+//        // Create an object from the request
+//        UpdateUserRequest req = userRequestForm.get();
+//
+//        // Create a new user
+//
+//
+//        // Call add user
+//        return userRepository.addUser(newUser).thenApplyAsync(id -> {
+//            return ok();
+//        });
+//    }
 
     public static class CreateUserRequest {
         @Constraints.Required
@@ -82,6 +102,28 @@ public class UserController extends Controller {
 
         @Constraints.Required
         public String password;
+
+        @Constraints.Required
+        public int dateOfBirth;
+
+        @Constraints.Required
+        public List<NationalityRequest> nationalities;
+
+        @Constraints.Required
+        public List<Integer> travellerTypes;
+    }
+
+    public static class UpdateUserRequest {
+        @Constraints.Required
+        public String firstName;
+
+        @Constraints.Required
+        public String lastName;
+
+        public String middleName;
+
+        @Constraints.Required
+        public String gender;
 
         @Constraints.Required
         public int dateOfBirth;
