@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.UserController;
 import finders.UserFinder;
 import io.ebean.Finder;
@@ -7,13 +8,14 @@ import io.ebean.annotation.NotNull;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.Constraint;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -48,14 +50,15 @@ public class User extends BaseModel {
     @Constraints.Required
     public String gender;
 
-    @NotNull
+    @Column(length = 256, unique = true, nullable = false)
+    @Constraints.MaxLength(256)
     @Constraints.Required
     @Constraints.Email
     public String email;
 
-    @NotNull
-    @Constraints.Required
-    public String password;
+    @JsonIgnore
+    @Column(length = 64, nullable = false)
+    private byte[] shaPassword;
 
     @NotNull
     public int timestamp;
@@ -88,14 +91,32 @@ public class User extends BaseModel {
         save();
     }
 
+    public void setEmail(String email) {
+        this.email = email.toLowerCase();
+    }
+
+
+    public void setPassword(String password) {
+        shaPassword = getSha512(password);
+    }
+
+    public static byte[] getSha512(String value) {
+        try {
+            return MessageDigest.getInstance("SHA-512").digest(value.getBytes("UTF-8"));
+        }
+        catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public User(UserController.CreateUserRequest request) {
         this.firstName = request.firstName;
         this.lastName = request.lastName;
         this.email = request.email;
-        this.password = request.password;
+        setPassword(request.password);
         this.gender = "Male";
-        this.dateOfBirth = 1;
+        this.dateOfBirth = request.dateOfBirth;
     }
 
 }

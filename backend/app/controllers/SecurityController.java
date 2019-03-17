@@ -21,7 +21,7 @@ public class SecurityController extends Controller {
     FormFactory formFactory;
 
     // Header key name
-    public final static String AUTH_TOKEN_HEADER = "X-AUTHORIZATION";
+    public final static String AUTH_TOKEN_HEADER = "X-Authorization";
     // Database column name
     public final static String AUTH_TOKEN = "authToken";
 
@@ -45,11 +45,12 @@ public class SecurityController extends Controller {
             String authToken = user.setAuthToken();
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
+            authTokenJson.put("id", user.id);
             return ok(authTokenJson);
         }
     }
 
-    @Authorization.RequireAuth
+    @Authorization.RequireAuth()
     public Result logout(Http.Request request) {
         User user = request.attrs().get(Attrs.USER);
         user.deleteAuthToken();
@@ -64,7 +65,6 @@ public class SecurityController extends Controller {
 
         @Constraints.Required
         public String password;
-
     }
 
 }

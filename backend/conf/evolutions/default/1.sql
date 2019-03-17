@@ -71,10 +71,11 @@ create table user (
   auth_token                    varchar(255),
   date_of_birth                 integer not null,
   gender                        varchar(255) not null,
-  email                         varchar(255) not null,
-  password                      varchar(255) not null,
+  email                         varchar(256) not null,
+  sha_password                  varbinary(64) not null,
   timestamp                     integer not null,
   account_type                  integer default 0 not null,
+  constraint uq_user_email unique (email),
   constraint pk_user primary key (id)
 );
 

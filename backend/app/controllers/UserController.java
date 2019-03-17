@@ -1,6 +1,7 @@
 package controllers;
 
 import akka.dispatch.sysmsg.Create;
+import models.Nationality;
 import models.User;
 import play.core.j.HttpExecutionContext;
 import play.data.Form;
@@ -13,6 +14,8 @@ import play.mvc.Result;
 import repository.UserRepository;
 
 import javax.inject.Inject;
+import javax.validation.Constraint;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -64,13 +67,35 @@ public class UserController extends Controller {
     public static class CreateUserRequest {
         @Constraints.Required
         public String firstName;
+
         @Constraints.Required
         public String lastName;
+
+        public String middleName;
+
+        @Constraints.Required
+        public String gender;
+
         @Constraints.Required
         @Constraints.Email
         public String email;
+
         @Constraints.Required
         public String password;
+
+        @Constraints.Required
+        public int dateOfBirth;
+
+        @Constraints.Required
+        public List<NationalityRequest> nationalities;
+
+        @Constraints.Required
+        public List<Integer> travellerTypes;
+    }
+
+    public static class NationalityRequest {
+        public int id;
+        public boolean hasPassport;
     }
 
 
