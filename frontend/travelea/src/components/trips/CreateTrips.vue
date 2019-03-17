@@ -14,20 +14,28 @@
             <v-text-field :counter="20" label="Destination Type" required></v-text-field>
           </v-flex>
         </v-layout>
-        <v-card class="destination-form-padding">
-          <v-layout>
-            <v-flex xs12 md>
-              <v-text-field :counter="20" label="Destination District" required></v-text-field>
-            </v-flex>
+        <ul>
+          <li v-for="(destination, index) in trip.destinations" :v-bind="index">
+            <v-card class="destination-form-padding">
+              <v-layout>
+                <v-flex xs12 md4>
+                  <v-combobox
+                    :items="destinationsNamesAndIndex"
+                    v-model="destination.title"
+                    label="Select an existing destination"
+                  ></v-combobox>
+                </v-flex>
 
-            <v-flex xs12 md4>
-              <v-text-field :counter="10" label="Country" required></v-text-field>
-            </v-flex>
-            <v-flex xs12 md4>
-              <v-text-field :counter="10" label="Country" required></v-text-field>
-            </v-flex>
-          </v-layout>
-        </v-card>
+                <v-flex xs12 md4>
+                  <v-text-field :counter="10" label="Country" required></v-text-field>
+                </v-flex>
+                <v-flex xs12 md4>
+                  <v-text-field :counter="10" label="Country" required></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </li>
+        </ul>
 
         <v-layout>
           <v-flex xs12 md6>
@@ -64,25 +72,42 @@
 
 
 <script>
-import { store } from "../../store/index";
+// import { store } from "../../store/index";
+import moment from "moment";
 
 export default {
-  store,
+  // store,
   props: {},
   data() {
     return {
-      trip: {}
+      trip: {
+        destinations: [
+          {
+            title: "Ciao",
+            arrivalTime: moment(),
+            departureTime: moment().add(1, "day")
+          },
+          {
+            title: "Ciao",
+            arrivalTime: moment(),
+            departureTime: moment().add(1, "day")
+          }
+        ]
+      }
     };
   },
   computed: {
     destinations() {
-      return store.state.destinations.destinations;
+      return [
+        { title: "Ciao", something: "Something" },
+        { title: "bUONGIORNO", something: "Something" }
+      ];
+      // return store.state.destinations.destinations;
+    },
+    destinationsNamesAndIndex() {
+      // return store.state.destinations.destinations.map(
+      return this.destinations.map(destination => destination.title);
     }
-    // destinationsNamesAndIndex() {
-    //   return store.state.destinations.destinations.map(
-    //     (destination, index) => ({ index: index, title: destination.title })
-    //   );
-    // }
   },
   methods: {
     resetValues: function() {
