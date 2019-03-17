@@ -27,10 +27,117 @@
                 </v-flex>
 
                 <v-flex xs12 md4>
-                  <v-text-field :counter="10" label="Country" required></v-text-field>
+                  <v-card class="times-padding">
+                    <!-- Arrival Time -->
+                    <v-menu
+                      ref="arrivalTimeMenu"
+                      v-model="arrivalTimeMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      :return-value.sync="arrivalTime"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="arrivalTime"
+                          label="Arrival time"
+                          prepend-icon="access_time"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-time-picker
+                        v-if="arrivalTimeMenu"
+                        v-model="arrivalTime"
+                        full-width
+                        @click:minute="$refs.arrivalTimeMenu[index].save(arrivalTime)"
+                      ></v-time-picker>
+                    </v-menu>
+
+                    <!-- Arrival date -->
+                    <v-menu
+                      v-model="arrivalDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="arrivalDate"
+                          label="Arrival date"
+                          prepend-icon="event"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker v-model="arrivalDate" @input="arrivalDateMenu = false"></v-date-picker>
+                    </v-menu>
+                  </v-card>
                 </v-flex>
                 <v-flex xs12 md4>
-                  <v-text-field :counter="10" label="Country" required></v-text-field>
+                  <v-card class="times-padding">
+                    <!-- Departure time -->
+                    <v-menu
+                      ref="departureTimeMenu"
+                      v-model="departureTimeMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      :return-value.sync="departureTime"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="departureTime"
+                          label="Departure time"
+                          prepend-icon="access_time"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-time-picker
+                        v-if="departureTimeMenu"
+                        v-model="departureTime"
+                        full-width
+                        @click:minute="$refs.departureTimeMenu[index].save(departureTime)"
+                      ></v-time-picker>
+                    </v-menu>
+                    <!-- Departure date -->
+                    <v-menu
+                      v-model="departureDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="departureDate"
+                          label="Departure date"
+                          prepend-icon="event"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker v-model="departureDate" @input="departureDateMenu = false"></v-date-picker>
+                    </v-menu>
+                  </v-card>
                 </v-flex>
               </v-layout>
             </v-card>
@@ -68,30 +175,44 @@
 .destination-form-padding {
   padding: 2em;
 }
+.times-padding {
+  padding: 1em;
+}
 </style>
 
 
 <script>
 // import { store } from "../../store/index";
 import moment from "moment";
-
+import { Datetime } from "vue-datetime";
 export default {
   // store,
+  components: {
+    datetime: Datetime
+  },
   props: {},
   data() {
     return {
+      arrivalTimeMenu: false,
+      arrivalDateMenu: false,
+      departureTimeMenu: false,
+      departureDateMenu: false,
+      arrivalDate: null,
+      departureDate: null,
+      arrivalTime: null,
+      departureTime: null,
       trip: {
         destinations: [
           {
             title: "Ciao",
-            arrivalTime: moment(),
-            departureTime: moment().add(1, "day")
-          },
-          {
-            title: "Ciao",
-            arrivalTime: moment(),
+            arrivalTime: null,
             departureTime: moment().add(1, "day")
           }
+          // {
+          //   title: "Ciao",
+          //   arrivalTime: moment(),
+          //   departureTime: moment().add(1, "day")
+          // }
         ]
       }
     };
