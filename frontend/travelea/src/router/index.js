@@ -29,11 +29,10 @@ export default new Router({
       name: 'edit-destination',
       component: DestinationEdit
     },
-    },
+
     {
       path: '/login',
       name: 'login',
       component: Login
     }
-  ]
-})
+  ]})
