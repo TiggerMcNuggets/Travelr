@@ -22,7 +22,7 @@ public class UserFinder extends Finder<Long, User> {
         return query().where().eq("authToken", token).findOneOrEmpty();
     }
 
-    public static byte[] getSha512(String value) {
+    private byte[] getSha512(String value) {
         try {
             return MessageDigest.getInstance("SHA-512").digest(value.getBytes("UTF-8"));
         }
@@ -32,7 +32,6 @@ public class UserFinder extends Finder<Long, User> {
     }
 
     public Optional<User> findByLogin(String email, String password) {
-        // TODO: Hash Password in the future
 
         return query().where().eq("email", email.toLowerCase()).eq("password", getSha512(password)).findOneOrEmpty();
 
