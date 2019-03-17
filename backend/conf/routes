@@ -41,11 +41,20 @@ PUT         /destinations/:id               controllers.DestinationController.up
 GET        /destinations                   controllers.DestinationController.list(request: Request)
 GET        /destinations/:id                   controllers.DestinationController.getOne(request: Request, id: Long)
 
-POST        /login                          controllers.LoginController.login(request: Request)
-GET         /logout                         controllers.LoginController.logout()
-
 #trip type routes
 POST        /trips                      controllers.TripController.add(request: Request)
 PUT         /trips/:id                  controllers.TripController.update(request: Request, id: Long)
 DELETE      /trips/:id                  controllers.TripController.delete(id: Long)
 GET         /trips                      controllers.TripController.list(request: Request)
+
+# ################## REFACTORED API BELOW ######################
+# AUTH ROUTES
+POST        /login                          controllers.SecurityController.login(request: Request)
+POST        /logout                         controllers.SecurityController.logout(request: Request)
+
+# User
+
+GET         /users                          controllers.UserController.getAllUsers(request: Request)
+
+
+POST        /users                          controllers.UserController.addUser(request: Request)
