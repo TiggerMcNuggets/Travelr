@@ -3,41 +3,32 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
-import models.PersonalPhoto;
 import play.i18n.MessagesApi;
-import play.libs.Files;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.PersonalPhotoRepository;
 import repository.TravellerRepository;
-import utils.FileHelper;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import static play.libs.Scala.asScala;
 
 public class TravellerController extends Controller {
 
     private final HttpExecutionContext httpExecutionContext;
     private final MessagesApi messagesApi;
     private final TravellerRepository travellerRepository;
-    private final PersonalPhotoRepository personalPhotoRepository;
 
     @Inject
     public TravellerController(
             TravellerRepository travellerRepository,
             HttpExecutionContext httpExecutionContext,
-            MessagesApi messagesApi,
-            PersonalPhotoRepository personalPhotoRepository
+            MessagesApi messagesApi
     ) {
         this.travellerRepository = travellerRepository;
-        this.personalPhotoRepository = personalPhotoRepository;
         this.httpExecutionContext = httpExecutionContext;
         this.messagesApi = messagesApi;
     }
