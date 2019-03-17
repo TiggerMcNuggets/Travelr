@@ -34,9 +34,17 @@ public class TravellerController extends Controller {
     }
 
     /**
-     * Renders travellers.scala.html and sends 200 response
      *
-     * @return CompletionStage<Result>
+     * @param request the http request
+     * @param fname the traveller first name
+     * @param lname the traveller last name
+     * @param gender the traveller gender
+     * @param minAge the traveller min age
+     * @param maxAge the traveller max age
+     * @param nationalities the nationality the traveller has to be from
+     * @param traveller_types the traveller types the traveller must have
+     * @param orderBy value the list needs to be ordered to
+     * @return @return 200 response and list of travellers in JSON format if successful, 401 if unauthorised
      */
     public CompletionStage<Result> list(Http.Request request, String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities,List<String> traveller_types, String orderBy) {
         if (controllers.LoginController.isLoggedIn(request)) {
@@ -61,11 +69,10 @@ public class TravellerController extends Controller {
         return optional.substring(9, optional.length() -1);
     }
 
-
     /**
-     * Renders a profile page for a particular user when logged in. Gives denied access if not logged in or trying to access another user.
-     *
-     * @return CompletionStage<Result>
+     * @param id the user id
+     * @param request the http request
+     * @return 200 response and traveller information as JSON object if successful, 401 if unauthorised or trying to view someone else's profile
      */
     public CompletionStage<Result> showProfile(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request) && !extractValueFromOptional(request.session().getOptional("connected").toString()).equals(id.toString())) {
@@ -81,12 +88,11 @@ public class TravellerController extends Controller {
         }
     }
 
-
     /**
-     * Renders the travellers.scale.html file and responds with 200 response or raises 400 response
+     * Adds traveller to db
      *
      * @param request http request
-     * @return CompletionStage<Result>
+     * @return 200 if successful, 404 for bad request
      */
     public CompletionStage<Result> add(Http.Request request) {
         return travellerRepository.add(request).thenApplyAsync((traveller) -> {
@@ -116,7 +122,6 @@ public class TravellerController extends Controller {
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
-
     }
 
     /**

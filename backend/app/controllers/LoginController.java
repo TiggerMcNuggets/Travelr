@@ -33,7 +33,7 @@ public class LoginController extends Controller {
      */
     public static Boolean isLoggedIn(Http.Request request) {
 //        return request.session().getOptional("connected").isPresent();
-	return true;
+        return true;
     }
 
     public static CompletionStage<Result> loginCheck(Http.Request request, CompletionStage<Result> result) {

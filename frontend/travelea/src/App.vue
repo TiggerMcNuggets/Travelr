@@ -18,7 +18,7 @@
       <v-toolbar-title>TravelEA</v-toolbar-title>
     </v-toolbar>
     <v-content>
-    <v-container fluid pa-0>
+    <v-container fluid pa-0 ma-0>
       <router-view></router-view>
     </v-container>
   </v-content>
@@ -45,7 +45,8 @@ export default {
         menuOptions = [
           {name: 'Dashboard', icon: 'lock_open', link: '/home'},
           {name: 'Users', icon: 'lock_open', link: '/users'},
-          {name: 'My Trips', icon: 'lock_open', link: '/trips'}
+          {name: 'My Trips', icon: 'lock_open', link: '/trips'},
+          {name: 'My Destinations', icon: 'lock_open', link: '/destination'}
         ]
       }
 
