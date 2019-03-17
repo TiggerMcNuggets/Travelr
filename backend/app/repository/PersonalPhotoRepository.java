@@ -39,15 +39,14 @@ public class PersonalPhotoRepository {
      * Adds a new personal photo for a user.
      * @param id user id
      */
-    public CompletionStage<Boolean> add(Long id, String imageFileName) {
+    public CompletionStage<Long> add(Long id, String imageFileName) {
         return supplyAsync(() -> {
             Traveller traveller = Traveller.find.byId(id);
             System.out.println(traveller);
-            if (traveller == null) return false; // bad user
+            if (traveller == null) return null; // bad user
             PersonalPhoto photo = new PersonalPhoto(traveller, imageFileName);
-            System.out.println(photo);
             photo.save();
-            return true;
+            return photo.id;
         }, executionContext);
     }
 

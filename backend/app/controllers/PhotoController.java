@@ -68,9 +68,9 @@ public class PhotoController extends Controller {
             FileHelper fh = new FileHelper();
             fh.make_directory("resources/images");
             file.copyTo(Paths.get("resources/images/"+ fileName), true);
-            return personalPhotoRepository.add(id, fileName).thenApplyAsync((isSuccessful) -> {
-                if (isSuccessful) {
-                    return ok("File uploaded");
+            return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
+                if (photo_id != null) {
+                    return ok("File uploaded with Photo ID " + photo_id);
                 } else {
                     return badRequest("Error adding reference to the database.");
                 }
