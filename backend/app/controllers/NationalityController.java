@@ -34,30 +34,31 @@ public class NationalityController extends Controller {
     }
 
     /**
-     * Renders traveller_nationalitites.scala.html and sends 200 response
-     *
-     * @return 200 response and nationalities JSON body if successful.
-     *         401 response if unauthorised.
+     * Allows the user to fetch rows from the nationality repository, given a nationality id.
+     * @param request the http request
+     * @param id user id
+     * @return 200 response and nationalities JSON body if successful
+     *         400 response if user is invalid
+     *         401 response if access is denied
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
         if (controllers.LoginController.isLoggedIn(request)) {
-        return nationalityRepository.list(id).thenApplyAsync((nationalities) -> {
-                    PathProperties pathProperties = PathProperties.parse("id,nationality,hasPassport");
-                    return ok(Ebean.json().toJson(nationalities, pathProperties));
-                }
-        );
+            return nationalityRepository.list(id).thenApplyAsync((nationalities) -> {
+                PathProperties pathProperties = PathProperties.parse("id,nationality,hasPassport");
+                return ok(Ebean.json().toJson(nationalities, pathProperties));
+            });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
-
-
-
     }
 
     /**
+     * Allows the creation of rows on the nationality repository, given a nationality id.
      * @param request the http request
      * @param id user id
-     * @return 200 response if 0 or more rows have been inserted, 400 response if user invalid
+     * @return 200 response if 0 or more rows have been inserted
+     *         400 response if user is invalid
+     *         401 response if access is denied
      */
     public CompletionStage<Result> add(Http.Request request, Long id) {
         JsonNode data = request.body().asJson();
@@ -72,18 +73,20 @@ public class NationalityController extends Controller {
     }
 
     /**
-     *
+     * Allows the deletion of rows from the nationality repository, given a nationality id.
      * @param request the http request
      * @param id user id
-     * @return 200 response if 0 or more rows have been deleted, 400 response if user invalid
+     * @return 200 response if 0 or more rows have been deleted
+     *         400 response if user is invalid
+     *         401 response if access is denied
      */
     public CompletionStage<Result> delete(Http.Request request, Long id) {
         JsonNode data = request.body().asJson();
         if (controllers.LoginController.isLoggedIn(request)) {
             return nationalityRepository.delete(id, data).thenApplyAsync((Integer insertedRows) -> {
-                        if (insertedRows == null) return badRequest("Bad Request - Invalid User");
-                        return ok("Success: " + insertedRows + " deleted rows");
-                    }
+                if (insertedRows == null) return badRequest("Bad Request - Invalid User");
+                    return ok("Success: " + insertedRows + " deleted rows");
+                }
             );
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));

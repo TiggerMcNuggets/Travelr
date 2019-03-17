@@ -3,36 +3,7 @@
 # ~~~~
 
 # Home page
-GET         /                            controllers.HomeController.index
-
-#+nocsrf
-#POST        /login                     controllers.AuthController.authorize()
-
-# Widgets
-GET         /widgets                     controllers.WidgetController.listWidgets(request: Request)
-POST        /widgets                     controllers.WidgetController.createWidget(request: Request)
-
-# Computers list (look at the default values for pagination parameters)
-GET         /computers                   controllers.HomeController.list(request: Request, p:Int ?= 0, s ?= "name", o ?= "asc", f ?= "")
-
-# Add computer
-GET         /computers/new               controllers.HomeController.create(request: Request)
-POST        /computers                   controllers.HomeController.save(request: Request)
-
-# Edit existing computer
-GET         /computers/:id               controllers.HomeController.edit(request: Request, id:Long)
-POST        /computers/:id               controllers.HomeController.update(request: Request, id:Long)
-
-# Delete a computer
-POST        /computers/:id/delete        controllers.HomeController.delete(id:Long)
-
-# Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                controllers.Assets.at(path="/public", file)
-
-GET         /about                       controllers.HomeController.about
-
-
-
+GET         /                            controllers.DestinationController.index
 
 #trip destination routes, subroute of trips
 GET         /trips/destination          controllers.TripDestinationsController.list(request: Request)
@@ -68,12 +39,22 @@ POST        /destinations                   controllers.DestinationController.ad
 DELETE      /destinations/:id               controllers.DestinationController.delete(request: Request, id: Long)
 PUT         /destinations/:id               controllers.DestinationController.update(request: Request, id: Long)
 GET        /destinations                   controllers.DestinationController.list(request: Request)
-
-POST        /login                          controllers.LoginController.login(request: Request)
-GET         /logout                         controllers.LoginController.logout()
+GET        /destinations/:id                   controllers.DestinationController.getOne(request: Request, id: Long)
 
 #trip type routes
 POST        /trips                      controllers.TripController.add(request: Request)
 PUT         /trips/:id                  controllers.TripController.update(request: Request, id: Long)
 DELETE      /trips/:id                  controllers.TripController.delete(id: Long)
 GET         /trips                      controllers.TripController.list(request: Request)
+
+# ################## REFACTORED API BELOW ######################
+# AUTH ROUTES
+POST        /login                          controllers.SecurityController.login(request: Request)
+POST        /logout                         controllers.SecurityController.logout(request: Request)
+
+# User
+
+GET         /users                          controllers.UserController.getAllUsers(request: Request)
+
+
+POST        /users                          controllers.UserController.addUser(request: Request)
