@@ -27,11 +27,12 @@ DELETE      /travellers/:id/travellers_type        controllers.TravellerTypeCont
 # usage --> http://localhost:9000/travellers?gender=f&name=Lorenzo&minAge=10&maxAge=20&nationality=Italy&nationality=Mexico&t_type=Thrillseeker&t_type=quiete
 GET         /travellers                     controllers.TravellerController.list(request: Request, fname: String ?= null, lname: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,t_type: java.util.List[String] ?= null, orderBy: String ?= null)
 GET         /travellers/:id                 controllers.TravellerController.showProfile(request: Request, id: Long)
-
+POST        /travellers/:id/photo           controllers.TravellerController.upload(request: Request, id: Long)
 
 POST        /travellers                            controllers.TravellerController.add(request: Request)
 PUT         /travellers/:id                 controllers.TravellerController.update(request: Request, id: Long)
 DELETE      /travellers/:id                 controllers.TravellerController.delete(request: Request, id: Long)
+
 
 
 # destinations routes

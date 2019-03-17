@@ -4,13 +4,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
+import play.libs.Files;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.TravellerRepository;
+import utils.FileHelper;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -143,5 +147,23 @@ public class TravellerController extends Controller {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
 
+    }
+
+
+    public Result upload(Http.Request request, Long id) {
+        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+        if (picture != null) {
+            String fileName = picture.getFilename();
+            long fileSize = picture.getFileSize();
+            String contentType = picture.getContentType();
+            Files.TemporaryFile file = picture.getRef();
+            FileHelper fh = new FileHelper();
+            fh.make_directory("resources/images");
+            file.copyTo(Paths.get("resources/images/destination.jpg"), true);
+            return ok("File uploaded");
+        } else {
+            return badRequest().flashing("error", "Missing file");
+        }
     }
 }
