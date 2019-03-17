@@ -4,20 +4,13 @@
     <v-container grid-list-xl>
         <h1>Hello World</h1>
         <v-layout row wrap>
-        <v-flex xs12 sm5 md9>
+        <v-flex xs12 sm5 md10>
             <userTable/>
         </v-flex>
       <v-flex xs8 sm5 md3>
             <searchFilter/>
       </v-flex>
     </v-layout>
-    <li
-    v-for="item in users"
-    :value="item.value"
-    :key="item.key"
-    >
-    <h1>{{ item.fname }}</h1>
-    </li>
     </v-container>
 </template>
 

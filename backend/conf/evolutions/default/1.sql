@@ -143,3 +143,4 @@ drop table if exists trip;
 drop table if exists trip_destination;
 
 drop table if exists user;
+

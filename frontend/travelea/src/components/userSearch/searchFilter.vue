@@ -2,7 +2,6 @@
     <v-card>
         <v-container fluid>
             <v-layout wrap>
-                <v-layout row wrap>
                     <v-flex xs12 sm6 md6>
                          <v-text-field
                         v-model="fName"
@@ -65,7 +64,6 @@
                     <v-flex xs12 sm12 md12 class="text-xs-center">
                         <v-btn color='primary'>Search</v-btn>
                     </v-flex>
-                </v-layout>
             </v-layout>
         </v-container>
     </v-card>
