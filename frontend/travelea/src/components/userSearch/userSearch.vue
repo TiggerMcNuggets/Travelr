@@ -11,6 +11,13 @@
             <searchFilter/>
       </v-flex>
     </v-layout>
+    <li
+    v-for="item in users"
+    :value="item.value"
+    :key="item.key"
+    >
+    <h1>{{ item.fname }}</h1>
+    </li>
     </v-container>
 </template>
 
@@ -19,7 +26,7 @@
 
 
 <script>
-
+import { store } from "../../store/index";
 import userTable from "./userTable"
 import searchFilter from "./searchFilter"
 
@@ -31,6 +38,15 @@ export default {
     components: {
         userTable,
         searchFilter
+    },
+    // the place where you want to make the store values readable
+    computed: {
+        users() {
+        return store.state.users.users;
+        }
+    },
+    created: async function() {
+        store.commit("setUsers");
     }
 }
 </script>

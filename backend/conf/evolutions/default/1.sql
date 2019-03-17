@@ -26,6 +26,7 @@ create table destination (
   destination_type              varchar(255) not null,
   district                      varchar(255),
   country                       varchar(255),
+  constraint uq_destination_name unique (name),
   constraint pk_destination primary key (id)
 );
 
