@@ -1,5 +1,6 @@
 package models;
 
+import controllers.UserController;
 import finders.UserFinder;
 import io.ebean.Finder;
 import io.ebean.annotation.NotNull;
@@ -57,7 +58,6 @@ public class User extends BaseModel {
     public String password;
 
     @NotNull
-    @Constraints.Required
     public int timestamp;
 
     @Column(columnDefinition = "integer default 0")
@@ -86,6 +86,16 @@ public class User extends BaseModel {
     public void deleteAuthToken() {
         authToken = null;
         save();
+    }
+
+
+    public User(UserController.CreateUserRequest request) {
+        this.firstName = request.firstName;
+        this.lastName = request.lastName;
+        this.email = request.email;
+        this.password = request.password;
+        this.gender = "Male";
+        this.dateOfBirth = 1;
     }
 
 }

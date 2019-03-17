@@ -3,21 +3,6 @@
 
 # --- !Ups
 
-create table company (
-  id                            bigint auto_increment not null,
-  name                          varchar(255),
-  constraint pk_company primary key (id)
-);
-
-create table computer (
-  id                            bigint auto_increment not null,
-  name                          varchar(255),
-  introduced                    timestamp,
-  discontinued                  timestamp,
-  company_id                    bigint,
-  constraint pk_computer primary key (id)
-);
-
 create table destination (
   id                            bigint auto_increment not null,
   name                          varchar(255),
@@ -26,11 +11,13 @@ create table destination (
   destination_type              varchar(255) not null,
   district                      varchar(255),
   country                       varchar(255),
+  constraint uq_destination_name unique (name),
   constraint pk_destination primary key (id)
 );
 
 create table nationality (
   id                            bigint auto_increment not null,
+  user_id                       bigint not null,
   traveller_id                  bigint,
   nationality                   varchar(255),
   has_passport                  boolean not null default 1,
@@ -52,6 +39,7 @@ create table traveller (
 
 create table traveller_type (
   id                            bigint auto_increment not null,
+  user_id                       bigint not null,
   t_type                        varchar(255) not null,
   traveller_id                  bigint,
   constraint pk_traveller_type primary key (id)
@@ -59,6 +47,7 @@ create table traveller_type (
 
 create table trip (
   id                            bigint auto_increment not null,
+  user_id                       bigint not null,
   traveller_id                  bigint,
   name                          varchar(255),
   constraint pk_trip primary key (id)
@@ -74,14 +63,35 @@ create table trip_destination (
   constraint pk_trip_destination primary key (id)
 );
 
-create index ix_computer_company_id on computer (company_id);
-alter table computer add constraint fk_computer_company_id foreign key (company_id) references company (id) on delete restrict on update restrict;
+create table user (
+  id                            bigint auto_increment not null,
+  first_name                    varchar(255) not null,
+  middle_name                   varchar(255),
+  last_name                     varchar(255) not null,
+  auth_token                    varchar(255),
+  date_of_birth                 integer not null,
+  gender                        varchar(255) not null,
+  email                         varchar(255) not null,
+  password                      varchar(255) not null,
+  timestamp                     integer not null,
+  account_type                  integer default 0 not null,
+  constraint pk_user primary key (id)
+);
+
+create index ix_nationality_user_id on nationality (user_id);
+alter table nationality add constraint fk_nationality_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 create index ix_nationality_traveller_id on nationality (traveller_id);
 alter table nationality add constraint fk_nationality_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
 
+create index ix_traveller_type_user_id on traveller_type (user_id);
+alter table traveller_type add constraint fk_traveller_type_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
 create index ix_traveller_type_traveller_id on traveller_type (traveller_id);
 alter table traveller_type add constraint fk_traveller_type_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
+
+create index ix_trip_user_id on trip (user_id);
+alter table trip add constraint fk_trip_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 create index ix_trip_traveller_id on trip (traveller_id);
 alter table trip add constraint fk_trip_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
@@ -95,14 +105,20 @@ alter table trip_destination add constraint fk_trip_destination_destination_id f
 
 # --- !Downs
 
-alter table computer drop constraint if exists fk_computer_company_id;
-drop index if exists ix_computer_company_id;
+alter table nationality drop constraint if exists fk_nationality_user_id;
+drop index if exists ix_nationality_user_id;
 
 alter table nationality drop constraint if exists fk_nationality_traveller_id;
 drop index if exists ix_nationality_traveller_id;
 
+alter table traveller_type drop constraint if exists fk_traveller_type_user_id;
+drop index if exists ix_traveller_type_user_id;
+
 alter table traveller_type drop constraint if exists fk_traveller_type_traveller_id;
 drop index if exists ix_traveller_type_traveller_id;
+
+alter table trip drop constraint if exists fk_trip_user_id;
+drop index if exists ix_trip_user_id;
 
 alter table trip drop constraint if exists fk_trip_traveller_id;
 drop index if exists ix_trip_traveller_id;
@@ -112,10 +128,6 @@ drop index if exists ix_trip_destination_trip_id;
 
 alter table trip_destination drop constraint if exists fk_trip_destination_destination_id;
 drop index if exists ix_trip_destination_destination_id;
-
-drop table if exists company;
-
-drop table if exists computer;
 
 drop table if exists destination;
 
@@ -128,4 +140,6 @@ drop table if exists traveller_type;
 drop table if exists trip;
 
 drop table if exists trip_destination;
+
+drop table if exists user;
 
