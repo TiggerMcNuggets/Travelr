@@ -1,8 +1,10 @@
 package models;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
+@Entity
 public class UserNationality extends BaseModel {
 
     @ManyToOne
@@ -16,7 +18,7 @@ public class UserNationality extends BaseModel {
 
     public UserNationality(User user, Nationality nationality, boolean hasPassport) {
         this.user = user;
-        this.nationality = nationality,
+        this.nationality = nationality;
         this.hasPassport = hasPassport;
     }
 

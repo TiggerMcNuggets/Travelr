@@ -1,6 +1,7 @@
 package controllers;
 
 import akka.dispatch.sysmsg.Create;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Nationality;
 import models.User;
 import play.core.j.HttpExecutionContext;
@@ -45,12 +46,13 @@ public class UserController extends Controller {
         // Create an object from the request
         CreateUserRequest req = userRequestForm.get();
 
-        // Create a new user
-        User newUser = new User(req);
 
         // Call add user
-        return userRepository.addUser(newUser).thenApplyAsync(id -> {
-            return ok();
+        return userRepository.createNewUser(req).thenApplyAsync(id -> {
+
+            ObjectNode userResponse = Json.newObject();
+            userResponse.put("id", id);
+            return ok(userResponse);
         });
     }
 
@@ -132,11 +134,11 @@ public class UserController extends Controller {
         public List<NationalityRequest> nationalities;
 
         @Constraints.Required
-        public List<Integer> travellerTypes;
+        public List<Long> travellerTypes;
     }
 
     public static class NationalityRequest {
-        public int id;
+        public Long id;
         public boolean hasPassport;
     }
 

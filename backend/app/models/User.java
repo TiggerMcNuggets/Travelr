@@ -66,15 +66,11 @@ public class User extends BaseModel {
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Nationality> nationalities;
+    @OneToMany(mappedBy="nationality")
+    public List<UserNationality> nationalities;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     public List<TravellerType> travellerTypes;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Trip> trips;
-
 
     public String setAuthToken() {
         this.authToken = UUID.randomUUID().toString();
@@ -112,10 +108,11 @@ public class User extends BaseModel {
 
     public User(UserController.CreateUserRequest request) {
         this.firstName = request.firstName;
+        this.middleName = request.middleName;
         this.lastName = request.lastName;
-        this.email = request.email;
+        setEmail(request.email);
         setPassword(request.password);
-        this.gender = "Male";
+        this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
     }
 

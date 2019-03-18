@@ -1,6 +1,10 @@
 package repository;
 
+import controllers.UserController;
+import models.Nationality;
+import models.TravellerType;
 import models.User;
+import models.UserNationality;
 
 import javax.inject.Inject;
 
@@ -32,5 +36,26 @@ public class UserRepository {
             user.insert();
             return user.id;
         }, context);
+    }
+
+    public CompletableFuture<Long> createNewUser(UserController.CreateUserRequest request) {
+        return supplyAsync(() -> {
+            User user = new User(request);
+
+            for(UserController.NationalityRequest nationality: request.nationalities) {
+
+                UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport );
+                userNationality.insert();
+
+            }
+
+            for(long i: request.travellerTypes) {
+                user.travellerTypes.add(TravellerType.find.byId(i));
+                user.save();
+            }
+
+            System.out.println(user.nationalities);
+            return user.id;
+        });
     }
 }
