@@ -1,25 +1,25 @@
 <template>
     <div class="width-for-container">
         <v-form ref="form">
-          <v-container grid-list-xl v-if="showAddDestination">
-            <v-layout align-center justify-center row fill-height/>
-                <v-flex xs12 sm6 md3>
+           <v-container grid-list-xl text-xs-center>
+              <v-layout justify-center row wrap align-center justify-space-around="true">
+                 <v-flex xs12 md6>
+                     <h1>Login</h1>
                     <v-text-field
                     v-model="user.email"
                     label="Email"
                     ></v-text-field>
-                </v-flex>
 
-                <v-flex xs12 sm6 md3>
                     <v-text-field
                     v-model="user.password"
                     label="Password"
+                    type="password"
                     ></v-text-field>
-                </v-flex>
 
-                <v-btn round v-on:click.login color="primary">Login</v-btn>
-            </v-layout>
-          </v-container>
+
+                <v-btn large round v-on:click="attemptLogin" color="primary">Login</v-btn></v-flex>
+              </v-layout>
+           </v-container>
         </v-form>
      </div>
 </template>
@@ -40,13 +40,12 @@
 
 import {attemptLogin} from "../../repository/LoginRepository";
 import {RepositoryFactory} from "../../repository/RepositoryFactory"
-import {store} from "../../store/index";
 
 export default {
-    store,
+
     data() {
         return {
-          destination: {}
+          user: {}
         };
       },
     methods: {
