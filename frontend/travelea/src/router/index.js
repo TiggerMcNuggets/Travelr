@@ -5,6 +5,7 @@ import Router from 'vue-router'
 import Profile from "../components/profile/Profile"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
+import PersonalPhotos from "../components/profile/PersonalPhotos"
 
 
 Vue.use(Router)
@@ -28,5 +29,11 @@ export default new Router({
       name: 'edit-destination',
       component: DestinationEdit
     },
+
+    {
+      path: '/personalphotos/:id',
+      name: 'personal-photos',
+      component: PersonalPhotos
+    }
   ]
 })
