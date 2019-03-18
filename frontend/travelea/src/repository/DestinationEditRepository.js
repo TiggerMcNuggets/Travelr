@@ -1,7 +1,7 @@
 /**
  * retrieves the list of all the destinations stored in the database 
  */
-export const getDestination = async () => {
+export const getDestination = async() => {
 
     let url = "http://localhost:9000/destinations";
 
@@ -24,7 +24,7 @@ export const getDestination = async () => {
     return result;
 }
 
-export const getOneDestination = async (id) => {
+export const getOneDestination = async(id) => {
 
     let url = "http://localhost:9000/destinations/" + id;
     const result = await fetch(url)
@@ -46,17 +46,17 @@ export const getOneDestination = async (id) => {
     return result;
 }
 
-export const updateDestination = async (id, data) => {
+export const updateDestination = async(id, data) => {
 
     let url = "http://localhost:9000/destinations/" + id;
 
     const result = await fetch(url, {
-        method: "PUT", // *GET, POST, PUT, DELETE, etc.
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
-    })
+            method: "PUT", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
         .then(response => {
             return response;
         });
@@ -65,17 +65,17 @@ export const updateDestination = async (id, data) => {
 
 }
 
-export const createDestination = async (data) => {
+export const createDestination = async(data) => {
 
     let url = "http://localhost:9000/destinations";
 
     const result = await fetch(url, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
-    })
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
         .then(response => {
             return response;
         });
@@ -84,12 +84,12 @@ export const createDestination = async (data) => {
 
 }
 
-export const deleteDestination = async (id) => {
+export const deleteDestination = async(id) => {
 
     let url = "http://localhost:9000/destinations/" + id;
     const result = await fetch(url, {
-        method: "DELETE", // *GET, POST, PUT, DELETE, etc.
-    })
+            method: "DELETE", // *GET, POST, PUT, DELETE, etc.
+        })
         .then(response => {
             return response;
         });
@@ -97,4 +97,3 @@ export const deleteDestination = async (id) => {
     return result;
 
 }
-

@@ -2,15 +2,14 @@
 
 <template>
     <v-container grid-list-xl>
-        <h1>Hello World</h1>
         <v-layout row wrap>
-        <v-flex xs12 sm5 md10>
-            <userTable/>
-        </v-flex>
-      <v-flex xs8 sm5 md3>
-            <searchFilter/>
-      </v-flex>
-    </v-layout>
+            <v-flex xs12 sm5 md9>
+                <userTable/>
+            </v-flex>
+            <v-flex xs12 sm5 md3>
+                <searchFilter/>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
@@ -25,8 +24,8 @@ import searchFilter from "./searchFilter"
 
 export default {
     data () {
-        return {   
-    }
+        return {
+        }
     },
     components: {
         userTable,

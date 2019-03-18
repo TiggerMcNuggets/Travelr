@@ -1,43 +1,42 @@
 <template>
     <v-card>
-        <v-container fluid>
             <v-layout wrap>
                     <v-flex xs12 sm6 md6>
                          <v-text-field
-                        v-model="fName"
+                        v-model=search_params.fName
                         label="First Name"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                          <v-text-field
-                        v-model="lName"
+                        v-model="search_params.lName"
                         label="Last Name"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                         <v-text-field
-                        v-model="minAge"
+                        v-model.number="search_params.minAge"
                         label="Min Age"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                         <v-text-field
-                        v-model="maxAge"
+                        v-model.number="search_params.maxAge"
                         label="Max Age"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
-                        <v-select
-                        v-model="gender"
+                        <v-combobox
+                        v-model="search_params.gender"
                         :items="['Male', 'Female']"
                         attach
                         chips
                         label="Gender"
-                        ></v-select>
+                        ></v-combobox>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                         <v-combobox
-                        v-model="nationality"
+                        v-model="search_params.nationality"
                         :items="['Traveller1', 'Traveller2', 'Traveller3']"
                         chips
                         label="Nationality"
@@ -45,7 +44,7 @@
                     </v-flex>
                     <v-flex xs12 sm12 md12>
                         <v-select
-                        v-model="travellerTypes"
+                        v-model="search_params.travellerTypes"
                         :items="['Traveller1', 'Traveller2', 'Traveller3']"
                         attach
                         chips
@@ -54,33 +53,45 @@
                         ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md12 >
-                        <v-select
-                        v-model="orderBy"
-                        :items="['None', 'Nationality', 'Traveller Type']"
+                        <v-combobox
+                        v-model="search_params.orderBy"
+                        :items="['Nationality', 'Traveller Type']"
                         attach
+                        chips
                         label="Order By"
-                        ></v-select>
+                        ></v-combobox>
                     </v-flex>
                     <v-flex xs12 sm12 md12 class="text-xs-center">
-                        <v-btn color='primary'>Search</v-btn>
+                        <v-btn color='primary' v-on:click="searchUsers">Search</v-btn>
                     </v-flex>
             </v-layout>
-        </v-container>
     </v-card>
 </template>
 
 <script>
+import { getAllUsers } from "../../repository/UserRepository";
+import { store } from "../../store/index";
+
 export default {
     data() {
-        return {
-            fName: null,
-            lName: null,
-            minAge: null,
-            maxAge: null,
-            gender: null,
-            nationality: null,
-            travellerTypes: null,
-            orderBy: null
+        return {  
+            search_params: {
+                fName: '',
+                lName: '',
+                minAge: '',
+                maxAge: '',
+                gender: '',
+                nationality: '',
+                travellerTypes: '',
+                orderBy: ''
+            }
+        }
+    },
+    methods: {
+        searchUsers: function() {
+            getAllUsers(this.search_params).then(function(result) {
+                store.state.users.users = result;
+            })
         }
     }
 }

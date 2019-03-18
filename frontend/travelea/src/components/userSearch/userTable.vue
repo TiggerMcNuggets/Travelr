@@ -40,18 +40,12 @@
 
 <script>
 import { store } from "../../store/index";
-import userTable from "./userTable"
-import searchFilter from "./searchFilter"
 
 export default {
     data () {
         return {   
             search: ''
     }
-    },
-    components: {
-        userTable,
-        searchFilter
     },
     // the place where you want to make the store values readable
     computed: {
