@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1e41821b-3094-47de-ba72-254de206f389",
+		"_postman_id": "5f85ca44-580a-49c2-8462-0305c830d8a6",
 		"name": "SENG302",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -345,7 +345,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"Fred\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "http://localhost:9000/travellers",
@@ -403,6 +403,68 @@
 							"path": [
 								"travellers",
 								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST travellers/:id/photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/photo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET travellers/:id/photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/photo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"photo"
 							],
 							"variable": [
 								{
@@ -684,7 +746,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Red > Krugs > Bot\"\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "http://localhost:9000/trips",
@@ -1084,7 +1146,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"first\": 0,\n    \"second\": 1\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "http://localhost:9000/trips/destination",
