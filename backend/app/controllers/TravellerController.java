@@ -8,7 +8,6 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import repository.PersonalPhotoRepository;
 import repository.TravellerRepository;
 
 import javax.inject.Inject;
