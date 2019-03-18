@@ -1,9 +1,7 @@
 package models;
 
 import play.data.validation.Constraints;
-import utils.finders.DestinationFinder;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;

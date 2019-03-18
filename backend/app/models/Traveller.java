@@ -3,14 +3,11 @@ package models;
 import io.ebean.annotation.NotNull;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
-import utils.finders.TravellerFinder;
+import finders.TravellerFinder;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.Constraint;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

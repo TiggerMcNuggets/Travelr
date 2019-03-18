@@ -1,11 +1,9 @@
 package models;
 
 
-import com.sun.istack.NotNull;
 import play.data.validation.Constraints;
-import utils.finders.NationalityFinder;
+import finders.NationalityFinder;
 import javax.persistence.*;
-import java.util.Comparator;
 
 @Entity
 public class Nationality extends BaseModel {
@@ -14,14 +12,12 @@ public class Nationality extends BaseModel {
     public static final NationalityFinder find = new NationalityFinder();
 
     @Constraints.Required
-    public String nationality;
+    public String name;
 
-    @Column(columnDefinition = "boolean not null default 1")
-    public Integer hasPassport;
 
-    public Nationality(String nationality, Integer hasPassport) {
+    public Nationality(String name) {
 
-        this.nationality = nationality;
-        this.hasPassport = hasPassport;
+        this.name = name;
+
     }
 }

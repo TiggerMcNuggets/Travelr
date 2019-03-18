@@ -1,6 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.actions.Authorization;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
@@ -54,7 +55,6 @@ public class PhotoController extends Controller {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
     }
-
 
 
     public CompletionStage<Result> uploadPersonalPhoto(Http.Request request, Long id) {

@@ -1,4 +1,4 @@
-package utils.finders;
+package finders;
 
 import io.ebean.Finder;
 import models.Destination;

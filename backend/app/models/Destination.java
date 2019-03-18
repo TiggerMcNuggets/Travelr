@@ -1,12 +1,10 @@
 package models;
 
 import play.data.validation.Constraints;
-import utils.finders.DestinationFinder;
+import finders.DestinationFinder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.UniqueConstraint;
-import javax.validation.Constraint;
 import javax.validation.constraints.NotNull;
 
 /**
