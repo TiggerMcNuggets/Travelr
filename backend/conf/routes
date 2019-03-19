@@ -1,6 +1,8 @@
 
 # ################## REFACTORED API BELOW ######################
 
+GET         /                               controllers.UserController.index()
+
 # AUTH ROUTES
 POST        /login                          controllers.SecurityController.login(request: Request)
 POST        /logout                         controllers.SecurityController.logout(request: Request)
