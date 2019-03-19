@@ -7,7 +7,11 @@
                 <h4>Create a new trip</h4>
                 <v-layout justify-space-around="true">
                     <v-flex xs12 md12 class="row-input-margin">
-                        <v-text-field v-model="trip.title" :counter="20" label="Trip Name" required></v-text-field>
+                        <v-text-field
+                                v-model="trip.title"
+                                :rules="nameRules"
+                                :counter="20"
+                                label="Trip Name"></v-text-field>
                     </v-flex>
                 </v-layout>
                 <ul>
@@ -40,6 +44,7 @@
                                                     <template v-slot:activator="{ on }">
                                                         <v-text-field
                                                                 v-model="destination.arrivalDate"
+                                                                :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                                                                 label="Arrival date"
                                                                 prepend-icon="event"
                                                                 readonly
@@ -66,6 +71,7 @@
                                                     <template v-slot:activator="{ on }">
                                                         <v-text-field
                                                                 v-model="destination.departureDate"
+                                                                :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                                                                 label="Departure date"
                                                                 prepend-icon="event"
                                                                 readonly
@@ -81,7 +87,7 @@
                         </li>
                 </ul>
                 <div>
-                    <v-btn color="red" v-on:click="resetValues">CANCEL</v-btn>
+                    <v-btn color="red" v-on:click="resetValues">RESET</v-btn>
                     <v-btn v-on:click="createTrip">CREATE TRIP</v-btn>
                     <v-btn v-on:click="addDestinationToTrip">ADD DESTINATION</v-btn>
                 </div>
@@ -108,6 +114,7 @@
 <script>
     import { store } from "../../store/index";
     import { createTrip } from '../../repository/TripRepository';
+    import {rules, noSameDestinationNameConsecutiveRule, arrivalBeforeDepartureAndDestinationsOneAfterTheOther} from '../form_rules';
 
     export default {
         store,
@@ -119,32 +126,20 @@
                 trip: {
                     title: "",
                     destinations: []
-                }
+                },
+                ...rules,
             };
         },
         computed: {
-            // rules
-            noSameDestinationNameConsecutiveRule() {
-                let noConsecutiveSame = true;
-                const destinations = this.trip.destinations;
-                for (let i=0; i < destinations.length; i++) {
-                    if ((i + 1) < destinations.length) {
-                        if (destinations[i].title === destinations[i + 1].title) {
-                            noConsecutiveSame = false;
-                        }
-                    }
-                    if ((i - 1) >= 0) {
-                        if (destinations[i].title === destinations[i - 1].title) {
-                            noConsecutiveSame = false;
-                        }
-                    }
-                }
-                return [(noConsecutiveSame) || "Cannot have same destination consecutive"];
-            },
-            //
             destinations() {
                 return store.state.destinations.destinations;
             },
+            noSameDestinationNameConsecutiveRule() {
+                return noSameDestinationNameConsecutiveRule(this.trip.destinations)
+            },
+            arrivalBeforeDepartureAndDestinationsOneAfterTheOther() {
+                return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(this.trip.destinations);
+            }
         },
         methods: {
             resetValues: function() {
@@ -160,7 +155,6 @@
                 const template = {
                         title: null,
                         arrivalDate: null,
-                        departureTime: null,
                         departureDate: null,
                         arrivalDateMenu: false,
                         departureDateMenu: false,
