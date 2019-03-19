@@ -62,10 +62,15 @@ public class Traveller extends BaseModel {
     public List<Nationality> nationalities;
 
     @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)
+    public List<PersonalPhoto> personalPhotos;
+
+    @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)
     public List<TravellerType> types;
 
     @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)
     public List<Trip> trips;
+
+
 
     public Traveller(
             @Constraints.Required String fname,
@@ -165,5 +170,13 @@ public class Traveller extends BaseModel {
 
     public void setTypes(List<TravellerType> types) {
         this.types = types;
+    }
+
+    public List<PersonalPhoto> getPersonalPhotos() {
+        return personalPhotos;
+    }
+
+    public void setPersonalPhotos(List<PersonalPhoto> personalPhotos) {
+        this.personalPhotos = personalPhotos;
     }
 }
