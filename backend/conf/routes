@@ -1,6 +1,8 @@
 
 # ################## REFACTORED API BELOW ######################
 
+GET         /                               controllers.UserController.index()
+
 # Populate static data
 POST        /populate                       controllers.StaticDataController.populateDatabase()
 
@@ -14,3 +16,6 @@ POST        /users                          controllers.UserController.addUser(r
 
 # Nationalities
 GET         /nationalities                  controllers.NationalityController.getNationalities()
+
+#Travller Types
+GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()

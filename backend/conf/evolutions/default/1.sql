@@ -17,41 +17,19 @@ create table destination (
 
 create table nationality (
   id                            bigint auto_increment not null,
-  traveller_id                  bigint not null,
   name                          varchar(255),
   constraint pk_nationality primary key (id)
 );
 
-create table personal_photo (
-  id                            bigint auto_increment not null,
-  traveller_id                  bigint,
-  photo_filename                varchar(255) not null,
-  constraint pk_personal_photo primary key (id)
-);
-
-create table traveller (
-  id                            bigint auto_increment not null,
-  fname                         varchar(255) not null,
-  mname                         varchar(255),
-  lname                         varchar(255) not null,
-  dob                           timestamp not null,
-  gender                        varchar(255) not null,
-  email                         varchar(255) not null,
-  password                      varchar(255) not null,
-  timestamp                     timestamp not null,
-  constraint pk_traveller primary key (id)
-);
-
 create table traveller_type (
   id                            bigint auto_increment not null,
-  traveller_id                  bigint not null,
-  name                          varchar(255) not null,
+  name                          varchar(255),
   constraint pk_traveller_type primary key (id)
 );
 
 create table trip (
   id                            bigint auto_increment not null,
-  traveller_id                  bigint,
+  user_id                       bigint,
   name                          varchar(255),
   constraint pk_trip primary key (id)
 );
@@ -96,17 +74,8 @@ create table user_nationality (
   constraint pk_user_nationality primary key (id)
 );
 
-create index ix_nationality_traveller_id on nationality (traveller_id);
-alter table nationality add constraint fk_nationality_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
-
-create index ix_personal_photo_traveller_id on personal_photo (traveller_id);
-alter table personal_photo add constraint fk_personal_photo_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
-
-create index ix_traveller_type_traveller_id on traveller_type (traveller_id);
-alter table traveller_type add constraint fk_traveller_type_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
-
-create index ix_trip_traveller_id on trip (traveller_id);
-alter table trip add constraint fk_trip_traveller_id foreign key (traveller_id) references traveller (id) on delete restrict on update restrict;
+create index ix_trip_user_id on trip (user_id);
+alter table trip add constraint fk_trip_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 create index ix_trip_destination_trip_id on trip_destination (trip_id);
 alter table trip_destination add constraint fk_trip_destination_trip_id foreign key (trip_id) references trip (id) on delete restrict on update restrict;
@@ -129,17 +98,8 @@ alter table user_nationality add constraint fk_user_nationality_nationality_id f
 
 # --- !Downs
 
-alter table nationality drop constraint if exists fk_nationality_traveller_id;
-drop index if exists ix_nationality_traveller_id;
-
-alter table personal_photo drop constraint if exists fk_personal_photo_traveller_id;
-drop index if exists ix_personal_photo_traveller_id;
-
-alter table traveller_type drop constraint if exists fk_traveller_type_traveller_id;
-drop index if exists ix_traveller_type_traveller_id;
-
-alter table trip drop constraint if exists fk_trip_traveller_id;
-drop index if exists ix_trip_traveller_id;
+alter table trip drop constraint if exists fk_trip_user_id;
+drop index if exists ix_trip_user_id;
 
 alter table trip_destination drop constraint if exists fk_trip_destination_trip_id;
 drop index if exists ix_trip_destination_trip_id;
@@ -162,10 +122,6 @@ drop index if exists ix_user_nationality_nationality_id;
 drop table if exists destination;
 
 drop table if exists nationality;
-
-drop table if exists personal_photo;
-
-drop table if exists traveller;
 
 drop table if exists traveller_type;
 
