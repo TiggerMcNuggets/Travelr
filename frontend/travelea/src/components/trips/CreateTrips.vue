@@ -176,7 +176,7 @@
                     let trip = {travellerID: 1, name: this.trip.title, destinations: [] };
                     this.trip.destinations.forEach((destination, index) => {
                         const destById = this.destinations.find(dest => destination.title === dest.name);
-                        trip.destinations.push({id: destById.id, ordinal: index, arrivalDate: destination.arrivalDate, departureDate: destination.departureDate});
+                        trip.destinations.push({destId: destById.id, ordinal: index, arrivalDate: destination.arrivalDate, departureDate: destination.departureDate});
                     });
                     console.log(trip);
                     // TODO: wait for auth frontend

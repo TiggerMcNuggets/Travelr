@@ -33,8 +33,7 @@ export default new Router({
       path: '/trips/create',
       name: 'create-trip',
       component: CreateTrips
-    }
-
+    },
     {
       path: '/personalphotos/:id',
       name: 'personal-photos',
