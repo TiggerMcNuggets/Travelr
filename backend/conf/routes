@@ -1,11 +1,16 @@
 
 # ################## REFACTORED API BELOW ######################
 
-# AUTH ROUTES
+# Populate static data
+POST        /populate                       controllers.StaticDataController.populateDatabase()
+
+# Auth
 POST        /login                          controllers.SecurityController.login(request: Request)
 POST        /logout                         controllers.SecurityController.logout(request: Request)
 
-# User
-
+# Users
 GET         /users                          controllers.UserController.getAllUsers(request: Request)
 POST        /users                          controllers.UserController.addUser(request: Request)
+
+# Nationalities
+GET         /nationalities                  controllers.NationalityController.getNationalities()

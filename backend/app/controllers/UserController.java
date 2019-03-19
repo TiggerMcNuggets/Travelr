@@ -15,10 +15,12 @@ import play.mvc.Result;
 import repository.UserRepository;
 
 import javax.inject.Inject;
+import javax.persistence.Entity;
 import javax.validation.Constraint;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
 
 public class UserController extends Controller {
 
