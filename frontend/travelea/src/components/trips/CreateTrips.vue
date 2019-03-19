@@ -171,13 +171,14 @@
             },
             createTrip: async function() {
                 if (this.$refs.form.validate()) {
-                    console.log('going throuhg');
-                    // {id: null, ordinal: null, arrivalTime: null, departureTime: null}
-                    let trip = {title: this.trip.title, destinations: [] };
-                    for (let destination of this.trip.destinations) {
-                        const destByIdId = this.destinations.find(dest => destination.title === dest.title);
-                        trip.destinations.push({id: destByIdId.id, arrivalDate: destination.arrivalDate, departureDate: destination.departureDate});
-                    }
+                    // FIXME: traveller id needs to be retrieved from STORE when the store will have it
+                    // FIXME: for now traveller id is hardcoded, which means that for testing we need to create a traveller through postman first
+                    let trip = {travellerID: 1, name: this.trip.title, destinations: [] };
+                    this.trip.destinations.forEach((destination, index) => {
+                        const destById = this.destinations.find(dest => destination.title === dest.name);
+                        trip.destinations.push({id: destById.id, ordinal: index, arrivalDate: destination.arrivalDate, departureDate: destination.departureDate});
+                    });
+                    console.log(trip);
                     // TODO: wait for auth frontend
                     const response = await createTrip(trip);
                     console.log(response);
