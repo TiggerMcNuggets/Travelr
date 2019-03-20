@@ -24,37 +24,26 @@ public class UserRepository {
         this.context = context;
     }
 
-
     public CompletableFuture<List<User>> getAllUsers() {
         return supplyAsync(() -> {
             return User.find.all();
         }, context);
     }
 
-    public CompletableFuture<Long> addUser(User user) {
-        return supplyAsync(() -> {
-            user.insert();
-            return user.id;
-        }, context);
-    }
-
     public CompletableFuture<Long> createNewUser(UserController.CreateUserRequest request) {
         return supplyAsync(() -> {
             User user = new User(request);
-
+            user.insert();
             for(UserController.NationalityRequest nationality: request.nationalities) {
-
                 UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport);
                 userNationality.insert();
-
             }
 
             for(long i: request.travellerTypes) {
                 user.travellerTypes.add(TravellerType.find.byId(i));
-                user.save();
             }
+            user.save();
 
-            System.out.println(user.nationalities);
             return user.id;
         });
     }

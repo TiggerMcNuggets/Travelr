@@ -51,6 +51,6 @@ public class StaticDataController extends Controller {
         new Destination("Beach", 1.0, 1.0, "123", "123", "123", user2).insert();
         new Destination("Ski", 1.0, 1.0, "123", "123", "123", user3).insert();
 
-        return ok();
+        return ok("Populated");
     }
 }

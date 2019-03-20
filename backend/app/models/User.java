@@ -34,7 +34,7 @@ public class User extends BaseModel {
     @Constraints.Required
     public String lastName;
 
-
+    @JsonIgnore
     public String authToken;
 
     @NotNull
@@ -55,9 +55,11 @@ public class User extends BaseModel {
     @Column(length = 64)
     private byte[] password;
 
+    @JsonIgnore
     @NotNull
     public int timestamp;
 
+    @JsonIgnore
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 

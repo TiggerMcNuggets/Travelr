@@ -2,6 +2,7 @@ package controllers;
 
 import akka.dispatch.sysmsg.Create;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.ebean.Ebean;
 import models.Nationality;
 import models.User;
 import play.core.j.HttpExecutionContext;
@@ -51,18 +52,15 @@ public class UserController extends Controller {
 
         // Call add user
         return userRepository.createNewUser(req).thenApplyAsync(id -> {
-
             ObjectNode userResponse = Json.newObject();
             userResponse.put("id", id);
-            return ok(userResponse);
+            return created(userResponse);
         });
     }
 
 
     public CompletionStage<Result> getAllUsers(Http.Request request) {
-        return userRepository.getAllUsers().thenApplyAsync(users -> {
-            return ok(Json.toJson(users));
-        });
+        return userRepository.getAllUsers().thenApplyAsync(users -> ok(Ebean.json().toJson(users)));
 
     }
 
