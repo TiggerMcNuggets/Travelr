@@ -31,9 +31,9 @@ release-artifacts:
  only:
     - tags
 
-Update-sonar:
-    Stage: deploy
-    Script:
+update-sonar:
+    stage: deploy
+    script:
         - sonar-scanner
-    Only:
+    only:
         - vue-restructure@seng302-2019/team-300
