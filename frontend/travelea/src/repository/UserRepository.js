@@ -51,5 +51,16 @@ export const getAllUsers = async(search_params = false) => {
             console.log(jsonResponse)
             return jsonResponse
         });
+    //console.log(result);
+    for (let i = 0; i < result.length; i++) {
+        //console.log(result[i]);
+        let correct_date = new Date(result[i]['dob']).toLocaleDateString();
+        let gender = 'Female';
+        if (result[i]['gender'] === 'm') {
+            gender = 'Male';
+        }
+        result[i]['dob'] = correct_date;
+        result[i]['gender'] = gender;
+    }
     return result;
 }

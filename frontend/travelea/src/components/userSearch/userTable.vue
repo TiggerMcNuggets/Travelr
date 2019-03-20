@@ -27,8 +27,20 @@
                 <td class="text-xs-right">{{ props.item.lname }}</td>
                 <td class="text-xs-right">{{ props.item.dob }}</td>
                 <td class="text-xs-right">{{ props.item.gender }}</td>
-                <td class="text-xs-right">{{ props.item.nationalities }}</td>
-                <td class="text-xs-right">{{ props.item.types }}</td>
+                <td>
+                    <ul style="list-style-type:none">
+                        <li v-for="nationality in  props.item.nationalities">
+                            {{ nationality }} <br/>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <ul style="list-style-type:none">
+                        <li v-for="travelType in  props.item.types">
+                            {{ travelType }} <br/>
+                        </li>
+                    </ul>
+                </td>
             </template>
             <v-alert v-slot:no-results :value="true" color="error" icon="warning">
                 Your search for "{{ search }}" found no results.

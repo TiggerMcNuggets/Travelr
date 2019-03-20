@@ -1,5 +1,6 @@
 <template>
     <v-card>
+        <v-form v-model="valid">
             <v-layout wrap>
                     <v-flex xs12 sm6 md6>
                          <v-text-field
@@ -17,30 +18,33 @@
                         <v-text-field
                         v-model.number="search_params.minAge"
                         label="Min Age"
+                        :rules="ageRules"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                         <v-text-field
                         v-model.number="search_params.maxAge"
                         label="Max Age"
+                        :rules="ageRules"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
-                        <v-combobox
+                        <v-select
                         v-model="search_params.gender"
                         :items="['Male', 'Female']"
-                        attach
                         chips
+                        attach
                         label="Gender"
-                        ></v-combobox>
+                        ></v-select>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
-                        <v-combobox
+                        <v-select
                         v-model="search_params.nationality"
-                        :items="['Traveller1', 'Traveller2', 'Traveller3']"
+                        :items="['nationality1', 'nationality2', 'nationality3']"
+                        attach
                         chips
                         label="Nationality"
-                        ></v-combobox>
+                        ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md12>
                         <v-select
@@ -53,18 +57,20 @@
                         ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md12 >
-                        <v-combobox
+                        <v-select
                         v-model="search_params.orderBy"
                         :items="['Nationality', 'Traveller Type']"
                         attach
                         chips
                         label="Order By"
-                        ></v-combobox>
+                        ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md12 class="text-xs-center">
                         <v-btn color='primary' v-on:click="searchUsers">Search</v-btn>
+                        <v-btn color='primary' v-on:click="resetSearch">Reset</v-btn>
                     </v-flex>
             </v-layout>
+        </v-form>
     </v-card>
 </template>
 
@@ -75,6 +81,9 @@ import { store } from "../../store/index";
 export default {
     data() {
         return {  
+            ageRules: [
+                v => (parseInt(v) > 0 || v.length == 0) || 'Age must be positive and number'
+            ],
             search_params: {
                 fName: '',
                 lName: '',
@@ -92,6 +101,16 @@ export default {
             getAllUsers(this.search_params).then(function(result) {
                 store.state.users.users = result;
             })
+        },
+        resetSearch: function() {
+            this.search_params.fName = '';
+            this.search_params.lName = '';
+            this.search_params.minAge = '';
+            this.search_params.maxAge = '';
+            this.search_params.gender = '';
+            this.search_params.nationality = '';
+            this.search_params.travellerTypes = '';
+            this.search_params.orderBy = '';
         }
     }
 }
