@@ -25,9 +25,7 @@ public class UserRepository {
     }
 
     public CompletableFuture<List<User>> getAllUsers() {
-        return supplyAsync(() -> {
-            return User.find.all();
-        }, context);
+        return supplyAsync(() -> User.find.all(), context);
     }
 
     public CompletableFuture<Long> createNewUser(UserController.CreateUserRequest request) {
@@ -35,7 +33,9 @@ public class UserRepository {
             User user = new User(request);
             user.insert();
             for(UserController.NationalityRequest nationality: request.nationalities) {
+
                 UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport);
+
                 userNationality.insert();
             }
 
@@ -45,6 +45,6 @@ public class UserRepository {
             user.save();
 
             return user.id;
-        });
+        }, context);
     }
 }
