@@ -44,7 +44,7 @@ public class UserRepository {
 
             for(UserController.NationalityRequest nationality: request.nationalities) {
 
-                UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport );
+                UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport);
                 userNationality.insert();
 
             }

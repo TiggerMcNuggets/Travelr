@@ -11,11 +11,16 @@ POST        /login                          controllers.SecurityController.login
 POST        /logout                         controllers.SecurityController.logout(request: Request)
 
 # Users
-GET         /travellers                     controllers.UserController.getAllUsers(request: Request)
-POST        /travellers                     controllers.UserController.addUser(request: Request)
+GET         /users                   controllers.UserController.getAllUsers(request: Request)
+POST        /users                     controllers.UserController.addUser(request: Request)
 
 # Nationalities
 GET         /nationalities                  controllers.NationalityController.getNationalities()
 
 #Travller Types
 GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
+
+
+# Destinations
+
+GET         /destinations                   controllers.DestinationController.listUserDestinations(request: Request)

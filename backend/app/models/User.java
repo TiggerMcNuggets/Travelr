@@ -3,19 +3,14 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.UserController;
 import finders.UserFinder;
-import io.ebean.Finder;
 import io.ebean.annotation.NotNull;
-import play.data.format.Formats;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -57,8 +52,8 @@ public class User extends BaseModel {
     public String email;
 
     @JsonIgnore
-    @Column(length = 64, nullable = false)
-    private byte[] shaPassword;
+    @Column(length = 64)
+    private byte[] password;
 
     @NotNull
     public int timestamp;
@@ -71,6 +66,9 @@ public class User extends BaseModel {
 
     @ManyToMany
     public List<TravellerType> travellerTypes;
+
+    @OneToMany
+    public List<Destination> destinations;
 
     public String setAuthToken() {
         this.authToken = UUID.randomUUID().toString();
@@ -93,7 +91,7 @@ public class User extends BaseModel {
 
 
     public void setPassword(String password) {
-        shaPassword = getSha512(password);
+        this.password = getSha512(password);
     }
 
     public static byte[] getSha512(String value) {
@@ -114,6 +112,14 @@ public class User extends BaseModel {
         setPassword(request.password);
         this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
+    }
+
+    public User(String first, String last, String email, int dob) {
+        this.firstName = first;
+        this.lastName = last;
+        this.email = email;
+        this.dateOfBirth = dob;
+        this.gender = "dsadS";
     }
 
 }

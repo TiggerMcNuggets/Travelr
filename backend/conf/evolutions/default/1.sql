@@ -6,12 +6,12 @@
 create table destination (
   id                            bigint auto_increment not null,
   name                          varchar(255),
-  crd_latitude                  double not null,
-  crd_longitude                 double not null,
-  destination_type              varchar(255) not null,
+  latitude                      double not null,
+  longitude                     double not null,
+  type                          varchar(255) not null,
   district                      varchar(255),
   country                       varchar(255),
-  constraint uq_destination_name unique (name),
+  user_id                       bigint not null,
   constraint pk_destination primary key (id)
 );
 
@@ -53,7 +53,7 @@ create table user (
   date_of_birth                 integer not null,
   gender                        varchar(255) not null,
   email                         varchar(256) not null,
-  sha_password                  varbinary(64) not null,
+  password                      varbinary(64),
   timestamp                     integer not null,
   account_type                  integer default 0 not null,
   constraint uq_user_email unique (email),
@@ -73,6 +73,9 @@ create table user_nationality (
   has_passport                  boolean not null default false not null,
   constraint pk_user_nationality primary key (id)
 );
+
+create index ix_destination_user_id on destination (user_id);
+alter table destination add constraint fk_destination_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 create index ix_trip_user_id on trip (user_id);
 alter table trip add constraint fk_trip_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -97,6 +100,9 @@ alter table user_nationality add constraint fk_user_nationality_nationality_id f
 
 
 # --- !Downs
+
+alter table destination drop constraint if exists fk_destination_user_id;
+drop index if exists ix_destination_user_id;
 
 alter table trip drop constraint if exists fk_trip_user_id;
 drop index if exists ix_trip_user_id;
