@@ -26,9 +26,7 @@ public class UserRepository {
 
 
     public CompletableFuture<List<User>> getAllUsers() {
-        return supplyAsync(() -> {
-            return User.find.all();
-        }, context);
+        return supplyAsync(() -> User.find.all(), context);
     }
 
     public CompletableFuture<Long> addUser(User user) {
@@ -44,7 +42,7 @@ public class UserRepository {
 
             for(UserController.NationalityRequest nationality: request.nationalities) {
 
-                UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport);
+                UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport );
                 userNationality.insert();
 
             }
@@ -56,6 +54,6 @@ public class UserRepository {
 
             System.out.println(user.nationalities);
             return user.id;
-        });
+        }, context);
     }
 }

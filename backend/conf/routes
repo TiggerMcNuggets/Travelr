@@ -24,3 +24,4 @@ GET         /traveller-types                controllers.TravellerTypeController.
 # Destinations
 
 GET         /destinations                   controllers.DestinationController.listUserDestinations(request: Request)
+POST        /destinations                   controllers.DestinationController.createDestination(request: Request)
