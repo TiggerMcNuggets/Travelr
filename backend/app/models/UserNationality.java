@@ -1,9 +1,8 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import finders.UserFinder;
 import io.ebean.Finder;
-
+import finders.UserNationalityFinder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -12,6 +11,8 @@ import javax.persistence.ManyToOne;
 public class UserNationality extends BaseModel {
 
     public static final Finder<Long, UserNationality> find = new Finder<>(UserNationality.class);
+
+    //public static final UserNationalityFinder find = new UserNationalityFinder();
 
     @JsonIgnore
     @ManyToOne

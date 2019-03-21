@@ -1,5 +1,6 @@
 package models;
 
+import finders.TripFinder;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 
@@ -15,6 +16,8 @@ import java.util.List;
 public class Trip extends BaseModel {
 
     private static final long tripID = 1L;
+
+    public static final TripFinder find = new TripFinder();
 
     @ManyToOne
     public User user;
