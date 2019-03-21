@@ -1,3 +1,8 @@
+stages:
+  - build
+  - deploy
+
+
 tag_checker:
   stage: build
   script:
@@ -6,11 +11,11 @@ tag_checker:
     - tags
     
 release-artifacts-frontend:
- stage: deploy
- script:
+  stage: deploy
+  script:
     - cd ./frontend && npm install && npm run build 
- artifacts:
+  artifacts:
     paths:
-    - target/universal/*.zip
+      - target/universal/*.zip
  only:
     - tags
