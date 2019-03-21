@@ -144,12 +144,8 @@ export default {
       this.showCreateDestination = !this.showCreateDestination;
     },
     deleteDestination: function(id) {
-      for (let i = 0; i < this.destinations.length; i++) {
-        if (this.destinations[i].id === id) {
-          this.destinations.splice(i, 1);
-        }
-      }
       deleteDestination(id).then(result => {
+        store.commit("setDestinations");
         console.log(result);
       });
     }
