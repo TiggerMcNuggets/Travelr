@@ -66,14 +66,14 @@ public class User extends BaseModel {
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Nationality> nationalities;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<TravellerType> types;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Trip> trips;
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    public List<Nationality> nationalities;
+//
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    public List<TravellerType> types;
+//
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    public List<Trip> trips;
 
 
     public String setAuthToken() {

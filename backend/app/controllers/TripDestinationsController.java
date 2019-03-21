@@ -78,9 +78,9 @@ public class TripDestinationsController extends Controller {
      */
     public CompletionStage<Result> add(Http.Request request) {
         if (controllers.LoginController.isLoggedIn(request)) {
-            return tripDestinationsRepository.add(request).thenApplyAsync((tripDestination) -> {
+            return tripDestinationsRepository.add(request.body().asJson()).thenApplyAsync((tripDestination) -> {
                 if (tripDestination == null) {
-                    return badRequest("Bad Request - Failed to add the trip destination" + tripDestination);
+                    return badRequest("Bad Request - Failed to add the trip destination");
                 }
                 return ok("Trip: " + tripDestination + " added");
             });

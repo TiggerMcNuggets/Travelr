@@ -2,32 +2,21 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
-import models.Trip;
-import play.data.Form;
+
 import play.data.FormFactory;
 import play.i18n.MessagesApi;
-import static play.libs.Scala.asScala;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Results;
+import repository.TripDestinationsRepository;
 import repository.TripRepository;
 
 import javax.inject.Inject;
-import javax.persistence.PersistenceException;
-import java.util.Map;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import play.data.format.Formats;
-import play.data.validation.Constraints;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import java.util.Date;
-
-import javax.inject.Inject;
 
 public class TripController extends Controller {
 
@@ -35,16 +24,19 @@ public class TripController extends Controller {
     private final HttpExecutionContext httpExecutionContext;
     private final MessagesApi messagesApi;
     private final TripRepository tripRepository;
+    private final TripDestinationsRepository tripDestinationsRepository;
 
     @Inject
     public TripController(FormFactory formFactory,
                           TripRepository tripRepository,
                           HttpExecutionContext httpExecutionContext,
-                          MessagesApi messagesApi) {
+                          MessagesApi messagesApi,
+                          TripDestinationsRepository tripDestinationsRepository) {
         this.tripRepository = tripRepository;
         this.formFactory = formFactory;
         this.httpExecutionContext = httpExecutionContext;
         this.messagesApi = messagesApi;
+        this.tripDestinationsRepository = tripDestinationsRepository;
     }
 
     /**
@@ -73,13 +65,16 @@ public class TripController extends Controller {
             return tripRepository.add(data).thenApplyAsync((trip) -> {
                 if (trip == null) {
                     return badRequest("Bad Request - Failed to add the trip");
+                } else {
+                    for (JsonNode destination : data.at("/destinations")) {
+                        tripDestinationsRepository.addGivenTripId(destination, trip.id);
+                    }
                 }
                 return ok("Trip: " + trip + " added");
             });
         } else {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
-
     }
 
     /**
