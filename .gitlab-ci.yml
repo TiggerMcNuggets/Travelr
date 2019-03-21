@@ -14,10 +14,3 @@ release-artifacts-frontend:
     - target/universal/*.zip
  only:
     - tags
-
-update-sonar:
-    stage: deploy
-    script:
-        - sonar-scanner
-    only:
-        - vue-restructure@seng302-2019/team-300
