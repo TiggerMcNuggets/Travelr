@@ -137,6 +137,10 @@ export default {
       let formData = new FormData();
       formData.append("picture", this.file);
       storeImage(this.$route.params.id, formData);
+      getImages(this.$route.params.id).then((result) => {
+      console.log(result)
+      this.files = result;
+    } );
     },
 
     // Gets the local image file path
