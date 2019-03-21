@@ -2,6 +2,7 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.UserController;
+import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
 import io.ebean.annotation.NotNull;
 import play.data.validation.Constraints;
@@ -106,7 +107,7 @@ public class User extends BaseModel {
     }
 
 
-    public User(UserController.CreateUserRequest request) {
+    public User(CreateUserReq request) {
         this.firstName = request.firstName;
         this.middleName = request.middleName;
         this.lastName = request.lastName;

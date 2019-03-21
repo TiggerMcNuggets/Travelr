@@ -1,6 +1,10 @@
 package repository;
 
 import controllers.UserController;
+import controllers.dto.User.CreateUserReq;
+import controllers.dto.User.NationalityReq;
+import controllers.dto.User.UpdateUserReq;
+import finders.UserFinder;
 import models.Nationality;
 import models.TravellerType;
 import models.User;
@@ -19,24 +23,30 @@ public class UserRepository {
 
     private DatabaseExecutionContext context;
 
+    private UserFinder userFinder = new UserFinder();
+
     @Inject
     public UserRepository(DatabaseExecutionContext context) {
 
         this.context = context;
     }
 
-    public CompletableFuture<List<User>> getAllUsers() {
-        return supplyAsync(() -> User.find.query().fetch("nationalities").fetch("nationalities.nationality").fetch("travellerTypes").findList(), context);
+    public CompletableFuture<User> getUserByEmail(String email) {
+        return supplyAsync(() -> userFinder.findByEmail(email), context);
     }
 
-    public CompletableFuture<Long> createNewUser(UserController.CreateUserRequest request) {
+    public CompletableFuture<List<User>> getAllUsers() {
+        return supplyAsync(() -> userFinder.findAll(), context);
+    }
+
+    public CompletableFuture<Long> createNewUser(CreateUserReq request) {
         return supplyAsync(() -> {
             // Insert user
             User user = new User(request);
             user.insert();
 
             // Insert nationalities
-            for(UserController.NationalityRequest nationality: request.nationalities) {
+            for(NationalityReq nationality: request.nationalities) {
                 Nationality nationalityNew = Nationality.find.byId(nationality.id);
                 UserNationality userNationality = new UserNationality(user, nationalityNew, nationality.hasPassport);
                 userNationality.insert();
@@ -53,10 +63,10 @@ public class UserRepository {
     }
 
     public CompletableFuture<User> getUser(Long id) {
-        return supplyAsync(() -> User.find.query().fetch("nationalities").fetch("nationalities.nationality").fetch("travellerTypes").where().eq("id", id).findOneOrEmpty().orElse(null), context);
+        return supplyAsync(() -> userFinder.findById(id), context);
     }
 
-    public CompletableFuture<Long> updateUser(UserController.UpdateUserRequest request, Long id) {
+    public CompletableFuture<Long> updateUser(UpdateUserReq request, Long id) {
         return supplyAsync(() -> {
             User user = User.find.byId(id);
 
@@ -73,7 +83,7 @@ public class UserRepository {
                 un.delete();
             }
 
-            for(UserController.NationalityRequest nationality: request.nationalities) {
+            for(NationalityReq nationality: request.nationalities) {
                 Nationality nationalityNew = Nationality.find.byId(nationality.id);
                 UserNationality userNationality = new UserNationality(user, nationalityNew, nationality.hasPassport);
                 userNationality.insert();
@@ -88,39 +98,4 @@ public class UserRepository {
             return user.id;
         }, context);
     }
-
-//    public CompletableFuture<Long> updateCurrentUser(UserController.UpdateUserRequest request, long userId) {
-//        return supplyAsync(() -> {
-//            User user = User.find.byId(userId);
-//            user.firstName = request.firstName;
-//            user.lastName = request.lastName;
-//            if (request.middleName != null) {
-//                user.middleName = request.middleName;
-//            }
-//            user.gender = request.gender;
-//            user.dateOfBirth = request.dateOfBirth;
-//            for(UserController.NationalityRequest nationality: request.nationalities) {
-//
-//
-//                Nationality tempNationality = Nationality.find.byId(nationality.id);
-//                UserNationality tempUserNationality;
-//                tempUserNationality = UserNationality.find.ByUserNationality(user, tempNationality);
-//                if (tempUserNationality == null) {
-//                    UserNationality userNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport);
-//                    userNationality.insert();
-//                } else {
-//                    tempUserNationality = new UserNationality(user, Nationality.find.byId(nationality.id), nationality.hasPassport);
-//                    tempUserNationality.save();
-//                };
-//            }
-//            for(long i: request.travellerTypes) {
-//                if (!user.travellerTypes.contains(TravellerType.find.byId(i))) {
-//                    user.travellerTypes.add(TravellerType.find.byId(i));
-//                }
-//            }
-//            user.save();
-//
-//            return user.id;
-//        });
-//    }
 }

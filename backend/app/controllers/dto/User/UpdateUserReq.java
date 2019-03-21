@@ -1,0 +1,27 @@
+package controllers.dto.User;
+
+import play.data.validation.Constraints;
+
+import java.util.List;
+
+public class UpdateUserReq {
+    @Constraints.Required
+    public String firstName;
+
+    @Constraints.Required
+    public String lastName;
+
+    public String middleName;
+
+    @Constraints.Required
+    public String gender;
+
+    @Constraints.Required
+    public int dateOfBirth;
+
+    @Constraints.Required
+    public List<NationalityReq> nationalities;
+
+    @Constraints.Required
+    public List<Long> travellerTypes;
+}

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.dto.User.*;
 import io.ebean.Ebean;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
@@ -44,52 +45,49 @@ public class UserController extends Controller {
         this.userRepository = userRepository;
     }
 
-
+    @Authorization.RequireAuth
     public CompletionStage<Result> getAllUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
+
+            GetUsersRes response = new GetUsersRes(users);
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode userList = mapper.createArrayNode();
+            JsonNode jsonResponse = mapper.valueToTree(response.getGetUserRes());
 
-            try {
-                userList = mapper.readTree(Ebean.json().toJson(users));
-            } catch (IOException e) {
-                return internalServerError();
-            }
-
-            // Format json to remove unnecessary fields
-            for (JsonNode user: userList) {
-                for (JsonNode nationality: user.get("nationalities")) {
-                    ((ObjectNode)nationality).put("id", nationality.get("nationality").get("id").asInt());
-                    ((ObjectNode)nationality).put("name", nationality.get("nationality").get("name").asText());
-                    ((ObjectNode)nationality).remove("nationality");
-                }
-            }
-
-            return ok(userList);
+            return ok(jsonResponse);
         });
     }
 
     public CompletionStage<Result> addUser(Http.Request request) {
-
         // Turns the post data into a form object
-        Form<CreateUserRequest> userRequestForm = formFactory.form(CreateUserRequest.class).bindFromRequest(request);
+        Form<CreateUserReq> userRequestForm = formFactory.form(CreateUserReq.class).bindFromRequest(request);
 
         // Bad Request Check
         if (userRequestForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 
-        // Create an object from the request
-        CreateUserRequest req = userRequestForm.get();
+        CreateUserReq req = userRequestForm.get();
 
-        // Call add user
-        return userRepository.createNewUser(req).thenApplyAsync(id -> {
-            ObjectNode userResponse = Json.newObject();
-            userResponse.put("id", id);
-            return created(userResponse);
+        // Email Taken Check
+        return userRepository.getUserByEmail(req.email).thenComposeAsync(user -> {
+            if (user != null) {
+                return CompletableFuture.completedFuture(null);
+            } else {
+                return userRepository.createNewUser(req);
+            }
+        }).thenApplyAsync(id -> {
+            if (id == null) {
+                return badRequest("Email is already taken");
+            }
+
+            CreateUserRes response = new CreateUserRes(id);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+
+            return created(jsonResponse);
         });
     }
-
+    @Authorization.RequireAuth
     public CompletionStage<Result> getUser(Http.Request request, Long id) {
         return userRepository.getUser(id).thenApplyAsync(user -> {
 
@@ -98,23 +96,11 @@ public class UserController extends Controller {
                 return notFound("Traveller not found");
             }
 
+            GetUserRes response = new GetUserRes(user);
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode userNode;
+            JsonNode jsonResponse = mapper.valueToTree(response);
 
-            try {
-                userNode = mapper.readTree(Ebean.json().toJson(user));
-            } catch (IOException e) {
-                return internalServerError();
-            }
-
-            // Format json to remove unnecessary fields
-            for (JsonNode nationality: userNode.get("nationalities")) {
-                ((ObjectNode)nationality).put("id", nationality.get("nationality").get("id").asLong());
-                ((ObjectNode)nationality).put("name", nationality.get("nationality").get("name").asText());
-                ((ObjectNode)nationality).remove("nationality");
-            }
-
-            return ok(userNode);
+            return ok(jsonResponse);
         });
     }
 
@@ -122,7 +108,7 @@ public class UserController extends Controller {
     public CompletionStage<Result> updateUser(Http.Request request, Long id) {
 
         // Turns the post data into a form object
-        Form<UpdateUserRequest> userRequestForm = formFactory.form(UpdateUserRequest.class).bindFromRequest(request);
+        Form<UpdateUserReq> userRequestForm = formFactory.form(UpdateUserReq.class).bindFromRequest(request);
 
         // Bad Request Check
         if (userRequestForm.hasErrors()) {
@@ -136,10 +122,9 @@ public class UserController extends Controller {
         }
 
         // Create an object from the request
-        UpdateUserRequest req = userRequestForm.get();
+        UpdateUserReq req = userRequestForm.get();
 
         return userRepository.getUser(id).thenComposeAsync(newUser -> {
-
             // Not Found Check
             if (newUser == null) {
                 return null;
@@ -149,83 +134,10 @@ public class UserController extends Controller {
         }).thenApplyAsync(uid -> {
             if (uid == null) {
                 return notFound("Not Found");
-            } else {
-                return ok("Traveller Updated");
             }
+            return ok("Traveller Updated");
         });
     }
-
-//    @Authorization.RequireAuth
-//    public CompletionStage<Result> updateUser(Http.Request request) {
-//        Form<UpdateUserRequest> userRequestForm = formFactory.form(UpdateUserRequest.class).bindFromRequest(request);
-//
-//        User user = request.attrs().get(Attrs.USER);
-//
-//        if(userRequestForm.hasErrors()) {
-//            return CompletableFuture.completedFuture(badRequest());
-//        }
-//
-//        UpdateUserRequest req = userRequestForm.get();
-//
-//        return userRepository.updateCurrentUser(req, user.id).thenApplyAsync(userId -> ok());
-//    }
-
-    public static class CreateUserRequest {
-        @Constraints.Required
-        public String firstName;
-
-        @Constraints.Required
-        public String lastName;
-
-        public String middleName;
-
-        @Constraints.Required
-        public String gender;
-
-        @Constraints.Required
-        @Constraints.Email
-        public String email;
-
-        @Constraints.Required
-        public String password;
-
-        @Constraints.Required
-        public int dateOfBirth;
-
-        @Constraints.Required
-        public List<NationalityRequest> nationalities;
-
-        @Constraints.Required
-        public List<Integer> travellerTypes;
-    }
-
-    public static class UpdateUserRequest {
-        @Constraints.Required
-        public String firstName;
-
-        @Constraints.Required
-        public String lastName;
-
-        public String middleName;
-
-        @Constraints.Required
-        public String gender;
-
-        @Constraints.Required
-        public int dateOfBirth;
-
-        @Constraints.Required
-        public List<NationalityRequest> nationalities;
-
-        @Constraints.Required
-        public List<Long> travellerTypes;
-    }
-
-    public static class NationalityRequest {
-        public Long id;
-        public boolean hasPassport;
-    }
-
 
     // DW ABOUT THIS
     public Result index() {
