@@ -136,11 +136,13 @@ export default {
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
-      storeImage(this.$route.params.id, formData);
-      getImages(this.$route.params.id).then((result) => {
-      console.log(result)
-      this.files = result;
-    } );
+      storeImage(this.$route.params.id, formData).then (() => {
+         getImages(this.$route.params.id).then((result) => {
+          this.files = result;
+         }
+      );
+      });
+     
     },
 
     // Gets the local image file path
