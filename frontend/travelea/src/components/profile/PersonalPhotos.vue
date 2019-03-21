@@ -9,12 +9,33 @@
     <div class="container">
       <h2>UPLOAD PHOTO</h2>
       <hr>
-      <div class="flex-space-between">
+      <div class="section">
         <label>
           <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
         </label>
         <v-btn v-on:click="submitFile()">Submit</v-btn>
       </div>
+
+
+      <h2>MY PHOTOS</h2>
+      <hr>
+
+      <ul>
+      <li
+        class="personal-photo-element"
+        v-for="item in files"
+        :value="item.value"
+        :key="item.value"
+      >
+        <!-- <p>{{item.photo_filepath}}</p> -->
+        <img :src="getImgUrl(item)">
+        <!-- <img src='../../../../../backend/resources/images/avatar.jpg'> -->
+      </li>
+    </ul>
+
+
+
+
     </div>
   </div>
 </template>
@@ -32,7 +53,7 @@ hr {
 input {
 }
 
-.flex-space-between {
+.section {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -87,16 +108,23 @@ input {
 
 <script>
 import { store } from "../../store/index";
-import { storeImage } from "../../repository/PersonalPhotosRepository";
+import { storeImage, getImages } from "../../repository/PersonalPhotosRepository";
 
 export default {
   store,
   // local variables
   data() {
     return {
-      file: ""
+      files: []
     };
   },
+
+  // computed: {
+  //     personalPhotos() {
+  //     return store.state.personalPhotos.personalPhotos;
+  //   }
+  // },
+
   methods: {
 
     // Sets the file property the the file being uploaded.
@@ -109,7 +137,24 @@ export default {
       let formData = new FormData();
       formData.append("picture", this.file);
       storeImage(this.$route.params.id, formData);
+    },
+
+    // Gets the local image file path
+     getImgUrl(item) {
+      return require('../../../../../backend/resources/images/' + item.photo_filename)
     }
+  },
+
+  created: function() {
+    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
+    // store.commit("setPersonalImages", this.$route.params.id);
+    getImages(this.$route.params.id).then((result) => {
+      console.log(result)
+      this.files = result;
+    } );
+
+
+  
   }
 };
 </script>
