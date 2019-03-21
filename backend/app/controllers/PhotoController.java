@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
@@ -10,34 +9,23 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.PersonalPhotoRepository;
-import repository.TravellerRepository;
 import utils.FileHelper;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class PhotoController extends Controller {
 
-    private final HttpExecutionContext httpExecutionContext;
-    private final MessagesApi messagesApi;
     private final PersonalPhotoRepository personalPhotoRepository;
 
     @Inject
     public PhotoController(
-            HttpExecutionContext httpExecutionContext,
-            MessagesApi messagesApi,
             PersonalPhotoRepository personalPhotoRepository
     ) {
         this.personalPhotoRepository = personalPhotoRepository;
-        this.httpExecutionContext = httpExecutionContext;
-        this.messagesApi = messagesApi;
     }
 
     /**
@@ -61,6 +49,12 @@ public class PhotoController extends Controller {
         }
     }
 
+    /**
+     * Uploads a personal photo to the server file system.
+     * @param request The request containing the image data to upload.
+     * @param id The id of the traveller/user uploading the image.
+     * @return A result whether the image upload was successful or not.
+     */
     public CompletionStage<Result> uploadPersonalPhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
@@ -84,11 +78,14 @@ public class PhotoController extends Controller {
         }
     }
 
+    /**
+      * Gets a raw image from the file system and sends this as response data.
+      * @param filename The file name of the image to get.
+     * @return The raw image file which corresponds to the filename given.
+     */
     public Result getImageFromDatabase(String filename) {
         File file = new File("resources/images/" + filename);
-//        File file = directory.getF
         try {
-//            BufferedImage image = ImageIO.read(file);
             return ok(file);
         } catch (Exception e) {
             System.out.println(e);
