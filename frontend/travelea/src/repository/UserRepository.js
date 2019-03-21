@@ -1,11 +1,12 @@
 /**
- * retrieves the list of all the destinations stored in the database 
+ * retrieves the list of all the users stored in the database which meet the query paramaters
  */
 export const getAllUsers = async(search_params = false) => {
+
     let url = "http://localhost:9000/travellers";
-    if (search_params !== false) {
+
+    if (search_params !== false) {//Params have been suplied in an object, will go through to check each param and build the url query
         url = url + '?';
-        //console.log(search_params)
         if (search_params.fName !== '') {
             url = url + 'fname=' + search_params.fName + '&'
         }
@@ -35,7 +36,6 @@ export const getAllUsers = async(search_params = false) => {
             url = url + 'orderBy=' + search_params.orderBy + '&'
         }
     }
-    //console.log(url);
     const result = await fetch(url)
         .then(
             response => {
@@ -51,9 +51,9 @@ export const getAllUsers = async(search_params = false) => {
             console.log(jsonResponse)
             return jsonResponse
         });
-    //console.log(result);
+
+    //Go through each user from database and correct fields
     for (let i = 0; i < result.length; i++) {
-        //console.log(result[i]);
         let correct_date = new Date(result[i]['dob']).toLocaleDateString();
         let gender = 'Female';
         if (result[i]['gender'] === 'm') {
@@ -63,4 +63,67 @@ export const getAllUsers = async(search_params = false) => {
         result[i]['gender'] = gender;
     }
     return result;
-}
+};
+
+/**
+ * retrieves the list of all the nationalities stored in the database
+ */
+export const getAllNationalities = async() => {
+
+    let url = "http://localhost:9000/nationalities";
+
+    /*const result = await fetch(url)
+        .then(
+            response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                throw new Error("Request Failed");
+            },
+            networkError => {
+                console.log(networkError.message);
+            }
+        ).then(jsonResponse => {
+            console.log(jsonResponse);
+            return jsonResponse
+        });
+
+    let nationalities = [];
+    //Go throught each object and return only a list of strings
+    for (let i = 0; i < result.length; i++) {
+        nationalities.push(result[i]['name']);
+    }
+    nationalities.sort();
+    return nationalities;*/
+    return [3, 2 , 1]
+};
+
+/**
+ * retrieves the list of all the traveller types stored in the database
+ */
+export const getAllTravellerTypes = async() => {
+    let url = "http://localhost:9000/traveller-types";
+    /*const result = await fetch(url)
+        .then(
+            response => {
+                if (response.ok) {
+                    return response.json()
+                }
+                throw new Error("Request Failed");
+            },
+            networkError => {
+                console.log(networkError.message);
+            }
+        ).then(jsonResponse => {
+            console.log(jsonResponse)
+            return jsonResponse
+        });
+    let travellerTypes = [];
+    //Go throught each object and return only a list of strings
+    for (let i = 0; i < result.length; i++) {
+        travellerTypes.push(result[i]['name']);
+    }
+    travellerTypes.sort();
+    return travellerTypes;*/
+    return [1, 2, 3, 4];
+};

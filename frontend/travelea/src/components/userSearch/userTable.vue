@@ -11,41 +11,38 @@
                 hide-details
             ></v-text-field>
             </v-card-title>
-            <v-data-table
-            :headers="[
-            {text: 'First Name', value: 'fname', align: 'left', sortable: true},
-            {text: 'Last Name', value: 'lname', align: 'left', sortable: true},
-            {text: 'DOB', value: 'dob', align: 'left', sortable: true},
-            {text: 'Gender', value: 'gender', align: 'left', sortable: true},
-            {text: 'Natoionalities', value: 'nationalities', align: 'left', sortable: true},
-            {text: 'Traveller Types', value: 'types', align: 'left', sortable: true}]"
-            :items="users"
-            :search="search"
-            >
-            <template v-slot:items="props">
-                <td class="text-xs-right">{{ props.item.fname }}</td>
-                <td class="text-xs-right">{{ props.item.lname }}</td>
-                <td class="text-xs-right">{{ props.item.dob }}</td>
-                <td class="text-xs-right">{{ props.item.gender }}</td>
-                <td>
-                    <ul style="list-style-type:none">
-                        <li v-for="nationality in  props.item.nationalities">
-                            {{ nationality }} <br/>
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    <ul style="list-style-type:none">
-                        <li v-for="travelType in  props.item.types">
-                            {{ travelType }} <br/>
-                        </li>
-                    </ul>
-                </td>
-            </template>
-            <v-alert v-slot:no-results :value="true" color="error" icon="warning">
-                Your search for "{{ search }}" found no results.
-            </v-alert>
-            </v-data-table>
+                <v-data-table
+                :headers="[
+                {text: 'First Name', value: 'fname', align: 'left', sortable: true},
+                {text: 'Last Name', value: 'lname', align: 'left', sortable: true},
+                {text: 'DOB', value: 'dob', align: 'left', sortable: true},
+                {text: 'Gender', value: 'gender', align: 'left', sortable: true},
+                {text: 'Natoionalities', value: 'nationalities', align: 'left', sortable: true},
+                {text: 'Traveller Types', value: 'types', align: 'left', sortable: true}]"
+                :items="users"
+                :search="search"
+                >
+                <template v-slot:items="props">
+                    <td class="text-xs-right">{{ props.item.fname }}</td>
+                    <td class="text-xs-right">{{ props.item.lname }}</td>
+                    <td class="text-xs-right">{{ props.item.dob }}</td>
+                    <td class="text-xs-right">{{ props.item.gender }}</td>
+                    <td>
+                        <ul style="list-style-type:none">
+                            <li v-bind:v-for="nationality in  props.item.nationalities">
+                                {{ nationality }} <br/>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul style="list-style-type:none">
+                            <li v-bind:v-for="travelType in  props.item.types">
+                                {{ travelType }} <br/>
+                            </li>
+                        </ul>
+                    </td>
+                </template>
+                </v-data-table>
         </v-card>
 </template>
 

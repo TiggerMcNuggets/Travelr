@@ -30,15 +30,6 @@ export default {
     components: {
         userTable,
         searchFilter
-    },
-    // the place where you want to make the store values readable
-    computed: {
-        users() {
-        return store.state.users.users;
-        }
-    },
-    created: async function() {
-        store.commit("setUsers");
     }
 }
 </script>
