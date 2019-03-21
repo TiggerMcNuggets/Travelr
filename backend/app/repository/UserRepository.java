@@ -25,7 +25,7 @@ public class UserRepository {
     }
 
     public CompletableFuture<List<User>> getAllUsers() {
-        return supplyAsync(() -> User.find.all(), context);
+        return supplyAsync(() -> User.find.query().select("*").fetch("nationalities").fetch("travellerTypes").where().findList(), context);
     }
 
     public CompletableFuture<Long> createNewUser(UserController.CreateUserRequest request) {

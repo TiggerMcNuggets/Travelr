@@ -2,6 +2,7 @@ package controllers;
 
 import akka.dispatch.sysmsg.Create;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import controllers.actions.Authorization;
 import io.ebean.Ebean;
 import models.Nationality;
 import models.User;
@@ -58,7 +59,7 @@ public class UserController extends Controller {
         });
     }
 
-
+    @Authorization.RequireAuth
     public CompletionStage<Result> getAllUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> ok(Ebean.json().toJson(users)));
 
