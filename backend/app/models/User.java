@@ -63,7 +63,7 @@ public class User extends BaseModel {
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
-    @OneToMany(mappedBy="nationality")
+    @OneToMany
     public List<UserNationality> nationalities;
 
     @ManyToMany
