@@ -5,11 +5,6 @@ tag_checker:
   only:
     - tags
 
-junit:
-  stage: test
-  script:
-    - cd ./backend && sbt test
-
 recent-artifacts-backend:
   stage: deploy
   script:
