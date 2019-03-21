@@ -22,14 +22,24 @@
 
       <ul>
       <li
-        class="personal-photo-element"
-        v-for="item in files"
-        :value="item.value"
-        :key="item.value"
+        
+        v-for="row in groupImages(files)"
+        :value="row.value"
+        :key="row.value"
+      >
+      <div
+        class="personal-photo-row"
+        
       >
         <!-- <p>{{item.photo_filepath}}</p> -->
-        <img :src="getImgUrl(item)">
+        <div v-for="item in row"
+        :value="item.value"
+        :key="item.value" class='image-container'>
+        <img class="personal-photo-element" :src="getImgUrl(item)">
+        </div>
         <!-- <img src='../../../../../backend/resources/images/avatar.jpg'> -->
+      </div>
+
       </li>
     </ul>
 
@@ -42,6 +52,38 @@
 
 
 <style>
+.image-container {
+   width: 250px;;
+   height: 250px;
+   border: 1px solid grey;
+
+     overflow: hidden;
+      background-position: center;
+}
+
+.image-container:hover .personal-photo-element {
+  opacity: 0.8;
+}
+
+
+
+.personal-photo-element {
+   height: 100%;
+  
+  overflow: hidden;
+ 
+}
+
+.personal-photo-row {
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 30px;
+}
+
+ul {
+  padding-left: 0px;
+}
+
 h2 {
   padding-bottom: 10px;
 }
@@ -148,6 +190,22 @@ export default {
     // Gets the local image file path
      getImgUrl(item) {
       return require('../../../../../backend/resources/images/' + item.photo_filename)
+    },
+
+    groupImages(imageList) {
+      let newImageList = [];
+      let row = [];
+      const num_cols = 4
+      for(let i = 0; i < this.files.length; i++) {
+        row.push(this.files[i]);
+        if (i % num_cols === 0 && row.length !== 0) {
+          newImageList.unshift(row);
+          row = []
+        }
+      }
+      console.log('new image list')
+      console.log(newImageList);
+      return newImageList;
     }
   },
 
