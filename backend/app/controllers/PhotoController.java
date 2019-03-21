@@ -13,7 +13,11 @@ import repository.PersonalPhotoRepository;
 import repository.TravellerRepository;
 import utils.FileHelper;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,6 +49,8 @@ public class PhotoController extends Controller {
      *         401 response if access is denied
      */
     public CompletionStage<Result> list(Http.Request request, Long id) {
+        FileHelper fh = new FileHelper();
+        fh.make_directory("resources/images");
         if (controllers.LoginController.isLoggedIn(request)) {
             return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
                 PathProperties pathProperties = PathProperties.parse("id,photo_filename");
@@ -54,8 +60,6 @@ public class PhotoController extends Controller {
             return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
     }
-
-
 
     public CompletionStage<Result> uploadPersonalPhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
@@ -77,6 +81,18 @@ public class PhotoController extends Controller {
             });
         } else {
             return  CompletableFuture.completedFuture(badRequest("Missing file"));
+        }
+    }
+
+    public Result getImageFromDatabase(String filename) {
+        File file = new File("resources/images/" + filename);
+//        File file = directory.getF
+        try {
+//            BufferedImage image = ImageIO.read(file);
+            return ok(file);
+        } catch (Exception e) {
+            System.out.println(e);
+            return badRequest("Missing file");
         }
     }
 }
