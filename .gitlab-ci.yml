@@ -25,6 +25,27 @@ release-artifacts-backend:
     - target/universal/*.zip
  only:
     - tags
+    
+recent-artifacts-frontend:
+ stage: deploy
+ script:
+    - cd ./frontend && npm install && npm run build 
+ artifacts:
+    paths:
+    - target/universal/*.zip
+    expire_in: 1 week
+ only:
+    - tags
+    
+release-artifacts-frontend:
+ stage: deploy
+ script:
+    - cd ./frontend && npm install && npm run build 
+ artifacts:
+    paths:
+    - target/universal/*.zip
+ only:
+    - tags
 
 update-sonar:
     stage: deploy
