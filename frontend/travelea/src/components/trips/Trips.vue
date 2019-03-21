@@ -22,33 +22,28 @@
     </div>
     <ul>
       <h2>My Trips</h2>
-      <v-container
-        id="input-usage"
-        md6>
-        <v-input
-          :messages="['Messages']"
-          append-icon="close"
-          prepend-icon="phone"
-        >
-          Default Slot
-        </v-input>
-  </v-container>
+      <div class="input-field-right-margin">
+        <v-text-field
+                v-model="searchValue"
+                label="Trip name"
+                prepend-icon="search"
+        ></v-text-field>
+      </div>
       <li
         class="trips-list-element"
-        v-for="item in trips"
+        v-for="item in tripsFiltered"
         :value="item.value"
         :key="item.value"
       >
-        <div class="top-destination-content">
-          <h2>{{ item.name }}</h2>
-          <span>
-            <!-- item.id -->
-            <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
-              <a>Edit</a>
-            </router-link>
-            <a v-on:click="deleteTrip(item.id)">Delete</a>
-          </span>
-        </div>
+        <v-card>
+          <div class="top-destination-content">
+            <h2>{{ item.name }}</h2>
+            <span>
+              <!-- item.id -->
+              <a v-on:click="deleteTrip(item.id)">Delete</a>
+            </span>
+          </div>
+        </v-card>
       </li>
     </ul>
   </v-container>
@@ -57,9 +52,9 @@
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
-.horizontal-details {
-  padding-top: 15px;
-  background-color: #05386b;
+
+.input-field-right-margin {
+  margin-right: 80%;
 }
 
 .horizontal-details li {
@@ -91,6 +86,7 @@ ul {
 .trips-list-element {
   padding-top: 20px;
 }
+
 </style>
 
 
@@ -105,14 +101,20 @@ export default {
   data() {
     return {
       showCreateTrip: false,
-    //   showEditDestination: false
+      searchValue: "",
     };
   },
   // the place where you want to make the store values readable
   computed: {
     trips() {
       return store.state.trips.trips;
+    },
+
+    tripsFiltered() {
+      console.log('here');
+      return this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
     }
+
   },
   // child components
   components: {
