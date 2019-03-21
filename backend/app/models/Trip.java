@@ -18,7 +18,7 @@ public class Trip extends BaseModel {
 
     private static final long tripID = 1L;
 
-    @ManyToOne
+    @ManyToOne(cascade= CascadeType.ALL)
     public Traveller traveller;
 
     @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)

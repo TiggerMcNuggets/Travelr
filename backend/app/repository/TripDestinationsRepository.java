@@ -17,6 +17,7 @@ import play.mvc.Http;
 import play.mvc.Results;
 import play.db.ebean.Transactional;
 
+import scala.Int;
 import utils.Moment;
 import javax.inject.Inject;
 import java.util.*;
@@ -47,12 +48,20 @@ public class TripDestinationsRepository {
      * @param data json file containing trip destination parameters in json format
      * @return a TripDestination object
      */
-    private TripDestination tripDestinationParser(JsonNode data) {
-        long tripID = data.at("/trip").asInt();
-        long destinationID = data.at("/destination").asInt();
+    private TripDestination tripDestinationParser(JsonNode data, Long tripId) {
+
+        long destinationID = data.at("/destId").asLong();
         Date arrivalDate = null;
         Date departureDate = null;
-        Trip trip = ebeanServer.find(Trip.class).where().eq("id", tripID).findOne();
+        Trip trip;
+        // this is needed to make this bacward compatible
+        // TODO: standardise API and ensure there is no deprecation, if thre is, delete it and make the server non-backward-compatible
+        if (tripId == null) {
+            long tripIDFromJson = data.at("/trip").asInt();
+            trip = ebeanServer.find(Trip.class).where().eq("id", tripIDFromJson).findOne();
+        } else {
+            trip = ebeanServer.find(Trip.class).where().eq("id", tripId).findOne();
+        }
         if (trip == null) {
             return null;
         }
@@ -94,13 +103,12 @@ public class TripDestinationsRepository {
 
     /**
      * inserts a TripDestination object into the database
-     * @param req the http request
+     * @param data a json object conforming the needed specs for tripDestination in the API
      * @return the TripDestination object that was inserted
      */
-    public CompletionStage<TripDestination> add(Http.Request req) {
+    public CompletionStage<TripDestination> add(JsonNode data) {
         return supplyAsync(() -> {
-            JsonNode data = req.body().asJson();
-            TripDestination tripDestination = tripDestinationParser(data);
+            TripDestination tripDestination = tripDestinationParser(data, null);
             if (tripDestination == null) {
                 return null;
             }
@@ -108,6 +116,23 @@ public class TripDestinationsRepository {
             return tripDestination;
         }, executionContext);
     }
+
+    /**
+     * inserts a TripDestination object into the database
+     * @param data a json object conforming the needed specs for tripDestination in the API
+     * @return the TripDestination object that was inserted
+     */
+    public CompletionStage<TripDestination> addGivenTripId(JsonNode data, Long tripId) {
+        return supplyAsync(() -> {
+            TripDestination tripDestination = tripDestinationParser(data, tripId);
+            if (tripDestination == null) {
+                return null;
+            }
+            tripDestination.save();
+            return tripDestination;
+        }, executionContext);
+    }
+
 
     /**
      * queries the database for a list of all TripDestination objects in the database

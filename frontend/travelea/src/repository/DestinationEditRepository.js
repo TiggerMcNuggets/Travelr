@@ -17,12 +17,12 @@ export const getDestination = async () => {
                 console.log(networkError.message);
             }
         ).then(jsonResponse => {
-            console.log(jsonResponse)
+            console.log(jsonResponse);
             return jsonResponse
         });
 
     return result;
-}
+};
 
 export const getOneDestination = async (id) => {
 
@@ -44,7 +44,7 @@ export const getOneDestination = async (id) => {
         });
 
     return result;
-}
+};
 
 export const updateDestination = async (id, data) => {
 
@@ -63,7 +63,7 @@ export const updateDestination = async (id, data) => {
 
     return result;
 
-}
+};
 
 export const createDestination = async (data) => {
 
@@ -82,7 +82,7 @@ export const createDestination = async (data) => {
 
     return result;
 
-}
+};
 
 export const deleteDestination = async (id) => {
 
