@@ -1,11 +1,15 @@
 package models;
 
+import finders.UserNationalityFinder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class UserNationality extends BaseModel {
+
+    public static final UserNationalityFinder find = new UserNationalityFinder();
 
     @ManyToOne
     public User user;

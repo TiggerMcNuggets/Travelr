@@ -3,6 +3,8 @@ package controllers;
 import akka.dispatch.sysmsg.Create;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.ebean.Ebean;
+import controllers.actions.Attrs;
+import controllers.actions.Authorization;
 import models.Nationality;
 import models.User;
 import play.core.j.HttpExecutionContext;
@@ -85,6 +87,21 @@ public class UserController extends Controller {
 //            return ok();
 //        });
 //    }
+
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUser(Http.Request request) {
+        Form<UpdateUserRequest> userRequestForm = formFactory.form(UpdateUserRequest.class).bindFromRequest(request);
+
+        User user = request.attrs().get(Attrs.USER);
+
+        if(userRequestForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        UpdateUserRequest req = userRequestForm.get();
+
+        return userRepository.updateCurrentUser(req, user.id).thenApplyAsync(userId -> ok());
+    }
 
     public static class CreateUserRequest {
         @Constraints.Required
