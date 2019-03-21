@@ -23,7 +23,7 @@
       <ul>
       <li
         
-        v-for="row in groupImages(files)"
+        v-for="row in files"
         :value="row.value"
         :key="row.value"
       >
@@ -31,13 +31,11 @@
         class="personal-photo-row"
         
       >
-        <!-- <p>{{item.photo_filepath}}</p> -->
         <div v-for="item in row"
         :value="item.value"
         :key="item.value" class='image-container'>
         <img class="personal-photo-element" :src="getImgUrl(item)">
         </div>
-        <!-- <img src='../../../../../backend/resources/images/avatar.jpg'> -->
       </div>
 
       </li>
@@ -53,23 +51,22 @@
 
 <style>
 .image-container {
-   width: 250px;;
-   height: 250px;
-   border: 1px solid grey;
+  width: 24%;;
+  height: 270px;
+  border: 1px solid lightgrey;
 
-     overflow: hidden;
-      background-position: center;
+  background-position: center;
+    padding: 7px;
+    overflow: hidden;
 }
 
 .image-container:hover .personal-photo-element {
+  cursor: pointer;
   opacity: 0.8;
 }
 
-
-
 .personal-photo-element {
-   height: 100%;
-  
+  height: 100%;
   overflow: hidden;
  
 }
@@ -178,9 +175,12 @@ export default {
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
+
       storeImage(this.$route.params.id, formData).then (() => {
          getImages(this.$route.params.id).then((result) => {
-          this.files = result;
+          console.log('suppose to be updating the result...')
+          console.log(result);
+          this.files = this.groupImages(result);
          }
       );
       });
@@ -196,15 +196,18 @@ export default {
       let newImageList = [];
       let row = [];
       const num_cols = 4
-      for(let i = 0; i < this.files.length; i++) {
-        row.push(this.files[i]);
+      for(let i = 0; i < imageList.length; i++) {
         if (i % num_cols === 0 && row.length !== 0) {
           newImageList.unshift(row);
           row = []
         }
+        row.push(imageList[i]);
       }
+
+      if (row) newImageList.unshift(row); 
       console.log('new image list')
       console.log(newImageList);
+      newImageList.reverse()
       return newImageList;
     }
   },
@@ -213,8 +216,10 @@ export default {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
     getImages(this.$route.params.id).then((result) => {
-      console.log(result)
-      this.files = result;
+      this.files = this.groupImages(result);
+      console.log('files below');
+      console.log(this.files);
+      console.log('files above');
     } );
 
 
