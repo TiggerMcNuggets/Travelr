@@ -4,38 +4,6 @@ tag_checker:
     - python tag_checker.py $CI_COMMIT_TAG
   only:
     - tags
-
-recent-artifacts-backend:
-  stage: deploy
-  script:
-    - cd ./backend && sbt dist
-  artifacts:
-    paths:
-      - target/universal/*.zip
-    expire_in: 1 week
-  except:
-    - tags
-
-release-artifacts-backend:
- stage: deploy
- script:
-    - cd ./backend && sbt dist
- artifacts:
-    paths:
-    - target/universal/*.zip
- only:
-    - tags
-    
-recent-artifacts-frontend:
- stage: deploy
- script:
-    - cd ./frontend && npm install && npm run build 
- artifacts:
-    paths:
-    - target/universal/*.zip
-    expire_in: 1 week
- only:
-    - tags
     
 release-artifacts-frontend:
  stage: deploy
