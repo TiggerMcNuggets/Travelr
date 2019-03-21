@@ -6,18 +6,9 @@ tag_checker:
     - tags
     
 release-artifacts-frontend:
- stage: deploy
- script:
+  stage: deploy
+  script:
     - cd ./frontend && npm install && npm run build 
- artifacts:
+  artifacts:
     paths:
-    - target/universal/*.zip
- only:
-    - tags
-
-update-sonar:
-    stage: deploy
-    script:
-        - sonar-scanner
-    only:
-        - vue-restructure@seng302-2019/team-300
+      - frontend

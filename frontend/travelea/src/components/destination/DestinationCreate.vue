@@ -53,6 +53,7 @@
           <v-flex xs12 md6>
             <v-text-field
               v-model.number="destination.crd_latitude"
+              type="number"
               :rules="numberRules"
               label="Latitude"
               required
@@ -93,7 +94,7 @@
 
 <script>
 import { createDestination } from "../../repository/DestinationEditRepository";
-import rules from "./destinations_rules";
+import { rules } from "../form_rules";
 import { store } from "../../store/index";
 
 export default {

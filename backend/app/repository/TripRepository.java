@@ -49,8 +49,9 @@ public class TripRepository {
      * @return a Trip object
      */
     public Trip tripParser(JsonNode data) {
+        System.out.println(data.asText());
         String name = data.at("/name").asText();
-        long travellerID = data.at("/travellerID").asInt();
+        long travellerID = data.at("/travellerID").asLong();
         Traveller traveller = ebeanServer.find(Traveller.class).where().eq("id", travellerID).findOne();
         Trip trip = new Trip(name, traveller);
         return trip;
@@ -66,6 +67,7 @@ public class TripRepository {
         trip.setName(name);
         return trip;
     }
+
 
     /**
      * inserts a Trip object into the database

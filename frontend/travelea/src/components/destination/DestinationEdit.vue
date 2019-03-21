@@ -136,7 +136,7 @@ import {
   getOneDestination,
   updateDestination
 } from "../../repository/DestinationEditRepository";
-import rules from "./destinations_rules";
+import {rules} from "../form_rules";
 
 export default {
   data() {
