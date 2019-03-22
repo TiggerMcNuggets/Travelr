@@ -4,11 +4,17 @@
 GET         /                               controllers.UserController.index()
 
 # Populate static data
-POST        /populate                       controllers.StaticDataController.populateDatabase()
+POST        /populate                       controllers.PopulateController.populateDatabase()
 
 # Auth
 POST        /login                          controllers.SecurityController.login(request: Request)
 POST        /logout                         controllers.SecurityController.logout(request: Request)
+
+# Nationalities
+GET         /nationalities                  controllers.NationalityController.getNationalities()
+
+#Traveller Types
+GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Users
 GET         /users                          controllers.UserController.getAllUsers(request: Request)
@@ -16,16 +22,11 @@ POST        /users                          controllers.UserController.addUser(r
 GET         /users/:id                      controllers.UserController.getUser(request: Request, id: Long)
 PUT         /users/:id                      controllers.UserController.updateUser(request: Request, id: Long)
 
-# Nationalities
-GET         /nationalities                  controllers.NationalityController.getNationalities()
-
-#Travller Types
-GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
-
-
 # Destinations
-
 GET         /destinations                   controllers.DestinationController.listUserDestinations(request: Request)
 POST        /destinations                   controllers.DestinationController.createDestination(request: Request)
-GET         /destinations/:id               controllers.DestinationController.getOneDestination(request: Request, id: Long)
-PUT         /destinations/:id               controllers.DestinationController.updateDestination(request: Request, id: Long)
+GET         /destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
+PUT         /destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
+
+# Trips
+GET         /trips                          controllers.TripController.listUserTrips(request: Request)

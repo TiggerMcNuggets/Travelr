@@ -1,15 +1,12 @@
 package controllers;
 
-import models.Destination;
-import models.Nationality;
-import models.TravellerType;
-import models.User;
+import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 
 import java.util.concurrent.CompletionStage;
 
-public class StaticDataController extends Controller {
+public class PopulateController extends Controller {
     public Result populateDatabase() {
         new Nationality("Australian").insert();
         new Nationality("Belgian").insert();
@@ -50,6 +47,10 @@ public class StaticDataController extends Controller {
         new Destination("City", 1.0, 1.0, "123", "123", "123", user1).insert();
         new Destination("Beach", 1.0, 1.0, "123", "123", "123", user2).insert();
         new Destination("Ski", 1.0, 1.0, "123", "123", "123", user3).insert();
+
+        new Trip("Backpacking 2018", user1).insert();
+        new Trip("New Trip", user2).insert();
+
 
         return ok("Populated");
     }

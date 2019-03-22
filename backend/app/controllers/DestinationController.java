@@ -42,7 +42,6 @@ public class DestinationController extends Controller {
 
     @Authorization.RequireAuth
     public CompletionStage<Result> listUserDestinations(Http.Request request) {
-        // Get authenticated user's id
         User user = request.attrs().get(Attrs.USER);
         return destinationRepository
                 .getUserDestinations(user.id)
@@ -71,7 +70,7 @@ public class DestinationController extends Controller {
     }
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> getOneDestination(Http.Request request, Long id) {
+    public CompletionStage<Result> getUserDestination(Http.Request request, Long id) {
         User user = request.attrs().get(Attrs.USER);
         return destinationRepository.getOneDestination(id).thenApplyAsync(destination -> {
             // Not Found Check
@@ -88,7 +87,7 @@ public class DestinationController extends Controller {
     }
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> updateDestination(Http.Request request, Long id) {
+    public CompletionStage<Result> updateUserDestination(Http.Request request, Long id) {
         Form<CreateDestReq> updateDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
 
         User user = request.attrs().get(Attrs.USER);
