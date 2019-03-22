@@ -29,7 +29,12 @@ public class Authorization {
 
     public static class RequireAuthAction extends Action<RequireAuth> {
         public CompletionStage<Result> call(Http.Request req) {
-            String authToken = req.header(SecurityController.AUTH_TOKEN_HEADER).get();
+            String authToken = null;
+            try {
+                authToken = req.header(SecurityController.AUTH_TOKEN_HEADER).get();
+            } catch (Exception e) {
+                return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+            }
             if(authToken != null) {
                 Optional<User> user = models.User.find.findByAuthToken(authToken);
                 if (user.isPresent()) {
@@ -37,7 +42,7 @@ public class Authorization {
                 }
             }
 
-            return CompletableFuture.completedFuture(unauthorized());
+            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
         }
     }
 }

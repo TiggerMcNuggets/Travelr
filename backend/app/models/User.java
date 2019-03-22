@@ -2,20 +2,16 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.UserController;
+import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
-import io.ebean.Finder;
 import io.ebean.annotation.NotNull;
-import play.data.format.Formats;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -39,8 +35,8 @@ public class User extends BaseModel {
     @Constraints.Required
     public String lastName;
 
-
-    public String authToken;
+    @JsonIgnore
+    public String token;
 
     @NotNull
     @Constraints.Required
@@ -57,37 +53,39 @@ public class User extends BaseModel {
     public String email;
 
     @JsonIgnore
-    @Column(length = 64, nullable = false)
-    private byte[] shaPassword;
+    @Column(length = 64)
+    private byte[] password;
 
+    @JsonIgnore
     @NotNull
     public int timestamp;
 
+    @JsonIgnore
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    public List<Nationality> nationalities;
-//
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    public List<TravellerType> types;
-//
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    public List<Trip> trips;
+    @OneToMany
+    public List<UserNationality> nationalities;
+
+    @ManyToMany
+    public List<TravellerType> travellerTypes;
 
 
-    public String setAuthToken() {
-        this.authToken = UUID.randomUUID().toString();
+    @OneToMany
+    public List<Destination> destinations;
+
+    public String setToken() {
+        this.token = UUID.randomUUID().toString();
         save();
-        return this.authToken;
+        return this.token;
     }
 
-    public String getAuthToken() {
-        return this.authToken;
+    public String getToken() {
+        return this.token;
     }
 
     public void deleteAuthToken() {
-        authToken = null;
+        token = null;
         save();
     }
 
@@ -97,7 +95,7 @@ public class User extends BaseModel {
 
 
     public void setPassword(String password) {
-        shaPassword = getSha512(password);
+        this.password = getSha512(password);
     }
 
     public static byte[] getSha512(String value) {
@@ -109,14 +107,22 @@ public class User extends BaseModel {
         }
     }
 
-
-    public User(UserController.CreateUserRequest request) {
+    public User(CreateUserReq request) {
         this.firstName = request.firstName;
+        this.middleName = request.middleName;
         this.lastName = request.lastName;
-        this.email = request.email;
+        setEmail(request.email);
         setPassword(request.password);
-        this.gender = "Male";
+        this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
+    }
+
+    public User(String first, String last, String email, int dob) {
+        this.firstName = first;
+        this.lastName = last;
+        this.email = email;
+        this.dateOfBirth = dob;
+        this.gender = "Male";
     }
 
 }

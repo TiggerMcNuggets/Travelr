@@ -23,14 +23,18 @@ public class SecurityController extends Controller {
     // Header key name
     public final static String AUTH_TOKEN_HEADER = "X-Authorization";
     // Database column name
-    public final static String AUTH_TOKEN = "authToken";
+    public final static String AUTH_TOKEN = "token";
 
-
-   public Result login(Http.Request request) {
+    /**
+     * Logs a user in with email and password and sets user token
+     * @param request the http request
+     * @return 200 with json object of id and token if all ok
+     */
+    public Result login(Http.Request request) {
         Form<Login> loginForm = formFactory.form(Login.class).bindFromRequest(request);
 
         if (loginForm.hasErrors()) {
-            return badRequest(loginForm.errorsAsJson());
+            return badRequest("Bad Request");
         }
 
         Login login = loginForm.get();
@@ -39,10 +43,10 @@ public class SecurityController extends Controller {
 
         // If no user exists, return unauthorized
         if (!userOptional.isPresent()) {
-            return unauthorized();
+            return unauthorized("Incorrect login details");
         } else {
             User user = userOptional.get();
-            String authToken = user.setAuthToken();
+            String authToken = user.setToken();
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
             authTokenJson.put("id", user.id);
@@ -50,11 +54,16 @@ public class SecurityController extends Controller {
         }
     }
 
+    /**
+     * Logs a user out and removes token
+     * @param request the http request
+     * @return 200 with string if all ok
+     */
     @Authorization.RequireAuth()
     public Result logout(Http.Request request) {
         User user = request.attrs().get(Attrs.USER);
         user.deleteAuthToken();
-        return ok();
+        return ok("Successfully logged out");
     }
 
     public static class Login {

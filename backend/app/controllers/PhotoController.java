@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.actions.Authorization;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
@@ -36,17 +37,15 @@ public class PhotoController extends Controller {
      *         400 response if user is invalid
      *         401 response if access is denied
      */
+    @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id) {
         FileHelper fh = new FileHelper();
         fh.make_directory("resources/images");
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
-                PathProperties pathProperties = PathProperties.parse("id,photo_filename");
-                return ok(Ebean.json().toJson(photos, pathProperties));
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
+
+        return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
+            PathProperties pathProperties = PathProperties.parse("id,photo_filename");
+            return ok(Ebean.json().toJson(photos, pathProperties));
+        });
     }
 
     /**
@@ -55,6 +54,7 @@ public class PhotoController extends Controller {
      * @param id The id of the traveller/user uploading the image.
      * @return A result whether the image upload was successful or not.
      */
+    @Authorization.RequireAuth
     public CompletionStage<Result> uploadPersonalPhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
@@ -83,6 +83,7 @@ public class PhotoController extends Controller {
       * @param filename The file name of the image to get.
      * @return The raw image file which corresponds to the filename given.
      */
+    @Authorization.RequireAuth
     public Result getImageFromDatabase(String filename) {
         File file = new File("resources/images/" + filename);
         try {

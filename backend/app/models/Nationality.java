@@ -1,30 +1,20 @@
 package models;
 
 
-import com.sun.istack.NotNull;
+import io.ebean.Finder;
 import play.data.validation.Constraints;
-import utils.finders.NationalityFinder;
+import finders.NationalityFinder;
 import javax.persistence.*;
-import java.util.Comparator;
 
 @Entity
 public class Nationality extends BaseModel {
 
-    // finder linked as a public static field
-    public static final NationalityFinder find = new NationalityFinder();
-
-    @ManyToOne
-    public Traveller traveller;
+    public static final Finder<Long, Nationality> find = new Finder<>(Nationality.class);
 
     @Constraints.Required
-    public String nationality;
+    public String name;
 
-    @Column(columnDefinition = "boolean not null default 1")
-    public Integer hasPassport;
-
-    public Nationality(Traveller traveller, @Constraints.Required String nationality, Integer hasPassport) {
-        this.traveller = traveller;
-        this.nationality = nationality;
-        this.hasPassport = hasPassport;
+    public Nationality(String name) {
+        this.name = name;
     }
 }

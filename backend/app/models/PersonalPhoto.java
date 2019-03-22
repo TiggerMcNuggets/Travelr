@@ -1,7 +1,6 @@
 package models;
 
 import play.data.validation.Constraints;
-import utils.finders.DestinationFinder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +14,7 @@ import javax.validation.constraints.NotNull;
 public class PersonalPhoto extends BaseModel {
 
     @ManyToOne
-    public Traveller traveller;
+    public User traveller;
 
     /**
      * The longtitude coordinatte value of the destination.
@@ -29,7 +28,7 @@ public class PersonalPhoto extends BaseModel {
      *
      * @param photo_filename The local file path where the image is stored.
      */
-    public PersonalPhoto(Traveller traveller, String photo_filename) {
+    public PersonalPhoto(User traveller, String photo_filename) {
         this.traveller = traveller;
         this.photo_filename = photo_filename;
     }
@@ -38,7 +37,7 @@ public class PersonalPhoto extends BaseModel {
      * Gets the traveller which the photo is associated with.
      * @return The traveller instance.
      */
-    public Traveller getTraveller() {
+    public User getTraveller() {
         return traveller;
     }
 
@@ -46,7 +45,7 @@ public class PersonalPhoto extends BaseModel {
      * Sets the traveller which the photo is associated with.
      * @param traveller The traveller instance.
      */
-    public void setTraveller(Traveller traveller) {
+    public void setTraveller(User traveller) {
         this.traveller = traveller;
     }
 

@@ -1,124 +1,77 @@
 package repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.ebean.Ebean;
-import io.ebean.EbeanServer;
+import controllers.DestinationController;
+import controllers.dto.Destination.CreateDestReq;
+import finders.DestinationFinder;
 import models.Destination;
-import play.db.ebean.EbeanConfig;
-import play.mvc.Http;
+import models.User;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.concurrent.CompletionStage;
-
+import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-/** Destination Repository used for dealing with database interactions involving destinations data. */
 public class DestinationRepository {
 
-    /** The Ebean Server instance. */
-    private final EbeanServer ebeanServer;
+    private DatabaseExecutionContext context;
 
-    /**
-     * The execution context for executing database commands.
-     */
-    private final DatabaseExecutionContext executionContext;
+    private DestinationFinder destinationFinder = new DestinationFinder();
 
-    /**
-     * The Constructor for the destination repository.
-     * @param ebeanConfig The Ebean configuration
-     * @param executionContext The database execution context
-     */
     @Inject
-    public DestinationRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
-        this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
-        this.executionContext = executionContext;
+    public DestinationRepository(DatabaseExecutionContext context) {
+        this.context = context;
     }
 
     /**
-     * Adds a destination to the database.
-     * @param req The HTTP POST request.
-     * @return The destination which was added.
+     * Gets list of destinations that belongs to a user
+     * @param userId the user id
+     * @return completable future of list of destinations
      */
-    public CompletionStage<Destination> add(Http.Request req) {
-        return supplyAsync(() -> {
-            JsonNode data = req.body().asJson();
-            String name = data.at("/name").asText();
-            String dest_type = data.at("/destination_type").asText();
-            String district = data.at("/district").asText();
-            Double lat = data.at("/crd_latitude").asDouble();
-            Double lng = data.at("/crd_longitude").asDouble();
-            String country = data.at("/country").asText();
+    public CompletableFuture<List<Destination>> getUserDestinations(Long userId) {
+        return supplyAsync(() -> destinationFinder.getUserDestinations(userId), context);
+    }
 
-            Destination destination = new Destination(name, dest_type, district, lat, lng, country);
+    /**
+     * Gets one destination that belongs to a user
+     * @param id the destination id
+     * @return completable future of the destination
+     */
+    public CompletableFuture<Destination> getOneDestination(Long id) {
+        return supplyAsync(() -> destinationFinder.findById(id), context);
+    }
+
+    /**
+     * Adds a destination for a user
+     * @param request the request DTO
+     * @param userId the user id
+     * @return completable future of the new id
+     */
+    public CompletableFuture<Long> add(CreateDestReq request, Long userId) {
+        return supplyAsync(() -> {
+            Destination destination = new Destination(request, User.find.byId(userId));
+            destination.insert();
+            return destination.id;
+        });
+    }
+
+    /**
+     * Updates a destination that belongs to a user
+     * @param request the request DTO
+     * @param destinationId the destination id
+     * @return completable future of the new destination
+     */
+    public CompletableFuture<Long> update(CreateDestReq request, Long destinationId) {
+        return supplyAsync(() -> {
+            Destination destination = destinationFinder.byId(destinationId);
+            destination.name = request.name;
+            destination.latitude = request.latitude;
+            destination.longitude = request.longitude;
+            destination.type = request.type;
+            destination.country = request.country;
+            destination.district = request.district;
             destination.save();
-            return destination;
-        }, executionContext);
-    }
 
-    /**
-     * Deletes a destination from the database.
-     * @param dest_id The id of the destination to be deleted.
-     * @return The deleted destination.
-     */
-    public CompletionStage<Destination> delete(Long dest_id) {
-        return supplyAsync(() -> {
-            Destination dest = Destination.find.byId(dest_id);
-            dest.delete();
-            return dest;
-        }, executionContext);
-    }
-
-    /**
-     * Looks for a destination with dest_id as id
-     * @param dest_id The id of the destination
-     * @return The deleted destination as a JSON object
-     */
-    public CompletionStage<Destination> getOne(Long dest_id) {
-        return supplyAsync(() -> {
-            Destination dest = Destination.find.byId(dest_id);
-            return dest;
-        }, executionContext);
-    }
-
-
-    /**
-     * Updates a destination based on data from a HTTP POST request.
-     * @param req The HTTP Post Request.
-     * @param dest_id The destination id to be deleted.
-     * @return The updated destination object.
-     */
-    public CompletionStage<Destination> update(Http.Request req, Long dest_id) {
-        return supplyAsync(() -> {
-            Destination dest = Destination.find.byId(dest_id);
-
-            JsonNode data = req.body().asJson();
-            String name = data.at("/name").asText();
-            String dest_type = data.at("/destination_type").asText();
-            String district = data.at("/district").asText();
-            Double lat = data.at("/crd_latitude").asDouble();
-            Double lng = data.at("/crd_longitude").asDouble();
-            String country = data.at("/country").asText();
-
-            dest.setName(name);
-            dest.setDestination_type(dest_type);
-            dest.setDistrict(district);
-            dest.setCrd_latitude(lat);
-            dest.setCrd_longitude(lng);
-            dest.setCountry(country);
-            dest.save();
-
-
-
-            return dest;
-        }, executionContext);
-    }
-
-    /**
-     * Selects all the destinations which are available in the database.
-     * @return The list of destination objects from the database.
-     */
-    public CompletionStage<List<Destination>> list() {
-        return supplyAsync(() -> ebeanServer.find(Destination.class).findList(), executionContext);
+            return destination.id;
+        });
     }
 }
