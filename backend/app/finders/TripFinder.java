@@ -15,8 +15,12 @@ public class TripFinder extends Finder<Long, Trip> {
         super(Trip.class);
     }
 
-    public List<Trip> findAll(Long id) {
-        return query().select("id, name").where().eq("user.id", id).findList();
+    public List<Trip> findAll(Long userId) {
+        return query().select("id, name").where().eq("user.id", userId).findList();
+    }
+
+    public Trip findOne(Long id) {
+        return query().fetch("destinations.destination").where().eq("id", id).findOneOrEmpty().orElse(null);
     }
 
 

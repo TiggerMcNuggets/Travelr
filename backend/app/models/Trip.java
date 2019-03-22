@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.dto.Trip.CreateTripReq;
 import finders.TripFinder;
 import play.data.format.Formats;
@@ -20,6 +21,7 @@ public class Trip extends BaseModel {
 
     public static final TripFinder find = new TripFinder();
 
+    @JsonIgnore
     @ManyToOne
     public User user;
 

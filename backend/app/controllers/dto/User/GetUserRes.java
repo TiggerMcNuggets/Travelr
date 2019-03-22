@@ -27,7 +27,6 @@ public class GetUserRes {
         this.gender = user.gender;
         this.travellerTypes = user.travellerTypes;
         this.setNationalities(user.nationalities);
-
     }
 
     public void setNationalities(List<UserNationality> nationalities) {

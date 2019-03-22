@@ -83,7 +83,6 @@ public class DestinationController extends Controller {
             }
             return ok(Ebean.json().toJson(destination));
         });
-
     }
 
     @Authorization.RequireAuth

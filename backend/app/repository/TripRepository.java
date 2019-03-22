@@ -27,8 +27,8 @@ public class TripRepository {
         this.context = context;
     }
 
-    public CompletableFuture<List<Trip>> getTrips(Long id) {
-        return supplyAsync(() -> tripFinder.findAll(id), context);
+    public CompletableFuture<List<Trip>> getTrips(Long userId) {
+        return supplyAsync(() -> tripFinder.findAll(userId), context);
     }
 
     public CompletableFuture<Long> createTrip(CreateTripReq request, User user) {
@@ -46,6 +46,10 @@ public class TripRepository {
 
             return trip.id;
         }, context);
+    }
+
+    public CompletableFuture<Trip> getTrip(Long id) {
+        return supplyAsync(() -> tripFinder.findOne(id), context);
     }
 
 
