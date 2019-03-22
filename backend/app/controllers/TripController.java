@@ -39,12 +39,22 @@ public class TripController extends Controller {
         this.tripRepository = tripRepository;
     }
 
+    /**
+     * Gets a list of trips that belongs to a user
+     * @param request the http request
+     * @return 200 with list of trips if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> getUserTrips(Http.Request request) {
         User user = request.attrs().get(Attrs.USER);
         return tripRepository.getTrips(user.id).thenApplyAsync(users -> ok(Ebean.json().toJson(users)));
     }
 
+    /**
+     * Creates a trip for the user
+     * @param request the http request
+     * @return 201 with json object of new trip id in it if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> createTrip(Http.Request request) {
         Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
@@ -77,13 +87,19 @@ public class TripController extends Controller {
         });
     }
 
+    /**
+     * Gets a single trip that belongs to a user and matches the given id
+     * @param request the http request
+     * @param id the trip id
+     * @return 200 with trip if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> getUserTrip(Http.Request request, Long id) {
         User user = request.attrs().get(Attrs.USER);
         return tripRepository.getTrip(id).thenApplyAsync(trip -> {
             // Not Found Check
             if (trip == null) {
-                return notFound("Destination not found");
+                return notFound("Trip not found");
             }
 
             // Forbidden Check
@@ -101,6 +117,12 @@ public class TripController extends Controller {
         });
     }
 
+    /**
+     * Updates a trip that belongs to a user with the given id
+     * @param request the http request
+     * @param id the trip id
+     * @return 200 with string if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUserTrip(Http.Request request, Long id) {
         Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);

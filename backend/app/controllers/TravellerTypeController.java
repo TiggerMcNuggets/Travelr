@@ -19,6 +19,10 @@ public class TravellerTypeController extends Controller {
         this.travellerTypeRepository = travellerTypeRepository;
     }
 
+    /**
+     * Gets all traveller types
+     * @return 200 with list of traveller types if all ok
+     */
     public CompletionStage<Result> getTravellerTypes() {
         return travellerTypeRepository.getTravellerTypes().thenApplyAsync(travellerTypes -> {
             return ok(Json.toJson(travellerTypes));

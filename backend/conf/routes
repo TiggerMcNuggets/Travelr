@@ -14,10 +14,10 @@ GET         /nationalities                  controllers.NationalityController.ge
 GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Users
-GET         /users                          controllers.UserController.getUsers(request: Request)
-POST        /users                          controllers.UserController.createUser(request: Request)
-GET         /users/:id                      controllers.UserController.getUser(request: Request, id: Long)
-PUT         /users/:id                      controllers.UserController.updateUser(request: Request, id: Long)
+GET         /travellers                     controllers.UserController.getUsers(request: Request)
+POST        /travellers                     controllers.UserController.createUser(request: Request)
+GET         /travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
+PUT         /travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
 
 # Destinations
 GET         /destinations                   controllers.DestinationController.getUserDestinations(request: Request)

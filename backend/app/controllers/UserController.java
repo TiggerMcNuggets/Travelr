@@ -45,6 +45,11 @@ public class UserController extends Controller {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Gets a list of users
+     * @param request the http request
+     * @return 200 with list of users if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
@@ -57,6 +62,11 @@ public class UserController extends Controller {
         });
     }
 
+    /**
+     * Creates a new user
+     * @param request the http request
+     * @return 201 with json object of new user id if all ok
+     */
     public CompletionStage<Result> createUser(Http.Request request) {
         // Turns the post data into a form object
         Form<CreateUserReq> userRequestForm = formFactory.form(CreateUserReq.class).bindFromRequest(request);
@@ -87,6 +97,13 @@ public class UserController extends Controller {
             return created(jsonResponse);
         });
     }
+
+    /**
+     * Gets a user by given id
+     * @param request the http request
+     * @param id the user id
+     * @return 200 with user if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> getUser(Http.Request request, Long id) {
         return userRepository.getUser(id).thenApplyAsync(user -> {
@@ -104,6 +121,12 @@ public class UserController extends Controller {
         });
     }
 
+    /**
+     * Update a user that matches header and id
+     * @param request the http request
+     * @param id the user id
+     * @return 200 with string if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUser(Http.Request request, Long id) {
 
@@ -133,7 +156,6 @@ public class UserController extends Controller {
         });
     }
 
-    // DW ABOUT THIS
     public Result index() {
         return ok("Travel EA - Home");
     }

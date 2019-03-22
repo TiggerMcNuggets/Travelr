@@ -7,6 +7,10 @@ import play.mvc.Result;
 import java.util.concurrent.CompletionStage;
 
 public class PopulateController extends Controller {
+    /**
+     * Populates the database with example values
+     * @return 200 with string if all ok
+     */
     public Result populateDatabase() {
         new Nationality("Australian").insert();
         new Nationality("Belgian").insert();

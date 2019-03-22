@@ -49,7 +49,7 @@ create table user (
   first_name                    varchar(255) not null,
   middle_name                   varchar(255),
   last_name                     varchar(255) not null,
-  auth_token                    varchar(255),
+  token                         varchar(255),
   date_of_birth                 integer not null,
   gender                        varchar(255) not null,
   email                         varchar(256) not null,

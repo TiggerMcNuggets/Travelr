@@ -17,6 +17,10 @@ public class TravellerTypeRepository {
         this.context = context;
     }
 
+    /**
+     * Gets all traveller types
+     * @return completable future of list of traveller types
+     */
     public CompletableFuture<List<TravellerType>> getTravellerTypes() {
         return supplyAsync(() -> {
             return TravellerType.find.all();

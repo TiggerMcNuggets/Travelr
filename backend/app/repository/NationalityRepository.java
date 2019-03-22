@@ -17,6 +17,10 @@ public class NationalityRepository {
         this.context = context;
     }
 
+    /**
+     * Gets a list of nationalities
+     * @return completable future of list of nationalites
+     */
     public CompletableFuture<List<Nationality>> getNationalities() {
         return supplyAsync(() -> {
             return Nationality.find.all();

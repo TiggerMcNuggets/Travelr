@@ -19,6 +19,10 @@ public class NationalityController extends Controller {
         this.nationalityRepository = nationalityRepository;
     }
 
+    /**
+     * Gets list of all nationalities
+     * @return 200 with list of all nationalities if all ok
+     */
     public CompletionStage<Result> getNationalities() {
         return nationalityRepository.getNationalities().thenApplyAsync(nationalities -> {
             return ok(Json.toJson(nationalities));

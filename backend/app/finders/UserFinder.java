@@ -22,7 +22,7 @@ public class UserFinder extends Finder<Long, User> {
             return null;
         }
 
-        return query().where().eq("authToken", token).findOneOrEmpty();
+        return query().where().eq("token", token).findOneOrEmpty();
     }
 
     private byte[] getSha512(String value) {

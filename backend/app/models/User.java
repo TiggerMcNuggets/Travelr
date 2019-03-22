@@ -36,7 +36,7 @@ public class User extends BaseModel {
     public String lastName;
 
     @JsonIgnore
-    public String authToken;
+    public String token;
 
     @NotNull
     @Constraints.Required
@@ -73,18 +73,18 @@ public class User extends BaseModel {
     @OneToMany
     public List<Destination> destinations;
 
-    public String setAuthToken() {
-        this.authToken = UUID.randomUUID().toString();
+    public String setToken() {
+        this.token = UUID.randomUUID().toString();
         save();
-        return this.authToken;
+        return this.token;
     }
 
-    public String getAuthToken() {
-        return this.authToken;
+    public String getToken() {
+        return this.token;
     }
 
     public void deleteAuthToken() {
-        authToken = null;
+        token = null;
         save();
     }
 
@@ -106,7 +106,6 @@ public class User extends BaseModel {
         }
     }
 
-
     public User(CreateUserReq request) {
         this.firstName = request.firstName;
         this.middleName = request.middleName;
@@ -122,7 +121,7 @@ public class User extends BaseModel {
         this.lastName = last;
         this.email = email;
         this.dateOfBirth = dob;
-        this.gender = "dsadS";
+        this.gender = "Male";
     }
 
 }

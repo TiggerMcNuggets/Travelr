@@ -27,18 +27,31 @@ public class UserRepository {
 
     @Inject
     public UserRepository(DatabaseExecutionContext context) {
-
         this.context = context;
     }
 
+    /**
+     * Gets user by their email
+     * @param email the user email
+     * @return completable future of user
+     */
     public CompletableFuture<User> getUserByEmail(String email) {
         return supplyAsync(() -> userFinder.findByEmail(email), context);
     }
 
+    /**
+     * Gets all users
+     * @return completable future of list of users
+     */
     public CompletableFuture<List<User>> getAllUsers() {
         return supplyAsync(() -> userFinder.findAll(), context);
     }
 
+    /**
+     * Creates a new user
+     * @param request the request DTO
+     * @return completable future of new user id
+     */
     public CompletableFuture<Long> createNewUser(CreateUserReq request) {
         return supplyAsync(() -> {
             // Insert user
@@ -62,10 +75,21 @@ public class UserRepository {
         }, context);
     }
 
+    /**
+     * Gets one user by id
+     * @param id the user id
+     * @return completable future of user
+     */
     public CompletableFuture<User> getUser(Long id) {
         return supplyAsync(() -> userFinder.findById(id), context);
     }
 
+    /**
+     * Updates the details of a user that matches their header and the id
+     * @param request the request DTO
+     * @param id the user id
+     * @return completable future of user id
+     */
     public CompletableFuture<Long> updateUser(UpdateUserReq request, Long id) {
         return supplyAsync(() -> {
             User user = User.find.byId(id);
