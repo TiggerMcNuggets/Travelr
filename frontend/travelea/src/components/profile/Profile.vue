@@ -15,6 +15,7 @@
                 </v-card>
             </v-flex>           
         </v-layout>
+        <trips></trips>
     </v-container>
 </template>
 
@@ -31,6 +32,7 @@
 
 import {RepositoryFactory} from "../../repository/RepositoryFactory"
 import profileNav from "./profileNav"
+import Trips from '../trips/Trips.vue';
 let profileRepository = RepositoryFactory.get("profile")
 
 export default {
@@ -39,7 +41,8 @@ export default {
         }
     },
     components: {
-        profileNav
+        profileNav,
+        Trips
     },
     created: function() {  
         profileRepository      
