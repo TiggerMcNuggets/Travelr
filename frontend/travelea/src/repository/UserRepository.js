@@ -5,7 +5,7 @@ export const getAllUsers = async(search_params = false) => {
 
     let url = "http://localhost:9000/travellers";
 
-    if (search_params !== false) {//Params have been suplied in an object, will go through to check each param and build the url query
+    if (search_params !== false) { //Params have been suplied in an object, will go through to check each param and build the url query
         url = url + '?';
         if (search_params.fName !== '') {
             url = url + 'fname=' + search_params.fName + '&'
@@ -62,7 +62,55 @@ export const getAllUsers = async(search_params = false) => {
         result[i]['dob'] = correct_date;
         result[i]['gender'] = gender;
     }
-    return result;
+    //return result;
+    let return_result = [];
+    let i = 0;
+    for (; i < 20; i++) {
+        let gen = "Male";
+        if (i % 2 == 0) {
+            gen == "Female";
+        }
+        return_result.push({
+            "id": i,
+            "firstName": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+            "middleName": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+            "lastName": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+            "dateOfBirth": 0,
+            "gender": gen,
+            "nationalities": [{
+                    "id": 0,
+                    "name": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+                    "hasPassport": 0
+                },
+                {
+                    "id": 0,
+                    "name": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+                    "hasPassport": 0
+                },
+                {
+                    "id": 0,
+                    "name": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5),
+                    "hasPassport": 0
+                }
+            ],
+            "travellerTypes": [{
+                    "id": 0,
+                    "name": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+                },
+                {
+                    "id": 0,
+                    "name": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+                },
+                {
+                    "id": 0,
+                    "name": Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+                }
+            ]
+        })
+    }
+    console.log('##############################################################################');
+    console.log(return_result);
+    return return_result
 };
 
 /**
@@ -95,7 +143,7 @@ export const getAllNationalities = async() => {
     }
     nationalities.sort();
     return nationalities;*/
-    return [3, 2 , 1]
+    return [3, 2, 1]
 };
 
 /**
