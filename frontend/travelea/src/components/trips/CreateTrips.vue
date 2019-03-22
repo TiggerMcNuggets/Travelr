@@ -120,7 +120,9 @@
         store,
         components: {
         },
-        props: {},
+        props: {
+            toggleShowCreateTrip: Function
+        },
         data() {
             return {
                 trip: {
@@ -175,6 +177,8 @@
                     console.log(trip);
                     // TODO: wait for auth frontend
                     const response = await createTrip(trip);
+                    this.toggleShowCreateTrip();
+                    store.commit("setTrips", 0);
                     console.log(response);
                     // if (response.status) {
                     //

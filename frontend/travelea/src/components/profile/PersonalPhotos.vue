@@ -16,34 +16,18 @@
         <v-btn v-on:click="submitFile()">Submit</v-btn>
       </div>
 
-
       <h2>MY PHOTOS</h2>
       <hr>
 
       <ul>
-      <li
-        
-        v-for="row in files"
-        :value="row.value"
-        :key="row.value"
-      >
-      <div
-        class="personal-photo-row"
-        
-      >
-        <div v-for="item in row"
-        :value="item.value"
-        :key="item.value" class='image-container'>
-        <img class="personal-photo-element" :src="getImgUrl(item)">
-        </div>
-      </div>
-
-      </li>
-    </ul>
-
-
-
-
+        <li v-for="row in files" :value="row.value" :key="row.value">
+          <div class="personal-photo-row">
+            <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
+              <img class="personal-photo-element" :src="getImgUrl(item)">
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -51,13 +35,13 @@
 
 <style>
 .image-container {
-  width: 24%;;
+  width: 24%;
   height: 270px;
   border: 1px solid lightgrey;
 
   background-position: center;
-    padding: 7px;
-    overflow: hidden;
+  padding: 7px;
+  overflow: hidden;
 }
 
 .image-container:hover .personal-photo-element {
@@ -68,13 +52,12 @@
 .personal-photo-element {
   height: 100%;
   overflow: hidden;
- 
 }
 
 .personal-photo-row {
-   display: flex;
-   justify-content: space-between;
-   margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
 }
 
 ul {
@@ -87,9 +70,6 @@ h2 {
 
 hr {
   margin-bottom: 25px;
-}
-
-input {
 }
 
 .section {
@@ -147,7 +127,10 @@ input {
 
 <script>
 import { store } from "../../store/index";
-import { storeImage, getImages } from "../../repository/PersonalPhotosRepository";
+import {
+  storeImage,
+  getImages
+} from "../../repository/PersonalPhotosRepository";
 
 export default {
   store,
@@ -165,7 +148,6 @@ export default {
   // },
 
   methods: {
-
     // Sets the file property the the file being uploaded.
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
@@ -176,38 +158,33 @@ export default {
       let formData = new FormData();
       formData.append("picture", this.file);
 
-      storeImage(this.$route.params.id, formData).then (() => {
-         getImages(this.$route.params.id).then((result) => {
-          console.log('suppose to be updating the result...')
-          console.log(result);
+      storeImage(this.$route.params.id, formData).then(() => {
+        getImages(this.$route.params.id).then(result => {
           this.files = this.groupImages(result);
-         }
-      );
+        });
       });
-     
     },
 
     // Gets the local image file path
-     getImgUrl(item) {
-      return require('../../../../../backend/resources/images/' + item.photo_filename)
+    getImgUrl(item) {
+      return require("../../../../../backend/resources/images/" +
+        item.photo_filename);
     },
 
     groupImages(imageList) {
       let newImageList = [];
       let row = [];
-      const num_cols = 4
-      for(let i = 0; i < imageList.length; i++) {
+      const num_cols = 4;
+      for (let i = 0; i < imageList.length; i++) {
         if (i % num_cols === 0 && row.length !== 0) {
           newImageList.unshift(row);
-          row = []
+          row = [];
         }
         row.push(imageList[i]);
       }
 
-      if (row) newImageList.unshift(row); 
-      console.log('new image list')
-      console.log(newImageList);
-      newImageList.reverse()
+      if (row) newImageList.unshift(row);
+      newImageList.reverse();
       return newImageList;
     }
   },
@@ -215,15 +192,9 @@ export default {
   created: function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
-    getImages(this.$route.params.id).then((result) => {
+    getImages(this.$route.params.id).then(result => {
       this.files = this.groupImages(result);
-      console.log('files below');
-      console.log(this.files);
-      console.log('files above');
-    } );
-
-
-  
+    });
   }
 };
 </script>
