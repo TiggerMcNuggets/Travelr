@@ -1,6 +1,7 @@
 package models;
 
 import controllers.DestinationController;
+import controllers.dto.Destination.CreateDestReq;
 import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import finders.DestinationFinder;
@@ -15,12 +16,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Destination extends BaseModel {
 
-    /**
-     * The destination finder used for querying destinations.
-     */
-    public static final DestinationFinder find = new DestinationFinder();
-
-
     @Constraints.Required
     public String name;
 
@@ -32,7 +27,6 @@ public class Destination extends BaseModel {
     @NotNull
     @Constraints.Required
     public Double longitude;
-
 
     @NotNull
     @Constraints.Required
@@ -48,7 +42,7 @@ public class Destination extends BaseModel {
     public User user;
 
 
-    public Destination(DestinationController.DestinationRequest request, User user) {
+    public Destination(CreateDestReq request, User user) {
         this.name = request.name;
         this.latitude = request.latitude;
         this.longitude = request.longitude;

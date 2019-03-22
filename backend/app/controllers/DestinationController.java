@@ -1,10 +1,16 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.dto.Destination.CreateDestReq;
+import controllers.dto.Destination.CreateDestRes;
+import controllers.dto.User.GetUserRes;
 import io.ebean.Ebean;
 import models.User;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import play.data.Form;
 import play.data.FormFactory;
 import play.data.validation.Constraints;
@@ -34,17 +40,10 @@ public class DestinationController extends Controller {
     }
 
 
-//    public CompletionStage<Result> listPublicDestination() {
-//        return destinationRepository
-//                .getPublicDestinations()
-//                .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
-//    }
-
     @Authorization.RequireAuth
     public CompletionStage<Result> listUserDestinations(Http.Request request) {
         // Get authenticated user's id
         User user = request.attrs().get(Attrs.USER);
-        System.out.print(user.id);
         return destinationRepository
                 .getUserDestinations(user.id)
                 .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
@@ -53,7 +52,7 @@ public class DestinationController extends Controller {
 
     @Authorization.RequireAuth
     public CompletionStage<Result> createDestination(Http.Request request) {
-        Form<DestinationRequest> createDestinationForm = formFactory.form(DestinationRequest.class).bindFromRequest(request);
+        Form<CreateDestReq> createDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
 
         User user = request.attrs().get(Attrs.USER);
 
@@ -61,18 +60,36 @@ public class DestinationController extends Controller {
             return CompletableFuture.completedFuture(badRequest());
         }
 
-        DestinationRequest req = createDestinationForm.get();
+        CreateDestReq req = createDestinationForm.get();
 
         return destinationRepository.add(req,user.id).thenApplyAsync(id -> {
-            ObjectNode userResponse = Json.newObject();
-            userResponse.put("id", id);
-            return ok(userResponse);
+            CreateDestRes response = new CreateDestRes(id);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
         });
     }
 
     @Authorization.RequireAuth
+    public CompletionStage<Result> getOneDestination(Http.Request request, Long id) {
+        User user = request.attrs().get(Attrs.USER);
+        return destinationRepository.getOneDestination(id).thenApplyAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return notFound("Destination not found");
+            }
+            // Forbidden Check
+            if (destination.user.id != user.id) {
+                return forbidden("Forbidden: Access Denied");
+            }
+            return ok(Ebean.json().toJson(destination));
+        });
+
+    }
+
+    @Authorization.RequireAuth
     public CompletionStage<Result> updateDestination(Http.Request request, Long id) {
-        Form<DestinationRequest> updateDestinationForm = formFactory.form(DestinationRequest.class).bindFromRequest(request);
+        Form<CreateDestReq> updateDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
 
         User user = request.attrs().get(Attrs.USER);
 
@@ -80,34 +97,21 @@ public class DestinationController extends Controller {
             return CompletableFuture.completedFuture(badRequest());
         }
 
-        DestinationRequest req = updateDestinationForm.get();
+        CreateDestReq req = updateDestinationForm.get();
 
-        return destinationRepository.update(req,user.id).thenApplyAsync(destId -> ok());
-    }
+        return destinationRepository.getOneDestination(id).thenComposeAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return CompletableFuture.completedFuture(notFound("Destination not found"));
+            }
+            // Forbidden Check
+            if (destination.user.id != user.id) {
+                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+            }
+            return destinationRepository.update(req, id).thenApplyAsync(destId -> ok("Destination updated"));
 
-    @Authorization.RequireAuth
-    public CompletionStage<Result> deleteDestination(Http.Request request, Long id) {
-
-        return destinationRepository.delete(id).thenApplyAsync((destId) -> ok());
-    }
-
-    // Forms
-
-    public static class DestinationRequest {
-        @Constraints.Required
-        public String name;
-        @Constraints.Required
-        public Double latitude;
-        @Constraints.Required
-        public Double longitude;
-        @Constraints.Required
-        public String type;
-        @Constraints.Required
-        public String district;
-        @Constraints.Required
-        public String country;
+        });
 
     }
-
 
 }

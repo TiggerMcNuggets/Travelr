@@ -127,15 +127,9 @@ public class UserController extends Controller {
         return userRepository.getUser(id).thenComposeAsync(newUser -> {
             // Not Found Check
             if (newUser == null) {
-                return null;
-            } else {
-                return userRepository.updateUser(req, id);
+                return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
-        }).thenApplyAsync(uid -> {
-            if (uid == null) {
-                return notFound("Not Found");
-            }
-            return ok("Traveller Updated");
+            return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
         });
     }
 

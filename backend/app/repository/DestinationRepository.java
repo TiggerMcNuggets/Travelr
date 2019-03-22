@@ -1,6 +1,8 @@
 package repository;
 
 import controllers.DestinationController;
+import controllers.dto.Destination.CreateDestReq;
+import finders.DestinationFinder;
 import models.Destination;
 import models.User;
 
@@ -13,21 +15,22 @@ public class DestinationRepository {
 
     private DatabaseExecutionContext context;
 
+    private DestinationFinder destinationFinder = new DestinationFinder();
+
     @Inject
     public DestinationRepository(DatabaseExecutionContext context) {
-
         this.context = context;
     }
 
     public CompletableFuture<List<Destination>> getUserDestinations(Long userId) {
-        return supplyAsync(() -> Destination.find.getUserDestinations(userId), context);
+        return supplyAsync(() -> destinationFinder.getUserDestinations(userId), context);
     }
 
-    public CompletableFuture<Destination> getById(Long destinationId) {
-        return supplyAsync(() -> Destination.find.byId(destinationId));
+    public CompletableFuture<Destination> getOneDestination(Long id) {
+        return supplyAsync(() -> destinationFinder.findById(id), context);
     }
 
-    public CompletableFuture<Long> add(DestinationController.DestinationRequest request, Long userId) {
+    public CompletableFuture<Long> add(CreateDestReq request, Long userId) {
         return supplyAsync(() -> {
             Destination destination = new Destination(request, User.find.byId(userId));
             destination.insert();
@@ -35,9 +38,9 @@ public class DestinationRepository {
         });
     }
 
-    public CompletableFuture<Long> update(DestinationController.DestinationRequest request, Long destinationId) {
+    public CompletableFuture<Long> update(CreateDestReq request, Long destinationId) {
         return supplyAsync(() -> {
-            Destination destination = Destination.find.byId(destinationId);
+            Destination destination = destinationFinder.byId(destinationId);
             destination.name = request.name;
             destination.latitude = request.latitude;
             destination.longitude = request.longitude;
@@ -46,13 +49,6 @@ public class DestinationRepository {
             destination.save();
 
             return destination.id;
-        });
-    }
-
-    public CompletableFuture<Long> delete(Long id) {
-        return supplyAsync(() -> {
-            Destination.find.byId(id).delete();
-            return id;
         });
     }
 }

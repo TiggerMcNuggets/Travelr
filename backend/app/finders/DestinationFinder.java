@@ -17,16 +17,15 @@ public class DestinationFinder extends Finder<Long, Destination> {
         super(Destination.class);
     }
 
-
-//    public List<Destination> getPublicDestinations() {
-//        return query().where().eq("isPublic", true).findList();
-//    }
-
-    public List<Destination> getUserDestinations(long userId) {
+    public List<Destination> getUserDestinations(Long userId) {
         return query().where().eq("user.id", userId).findList();
     }
 
-    public List<Destination> getAvaliableDestinations(long userId) {
+    public Destination findById(Long id) {
+        return query().where().eq("id", id).findOneOrEmpty().orElse(null);
+    }
+
+    public List<Destination> getAvaliableDestinations(Long userId) {
         return query().where().or(Expr.eq("isPublic", true), Expr.eq("user.id", userId)).findList();
     }
 
