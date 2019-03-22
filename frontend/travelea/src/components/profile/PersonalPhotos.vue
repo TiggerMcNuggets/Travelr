@@ -34,12 +34,14 @@
 
      <v-dialog
                 v-model="dialog"
-                width="700"
+                width="500"
+              
               >
 
                 <v-card>
                     <v-img
                     :src="clickedImage"
+                    class="dialogue-image"
                   ></v-img>
 
                   <v-card-title primary-title>
@@ -71,6 +73,14 @@
 
 
 <style>
+/*.v-dialog__content {
+  width: auto !important;
+}
+
+.dialogue-image {
+  height: auto;
+}*/
+
 .image-container {
   width: 24%;
   height: 270px;
