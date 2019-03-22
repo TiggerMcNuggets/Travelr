@@ -41,7 +41,7 @@ public class DestinationController extends Controller {
 
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> listUserDestinations(Http.Request request) {
+    public CompletionStage<Result> getUserDestinations(Http.Request request) {
         User user = request.attrs().get(Attrs.USER);
         return destinationRepository
                 .getUserDestinations(user.id)
@@ -55,8 +55,8 @@ public class DestinationController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
 
-        if(createDestinationForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest());
+        if (createDestinationForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 
         CreateDestReq req = createDestinationForm.get();

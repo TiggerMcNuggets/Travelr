@@ -1,5 +1,6 @@
 package models;
 
+import controllers.dto.Trip.CreateTripReq;
 import finders.TripFinder;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
@@ -32,5 +33,6 @@ public class Trip extends BaseModel {
         this.name = name;
         this.user = user;
     }
+
 }
 

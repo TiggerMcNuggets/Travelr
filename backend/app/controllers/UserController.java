@@ -46,7 +46,7 @@ public class UserController extends Controller {
     }
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> getAllUsers(Http.Request request) {
+    public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
 
             GetUsersRes response = new GetUsersRes(users);
@@ -57,7 +57,7 @@ public class UserController extends Controller {
         });
     }
 
-    public CompletionStage<Result> addUser(Http.Request request) {
+    public CompletionStage<Result> createUser(Http.Request request) {
         // Turns the post data into a form object
         Form<CreateUserReq> userRequestForm = formFactory.form(CreateUserReq.class).bindFromRequest(request);
 

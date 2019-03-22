@@ -10,9 +10,7 @@ import java.util.Optional;
 
 public class DestinationFinder extends Finder<Long, Destination> {
 
-    /**
-     * Construct using the default EbeanServer.
-     */
+
     public DestinationFinder() {
         super(Destination.class);
     }

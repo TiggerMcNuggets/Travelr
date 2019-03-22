@@ -1,6 +1,3 @@
-
-# ################## REFACTORED API BELOW ######################
-
 GET         /                               controllers.UserController.index()
 
 # Populate static data
@@ -17,16 +14,17 @@ GET         /nationalities                  controllers.NationalityController.ge
 GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Users
-GET         /users                          controllers.UserController.getAllUsers(request: Request)
-POST        /users                          controllers.UserController.addUser(request: Request)
+GET         /users                          controllers.UserController.getUsers(request: Request)
+POST        /users                          controllers.UserController.createUser(request: Request)
 GET         /users/:id                      controllers.UserController.getUser(request: Request, id: Long)
 PUT         /users/:id                      controllers.UserController.updateUser(request: Request, id: Long)
 
 # Destinations
-GET         /destinations                   controllers.DestinationController.listUserDestinations(request: Request)
+GET         /destinations                   controllers.DestinationController.getUserDestinations(request: Request)
 POST        /destinations                   controllers.DestinationController.createDestination(request: Request)
 GET         /destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
 PUT         /destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
 # Trips
-GET         /trips                          controllers.TripController.listUserTrips(request: Request)
+GET         /trips                          controllers.TripController.getUserTrips(request: Request)
+POST        /trips                          controllers.TripController.createTrip(request: Request)
