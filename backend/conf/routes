@@ -1,60 +1,32 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
+GET         /                               controllers.UserController.index()
 
-# Home page
-GET         /                            controllers.DestinationController.index
+# Populate static data
+POST        /populate                       controllers.PopulateController.populateDatabase()
 
-#trip destination routes, subroute of trips
-GET         /trips/destination          controllers.TripDestinationsController.list(request: Request)
-POST        /trips/destination          controllers.TripDestinationsController.add(request: Request)
-DELETE      /trips/destination/:id/:orderNo          controllers.TripDestinationsController.delete(id: Long, orderNo: Int)
-PUT         /trips/destination/:id/swap          controllers.TripDestinationsController.swap(request: Request, id: Long)
-PUT         /trips/destination/:id/:orderNo      controllers.TripDestinationsController.update(request: Request, id: Long, orderNo: Int)
-
-# nationalities routes
-GET         /travellers/:id/nationalities          controllers.NationalityController.list(request: Request, id: Long)
-POST        /travellers/:id/nationalities          controllers.NationalityController.add(request: Request, id: Long)
-DELETE      /travellers/:id/nationalities          controllers.NationalityController.delete(request: Request, id: Long)
-
-# travellers routes
-
-#traveller type routes
-GET         /travellers/:id/travellers_type        controllers.TravellerTypeController.list(request: Request, id:Long)
-POST        /travellers/:id/travellers_type        controllers.TravellerTypeController.add(request: Request, id:Long)
-DELETE      /travellers/:id/travellers_type        controllers.TravellerTypeController.delete(request: Request, id:Long)
-
-# usage --> http://localhost:9000/travellers?gender=f&name=Lorenzo&minAge=10&maxAge=20&nationality=Italy&nationality=Mexico&t_type=Thrillseeker&t_type=quiete
-GET         /travellers                     controllers.TravellerController.list(request: Request, fname: String ?= null, lname: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,t_type: java.util.List[String] ?= null, orderBy: String ?= null)
-GET         /travellers/:id                 controllers.TravellerController.showProfile(request: Request, id: Long)
-
-
-POST        /travellers                            controllers.TravellerController.add(request: Request)
-PUT         /travellers/:id                 controllers.TravellerController.update(request: Request, id: Long)
-DELETE      /travellers/:id                 controllers.TravellerController.delete(request: Request, id: Long)
-
-
-# destinations routes
-POST        /destinations                   controllers.DestinationController.add(request: Request)
-DELETE      /destinations/:id               controllers.DestinationController.delete(request: Request, id: Long)
-PUT         /destinations/:id               controllers.DestinationController.update(request: Request, id: Long)
-GET        /destinations                   controllers.DestinationController.list(request: Request)
-GET        /destinations/:id                   controllers.DestinationController.getOne(request: Request, id: Long)
-
-#trip type routes
-POST        /trips                      controllers.TripController.add(request: Request)
-PUT         /trips/:id                  controllers.TripController.update(request: Request, id: Long)
-DELETE      /trips/:id                  controllers.TripController.delete(id: Long)
-GET         /trips                      controllers.TripController.list(request: Request)
-
-# ################## REFACTORED API BELOW ######################
-# AUTH ROUTES
+# Auth
 POST        /login                          controllers.SecurityController.login(request: Request)
 POST        /logout                         controllers.SecurityController.logout(request: Request)
 
-# User
+# Nationalities
+GET         /nationalities                  controllers.NationalityController.getNationalities()
 
-GET         /users                          controllers.UserController.getAllUsers(request: Request)
+#Traveller Types
+GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
+# Users
+GET         /travellers                     controllers.UserController.getUsers(request: Request)
+POST        /travellers                     controllers.UserController.createUser(request: Request)
+GET         /travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
+PUT         /travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
 
-POST        /users                          controllers.UserController.addUser(request: Request)
+# Destinations
+GET         /destinations                   controllers.DestinationController.getUserDestinations(request: Request)
+POST        /destinations                   controllers.DestinationController.createDestination(request: Request)
+GET         /destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
+PUT         /destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
+
+# Trips
+GET         /trips                          controllers.TripController.getUserTrips(request: Request)
+POST        /trips                          controllers.TripController.createTrip(request: Request)
+GET         /trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
+PUT         /trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
