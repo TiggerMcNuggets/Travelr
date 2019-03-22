@@ -52,6 +52,19 @@ public class TripRepository {
         return supplyAsync(() -> tripFinder.findOne(id), context);
     }
 
+    public CompletableFuture<Long> updateTrip(CreateTripReq request, Trip trip) {
+        return supplyAsync(() -> {
+            // Insert destinations
+            for(TripDestinationReq destinationReq: request.destinations) {
+                Destination destination = destinationFinder.findById(destinationReq.id);
+                TripDestination tripDestination = new TripDestination(destinationReq.arrivalDate, destinationReq.departureDate, destinationReq.ordinal, trip, destination);
+                tripDestination.insert();
+            }
+            trip.save();
+            return trip.id;
+        }, context);
+    }
+
 
 
 }

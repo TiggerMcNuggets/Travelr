@@ -26,7 +26,7 @@ public class GetTripRes {
         return name;
     }
 
-    public List<TripDestinationRes> getTripDestinationRes() {
+    public List<TripDestinationRes> getDestinations() {
         return destinations;
     }
 

@@ -29,3 +29,4 @@ PUT         /destinations/:id               controllers.DestinationController.up
 GET         /trips                          controllers.TripController.getUserTrips(request: Request)
 POST        /trips                          controllers.TripController.createTrip(request: Request)
 GET         /trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
+PUT         /trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)

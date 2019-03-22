@@ -85,6 +85,7 @@ public class TripController extends Controller {
             if (trip == null) {
                 return notFound("Destination not found");
             }
+
             // Forbidden Check
             if (trip.user.id != user.id) {
                 return forbidden("Forbidden: Access Denied");
@@ -98,7 +99,44 @@ public class TripController extends Controller {
 
             return ok(jsonResponse);
         });
-
     }
 
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserTrip(Http.Request request, Long id) {
+        Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
+        User user = request.attrs().get(Attrs.USER);
+
+        // Bad Request check
+        if (createTripForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateTripReq req = createTripForm.get();
+
+        // Less than two destinations check
+        if (req.hasLessThanTwoDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+        }
+
+        // Two same destinations in a row check
+        if (req.hasSameConsecutiveDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+        }
+
+        return tripRepository.getTrip(id).thenComposeAsync(trip -> {
+            // Not Found Check
+            if (trip == null) {
+                return CompletableFuture.completedFuture(notFound("Trip not found"));
+            }
+
+            // Forbidden Check
+            if (trip.user.id != user.id) {
+                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+            }
+
+            trip.name = req.name;
+            trip.destinations.clear();
+            return tripRepository.updateTrip(req, trip).thenApplyAsync(tripId -> ok("Trip updated"));
+        });
+    }
 }
