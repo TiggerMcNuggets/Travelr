@@ -36,7 +36,12 @@ export const getAllUsers = async(search_params = false) => {
             url = url + 'orderBy=' + search_params.orderBy + '&'
         }
     }
-    const result = await fetch(url)
+    const result = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Authorization": "5e47683d-264f-4a96-a380-290b9e2c4c7c" //NEED TO FIGURE OUT HOW TO GET THIS PROPERLY
+            }
+        })
         .then(
             response => {
                 if (response.ok) {
@@ -51,9 +56,9 @@ export const getAllUsers = async(search_params = false) => {
             console.log(jsonResponse)
             return jsonResponse
         });
-
+    return result;
     //Go through each user from database and correct fields
-    for (let i = 0; i < result.length; i++) {
+    /*for (let i = 0; i < result.length; i++) {
         let correct_date = new Date(result[i]['dob']).toLocaleDateString();
         let gender = 'Female';
         if (result[i]['gender'] === 'm') {
@@ -110,7 +115,7 @@ export const getAllUsers = async(search_params = false) => {
     }
     console.log('##############################################################################');
     console.log(return_result);
-    return return_result
+    return return_result*/
 };
 
 /**
@@ -120,7 +125,12 @@ export const getAllNationalities = async() => {
 
     let url = "http://localhost:9000/nationalities";
 
-    /*const result = await fetch(url)
+    const result = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Authorization": "5e47683d-264f-4a96-a380-290b9e2c4c7c" //NEED TO FIGURE OUT HOW TO GET THIS PROPERLY
+            }
+        })
         .then(
             response => {
                 if (response.ok) {
@@ -142,8 +152,8 @@ export const getAllNationalities = async() => {
         nationalities.push(result[i]['name']);
     }
     nationalities.sort();
-    return nationalities;*/
-    return [3, 2, 1]
+    return nationalities;
+    //return [3, 2, 1]
 };
 
 /**
@@ -151,7 +161,12 @@ export const getAllNationalities = async() => {
  */
 export const getAllTravellerTypes = async() => {
     let url = "http://localhost:9000/traveller-types";
-    /*const result = await fetch(url)
+    const result = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-Authorization": "5e47683d-264f-4a96-a380-290b9e2c4c7c" //NEED TO FIGURE OUT HOW TO GET THIS PROPERLY
+            }
+        })
         .then(
             response => {
                 if (response.ok) {
@@ -172,6 +187,6 @@ export const getAllTravellerTypes = async() => {
         travellerTypes.push(result[i]['name']);
     }
     travellerTypes.sort();
-    return travellerTypes;*/
-    return [1, 2, 3, 4];
+    return travellerTypes;
+    //return[1, 2, 3, 4];
 };

@@ -28,7 +28,7 @@
                         :rules="ageRules"
                         ></v-text-field>
                     </v-flex>
-                    <v-flex xs12 sm6 md6>
+                    <v-flex xs12 sm12 md12>
                         <v-select
                         v-model="search_params.gender"
                         :items="['Male', 'Female']"
@@ -37,7 +37,7 @@
                         label="Gender"
                         ></v-select>
                     </v-flex>
-                    <v-flex xs12 sm6 md6>
+                    <v-flex xs12 sm12 md12>
                         <v-select
                         v-model="search_params.nationality"
                         :items="nationalities"
