@@ -1,44 +1,20 @@
 package models;
 
-import io.ebean.annotation.NotNull;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.validation.Constraint;
-
+import io.ebean.Finder;
 import play.data.validation.Constraints;
-/**
- * traveller type model
- */
+import finders.TravellerTypeFinder;
+import javax.persistence.*;
+
 @Entity
 public class TravellerType extends BaseModel {
 
+    public static final Finder<Long, TravellerType> find = new Finder<>(TravellerType.class);
 
-    @NotNull
     @Constraints.Required
-    public String tType;
+    public String name;
 
-    @ManyToOne
-    public Traveller traveller;
-
-    public TravellerType(@Constraints.Required String tType, Traveller traveller) {
-        this.tType = tType;
-        this.traveller = traveller;
-    }
-
-    public String getType() {
-        return tType;
-    }
-
-    public void setType(String type) {
-        this.tType = type;
-    }
-
-    public Traveller getTraveller() {
-        return traveller;
-    }
-
-    public void setTraveller(Traveller traveller) {
-        this.traveller = traveller;
+    public TravellerType(String name) {
+        this.name = name;
     }
 }

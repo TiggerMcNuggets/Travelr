@@ -7,14 +7,8 @@ import io.ebean.ExpressionList;
 import io.ebean.Transaction;
 import models.Nationality;
 import models.PersonalPhoto;
-import models.Traveller;
+import models.User;
 import play.db.ebean.EbeanConfig;
-import play.db.ebean.Transactional;
-import play.mvc.Http;
-import utils.Moment;
-import utils.comparators.TravellerComparatorForNationalitites;
-import utils.comparators.TravellerComparatorForType;
-
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +35,7 @@ public class PersonalPhotoRepository {
      */
     public CompletionStage<Long> add(Long id, String imageFileName) {
         return supplyAsync(() -> {
-            Traveller traveller = Traveller.find.byId(id);
+            User traveller = User.find.findById(id);
             System.out.println(traveller);
             if (traveller == null) return null; // bad user
             PersonalPhoto photo = new PersonalPhoto(traveller, imageFileName);

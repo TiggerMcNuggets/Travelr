@@ -1,111 +1,164 @@
 package controllers;
 
+
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import controllers.actions.Attrs;
+import controllers.actions.Authorization;
+import controllers.dto.Trip.CreateTripReq;
+import controllers.dto.Trip.CreateTripRes;
+import controllers.dto.Trip.GetTripRes;
+import controllers.dto.Trip.TripDestinationRes;
 import io.ebean.Ebean;
 
+import models.User;
+import play.data.Form;
 import play.data.FormFactory;
-import play.i18n.MessagesApi;
-import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import repository.TripDestinationsRepository;
 import repository.TripRepository;
 
-import javax.inject.Inject;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 
 public class TripController extends Controller {
 
-    private final FormFactory formFactory;
-    private final HttpExecutionContext httpExecutionContext;
-    private final MessagesApi messagesApi;
+    @Inject
+    FormFactory formFactory;
+
     private final TripRepository tripRepository;
-    private final TripDestinationsRepository tripDestinationsRepository;
 
     @Inject
-    public TripController(FormFactory formFactory,
-                          TripRepository tripRepository,
-                          HttpExecutionContext httpExecutionContext,
-                          MessagesApi messagesApi,
-                          TripDestinationsRepository tripDestinationsRepository) {
+
+    public TripController(TripRepository tripRepository) {
         this.tripRepository = tripRepository;
-        this.formFactory = formFactory;
-        this.httpExecutionContext = httpExecutionContext;
-        this.messagesApi = messagesApi;
-        this.tripDestinationsRepository = tripDestinationsRepository;
     }
 
     /**
-     * Allows a user to display all of the trips
-     *
+     * Gets a list of trips that belongs to a user
      * @param request the http request
-     * @return a 200 http response and trips object if successful, 401 in case user is not authorised
+     * @return 200 with list of trips if all ok
      */
-    public CompletionStage<Result> list(Http.Request request) {
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return tripRepository.list().thenApplyAsync((trips) -> {
-                return ok(Ebean.json().toJson(trips));
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTrips(Http.Request request) {
+        User user = request.attrs().get(Attrs.USER);
+        return tripRepository.getTrips(user.id).thenApplyAsync(users -> ok(Ebean.json().toJson(users)));
     }
 
     /**
-     * takes an http request to insert a trip into the database
-     * @return a 200 http response if successful, 400 otherwise for bad request
+     * Creates a trip for the user
+     * @param request the http request
+     * @return 201 with json object of new trip id in it if all ok
      */
-    public CompletionStage<Result> add(Http.Request request) {
-        JsonNode data = request.body().asJson();
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return tripRepository.add(data).thenApplyAsync((trip) -> {
-                if (trip == null) {
-                    return badRequest("Bad Request - Failed to add the trip");
-                } else {
-                    for (JsonNode destination : data.at("/destinations")) {
-                        tripDestinationsRepository.addGivenTripId(destination, trip.id);
-                    }
-                }
-                return ok("Trip: " + trip + " added");
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
-    }
+    @Authorization.RequireAuth
+    public CompletionStage<Result> createTrip(Http.Request request) {
+        Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
+        User user = request.attrs().get(Attrs.USER);
 
-    /**
-     *takes an http request to update a trip from the database
-     * @param request http request
-     * @param id trip id
-     * @return a 200 http response if successful, 400 otherwise for bad request
-     */
-    public CompletionStage<Result> update(Http.Request request, Long id) {
-        JsonNode data = request.body().asJson();
-        return tripRepository.update(data, id).thenApplyAsync((updateSuccess) -> {
-            if (updateSuccess) {
-                return ok("Trip successfully updated");
-            } else {
-                return badRequest("Trip update unsuccessful");
-            }
+        // Bad Request check
+        if (createTripForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateTripReq req = createTripForm.get();
+
+        // Less than two destinations check
+        if (req.hasLessThanTwoDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+        }
+
+        // Two same destinations in a row check
+        if (req.hasSameConsecutiveDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+        }
+
+        return tripRepository.createTrip(req, user).thenApplyAsync(tripId -> {
+
+            CreateTripRes response = new CreateTripRes(tripId);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+
+            return created(jsonResponse);
         });
     }
 
     /**
-     *Takes an http request to delete a trip from the database
-     * @param id trip id
-     * @return a 200 http response if successful, 400 otherwise for bad request
+     * Gets a single trip that belongs to a user and matches the given id
+     * @param request the http request
+     * @param id the trip id
+     * @return 200 with trip if all ok
      */
-    public CompletionStage<Result> delete(Long id) {
-        return tripRepository.delete(id).thenApplyAsync((deleteSuccess) -> {
-            if (deleteSuccess) {
-                return ok("Trip successfully deleted");
-            } else {
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTrip(Http.Request request, Long id) {
+        User user = request.attrs().get(Attrs.USER);
+        return tripRepository.getTrip(id).thenApplyAsync(trip -> {
+            // Not Found Check
+            if (trip == null) {
                 return notFound("Trip not found");
             }
+
+            // Forbidden Check
+            if (trip.user.id != user.id) {
+                return forbidden("Forbidden: Access Denied");
+            }
+
+            List<TripDestinationRes> destinations = new ArrayList<TripDestinationRes>();
+
+            GetTripRes response = new GetTripRes(trip);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+
+            return ok(jsonResponse);
+        });
+    }
+
+    /**
+     * Updates a trip that belongs to a user with the given id
+     * @param request the http request
+     * @param id the trip id
+     * @return 200 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserTrip(Http.Request request, Long id) {
+        Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
+        User user = request.attrs().get(Attrs.USER);
+
+        // Bad Request check
+        if (createTripForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateTripReq req = createTripForm.get();
+
+        // Less than two destinations check
+        if (req.hasLessThanTwoDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+        }
+
+        // Two same destinations in a row check
+        if (req.hasSameConsecutiveDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+        }
+
+        return tripRepository.getTrip(id).thenComposeAsync(trip -> {
+            // Not Found Check
+            if (trip == null) {
+                return CompletableFuture.completedFuture(notFound("Trip not found"));
+            }
+
+            // Forbidden Check
+            if (trip.user.id != user.id) {
+                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+            }
+
+            trip.name = req.name;
+            trip.destinations.clear();
+            return tripRepository.updateTrip(req, trip).thenApplyAsync(tripId -> ok("Trip updated"));
         });
     }
 }

@@ -1,136 +1,99 @@
 package repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import io.ebean.Ebean;
-import io.ebean.EbeanServer;
-import io.ebean.PagedList;
-import io.ebean.Transaction;
-
+import com.google.inject.Inject;
+import controllers.dto.Trip.CreateTripReq;
+import controllers.dto.Trip.CreateTripRes;
+import controllers.dto.Trip.TripDestinationReq;
+import finders.DestinationFinder;
+import finders.TripFinder;
 import models.Destination;
-import models.TripDestination;
 import models.Trip;
-import models.Traveller;
+import models.TripDestination;
+import models.User;
 
-import play.db.ebean.EbeanConfig;
-import play.mvc.Http;
-import play.mvc.Results;
-import play.db.ebean.Transactional;
-
-import javax.inject.Inject;
-import javax.xml.transform.Result;
-import java.util.*;
-import java.util.concurrent.CompletionStage;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-/**
- * A repository that executes database operations in a different
- * execution context.
- */
 public class TripRepository {
 
-    private final EbeanServer ebeanServer;
-    private final DatabaseExecutionContext executionContext;
-    private final TripDestinationsRepository tripDestinationsRepository;
+    private DatabaseExecutionContext context;
+    private TripFinder tripFinder = new TripFinder();
+    private DestinationFinder destinationFinder = new DestinationFinder();
 
     @Inject
-    public TripRepository(EbeanConfig ebeanConfig,
-                          DatabaseExecutionContext executionContext,
-                          TripDestinationsRepository tripDestinationsRepository) {
-        this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
-        this.executionContext = executionContext;
-        this.tripDestinationsRepository = tripDestinationsRepository;
+    public TripRepository(DatabaseExecutionContext context) {
+        this.context = context;
     }
 
     /**
-     * Converts a Trip in json data format to a Trip object
-     * @param data json file containing trip parameters in json format
-     * @return a Trip object
+     * Inserts the destinations for a trip from a list of destinations DTO
+     * @param trip the trip object
+     * @param destinations the list of destinations
      */
-    public Trip tripParser(JsonNode data) {
-        System.out.println(data.asText());
-        String name = data.at("/name").asText();
-        long travellerID = data.at("/travellerID").asLong();
-        Traveller traveller = ebeanServer.find(Traveller.class).where().eq("id", travellerID).findOne();
-        Trip trip = new Trip(name, traveller);
-        return trip;
+    private void insertDestinations(Trip trip, List<TripDestinationReq> destinations) {
+        for (TripDestinationReq destinationReq : destinations) {
+            Destination destination = destinationFinder.findById(destinationReq.id);
+            TripDestination tripDestination = new TripDestination(destinationReq.arrivalDate, destinationReq.departureDate, destinationReq.ordinal, trip, destination);
+            tripDestination.insert();
+        }
     }
 
     /**
-     * Converts a Trip in json data format to a Trip object
-     * @param data json file containing trip parameters in json format
-     * @return a Trip object
+     * Gets all trips for a given user
+     * @param userId the user id
+     * @return completable future of list of trips
      */
-    public Trip updateTrip(JsonNode data, Trip trip) {
-        String name = data.at("/name").asText();
-        trip.setName(name);
-        return trip;
+
+    public CompletableFuture<List<Trip>> getTrips(Long userId) {
+        return supplyAsync(() -> tripFinder.findAll(userId), context);
     }
 
 
     /**
-     * inserts a Trip object into the database
-     * @param data the data from the http request
-     * @return the Trip object that was inserted
+     * Creates a trip for a user from user DTO
+     * @param request the request DTO
+     * @param user the user object
+     * @return completable future of the new trip id
      */
-    public CompletionStage<Trip> add(JsonNode data) {
+    public CompletableFuture<Long> createTrip(CreateTripReq request, User user) {
         return supplyAsync(() -> {
-            Trip trip = tripParser(data);
+            Trip trip = new Trip(request.name, user);
+            trip.insert();
+
+            this.insertDestinations(trip, request.destinations);
             trip.save();
-            return trip;
-        }, executionContext);
-    }
 
-
-    /**
-     * queries the database for a list of all Trip objects in the database
-     * @return a list of Trip objects
-     */
-    public CompletionStage<List<Trip>> list() {
-        return supplyAsync(() -> ebeanServer.find(Trip.class).findList(), executionContext);
+            return trip.id;
+        }, context);
     }
 
     /**
-     *A function to update a trip's name from the database
-     * @param data the data from the http request
+     * Gets a trip for a user by trip id
      * @param id the trip id
-     * @return a true or false boolean signifying update success/failure
+     * @return completable future of trip
      */
-    public CompletionStage<Boolean> update(JsonNode data, Long id) {
-        return supplyAsync(() -> {
-            try (Transaction transaction = ebeanServer.beginTransaction()) {
-                Trip trip = ebeanServer.find(Trip.class).where().eq("id", id).findOne();
-                trip = updateTrip(data, trip);
-                if (trip == null) {
-                    transaction.rollback();
-                    return false;
-                } else {
-                    trip.save();
-                }
-                transaction.commit();
-                return true;
-            }
-        });
+    public CompletableFuture<Trip> getTrip(Long id) {
+        return supplyAsync(() -> tripFinder.findOne(id), context);
     }
 
     /**
-     *A function to delete a trip from the database
-     * @param id the trip id
-     * @return a true or false boolean signifying deletion success/failure
+     * Updates trip details for a given user
+     * @param request the request DTO
+     * @param trip the trip object
+     * @return completable future of the trip id
      */
-    public CompletionStage<Boolean> delete(Long id) {
+
+    public CompletableFuture<Long> updateTrip(CreateTripReq request, Trip trip) {
         return supplyAsync(() -> {
-            try (Transaction transaction = ebeanServer.beginTransaction()) {
-                Trip trip = ebeanServer.find(Trip.class).where().eq("id", id).findOne();
-                if (trip == null) {
-                    transaction.rollback();
-                    return false;
-                }
-                trip.delete();
-                transaction.commit();
-                return true;
-            }
-        });
+            this.insertDestinations(trip, request.destinations);
+            trip.save();
+
+            return trip.id;
+        }, context);
     }
+
+
+
 }
