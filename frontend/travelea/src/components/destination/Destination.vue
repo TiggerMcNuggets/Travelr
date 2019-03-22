@@ -78,14 +78,6 @@
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
-.outer-container {
-  text-align: center;
-}
-
-.destination-container {
-  display: flex;
-}
-
 .horizontal-details {
   padding-top: 15px;
   background-color: #05386b;
@@ -152,12 +144,8 @@ export default {
       this.showCreateDestination = !this.showCreateDestination;
     },
     deleteDestination: function(id) {
-      for (var i = 0; i < this.destinations.length; i++) {
-        if (this.destinations[i].id === id) {
-          this.destinations.splice(i, 1);
-        }
-      }
       deleteDestination(id).then(result => {
+        store.commit("setDestinations");
         console.log(result);
       });
     }

@@ -10,22 +10,21 @@ import controllers.dto.Trip.CreateTripReq;
 import controllers.dto.Trip.CreateTripRes;
 import controllers.dto.Trip.GetTripRes;
 import controllers.dto.Trip.TripDestinationRes;
-import controllers.dto.User.GetUserRes;
 import io.ebean.Ebean;
+
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
-import play.data.validation.Constraints;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.TripRepository;
 
-import javax.annotation.processing.Completion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
 
 public class TripController extends Controller {
 
@@ -35,6 +34,7 @@ public class TripController extends Controller {
     private final TripRepository tripRepository;
 
     @Inject
+
     public TripController(TripRepository tripRepository) {
         this.tripRepository = tripRepository;
     }

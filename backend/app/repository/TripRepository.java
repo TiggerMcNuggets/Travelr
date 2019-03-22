@@ -33,7 +33,7 @@ public class TripRepository {
      * @param destinations the list of destinations
      */
     private void insertDestinations(Trip trip, List<TripDestinationReq> destinations) {
-        for(TripDestinationReq destinationReq: destinations) {
+        for (TripDestinationReq destinationReq : destinations) {
             Destination destination = destinationFinder.findById(destinationReq.id);
             TripDestination tripDestination = new TripDestination(destinationReq.arrivalDate, destinationReq.departureDate, destinationReq.ordinal, trip, destination);
             tripDestination.insert();
@@ -45,9 +45,11 @@ public class TripRepository {
      * @param userId the user id
      * @return completable future of list of trips
      */
+
     public CompletableFuture<List<Trip>> getTrips(Long userId) {
         return supplyAsync(() -> tripFinder.findAll(userId), context);
     }
+
 
     /**
      * Creates a trip for a user from user DTO
@@ -82,6 +84,7 @@ public class TripRepository {
      * @param trip the trip object
      * @return completable future of the trip id
      */
+
     public CompletableFuture<Long> updateTrip(CreateTripReq request, Trip trip) {
         return supplyAsync(() -> {
             this.insertDestinations(trip, request.destinations);

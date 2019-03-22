@@ -70,6 +70,7 @@ public class User extends BaseModel {
     @ManyToMany
     public List<TravellerType> travellerTypes;
 
+
     @OneToMany
     public List<Destination> destinations;
 

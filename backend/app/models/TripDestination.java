@@ -6,6 +6,7 @@ import models.Trip;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class TripDestination extends BaseModel {
     @ManyToOne
     public Trip trip;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Destination destination ;
 
     public int arrivalDate;

@@ -3,7 +3,6 @@ GET         /                               controllers.UserController.index()
 # Populate static data
 POST        /populate                       controllers.PopulateController.populateDatabase()
 
-# Auth
 POST        /login                          controllers.SecurityController.login(request: Request)
 POST        /logout                         controllers.SecurityController.logout(request: Request)
 
@@ -18,6 +17,11 @@ GET         /travellers                     controllers.UserController.getUsers(
 POST        /travellers                     controllers.UserController.createUser(request: Request)
 GET         /travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
+#
+## Photos
+#GET         /travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
+#GET         /travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
+#POST        /travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
 
 # Destinations
 GET         /destinations                   controllers.DestinationController.getUserDestinations(request: Request)
