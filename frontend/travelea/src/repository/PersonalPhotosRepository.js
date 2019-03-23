@@ -6,7 +6,10 @@ export const storeImage = async (id, data) => {
     
     const result = await fetch(url, {
       method: 'POST',
-      body: data
+      body: data,
+      headers:{
+        'X-Authorization': "81df8afd-7623-4938-9d07-e72d651211c8"
+      }
     }).then(function (response) {
         return response
     });
@@ -19,7 +22,9 @@ export const getImages = async (id) => {
 
     let url = "http://localhost:9000/travellers/" + id + "/photo";
     
-    const result = await fetch(url)
+    const result = await fetch(url, {headers:{
+        'X-Authorization': "81df8afd-7623-4938-9d07-e72d651211c8"
+      }})
         .then(
             response => {
                 console.log(response);
