@@ -10,8 +10,8 @@
             <v-flex xs9 ml-5>
                 <v-card color="blue">
                     <v-card-text>
-                        Data
-                    </v-card-text>
+                            
+                    </v-card-text>                
                 </v-card>
             </v-flex>
         </v-layout>
@@ -25,14 +25,15 @@
 
 <script>
 
-import {RepositoryFactory} from "../../repository/RepositoryFactory"
+// import {RepositoryFactory} from "../../repository/RepositoryFactory"
 import profileNav from "./profileNav"
-import Trips from '../trips/Trips.vue';
-let profileRepository = RepositoryFactory.get("profile")
+import Trips from  "../trips/Trips"
+// let profileRepository = RepositoryFactory.get("profile")
+
 
 export default {
     data () {
-        return {     
+        return {   
         }
     },
     components: {
@@ -40,7 +41,8 @@ export default {
         Trips
     },
     created: function() {  
-        profileRepository      
+        this.var = 5
+
     }
 }
 </script>

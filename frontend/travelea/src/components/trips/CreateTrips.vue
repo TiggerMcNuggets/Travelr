@@ -113,7 +113,9 @@
 
 <script>
     import { store } from "../../store/index";
-    import { createTrip } from '../../repository/TripRepository';
+    import moment from "moment"
+    import  { RepositoryFactory } from "../../repository/RepositoryFactory"
+    let tripRepository = RepositoryFactory.get("trip");
     import {rules, noSameDestinationNameConsecutiveRule, arrivalBeforeDepartureAndDestinationsOneAfterTheOther} from '../form_rules';
 
     export default {
@@ -165,24 +167,23 @@
                 newDestinations.push(template);
                 this.trip.destinations = newDestinations;
             },
-            createTrip: async function() {
+            createTrip: function() {
                 if (this.$refs.form.validate()) {
                     // FIXME: traveller id needs to be retrieved from STORE when the store will have it
                     // FIXME: for now traveller id is hardcoded, which means that for testing we need to create a traveller through postman first
-                    let trip = {travellerID: 1, name: this.trip.title, destinations: [] };
+                    let trip = {name: this.trip.title, destinations: [] };
                     this.trip.destinations.forEach((destination, index) => {
                         const destById = this.destinations.find(dest => destination.title === dest.name);
-                        trip.destinations.push({destId: destById.id, ordinal: index, arrivalDate: destination.arrivalDate, departureDate: destination.departureDate});
+                        trip.destinations.push({id: destById.id, ordinal: index, arrivalDate: moment(destination.arrivalDate).unix, departureDate: moment(destination.departureDate).unix});
                     });
                     console.log(trip);
                     // TODO: wait for auth frontend
-                    const response = await createTrip(trip);
-                    this.toggleShowCreateTrip();
-                    store.commit("setTrips", 0);
-                    console.log(response);
-                    // if (response.status) {
-                    //
-                    // }
+                    tripRepository.createTrip(trip).then((res) => {
+                            this.toggleShowCreateTrip();
+                            store.commit("setTrips");
+                            console.log(response);
+                    });
+
                 }
             }
 
