@@ -62,6 +62,7 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
+            System.out.println(createTripForm.get());
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 

@@ -5,7 +5,10 @@ const baseUrl = "http://localhost:9000"
 
 // Create the axios object
 const repo = axios.create({
-    baseURL: baseUrl
+    baseURL: baseUrl,
+    headers: {
+        "X-Authorization": "123"
+    }
 });
 
 repo.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
