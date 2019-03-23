@@ -13,6 +13,7 @@ libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "org.glassfish.jaxb" % "jaxb-core" % "2.3.0.1"
 libraryDependencies += "org.glassfish.jaxb" % "jaxb-runtime" % "2.3.2"
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 
 libraryDependencies += "org.awaitility" % "awaitility" % "2.0.0" % Test
 libraryDependencies += "org.assertj" % "assertj-core" % "3.6.2" % Test

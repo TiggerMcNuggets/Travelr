@@ -7,8 +7,8 @@
       <hr>
     </div>
     <div class="container">
-      <h2>UPLOAD PHOTO</h2>
-      <hr>
+      <h2 class="headline mb-0">UPLOAD PHOTO</h2>
+      <v-divider></v-divider>
       <div class="section">
         <label>
           <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
@@ -16,41 +16,107 @@
         <v-btn v-on:click="submitFile()">Submit</v-btn>
       </div>
 
-
-      <h2>MY PHOTOS</h2>
-      <hr>
+      <h2 class="headline mb-0">MY PHOTOS</h2>
+      <v-divider></v-divider>
+      <!-- <hr> -->
 
       <ul>
-      <li
-        class="personal-photo-element"
-        v-for="item in files"
-        :value="item.value"
-        :key="item.value"
-      >
-        <!-- <p>{{item.photo_filepath}}</p> -->
-        <img :src="getImgUrl(item)">
-        <!-- <img src='../../../../../backend/resources/images/avatar.jpg'> -->
-      </li>
-    </ul>
-
-
-
-
+        <li v-for="row in files" :value="row.value" :key="row.value">
+          <div class="personal-photo-row">
+            <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
+              <v-img @click.stop="dialog = true" v-on:click="setDialogueContent(item)" class="personal-photo-element" :src="getImgUrl(item)"></v-img>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
-  </div>
+
+
+     <v-dialog
+                v-model="dialog"
+                width="500"
+              
+              >
+
+                <v-card>
+                    <v-img
+                    :src="clickedImage"
+                    class="dialogue-image"
+                  ></v-img>
+
+                  <v-card-title primary-title>
+                    <div>
+                      <h5 class="headline mb-0">Image Name</h5>
+                      <div> Description/Other meta info </div>
+                    </div>
+                  </v-card-title>
+
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="primary"
+                      flat
+                      @click="dialog = false"
+                    >
+                      Close
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+   
+    </div>
+
 </template>
 
 
 <style>
+/*.v-dialog__content {
+  width: auto !important;
+}
+
+.dialogue-image {
+  height: auto;
+}*/
+
+.image-container {
+  width: 24%;
+  height: 270px;
+  border: 1px solid lightgrey;
+
+  background-position: center;
+  padding: 7px;
+  overflow: hidden;
+}
+
+.image-container:hover .personal-photo-element {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.personal-photo-element {
+  height: 100%;
+  overflow: hidden;
+}
+
+.personal-photo-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+ul {
+  padding-left: 0px;
+}
+
 h2 {
   padding-bottom: 10px;
 }
 
 hr {
   margin-bottom: 25px;
-}
-
-input {
 }
 
 .section {
@@ -108,14 +174,19 @@ input {
 
 <script>
 import { store } from "../../store/index";
-import { storeImage, getImages } from "../../repository/PersonalPhotosRepository";
+import {
+  storeImage,
+  getImages
+} from "../../repository/PersonalPhotosRepository";
 
 export default {
   store,
   // local variables
   data() {
     return {
-      files: []
+      files: [],
+      clickedImage: "",
+      dialog: false
     };
   },
 
@@ -126,7 +197,6 @@ export default {
   // },
 
   methods: {
-
     // Sets the file property the the file being uploaded.
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
@@ -136,31 +206,55 @@ export default {
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
-      storeImage(this.$route.params.id, formData).then (() => {
-         getImages(this.$route.params.id).then((result) => {
-          this.files = result;
-         }
-      );
+
+      storeImage(this.$route.params.id, formData).then(() => {
+        getImages(this.$route.params.id).then(result => {
+          this.files = this.groupImages(result);
+        });
       });
-     
     },
 
     // Gets the local image file path
-     getImgUrl(item) {
-      return require('../../../../../backend/resources/images/' + item.photo_filename)
+    getImgUrl(item, place="somewhere else") {
+      console.log(place);
+      console.log("../../../../../backend/resources/images/" +
+        item.photo_filename)
+      return require("../../../../../backend/resources/images/" +
+        item.photo_filename);
+    },
+
+    // Gets the local image file path
+    setDialogueContent(selectedImage="") {
+      console.log("item");
+      this.dialog = true;
+      this.clickedImage = this.getImgUrl(selectedImage);
+      // this.clickedImage = require("../../../../../backend/resources/images/Civil Defence.png")
+    },
+
+    groupImages(imageList) {
+      let newImageList = [];
+      let row = [];
+      const num_cols = 4;
+      for (let i = 0; i < imageList.length; i++) {
+        if (i % num_cols === 0 && row.length !== 0) {
+          newImageList.unshift(row);
+          row = [];
+        }
+        row.push(imageList[i]);
+      }
+
+      if (row) newImageList.unshift(row);
+      newImageList.reverse();
+      return newImageList;
     }
   },
 
   created: function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
-    getImages(this.$route.params.id).then((result) => {
-      console.log(result)
-      this.files = result;
-    } );
-
-
-  
+    getImages(this.$route.params.id).then(result => {
+      this.files = this.groupImages(result);
+    });
   }
 };
 </script>

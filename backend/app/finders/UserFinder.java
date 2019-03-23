@@ -6,7 +6,10 @@ import models.User;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class UserFinder extends Finder<Long, User> {
 
@@ -19,7 +22,7 @@ public class UserFinder extends Finder<Long, User> {
             return null;
         }
 
-        return query().where().eq("authToken", token).findOneOrEmpty();
+        return query().where().eq("token", token).findOneOrEmpty();
     }
 
     private byte[] getSha512(String value) {
@@ -32,8 +35,19 @@ public class UserFinder extends Finder<Long, User> {
     }
 
     public Optional<User> findByLogin(String email, String password) {
-
         return query().where().eq("email", email.toLowerCase()).eq("password", getSha512(password)).findOneOrEmpty();
 
+    }
+
+    public List<User> findAll() {
+        return query().fetch("nationalities").fetch("nationalities.nationality").fetch("travellerTypes").findList();
+    }
+
+    public User findById(Long id) {
+        return query().fetch("nationalities").fetch("nationalities.nationality").fetch("travellerTypes").where().eq("id", id).findOneOrEmpty().orElse(null);
+    }
+
+    public User findByEmail(String email) {
+        return query().where().eq("email", email.toLowerCase()).findOneOrEmpty().orElse(null);
     }
 }

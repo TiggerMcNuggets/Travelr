@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import controllers.dto.Trip.CreateTripReq;
+import finders.TripFinder;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 
@@ -10,35 +13,28 @@ import javax.persistence.OneToMany;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Computer entity managed by Ebean
- */
+
 @Entity
 public class Trip extends BaseModel {
 
     private static final long tripID = 1L;
 
-    @ManyToOne(cascade= CascadeType.ALL)
-    public Traveller traveller;
+    public static final TripFinder find = new TripFinder();
 
-    @OneToMany(cascade= CascadeType.ALL, orphanRemoval=true)
+    @JsonIgnore
+    @ManyToOne
+    public User user;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<TripDestination> destinations;
 
     @Constraints.Required
     public String name;
 
-    public Trip(String name, Traveller traveller) {
+    public Trip(String name, User user) {
         this.name = name;
-        this.traveller = traveller;
+        this.user = user;
     }
 
-    public long getID() {
-        return tripID;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) { this.name = name; }
 }
+
