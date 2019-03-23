@@ -13,6 +13,6 @@ export const store = new Vuex.Store({
   modules: {
     user: user,
     destinations: destinations,
-    trips: trips
+    trips: trips,
   }
 })

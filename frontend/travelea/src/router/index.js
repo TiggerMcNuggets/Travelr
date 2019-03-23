@@ -1,8 +1,9 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
 // Components
 import Profile from "../components/profile/Profile"
+import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
@@ -17,7 +18,6 @@ export default new Router({
       name: 'profile',
       component: Profile
     },
-
     {
       path: '/destination',
       name: 'destination',
@@ -38,6 +38,11 @@ export default new Router({
       path: '/personalphotos/:id',
       name: 'personal-photos',
       component: PersonalPhotos
+    },
+    {
+      path: "/signup",
+      name: 'signup',
+      component: Signup
     }
   ]
 })

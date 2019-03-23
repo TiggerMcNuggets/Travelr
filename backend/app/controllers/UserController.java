@@ -59,6 +59,7 @@ public class UserController extends Controller {
 
         // Bad Request Check
         if (userRequestForm.hasErrors()) {
+            System.out.println(userRequestForm.errors());
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 
@@ -99,7 +100,16 @@ public class UserController extends Controller {
                 return notFound("Traveller not found");
             }
 
-            GetUserRes response = new GetUserRes(user);
+            boolean isSameUser = true;
+            User userGivenToken = request.attrs().get(Attrs.USER);
+            Object response;
+
+            if (userGivenToken.id != id) {
+                response = new GetUserRes(user);
+            } else {
+                response = new GetOwnUserRes(user);
+            }
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
 
