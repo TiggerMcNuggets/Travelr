@@ -1,34 +1,20 @@
 package controllers;
 
-import akka.dispatch.sysmsg.Create;
-import com.fasterxml.jackson.core.JsonParseException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.User.*;
-import io.ebean.Ebean;
-import controllers.actions.Attrs;
-import controllers.actions.Authorization;
-import models.Nationality;
 import models.User;
-import play.core.j.HttpExecutionContext;
 import play.data.Form;
 import play.data.FormFactory;
-import play.data.validation.Constraints;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
 
 import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.validation.Constraint;
-import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -50,7 +36,7 @@ public class UserController extends Controller {
      * @param request the http request
      * @return 200 with list of users if all ok
      */
-    @Authorization.RequireAuth
+//    @Authorization.RequireAuth
     public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
 
@@ -155,6 +141,40 @@ public class UserController extends Controller {
             return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
         });
     }
+
+    /**
+     * Gets a user by given id
+     * @param request the http request
+     * @param id the user id
+     * @return 200 with user if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> deleteUser(Http.Request request, Long id) {
+        return userRepository.getUser(id).thenApplyAsync(user -> {
+
+            // Not Found Check
+            if (user == null) {
+                return notFound("Traveller not found");
+            }
+
+            // Forbidden Check
+            User userGiveToken = request.attrs().get(Attrs.USER);
+            if (userGiveToken.id != id && userGiveToken.accountType == 0) {
+                return forbidden("Forbidden: you have too low privileges and you are not the account owner");
+            }
+
+            if (user.accountType == 2) {
+                return forbidden("You cannot delete a master admin");
+            } else {
+                user.delete();
+                return ok("Deleted user with user id: " + id);
+            }
+        });
+    }
+
+
+
+
 
     public Result index() {
         return ok("Travel EA - Home");

@@ -56,6 +56,8 @@ public class UserRepository {
         return supplyAsync(() -> {
             // Insert user
             User user = new User(request);
+            // int in Java defaults to 0
+            user.accountType = request.accountType;
             user.insert();
 
             // Insert nationalities
