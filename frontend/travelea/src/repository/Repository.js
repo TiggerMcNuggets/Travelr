@@ -1,11 +1,14 @@
 import axios from "axios"
 
 // Base URL used by all requests
-const baseUrl = "localhost:9000"
+const baseUrl = "http://localhost:9000"
 
 // Create the axios object
 const repo = axios.create({
-    baseURL: baseUrl
+    baseURL: baseUrl,
+    headers: {
+        "X-Authorization": "123"
+    }
 });
 
 // Add the auth header if it exists

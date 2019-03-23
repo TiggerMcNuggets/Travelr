@@ -18,7 +18,7 @@
 
           <v-flex xs12 md6>
             <v-text-field
-              v-model="destination.destination_type"
+              v-model="destination.type"
               :counter="20"
               :rules="nameRules"
               label="Destination Type"
@@ -52,7 +52,7 @@
         <v-layout>
           <v-flex xs12 md6>
             <v-text-field
-              v-model.number="destination.crd_latitude"
+              v-model.number="destination.latitude"
               type="number"
               :rules="numberRules"
               label="Latitude"
@@ -62,7 +62,7 @@
 
           <v-flex xs12 md6>
             <v-text-field
-              v-model.number="destination.crd_longitude"
+              v-model.number="destination.longitude"
               type="number"
               :rules="numberRules"
               label="Longitude"
@@ -93,7 +93,9 @@
 
 
 <script>
-import { createDestination } from "../../repository/DestinationEditRepository";
+import {RepositoryFactory} from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
+
 import { rules } from "../form_rules";
 import { store } from "../../store/index";
 
@@ -113,7 +115,7 @@ export default {
     createDestination: function() {
       console.log("Destination to create", this.destination);
       if (this.$refs.form.validate()) {
-        createDestination(this.destination).then(() => {
+        destinationRepository.createDestination(this.destination).then(() => {
           this.$refs.form.reset();
           this.toggleShowCreateDestination();
           store.commit("setDestinations");
