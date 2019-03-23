@@ -7,8 +7,8 @@
       <hr>
     </div>
     <div class="container">
-      <h2>UPLOAD PHOTO</h2>
-      <hr>
+      <h2 class="headline mb-0">UPLOAD PHOTO</h2>
+      <v-divider></v-divider>
       <div class="section">
         <label>
           <input type="file" id="file" ref="file" v-on:change="handleFileUpload()">
@@ -16,24 +16,71 @@
         <v-btn v-on:click="submitFile()">Submit</v-btn>
       </div>
 
-      <h2>MY PHOTOS</h2>
-      <hr>
+      <h2 class="headline mb-0">MY PHOTOS</h2>
+      <v-divider></v-divider>
+      <!-- <hr> -->
 
       <ul>
         <li v-for="row in files" :value="row.value" :key="row.value">
           <div class="personal-photo-row">
             <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
-              <img class="personal-photo-element" :src="getImgUrl(item)">
+              <v-img @click.stop="dialog = true" v-on:click="setDialogueContent(item)" class="personal-photo-element" :src="getImgUrl(item)"></v-img>
             </div>
           </div>
         </li>
       </ul>
     </div>
-  </div>
+
+
+     <v-dialog
+                v-model="dialog"
+                width="500"
+              
+              >
+
+                <v-card>
+                    <v-img
+                    :src="clickedImage"
+                    class="dialogue-image"
+                  ></v-img>
+
+                  <v-card-title primary-title>
+                    <div>
+                      <h5 class="headline mb-0">Image Name</h5>
+                      <div> Description/Other meta info </div>
+                    </div>
+                  </v-card-title>
+
+                  <v-divider></v-divider>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="primary"
+                      flat
+                      @click="dialog = false"
+                    >
+                      Close
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
+   
+    </div>
+
 </template>
 
 
 <style>
+/*.v-dialog__content {
+  width: auto !important;
+}
+
+.dialogue-image {
+  height: auto;
+}*/
+
 .image-container {
   width: 24%;
   height: 270px;
@@ -137,7 +184,9 @@ export default {
   // local variables
   data() {
     return {
-      files: []
+      files: [],
+      clickedImage: "",
+      dialog: false
     };
   },
 
@@ -166,9 +215,20 @@ export default {
     },
 
     // Gets the local image file path
-    getImgUrl(item) {
+    getImgUrl(item, place="somewhere else") {
+      console.log(place);
+      console.log("../../../../../backend/resources/images/" +
+        item.photo_filename)
       return require("../../../../../backend/resources/images/" +
         item.photo_filename);
+    },
+
+    // Gets the local image file path
+    setDialogueContent(selectedImage="") {
+      console.log("item");
+      this.dialog = true;
+      this.clickedImage = this.getImgUrl(selectedImage);
+      // this.clickedImage = require("../../../../../backend/resources/images/Civil Defence.png")
     },
 
     groupImages(imageList) {
