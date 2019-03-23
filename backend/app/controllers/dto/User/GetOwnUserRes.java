@@ -8,7 +8,7 @@ import models.UserNationality;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetUserRes {
+public class GetOwnUserRes {
     private Long id;
     private String firstName;
     private String middleName;
@@ -17,8 +17,10 @@ public class GetUserRes {
     private String gender;
     private List<NationalityRes> nationalities;
     private List<TravellerType> travellerTypes;
+    private String email;
+    private int accountType;
 
-    public GetUserRes(User user) {
+    public GetOwnUserRes(User user) {
         this.id = user.id;
         this.firstName = user.firstName;
         this.middleName = user.middleName;
@@ -27,6 +29,8 @@ public class GetUserRes {
         this.gender = user.gender;
         this.travellerTypes = user.travellerTypes;
         this.setNationalities(user.nationalities);
+        this.email = user.email;
+        this.accountType = user.accountType;
 
     }
 
@@ -69,4 +73,19 @@ public class GetUserRes {
         return travellerTypes;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(int accountType) {
+        this.accountType = accountType;
+    }
 }
