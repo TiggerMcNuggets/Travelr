@@ -80,9 +80,16 @@ public class User extends BaseModel {
         return this.token;
     }
 
+    public void setToken(String string) {
+        this.token = string;
+
+    }
+
     public String getToken() {
         return this.token;
     }
+
+
 
     public void deleteAuthToken() {
         token = null;
