@@ -1,5 +1,6 @@
 import { getImages } from "../../repository/PersonalPhotosRepository";
 import AuthRepository from "../../repository/AuthRepository";
+import ProfileRepository from "../../repository/ProfileRepository";
 
 export default {
     state: {
@@ -19,6 +20,7 @@ export default {
           }
         }
     },
+
     mutations: {
       setId(state, id) {
         state.id = id;
@@ -30,6 +32,7 @@ export default {
         state.profile = profile;
       }
     },
+
     actions: {
       async login({commit}, loginData) {
         try {
@@ -47,7 +50,18 @@ export default {
         } catch (e) {
           return;
         }
-      }
+      },
+
+      async fetchUser({commit}, id) {
+        const response = await ProfileRepository.getProfile(id);
+        commit('setProfile', response);
+      },
+
+      async updateUser({commit}, editData) {
+        await ProfileRepository.editProfile(editData);
+        commit('setProfile', editData);
+      },
+  
     },
     getters: {
       getUser: state => state,      

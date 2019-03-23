@@ -8,3 +8,4 @@ export default {
     return Repository.post("/travellers", payload);
   },
 };
+ 
