@@ -1,6 +1,8 @@
 logs
 target
-resources
+resources/images/*.png
+resources/images/*.jpg
+resources/images/*.jpeg
 build
 /.idea
 /.idea_modules
