@@ -36,7 +36,7 @@ public class UserController extends Controller {
      * @param request the http request
      * @return 200 with list of users if all ok
      */
-    @Authorization.RequireAuth
+//    @Authorization.RequireAuth
     public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
 
@@ -141,6 +141,40 @@ public class UserController extends Controller {
             return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
         });
     }
+
+    /**
+     * Gets a user by given id
+     * @param request the http request
+     * @param id the user id
+     * @return 200 with user if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> deleteUser(Http.Request request, Long id) {
+        return userRepository.getUser(id).thenApplyAsync(user -> {
+
+            // Not Found Check
+            if (user == null) {
+                return notFound("Traveller not found");
+            }
+
+            // Forbidden Check
+            User userGiveToken = request.attrs().get(Attrs.USER);
+            if (userGiveToken.id != id && userGiveToken.accountType == 0) {
+                return forbidden("Forbidden: you have too low privileges and you are not the account owner");
+            }
+
+            if (user.accountType == 2) {
+                return forbidden("You cannot delete a master admin");
+            } else {
+                user.delete();
+                return ok("Deleted user with user id: " + id);
+            }
+        });
+    }
+
+
+
+
 
     public Result index() {
         return ok("Travel EA - Home");

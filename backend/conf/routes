@@ -17,6 +17,8 @@ GET         /travellers                     controllers.UserController.getUsers(
 POST        /travellers                     controllers.UserController.createUser(request: Request)
 GET         /travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
+DELETE      /travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
+
 #
 ## Photos
 #GET         /travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
