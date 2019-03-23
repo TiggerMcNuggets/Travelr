@@ -53,6 +53,11 @@ public class Authorization {
         //boolean value() default true;
     }
 
+    /**
+     * Middleware to check if user has admin privileges.
+     * Returns 401 if user has no valid token or if has no admin privileges
+     * Let process the request if user is admin
+     */
     public static class RequireAdminAuthAction extends Action<RequireAdminAuth> {
         public CompletionStage<Result> call(Http.Request req) {
             String authToken = null;
