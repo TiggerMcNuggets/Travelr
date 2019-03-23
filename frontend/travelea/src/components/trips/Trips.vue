@@ -125,15 +125,16 @@ export default {
       this.showCreateTrip = !this.showCreateTrip;
     },
     deleteTrip: function(id) {
-      deleteTripById(id).then(result => {
+      deleteTripById(id).then(function(result) {
         console.log(result);
-        store.commit("setTrips", 0);
+        store.commit("setTrips");
       });
     }
   },
   created: async function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    store.commit("setTrips", 0);
+    store.commit("setTrips");
+    store.commit("setDestinations");
   }
 };
 </script>

@@ -48,7 +48,7 @@
           <li>
             <p>
               <strong>TYPE:</strong>
-              {{ item.destination_type }}
+              {{ item.type }}
             </p>
           </li>
           <li>
@@ -60,13 +60,13 @@
           <li>
             <p>
               <strong>LATITUDE:</strong>
-              {{ item.crd_latitude }}
+              {{ item.latitude }}
             </p>
           </li>
           <li>
             <p>
               <strong>LONGITUDE:</strong>
-              {{ item.crd_longitude }}
+              {{ item.longitude }}
             </p>
           </li>
         </ul>
@@ -117,8 +117,9 @@ ul {
 
 <script>
 import { store } from "../../store/index";
-import DestinationCreate from "./DestinationCreate.vue";
-import { deleteDestination } from "../../repository/DestinationEditRepository";
+import {RepositoryFactory} from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
+import DestinationCreate from "./DestinationCreate"
 
 export default {
   store,
@@ -143,14 +144,11 @@ export default {
     toggleShowCreateDestination: function() {
       this.showCreateDestination = !this.showCreateDestination;
     },
-    deleteDestination: function(id) {
-      deleteDestination(id).then(result => {
-        store.commit("setDestinations");
-        console.log(result);
-      });
+    deleteDestination: function(id) {      
+        // SPRINT 2 TODO
     }
   },
-  created: async function() {
+  created: function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     store.commit("setDestinations");
   }
