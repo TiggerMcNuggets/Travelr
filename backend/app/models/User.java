@@ -60,7 +60,6 @@ public class User extends BaseModel {
     @NotNull
     public int timestamp;
 
-    @JsonIgnore
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
@@ -81,8 +80,9 @@ public class User extends BaseModel {
     }
 
     // TODO: delete this
-    public void setToken(String token) {
+    public String setToken(String token) {
         this.token = token;
+        return token;
     }
 
     public String getToken() {
