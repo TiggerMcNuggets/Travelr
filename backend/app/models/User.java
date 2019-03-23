@@ -60,6 +60,7 @@ public class User extends BaseModel {
     @NotNull
     public int timestamp;
 
+    @JsonIgnore
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
