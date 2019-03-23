@@ -80,6 +80,11 @@ public class User extends BaseModel {
         return this.token;
     }
 
+    // TODO: delete this
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public String getToken() {
         return this.token;
     }
@@ -115,6 +120,7 @@ public class User extends BaseModel {
         setPassword(request.password);
         this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
+        this.accountType = request.accountType;
     }
 
     public User(String first, String last, String email, int dob) {
