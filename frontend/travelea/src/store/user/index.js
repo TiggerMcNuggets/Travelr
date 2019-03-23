@@ -15,7 +15,7 @@ export default {
             nationalities: [],
             travellerTypes: [],
             email: null,
-            accountType: 0
+            accountType: 2
           }
         }
     },
@@ -50,6 +50,8 @@ export default {
       }
     },
     getters: {
-      getUser: state => state,      
+      getUser: state => state,
+      getIsUserAdmin: state => (state.user.profile.accountType > 0)
+
     }
 }

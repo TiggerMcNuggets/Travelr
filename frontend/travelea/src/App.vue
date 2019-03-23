@@ -23,8 +23,11 @@
 </template>
 
 <script>
+import { store } from "./store/index";
+
 export default {
   name: "App",
+  store,
   data() {
     return {
       drawer: false
@@ -44,6 +47,9 @@ export default {
           { name: "My Trips", icon: "lock_open", link: "/trips/create" },
           { name: "My Destinations", icon: "lock_open", link: "/destination" }
         ];
+      }
+      if (store.getters.getIsUserAdmin && this.userLoggedIn) {
+        menuOptions.push({ name: "Admin Panel", icon: "lock_open", link: "/admin_dash" });
       }
 
       return menuOptions;

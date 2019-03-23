@@ -8,8 +8,11 @@ import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
 import CreateTrips from "../components/trips/CreateTrips.vue";
+import AdminDashboard from "../components/admin/AdminDashboard";
 
-Vue.use(Router)
+import { store } from "../../src/store/index";
+
+Vue.use(Router);
 
 export default new Router({
   routes: [
@@ -43,6 +46,18 @@ export default new Router({
       path: "/signup",
       name: 'signup',
       component: Signup
+    },
+    {
+      path: "/admin_dash",
+      name: 'admin_dash',
+      component: AdminDashboard,
+      // beforeEnter(to, from, next) {
+      //   console.log(to);
+      //   console.log(from);
+      //   if (this.store.getters.getIsUserAdmin) {
+      //     next();
+      //   }
+      // }
     }
   ]
 })
