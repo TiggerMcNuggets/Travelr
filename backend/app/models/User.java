@@ -90,6 +90,8 @@ public class User extends BaseModel {
         return this.token;
     }
 
+
+
     public void deleteAuthToken() {
         token = null;
         save();
