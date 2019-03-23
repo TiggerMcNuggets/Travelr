@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 <template>
-    <v-container ma-0 >
-        <v-layout row >
+    <v-container ma-0>
+        <v-layout row>
             <v-flex xs3 mr-5>
                 <profileNav>
                 </profileNav>
@@ -13,18 +13,13 @@
                             
                     </v-card-text>                
                 </v-card>
-            </v-flex>           
+            </v-flex>
         </v-layout>
         <trips></trips>
     </v-container>
 </template>
 
 <style>
-.test {
-    border: 1px solid black;
-}
-
-
 </style>
 
 

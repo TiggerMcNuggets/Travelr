@@ -11,13 +11,15 @@ const repo = axios.create({
     }
 });
 
+repo.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+
 // Add the auth header if it exists
 repo.interceptors.request.use(
     (config) => {
         let token = localStorage.getItem('token');
 
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers['X-Authorization'] = token;
         }
 
         return config;

@@ -32,4 +32,5 @@ public class CreateUserReq {
     @Constraints.Required
     public List<Integer> travellerTypes;
 
+    public int accountType;
 }

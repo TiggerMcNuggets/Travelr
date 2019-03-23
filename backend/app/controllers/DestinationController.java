@@ -6,20 +6,16 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Destination.CreateDestReq;
 import controllers.dto.Destination.CreateDestRes;
-
 import io.ebean.Ebean;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
-
-
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.DestinationRepository;
 
 import javax.inject.Inject;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 

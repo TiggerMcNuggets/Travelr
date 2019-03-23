@@ -64,14 +64,18 @@ public class User extends BaseModel {
     @Column(columnDefinition = "integer default 0")
     public int accountType;
 
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<UserNationality> nationalities;
 
     @ManyToMany
     public List<TravellerType> travellerTypes;
 
 
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
+    public List<Trip> trips;
+
+
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
 
     public String setToken() {
@@ -80,9 +84,10 @@ public class User extends BaseModel {
         return this.token;
     }
 
-    public void setToken(String string) {
-        this.token = string;
-
+    // TODO: delete this
+    public String setToken(String token) {
+        this.token = token;
+        return token;
     }
 
     public String getToken() {
@@ -122,6 +127,7 @@ public class User extends BaseModel {
         setPassword(request.password);
         this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
+        this.accountType = request.accountType;
     }
 
     public User(String first, String last, String email, int dob) {
