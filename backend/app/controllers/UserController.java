@@ -1,34 +1,20 @@
 package controllers;
 
-import akka.dispatch.sysmsg.Create;
-import com.fasterxml.jackson.core.JsonParseException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.User.*;
-import io.ebean.Ebean;
-import controllers.actions.Attrs;
-import controllers.actions.Authorization;
-import models.Nationality;
 import models.User;
-import play.core.j.HttpExecutionContext;
 import play.data.Form;
 import play.data.FormFactory;
-import play.data.validation.Constraints;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
 
 import javax.inject.Inject;
-import javax.persistence.Entity;
-import javax.validation.Constraint;
-import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
