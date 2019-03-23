@@ -1,8 +1,14 @@
 package controllers;
 
+import com.sun.xml.bind.v2.schemagen.xmlschema.LocalAttribute;
+import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
+import models.User;
+import play.data.Form;
+import play.data.FormFactory;
 import play.i18n.MessagesApi;
 import play.libs.Files;
 import play.libs.concurrent.HttpExecutionContext;
@@ -21,6 +27,9 @@ import java.util.concurrent.CompletionStage;
 public class PhotoController extends Controller {
 
     private final PersonalPhotoRepository personalPhotoRepository;
+
+    @Inject
+    FormFactory formFactory;
 
     @Inject
     public PhotoController(
@@ -43,7 +52,7 @@ public class PhotoController extends Controller {
         fh.make_directory("resources/images");
 
         return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
-            PathProperties pathProperties = PathProperties.parse("id,photo_filename");
+            PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
     }
@@ -92,5 +101,39 @@ public class PhotoController extends Controller {
             System.out.println(e);
             return badRequest("Missing file");
         }
+    }
+
+
+    /**
+     * Updates a destination that belongs to a user
+     * @param request the http request
+     * @param id the id of the destination
+     * @return 200 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserPhoto(Http.Request request, Long id) {
+        Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
+        User user = request.attrs().get(Attrs.USER);
+
+        if (updatePhotoForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        UpdatePhotoReq req = updatePhotoForm.get();
+
+        return personalPhotoRepository.getOne(id).thenComposeAsync(photo -> {
+            // Not Found Check
+            if (photo == null) {
+                return CompletableFuture.completedFuture(notFound("Photo not found"));
+            }
+            // Forbidden Check
+//            System.out.println(photo.traveller.id);
+//            System.out.println(user.id);
+//            if (photo.traveller.id != user.id) {
+//                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+//            }
+            return personalPhotoRepository.update(req, id).thenApplyAsync(destId -> ok("Photo updated"));
+
+        });
     }
 }
