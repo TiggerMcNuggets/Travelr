@@ -22,7 +22,7 @@
 
           <v-flex xs12 md6>
             <v-text-field
-              v-model="destination.destination_type"
+              v-model="destination.type"
               :rules="nameRules"
               :counter="10"
               label="Destination Type"
@@ -56,7 +56,7 @@
         <v-layout>
           <v-flex xs12 md6>
             <v-text-field
-              v-model.number="destination.crd_latitude"
+              v-model.number="destination.latitude"
               :rules="numberRules"
               label="Latitude"
               required
@@ -65,7 +65,7 @@
 
           <v-flex xs12 md6>
             <v-text-field
-              v-model.number="destination.crd_longitude"
+              v-model.number="destination.longitude"
               :rules="numberRules"
               label="Longitude"
               required
@@ -132,10 +132,8 @@
 
 
 <script>
-import {
-  getOneDestination,
-  updateDestination
-} from "../../repository/DestinationEditRepository";
+import {RepositoryFactory} from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
 import {rules} from "../form_rules";
 
 export default {
@@ -148,7 +146,7 @@ export default {
   methods: {
     updateDestination: function() {
       if (this.$refs.form.validate()) {
-        updateDestination(this.$route.params.id, this.destination).then(() => {
+        destinationRepository.updateDestination(this.$route.params.id, this.destination).then(() => {
           this.$refs.form.reset();
           this.routeBackToPrevPage();
         });
@@ -160,8 +158,9 @@ export default {
   },
 
   created: function() {
-    getOneDestination(this.$route.params.id).then(result => {
-      this.destination = result;
+    destinationRepository.getDestination(this.$route.params.id).then(result => {
+      this.destination = result.data;
+      console.log(this.destination)
     });
   }
 };

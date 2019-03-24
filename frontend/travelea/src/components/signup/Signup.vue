@@ -87,11 +87,7 @@ export default {
       await store.dispatch("login", loginData);
       const token = store.getters.getUser.token;
       localStorage.setItem("token", token);
-      console.log("here");
-      console.log(token);
-      console.log(store.getters.getUser.id);
-      console.log(store.getters.getUser);
-      console.log(store.getters.isLoggedIn);
+
     },
     async handleSignup() {
       if (this.$refs.form.validate()) {

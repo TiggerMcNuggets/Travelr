@@ -1,5 +1,5 @@
-import { getTrips } from "../../repository/TripRepository";
-
+import  { RepositoryFactory } from "../../repository/RepositoryFactory"
+let tripRepository = RepositoryFactory.get("trip");
 /**
  * Trips store sub-module
  */
@@ -8,8 +8,8 @@ export default {
         trips: []
     },
     mutations: {
-        async setTrips(state, id) {
-            const trips = await getTrips(id);
+        async setTrips(state) {
+            const trips = await tripRepository.getTrips()
             state.trips = trips;
         },
     },

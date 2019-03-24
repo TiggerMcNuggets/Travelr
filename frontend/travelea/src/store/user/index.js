@@ -2,23 +2,25 @@ import { getImages } from "../../repository/PersonalPhotosRepository";
 import AuthRepository from "../../repository/AuthRepository";
 import ProfileRepository from "../../repository/ProfileRepository";
 
+const emptyProfile = {
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  dateOfBirth: null,
+  gender: "",
+  nationalities: [],
+  travellerTypes: [],
+  email: null,
+  accountType: 0
+}
+
 export default {
     state: {
         user: {
           id: null,
           token: "",
-          profile: {
-            firstName: "",
-            middleName: "",
-            lastName: "",
-            dateOfBirth: null,
-            gender: "",
-            nationalities: [],
-            travellerTypes: [],
-            email: null,
-            accountType: 0
-          }
-        }
+          profile: emptyProfile,
+        },
     },
 
     mutations: {
@@ -52,19 +54,35 @@ export default {
         }
       },
 
+      async logout({commit}) {
+        const response = await AuthRepository.logout();
+        commit('setId', null);
+        commit('setToken', "");
+        commit('setProfile', emptyProfile);
+      },
+
       async fetchUser({commit}, id) {
         const response = await ProfileRepository.getProfile(id);
         commit('setProfile', response.data);
       },
 
-      async updateUser({commit}, editData) {
-        await ProfileRepository.editProfile(editData);
+      async fetchMe({commit}, id) {
+        const response = await ProfileRepository.getMe();
+        commit('setId', response.data.id);
+        commit('setToken', localStorage.getItem('token'));
+        commit('setProfile', response.data);
+      },
+
+      async updateUser({commit}, editData, id) {
+        await ProfileRepository.editProfile(editData, id);
         commit('setProfile', editData.data);
       },
   
     },
     getters: {
       getUser: state => state.user,
-      isLoggedIn: state => (state.user.id !== null && state.user.token !== ""),
+      getId: state => state.user.id,
+      getToken: state => state.user.token,
+      isLoggedIn: state => {return (state.user.id !== null && state.user.token !== "")}
     }
 }

@@ -57,16 +57,15 @@ export default {
   methods: {
     getTraveller() {
       let user = store.getters.getUser;
-      if (!user.user.id) {
-        store.dispatch("fetchUser");
-      }
-      user = store.getters.getUser;
-      this.traveller = user.user.profile;
+      this.traveller = user.profile;
+      this.setTravellerToFields();
+      delete this.traveller.email;
+      delete this.traveller.id;
     },
 
     setTravellerToFields() {
-      [this.traveller.nationalities, this.traveller.passports] = travellerFormHelper.convertFromNationalitiesRes(this.nationalities, this.passports);
-      this.traveller.dateOfBirth = dateTime.convertTimestampToString(this.dateOfBirth);
+      [this.nationalities, this.passports] = travellerFormHelper.convertFromNationalitiesRes(this.traveller.nationalities);
+      this.dateOfBirth = dateTime.convertTimestampToString(this.traveller.dateOfBirth);
     },
 
     setFieldsToTraveller() {
@@ -77,11 +76,11 @@ export default {
     async handleEdit() {
       if (this.$refs.form.validate()) {
         this.setFieldsToTraveller();
-        
-        await store.dispatch("editProfile", this.traveller);
-        this.$router.push("/profile");
+        console.log(this.traveller);        
+        // await store.dispatch("updateUser", this.traveller);
+        // this.$router.push("/profile");
       }
-    },
+     },
   },
 };
 </script>

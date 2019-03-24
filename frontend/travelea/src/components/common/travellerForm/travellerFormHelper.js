@@ -34,6 +34,13 @@ travellerFormHelper.convertFromNationalitiesRes = (natList) => {
   return [nationalities, passports];
 }
 
+travellerFormHelper.convertToTravellerTypeReq = (travellerTypeList) => {
+  let typesList = [];
+  for (let types of travellerTypeList) {
+    typesList.push(types.id);
+  }
+}
+
 
 
 export default travellerFormHelper;

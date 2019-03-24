@@ -10,6 +10,7 @@ import DestinationEdit from "../components/destination/DestinationEdit"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
 import CreateTrips from "../components/trips/CreateTrips.vue";
 import EditProfile from "../components/profile/EditProfile.vue";
+import Logout from "../components/logout/Logout.vue"
 
 Vue.use(Router)
 
@@ -58,7 +59,7 @@ let router = new Router({
       }
     },
     {
-      path: "/signup",
+      path: '/signup',
       name: 'signup',
       component: Signup
     },
@@ -69,23 +70,46 @@ let router = new Router({
       meta: { 
         requiresAuth: true
       }
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: Logout,
+      meta: {
+        requiresAuth: true
+      }
     }
-
   ]
 })
 
+function myFunction() {
+
+}
+
 router.beforeEach((to, from, next) => {
+
+  let user = store.getters.getUser;
+      
   if(to.matched.some(record => record.meta.requiresAuth)) {
-    console.log(store.getters.isLoggedIn);
-    console.log(store.getters.getUser);  
     if (store.getters.isLoggedIn) {
-      next()
-      return
+      next();
+      return;
     }
-    next('/login') 
+    const tokenFromCookies = localStorage.getItem("token");
+    console.log(tokenFromCookies);
+    if (tokenFromCookies === "") {
+      next('/login');
+      return;
+    }
+    // maybe getTime returns non error even when token null, yoiu have to figure out how to handle res
+    store.dispatch("fetchMe")
+    .then(() => {
+      next();
+      })
+    .catch(e => console.log(e));
   } else {
     next() 
   }
-})
+});
 
 export default router;

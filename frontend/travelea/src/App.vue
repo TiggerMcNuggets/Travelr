@@ -8,6 +8,7 @@
           </v-list-tile-action>
           <v-list-tile-content>{{ item.name }}</v-list-tile-content>
         </v-list-tile>
+
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="indigo" dark dense clipped-left fixed app>
@@ -46,15 +47,13 @@ export default {
           { name: "Dashboard", icon: "lock_open", link: "/home" },
           { name: "Users", icon: "lock_open", link: "/users" },
           { name: "My Trips", icon: "lock_open", link: "/trips/create" },
-          { name: "My Destinations", icon: "lock_open", link: "/destination" }
+          { name: "My Destinations", icon: "lock_open", link: "/destination" },
+          { name: "Log Out", icon: "lock_open", link: "/logout"}
         ];
       }
 
       return menuOptions;
     },
-    userLoggedIn() {
-      return true;
-    }
   }
 };
 </script>
