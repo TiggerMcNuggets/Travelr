@@ -1,5 +1,8 @@
 logs
 target
+resources/images/*.png
+resources/images/*.jpg
+resources/images/*.jpeg
 build
 /.idea
 /.idea_modules
@@ -8,3 +11,4 @@ build
 /.settings
 /.gradle
 /RUNNING_PID
+

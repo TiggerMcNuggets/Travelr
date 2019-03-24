@@ -21,6 +21,13 @@ create table nationality (
   constraint pk_nationality primary key (id)
 );
 
+create table personal_photo (
+  id                            bigint auto_increment not null,
+  traveller_id                  bigint,
+  photo_filename                varchar(255) not null,
+  constraint pk_personal_photo primary key (id)
+);
+
 create table traveller_type (
   id                            bigint auto_increment not null,
   name                          varchar(255),
@@ -77,6 +84,9 @@ create table user_nationality (
 create index ix_destination_user_id on destination (user_id);
 alter table destination add constraint fk_destination_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+create index ix_personal_photo_traveller_id on personal_photo (traveller_id);
+alter table personal_photo add constraint fk_personal_photo_traveller_id foreign key (traveller_id) references user (id) on delete restrict on update restrict;
+
 create index ix_trip_user_id on trip (user_id);
 alter table trip add constraint fk_trip_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -104,6 +114,9 @@ alter table user_nationality add constraint fk_user_nationality_nationality_id f
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;
 
+alter table personal_photo drop constraint if exists fk_personal_photo_traveller_id;
+drop index if exists ix_personal_photo_traveller_id;
+
 alter table trip drop constraint if exists fk_trip_user_id;
 drop index if exists ix_trip_user_id;
 
@@ -128,6 +141,8 @@ drop index if exists ix_user_nationality_nationality_id;
 drop table if exists destination;
 
 drop table if exists nationality;
+
+drop table if exists personal_photo;
 
 drop table if exists traveller_type;
 
