@@ -23,8 +23,12 @@
 </template>
 
 <script>
+
+import {store} from "./store/index";
+
 export default {
   name: "App",
+  store,
   data() {
     return {
       drawer: false
@@ -37,7 +41,7 @@ export default {
         { name: "Log In", icon: "lock_open", link: "/login" }
       ];
 
-      if (this.userLoggedIn) {
+      if (store.getters.isLoggedIn) {
         menuOptions = [
           { name: "Dashboard", icon: "lock_open", link: "/home" },
           { name: "Users", icon: "lock_open", link: "/users" },

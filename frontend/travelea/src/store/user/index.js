@@ -23,13 +23,13 @@ export default {
 
     mutations: {
       setId(state, id) {
-        state.id = id;
+        state.user.id = id;
       },
       setToken(state, token) {
-        state.token = token;
+        state.user.token = token;
       },
       setProfile(state, profile) {
-        state.profile = profile;
+        state.user.profile = profile;
       }
     },
 
@@ -64,6 +64,7 @@ export default {
   
     },
     getters: {
-      getUser: state => state,      
+      getUser: state => state.user,
+      isLoggedIn: state => (state.user.id !== null && state.user.token !== ""),
     }
 }
