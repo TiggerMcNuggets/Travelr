@@ -118,6 +118,17 @@ public class UserController extends Controller {
     }
 
     /**
+     * Gets current user according to their auth token
+     * @param request the http request
+     * @return 200 with user if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getMe(Http.Request request) {
+        User user = request.attrs().get(Attrs.USER);
+        return getUser(request, user.id);
+    }
+
+    /**
      * Update a user that matches header and id
      * @param request the http request
      * @param id the user id
