@@ -39,7 +39,7 @@ public class PhotoController extends Controller {
     }
 
     /**
-     * Allows the user to fetch rows from the nationality repository, given a nationality id.
+     * Allows the user to fetch rows from the personal photo repository, given a user id
      * @param request the http request
      * @param id user id
      * @return 200 response and nationalities JSON body if successful
@@ -105,9 +105,9 @@ public class PhotoController extends Controller {
 
 
     /**
-     * Updates a destination that belongs to a user
+     * Updates a photo that belongs to a user
      * @param request the http request
-     * @param id the id of the destination
+     * @param id the id of the photo
      * @return 200 with string if all ok
      */
     @Authorization.RequireAuth
