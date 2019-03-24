@@ -2,18 +2,11 @@
 
 <template>
   <div class="outer-container">
-  <!-- <v-container > -->
      <div fluid class="banner">
-    <!-- <div class="banner"> -->
       <h1>MY PHOTOS</h1>
       <hr>
      </div>
-    
-    <!-- </div> -->
-    <!-- <div class="container"> -->
      <v-container>
-      <!-- <h2 class="headline mb-0">UPLOAD PHOTO</h2>
-      <v-divider></v-divider>-->
 
       <div class="section">
         <h2 class='headline'>MY PHOTOS</h2>
@@ -31,8 +24,6 @@
        </div>
         <v-divider class='photo-header-divider'></v-divider>
       </div>
-      
-      <!-- <hr> -->
 
       <ul>
         <li v-for="row in files" :value="row.value" :key="row.value">
@@ -48,9 +39,6 @@
           </div>
         </li>
       </ul>
-      <!-- </v-container> -->
-    <!-- </div> -->
-    
 
     <v-dialog v-model="dialog" width="500">
       <v-card>
@@ -79,13 +67,7 @@
 
 
 <style>
-/*.v-dialog__content {
-  width: auto !important;
-}
 
-.dialogue-image {
-  height: auto;
-}*/
 .choose-file-button {
   background-color: #f5f5f5;
   color: rgba(0,0,0,0.87);
@@ -247,10 +229,12 @@ export default {
       this.file = this.$refs.file.files[0];
     },
 
+    // Toggles the upload section for the photos
     toggleShowUploadPhoto: function() {
       this.showUploadSection = !this.showUploadSection;
     },
 
+    // Updates whether the photo is public or private depending on the swich state.
     updatePhotoVisability() {
       this.clickedImage.is_public = this.publicPhotoSwitch;
       updatePersonalPhoto(this.clickedImage);
@@ -282,6 +266,7 @@ export default {
       this.clickedImageURL = this.getImgUrl(selectedImage);
     },
 
+    // Groups the images into rows
     groupImages(imageList) {
       let newImageList = [];
       let row = [];
