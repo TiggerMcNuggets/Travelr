@@ -30,7 +30,7 @@
 
 <script>
 import TravellerForm from "../common/travellerForm/TravellerForm";
-import travellerFormHelper from "../travellerForm/travellerFormHelper";
+import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
 import ProfileRepository from "../../repository/ProfileRepository";
 
@@ -52,18 +52,18 @@ export default {
     };
   },
   mounted() {
-    await this.getTraveller();
+    this.getTraveller();
   },
   methods: {
-    async getTraveller() {
+    getTraveller() {
       let user = store.getters.getUser;
-      if (user.id == null) {
-        await store.dispatch("getUser");
-      } else {
-        this.traveller = user.profile;
+      if (!user.user.id) {
+        store.dispatch("fetchUser");
       }
+      user = store.getters.getUser;
+      this.traveller = user.user.profile;
     },
-    
+
     setTravellerToFields() {
       [this.traveller.nationalities, this.traveller.passports] = travellerFormHelper.convertFromNationalitiesRes(this.nationalities, this.passports);
       this.traveller.dateOfBirth = dateTime.convertTimestampToString(this.dateOfBirth);

@@ -54,12 +54,12 @@ export default {
 
       async fetchUser({commit}, id) {
         const response = await ProfileRepository.getProfile(id);
-        commit('setProfile', response);
+        commit('setProfile', response.data);
       },
 
       async updateUser({commit}, editData) {
         await ProfileRepository.editProfile(editData);
-        commit('setProfile', editData);
+        commit('setProfile', editData.data);
       },
   
     },

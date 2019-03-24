@@ -6,7 +6,7 @@ let dateTime = {};
  * Converts a string date into unix timestamp
  * @param date The date as a string with the format "YYYY-MM-DD"
  */
-dateTime.convertTimestampToString = date => {
+dateTime.convertStringToTimestamp = date => {
   return moment(date)
     .utc()
     .unix();
@@ -16,7 +16,7 @@ dateTime.convertTimestampToString = date => {
  * Converts a unix timestamp into a string date
  * @param timestamp The timestamp (seconds since beginning of 1970)
  */
-dateTime.convertStringToTimestamp = timestamp => {
+dateTime.convertTimestampToString = timestamp => {
   return moment.unix(timestamp).format();
 }
 

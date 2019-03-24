@@ -89,6 +89,7 @@
 
 <script>
 import Datepicker from "../dateTime/Datepicker";
+import SelectDataRepository from "../../../repository/SelectDataRepository";
 import rules from "../formRules";
 export default {
   name: "TravellerForm",
@@ -100,14 +101,25 @@ export default {
       tDob: this.dob,
       //Select lists
       genderList: ["Male", "Female", "Other"],
-      typeList: [{ id: 1, name: "Type1" }, { id: 2, name: "Type2" }],
-      nationalityList: [{ id: 1, name: "Nat1" }, { id: 2, name: "Nat2" }],
+      typeList: [],
+      nationalityList: [],
     };
+  },
+  mounted() {
+      this.populateSelects();
   },
   watch: {
     tDob: function() {
       this.$emit("update:dob", this.tDob);
     },
   },
+  methods: {
+      async populateSelects() {
+          const nationalities = await SelectDataRepository.nationalities();
+          this.nationalityList = nationalities.data;
+          const travellerTypes = await SelectDataRepository.travellerTypes();
+          this.typeList = travellerTypes.data;
+      }
+  }
 };
 </script>

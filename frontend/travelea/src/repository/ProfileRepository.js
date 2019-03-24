@@ -1,4 +1,6 @@
 
+import Repository from "./Repository";
+
 export default {
   getProfile(id) {
     return Repository.get(`/profile/${id}`);
