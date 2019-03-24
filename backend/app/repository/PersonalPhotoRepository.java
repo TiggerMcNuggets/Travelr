@@ -1,6 +1,8 @@
 package repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.dto.Photo.UpdatePhotoReq;
+import finders.PhotoFinder;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
 import io.ebean.ExpressionList;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -22,6 +25,8 @@ public class PersonalPhotoRepository {
 
     private final EbeanServer ebeanServer;
     private final DatabaseExecutionContext executionContext;
+    private PhotoFinder photoFinder = new PhotoFinder();
+
     @Inject
     public PersonalPhotoRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
         this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
@@ -54,6 +59,32 @@ public class PersonalPhotoRepository {
             ExpressionList<PersonalPhoto> query = ebeanServer.find(PersonalPhoto.class).where().eq("traveller_id", id);
             return query.findList();
         }, executionContext);
+    }
+
+
+    /**
+     * Updates a photo that belongs to a user
+     * @param request the request DTO
+     * @param photoId the photo id
+     * @return completable future of the new destination
+     */
+    public CompletableFuture<Long> update(UpdatePhotoReq request, Long photoId) {
+        return supplyAsync(() -> {
+            PersonalPhoto photo = photoFinder.findByPhotoId(photoId);
+            photo.is_public = request.is_public;
+            photo.save();
+
+            return photo.id;
+        });
+    }
+
+    /**
+     * Gets one photo that belongs to a user
+     * @param id the photo id
+     * @return completable future of the photo
+     */
+    public CompletableFuture<PersonalPhoto> getOne(Long id) {
+        return supplyAsync(() -> photoFinder.findByPhotoId(id), executionContext);
     }
 
 }

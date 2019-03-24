@@ -40,7 +40,7 @@
 
                 <v-card>
                     <v-img
-                    :src="clickedImage"
+                    :src="clickedImageURL"
                     class="dialogue-image"
                   ></v-img>
 
@@ -55,6 +55,17 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
+                      <v-switch
+                      v-model="publicPhotoSwitch"
+                      :label="`Public Photo`"
+                    ></v-switch>
+                       <v-btn
+                      color="primary"
+                      flat
+                      @click="updatePhotoVisability()"
+                    >
+                      Apply changes
+                    </v-btn>
                     <v-btn
                       color="primary"
                       flat
@@ -176,7 +187,8 @@ hr {
 import { store } from "../../store/index";
 import {
   storeImage,
-  getImages
+  getImages,
+  updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
 
 export default {
@@ -185,8 +197,10 @@ export default {
   data() {
     return {
       files: [],
-      clickedImage: "",
-      dialog: false
+      clickedImageURL: "",
+      clickedImage: {},
+      dialog: false,
+      publicPhotoSwitch: false
     };
   },
 
@@ -196,10 +210,17 @@ export default {
   //   }
   // },
 
+  
+
   methods: {
     // Sets the file property the the file being uploaded.
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
+    },
+
+    updatePhotoVisability() {
+      this.clickedImage.is_public = this.publicPhotoSwitch;
+      updatePersonalPhoto(this.clickedImage)
     },
 
     // Submits the image file and uploads it to the server
@@ -216,19 +237,16 @@ export default {
 
     // Gets the local image file path
     getImgUrl(item, place="somewhere else") {
-      console.log(place);
-      console.log("../../../../../backend/resources/images/" +
-        item.photo_filename)
       return require("../../../../../backend/resources/images/" +
         item.photo_filename);
     },
 
     // Gets the local image file path
     setDialogueContent(selectedImage="") {
-      console.log("item");
       this.dialog = true;
-      this.clickedImage = this.getImgUrl(selectedImage);
-      // this.clickedImage = require("../../../../../backend/resources/images/Civil Defence.png")
+      this.clickedImage = selectedImage;
+      this.publicPhotoSwitch = selectedImage.is_public
+      this.clickedImageURL = this.getImgUrl(selectedImage);
     },
 
     groupImages(imageList) {

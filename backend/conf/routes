@@ -23,6 +23,7 @@ DELETE      /travellers/:id                 controllers.UserController.deleteUse
 ## Photos
 GET         /travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
 GET         /travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
+POST        /travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
 POST        /travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
 
 # Destinations
