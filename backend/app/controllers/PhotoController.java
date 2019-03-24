@@ -127,8 +127,6 @@ public class PhotoController extends Controller {
                 return CompletableFuture.completedFuture(notFound("Photo not found"));
             }
             // Forbidden Check
-//            System.out.println(photo.traveller.id);
-//            System.out.println(user.id);
 //            if (photo.traveller.id != user.id) {
 //                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
 //            }

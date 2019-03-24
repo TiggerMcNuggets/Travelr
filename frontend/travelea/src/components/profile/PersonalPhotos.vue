@@ -2,27 +2,39 @@
 
 <template>
   <div class="outer-container">
-     <div fluid class="banner">
+    <div fluid class="banner">
       <h1>MY PHOTOS</h1>
       <hr>
-     </div>
-     <v-container>
-
+    </div>
+    <v-container>
       <div class="section">
-        <h2 class='headline'>MY PHOTOS</h2>
-        <v-btn class="upload-toggle-button" fab small dark color="indigo"  @click="toggleShowUploadPhoto">
+        <h2 class="headline">MY PHOTOS</h2>
+        <v-btn
+          class="upload-toggle-button"
+          fab
+          small
+          dark
+          color="indigo"
+          @click="toggleShowUploadPhoto"
+        >
           <v-icon dark>add</v-icon>
         </v-btn>
       </div>
-      <v-divider class='photo-header-divider'></v-divider>
-      <div  v-if="showUploadSection" >
-      <div class="upload-section  section">
-        <label>
-          <input class='choose-file-button' type="file" id="file" ref="file" v-on:change="handleFileUpload()">
-        </label>
-        <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
-       </div>
-        <v-divider class='photo-header-divider'></v-divider>
+      <v-divider class="photo-header-divider"></v-divider>
+      <div v-if="showUploadSection">
+        <div class="upload-section section">
+          <label>
+            <input
+              class="choose-file-button"
+              type="file"
+              id="file"
+              ref="file"
+              v-on:change="handleFileUpload()"
+            >
+          </label>
+          <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+        </div>
+        <v-divider class="photo-header-divider"></v-divider>
       </div>
 
       <ul>
@@ -40,37 +52,36 @@
         </li>
       </ul>
 
-    <v-dialog v-model="dialog" width="500">
-      <v-card>
-        <v-img :src="clickedImageURL" class="dialogue-image"></v-img>
+      <v-dialog v-model="dialog" width="500">
+        <v-card>
+          <v-img :src="clickedImageURL" class="dialogue-image"></v-img>
 
-        <v-card-title primary-title>
-          <div>
-            <h5 class="headline mb-0">Image Name</h5>
-            <div>Description/Other meta info</div>
-          </div>
-        </v-card-title>
+          <v-card-title primary-title>
+            <div>
+              <h5 class="headline mb-0">Image Name</h5>
+              <div>Description/Other meta info</div>
+            </div>
+          </v-card-title>
 
-        <v-divider></v-divider>
+          <v-divider></v-divider>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-          <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-container>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+            <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
+            <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-container>
   </div>
 </template>
 
 
 <style>
-
 .choose-file-button {
   background-color: #f5f5f5;
-  color: rgba(0,0,0,0.87);
+  color: rgba(0, 0, 0, 0.87);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -101,7 +112,7 @@
 }
 
 .photo-header-divider {
-  margin-top:16px;
+  margin-top: 16px;
 }
 
 .image-container {
@@ -135,7 +146,7 @@ ul {
 }
 
 h2 {
-align-self: flex-end;
+  align-self: flex-end;
 }
 
 hr {
