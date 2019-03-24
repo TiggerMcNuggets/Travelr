@@ -29,14 +29,14 @@
                     <td class="text-xs-right">{{ props.item.gender }}</td>
                     <td>
                         <ul style="list-style-type:none">
-                            <li v-for="nationality in props.item.nationalities" :key="nationality">
+                            <li v-for="(nationality, index) in props.item.nationalities" :key="index">
                                 {{ nationality.name }} <br/>
                             </li>
                         </ul>
                     </td>
                     <td>
                         <ul style="list-style-type:none">
-                            <li v-for="travelType in props.item.travellerTypes" :key="travelType">
+                            <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
                                 {{ travelType.name }} <br/>
                             </li>
                         </ul>
@@ -51,20 +51,20 @@
 import { store } from "../../store/index";
 
 export default {
+    store,
     data () {
         return {   
             search: ''
-    }
+        }
     },
     // the place where you want to make the store values readable
     computed: {
         users() {
-        return store.state.users.users;
+            return store.state.users.users;
         }
     },
     created: async function() {
-        //store.commit("setUsers");
-        await store.dispatch("setUsers");
+        await store.dispatch("getUsers", {});
     }
 }
 </script>

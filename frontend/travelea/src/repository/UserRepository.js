@@ -198,7 +198,10 @@ import Repository from "./Repository";
 export default {
 
     getUsers(params) {
-        return Repository.get('/travellers', {
+        console.log("#############################################################");
+        console.log(params);
+        console.log("#############################################################");
+        return Repository.get('/travellers_filter', {
             params: params
         });
     },

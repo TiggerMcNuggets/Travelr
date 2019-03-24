@@ -1,16 +1,16 @@
 <template>
     <v-card>
-        <v-form v-model="valid">
+        <v-form>
             <v-layout wrap class="side-filter">
                     <v-flex xs12 sm6 md6>
                          <v-text-field
-                        v-model=search_params.fName
+                        v-model="search_params.firstName"
                         label="First Name"
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                          <v-text-field
-                        v-model="search_params.lName"
+                        v-model="search_params.lastName"
                         label="Last Name"
                         ></v-text-field>
                     </v-flex>
@@ -18,14 +18,14 @@
                         <v-text-field
                         v-model.number="search_params.minAge"
                         label="Min Age"
-                        :rules="ageRules"
+                        type='number'
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 md6>
                         <v-text-field
                         v-model.number="search_params.maxAge"
                         label="Max Age"
-                        :rules="ageRules"
+                        type='number'
                         ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm12 md12>
@@ -49,7 +49,7 @@
                     </v-flex>
                     <v-flex xs12 sm12 md12>
                         <v-select
-                        v-model="search_params.travellerTypes"
+                        v-model="search_params.travellerType"
                         :items="travellerTypes"
                         attach
                         chips
@@ -86,38 +86,41 @@ import { getAllUsers } from "../../repository/UserRepository";
 import { store } from "../../store/index";
 
 export default {
+    store,
     data() {
         return {  
             ageRules: [
                 v => (parseInt(v) >= 0 || v.length == 0) || 'Age must be positive and number'
             ],
             search_params: {
-                fName: '',
-                lName: '',
-                minAge: '',
-                maxAge: '',
-                gender: '',
-                nationality: '',
-                travellerTypes: '',
-                orderBy: ''
+                firstName: null,
+                lastName: null,
+                gender: null,
+                minAge: 0,
+                maxAge: 150,
+                nationality: null,
+                travellerType: null,
+                orderBy: null
             }
         }
     },
     methods: {
-        searchUsers: function() {
-            getAllUsers(this.search_params).then(function(result) {
+        async searchUsers() {
+            await store.dispatch("getUsers", this.search_params);
+            
+            /*getAllUsers(this.search_params).then(function(result) {
                 store.state.users.users = result;
-            })
+            })*/
         },
         resetSearch: function() {
-            this.search_params.fName = '';
-            this.search_params.lName = '';
-            this.search_params.minAge = '';
-            this.search_params.maxAge = '';
-            this.search_params.gender = '';
-            this.search_params.nationality = '';
-            this.search_params.travellerTypes = '';
-            this.search_params.orderBy = '';
+            this.search_params.firstName = null;
+            this.search_params.lastName = null;
+            this.search_params.gender = null;
+            this.search_params.minAge = null;
+            this.search_params.maxAge = null;
+            this.search_params.nationality = null;
+            this.search_params.travellerTypes = null;
+            this.search_params.orderBy = null;
             this.searchUsers();
         }
     },

@@ -3,11 +3,8 @@ import Router from "vue-router";
 
 // Components
 import Profile from "../components/profile/Profile"
-<<<<<<< HEAD
 import userSearch from "../components/userSearch/userSearch"
-=======
 import Signup from "../components/signup/Signup.vue"
->>>>>>> vue-restructure
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import PersonalPhotos from "../components/profile/PersonalPhotos"

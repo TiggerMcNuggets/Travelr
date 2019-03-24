@@ -7,5 +7,10 @@ export default {
 
     logout() {
         return Repository.post('/logout');
-    }
+    },
+
+    signup(payload) {
+        return Repository.post('/travellers', payload);
+    },
+
 }

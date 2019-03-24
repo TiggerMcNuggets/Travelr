@@ -5,17 +5,24 @@ import controllers.dto.User.CreateUserReq;
 import controllers.dto.User.NationalityReq;
 import controllers.dto.User.UpdateUserReq;
 import finders.UserFinder;
+import io.ebean.ExpressionList;
 import models.Nationality;
 import models.TravellerType;
 import models.User;
 import models.UserNationality;
+import play.db.ebean.Transactional;
+import utils.Moment;
 
 import javax.inject.Inject;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 
@@ -48,6 +55,17 @@ public class UserRepository {
     }
 
     /**
+     * Displays all travellers meeting the (optional) request query parameters
+     *
+     * @return CompletionStage<List<Traveller>>
+     */
+    @Transactional
+    public CompletionStage<List<User>> getFilteredUsers(String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> traveller_types, String orderBy) {
+        return supplyAsync(() -> userFinder.findUsersByParams(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy), context);
+    };
+
+
+    /**
      * Creates a new user
      * @param request the request DTO
      * @return completable future of new user id
@@ -66,9 +84,13 @@ public class UserRepository {
                 UserNationality userNationality = new UserNationality(user, nationalityNew, nationality.hasPassport);
                 userNationality.insert();
             }
+           // user.travellerTypes = new ArrayList<TravellerType>();
 
             // Insert traveller types
             for(long i: request.travellerTypes) {
+                System.out.println(TravellerType.find.byId(i));
+                System.out.println(user.firstName);
+                System.out.println(user.travellerTypes);
                 user.travellerTypes.add(TravellerType.find.byId(i));
             }
             user.save();

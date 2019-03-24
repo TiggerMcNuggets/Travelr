@@ -30,24 +30,16 @@ export default {
         async getUsers({commit}, params) {
           try {
             const response = await UserRepository.getUsers(params);
-            console.log('###############################################################');
-            console.log(response);
-            console.log('###############################################################');
-            commit('setUsers', response);
+            console.log(response['data']);
+            commit('setUsers', response['data']);
           } catch (e) {
             return;
           }
         },
     },
     getters: {
-        users(state) {
-            return state.users;
-        },
-        nationalities(state) {
-            return state.nationalities;
-        },
-        travellers(state) {
-            return state.travellerTypes;
-        }
+        users: (state) => state.users,
+        nationalities: (state) => state.nationalities,
+        travellers: (state) => state.travellerTypes
     }
 }

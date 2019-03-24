@@ -118,6 +118,22 @@ public class User extends BaseModel {
             throw new RuntimeException(e);
         }
     }
+//
+//    public List<UserNationality> getNationalities() {
+//        return nationalities;
+//    }
+//
+//    public void setNationalities(List<UserNationality> nationalities) {
+//        this.nationalities = nationalities;
+//    }
+//
+//    public List<TravellerType> getTravellerTypes() {
+//        return travellerTypes;
+//    }
+//
+//    public void setTravellerTypes(List<TravellerType> travellerTypes) {
+//        this.travellerTypes = travellerTypes;
+//    }
 
     public User(CreateUserReq request) {
         this.firstName = request.firstName;
