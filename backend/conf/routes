@@ -1,7 +1,7 @@
-GET         /                               controllers.UserController.index()
+GET     /                                   controllers.FrontendController.index()
 
 # Populate static data
-POST        /populate                       controllers.PopulateController.populateDatabase()
+POST        /api/populate                   controllers.PopulateController.populateDatabase()
 
 POST        /login                          controllers.SecurityController.login(request: Request)
 POST        /logout                         controllers.SecurityController.logout(request: Request)

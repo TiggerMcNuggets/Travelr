@@ -1,4 +1,4 @@
-name := "SENG302 TEAM UPDATE ME"
+name := "team300-travelea"
 
 version := "0.0.1-SNAPSHOT"
 
