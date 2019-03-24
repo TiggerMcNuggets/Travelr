@@ -63,7 +63,8 @@ export default {
         }
     },
     created: async function() {
-        store.commit("setUsers");
+        //store.commit("setUsers");
+        await store.dispatch("setUsers");
     }
 }
 </script>

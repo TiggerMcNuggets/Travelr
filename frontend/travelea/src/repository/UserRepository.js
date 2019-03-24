@@ -1,30 +1,4 @@
-import Repository from "./Repository";
-
-
-export default {
-    getUsers(params) {
-        return Repository.get('/travellers', {
-            params: params
-        });
-    },
-
-    getUser(id) {
-        return Repository.get(`/travellers/${id}`);
-    },
-
-    createUser(payload) {
-        return Repository.post('/travellers', payload); 
-    },
-
-    updateUser(id, payload) {
-        return Repository.put(`/travellers/${id}`, payload);
-    }
-
-
-}
-
-
-
+// <<<<<<< HEAD
 /**
  * retrieves the list of all the users stored in the database which meet the query paramaters
  */
@@ -217,3 +191,32 @@ export const getAllTravellerTypes = async() => {
     return travellerTypes;
     //return[1, 2, 3, 4];
 };
+// =======
+import Repository from "./Repository";
+
+
+export default {
+
+    getUsers(params) {
+        return Repository.get('/travellers', {
+            params: params
+        });
+    },
+
+    getUser(id) {
+        return Repository.get(`/travellers/${id}`);
+    },
+
+    createUser(payload) {
+        return Repository.post('/travellers', payload); 
+    },
+
+    updateUser(id, payload) {
+        return Repository.put(`/travellers/${id}`, payload);
+    }
+
+
+}
+
+
+// >>>>>>> vue-restructure

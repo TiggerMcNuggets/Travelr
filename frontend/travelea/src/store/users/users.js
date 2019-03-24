@@ -1,6 +1,7 @@
 import { getAllUsers } from "../../repository/UserRepository";
 import { getAllNationalities } from "../../repository/UserRepository";
 import { getAllTravellerTypes } from "../../repository/UserRepository";
+import UserRepository from "../../repository/UserRepository";
 
 /**
  * Users store sub-module
@@ -12,8 +13,8 @@ export default {
         travellerTypes: []
     },
     mutations: {
-        async setUsers(state) {
-            const users = await getAllUsers();
+        setUsers(state, users) {
+            //const users = await getAllUsers();
             state.users = users;
         },
         async setNationalities(state) {
@@ -26,7 +27,17 @@ export default {
         }
     },
     actions: {
-
+        async getUsers({commit}, params) {
+          try {
+            const response = await UserRepository.getUsers(params);
+            console.log('###############################################################');
+            console.log(response);
+            console.log('###############################################################');
+            commit('setUsers', response);
+          } catch (e) {
+            return;
+          }
+        },
     },
     getters: {
         users(state) {
