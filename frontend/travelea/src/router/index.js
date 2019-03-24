@@ -51,13 +51,13 @@ export default new Router({
       path: "/admin_dash",
       name: 'admin_dash',
       component: AdminDashboard,
-      // beforeEnter(to, from, next) {
-      //   console.log(to);
-      //   console.log(from);
-      //   if (this.store.getters.getIsUserAdmin) {
-      //     next();
-      //   }
-      // }
+      beforeEnter(to, from, next) {
+        console.log(to);
+        console.log(from);
+        if (store.getters.getIsUserAdmin) {
+          next();
+        }
+      }
     }
   ]
 })

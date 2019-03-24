@@ -47,7 +47,17 @@ export default {
         } catch (e) {
           return;
         }
-      }
+      },
+        async signupOtherUser(signupData) {
+            try {
+                await AuthRepository.signup(signupData);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+
     },
     getters: {
       getUser: state => state,

@@ -7,5 +7,9 @@ export default {
 
     logout() {
         return Repository.post('/logout');
+    },
+
+    signup(params) {
+        return Repository.post('/travellers', params);
     }
 }

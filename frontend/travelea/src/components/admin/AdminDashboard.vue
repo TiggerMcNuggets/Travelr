@@ -18,11 +18,23 @@
                         :password.sync="traveller.password"
                         :confirmPassword.sync="confirmPassword" />
 
-                <v-btn :disabled="!isValid" color="primary" @click="handleSignup">
-                    Create Profile
-                </v-btn>
+                <v-layout wrap>
+                        <v-flex xs12 sm6 md8 class="margin-left-to-checkbox">
+                            <v-checkbox
+                                    v-model="checkbox"
+                                    :label="'Create user as admin'"
+                            >
+                            </v-checkbox>
+                        </v-flex >
+                        <v-flex xs12 sm6 md3>
+                            <v-btn :disabled="!isValid" color="primary" @click="handleSignup">
+                                Create Profile
+                            </v-btn>
+                        </v-flex>
+                </v-layout>
             </v-card>
             <v-alert class="email-alert" :value="emailAlert" color="error">Email already taken</v-alert>
+            <v-alert class="success" :value="createdUser" color="success">User created!</v-alert>
         </v-flex>
     </v-form>
 </template>
@@ -34,6 +46,9 @@
     .email-alert {
         display: block;
         margin-top: 10px;
+    }
+    .margin-left-to-checkbox {
+        margin-left: 2em
     }
 </style>
 
@@ -52,8 +67,10 @@
         store,
         data() {
             return {
+                checkbox: true,
                 isValid: false,
                 emailAlert: false,
+                createdUser: false,
                 traveller: {},
 
                 dateOfBirth: "",
@@ -66,35 +83,30 @@
             setTraveller() {
                 this.$set(this.traveller, "nationalities", signup.nationalitiesAsObject(this.nationalities, this.passports));
                 this.$set(this.traveller, "dateOfBirth", dateTime.convertDate(this.dateOfBirth));
+                if (this.checkbox) {
+                    this.$set(this.traveller, "accountType", 1);
+                }
             },
 
             async signup() {
-                await store.dispatch("signup", this.traveller);
-                const id = store.getters.getUser.id;
+                const response = await store.dispatch("signupOtherUser", this.traveller);
 
-                if (!id) {
+                if (!response) {
                     this.emailAlert = true;
+                    return false;
                 }
-                return id
+                return true;
 
-            },
-            async login() {
-                const loginData = {
-                    email: this.traveller.email,
-                    password: this.traveller.password,
-                };
-                await store.dispatch("login", loginData);
-                const token = store.getters.getUser.token;
-                localStorage.setItem("token", token);
-                console.log(localStorage.getItem("token"));
             },
             async handleSignup() {
                 if (this.$refs.form.validate()) {
                     this.setTraveller();
 
                     if (await this.signup()) {
-                        await this.login();
-                        this.$router.push("/profile");
+                        this.createdUser = true;
+                        setTimeout(() => {
+                            this.createdUser = false
+                        }, 3000);
                     }
                 }
             },
