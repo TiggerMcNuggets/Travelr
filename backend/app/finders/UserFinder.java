@@ -57,16 +57,16 @@ public class UserFinder extends Finder<Long, User> {
     }
 
     public List<User> findUsersByParams(String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> traveller_types, String orderBy) {
-        ExpressionList<User> query = query().fetch("nationalities", "name").fetch("travellerTypes", "name").where().and();
+        ExpressionList<User> query = query().where().and();
         if (fname != null) query.ieq("first_name", fname);
         if (lname != null) query.ieq("last_name", lname);
         if (gender != null) query.ieq("gender", gender);
-        if (nationalities != null) query.in("nationality.name", nationalities);
+        /*if (nationalities != null) query.in("nationality.naitonality.name", nationalities);
         if (traveller_types != null) query.in("traveller_type.name", traveller_types);
         if (orderBy != null && !orderBy.toLowerCase().equals("type") && !orderBy.toLowerCase().equals("nationality")) {
             String order = sanitiseOrderBy(orderBy);
             query.setOrderBy(order);
-        }
+        }*/
         // if confused by next line, check moment findDOBFromAge documentation, shows wht I am passign maxAge as first param and minAge as second
 //        query.raw("date_of_birth BETWEEN ? AND ?", Moment.findDOBFromAge(maxAge), Moment.findDOBFromAge(minAge));
         query.endAnd();

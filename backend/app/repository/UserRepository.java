@@ -84,13 +84,9 @@ public class UserRepository {
                 UserNationality userNationality = new UserNationality(user, nationalityNew, nationality.hasPassport);
                 userNationality.insert();
             }
-           // user.travellerTypes = new ArrayList<TravellerType>();
 
             // Insert traveller types
             for(long i: request.travellerTypes) {
-                System.out.println(TravellerType.find.byId(i));
-                System.out.println(user.firstName);
-                System.out.println(user.travellerTypes);
                 user.travellerTypes.add(TravellerType.find.byId(i));
             }
             user.save();

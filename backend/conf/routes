@@ -15,7 +15,7 @@ GET         /api/nationalities                  controllers.NationalityControlle
 GET         /api/traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Travellers
-GET         /travellers_filter              controllers.UserController.getFilteredUsers(request: Request, firstName: String ?= null, lastName: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,travellerType: java.util.List[String] ?= null, orderBy: String ?= null)
+GET         /api/travellers_filter              controllers.UserController.getFilteredUsers(request: Request, firstName: String ?= null, lastName: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,travellerType: java.util.List[String] ?= null, orderBy: String ?= null)
 GET         /api/travellers                     controllers.UserController.getUsers(request: Request)
 POST        /api/travellers                     controllers.UserController.createUser(request: Request)
 GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
