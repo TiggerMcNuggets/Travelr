@@ -12,12 +12,14 @@ GET         /nationalities                  controllers.NationalityController.ge
 #Traveller Types
 GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
-# Users
+# Travellers
 GET         /travellers                     controllers.UserController.getUsers(request: Request)
 POST        /travellers                     controllers.UserController.createUser(request: Request)
+GET         /travellers/me                  controllers.UserController.getMe(request: Request)
 GET         /travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
 DELETE      /travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
+
 
 #
 ## Photos

@@ -46,9 +46,7 @@ public class SecurityController extends Controller {
             return unauthorized("Incorrect login details");
         } else {
             User user = userOptional.get();
-            // TODO delete before finishing the story
-//            String authToken = user.setToken();
-            String authToken = user.setToken("123");
+            String authToken = user.setToken();
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
             authTokenJson.put("id", user.id);
