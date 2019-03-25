@@ -6,6 +6,7 @@ import Profile from "../components/profile/Profile"
 import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
+import Login from "../components/login/Login"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
 import CreateTrips from "../components/trips/CreateTrips.vue";
 
@@ -33,6 +34,11 @@ export default new Router({
       path: '/trips/create',
       name: 'create-trip',
       component: CreateTrips
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
     },
     {
       path: '/personalphotos/:id',
