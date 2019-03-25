@@ -8,6 +8,7 @@
           </v-list-tile-action>
           <v-list-tile-content>{{ item.name }}</v-list-tile-content>
         </v-list-tile>
+
       </v-list>
     </v-navigation-drawer>
     <v-toolbar color="indigo" dark dense clipped-left fixed app>
@@ -23,8 +24,12 @@
 </template>
 
 <script>
+
+import {store} from "./store/index";
+
 export default {
   name: "App",
+  store,
   data() {
     return {
       drawer: false
@@ -37,20 +42,18 @@ export default {
         { name: "Log In", icon: "lock_open", link: "/login" }
       ];
 
-      if (this.userLoggedIn) {
+      if (store.getters.isLoggedIn) {
         menuOptions = [
           { name: "Dashboard", icon: "lock_open", link: "/home" },
           { name: "Users", icon: "lock_open", link: "/users" },
           { name: "My Trips", icon: "lock_open", link: "/trips/create" },
-          { name: "My Destinations", icon: "lock_open", link: "/destination" }
+          { name: "My Destinations", icon: "lock_open", link: "/destination" },
+          { name: "Log Out", icon: "lock_open", link: "/logout"}
         ];
       }
 
       return menuOptions;
     },
-    userLoggedIn() {
-      return true;
-    }
   }
 };
 </script>

@@ -5,9 +5,7 @@ import user from './user'
 import destinations from './destinations/destinations'
 import trips from './trips/trips'
 
-
 Vue.use(Vuex)
-
 
 export const store = new Vuex.Store({
   modules: {
@@ -15,4 +13,7 @@ export const store = new Vuex.Store({
     destinations: destinations,
     trips: trips,
   }
-})
+});
+
+
+
