@@ -11,7 +11,7 @@ recent-artifacts:
     - sbt dist
   artifacts:
     paths:
-      - target/universal/*.zip
+      - backend/target/universal/*.zip
     expire_in: 1 week
   except:
     - tags
@@ -23,7 +23,7 @@ release-artifacts:
     - sbt dist
  artifacts:
     paths:
-    - target/universal/*.zip
+    - backend/target/universal/*.zip
  only:
     - tags
 
