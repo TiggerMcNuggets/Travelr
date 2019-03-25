@@ -23,8 +23,8 @@ public class TravellerComparatorForType implements Comparator<User> {
         List<TravellerType> types2 = t2.travellerTypes;
         Collections.sort(types1, new TravellerTypeComparator());
         Collections.sort(types2, new TravellerTypeComparator());
-        t1.setTravellerTypes(types1);
-        t2.setTravellerTypes(types2);
+        //t1.setTravellerTypes(types1);
+        //t2.setTravellerTypes(types2);
         return types1.get(0).name.compareTo(types2.get(0).name);
     }
 }

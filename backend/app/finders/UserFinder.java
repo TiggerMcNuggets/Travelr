@@ -71,13 +71,13 @@ public class UserFinder extends Finder<Long, User> {
 //        query.raw("date_of_birth BETWEEN ? AND ?", Moment.findDOBFromAge(maxAge), Moment.findDOBFromAge(minAge));
         query.endAnd();
         List<User> travellers = query.findList();
-        if (orderBy != null) {
+        /*if (orderBy != null) {
             if (orderBy.equals("nationality")) {
                 Collections.sort(travellers, new TravellerComparatorForNationalitites());
             } else if (orderBy.equals("type")) {
                 Collections.sort(travellers, new TravellerComparatorForType());
             }
-        }
+        }*/
         return travellers;
     }
 

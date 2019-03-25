@@ -93,14 +93,14 @@ export default {
                 v => (parseInt(v) >= 0 || v.length == 0) || 'Age must be positive and number'
             ],
             search_params: {
-                firstName: null,
-                lastName: null,
-                gender: null,
-                minAge: 0,
-                maxAge: 150,
-                nationality: null,
-                travellerType: null,
-                orderBy: null
+                firstName: '',
+                lastName: '',
+                gender: '',
+                minAge: '',
+                maxAge: '',
+                nationality: [],
+                travellerType: [],
+                orderBy: ''
             }
         }
     },
@@ -113,14 +113,14 @@ export default {
             })*/
         },
         resetSearch: function() {
-            this.search_params.firstName = null;
-            this.search_params.lastName = null;
-            this.search_params.gender = null;
-            this.search_params.minAge = null;
-            this.search_params.maxAge = null;
-            this.search_params.nationality = null;
-            this.search_params.travellerTypes = null;
-            this.search_params.orderBy = null;
+            this.search_params.firstName = '';
+            this.search_params.lastName = '';
+            this.search_params.gender = '';
+            this.search_params.minAge = '';
+            this.search_params.maxAge = '';
+            this.search_params.nationality = [];
+            this.search_params.travellerType = [];
+            this.search_params.orderBy = '';
             this.searchUsers();
         }
     },

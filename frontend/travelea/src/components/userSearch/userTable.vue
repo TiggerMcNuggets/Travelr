@@ -64,7 +64,7 @@ export default {
         }
     },
     created: async function() {
-        await store.dispatch("getUsers", {});
+        await store.dispatch("getUsers", false);
     }
 }
 </script>

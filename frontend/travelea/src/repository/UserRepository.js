@@ -198,9 +198,9 @@ import Repository from "./Repository";
 export default {
 
     getUsers(params) {
-        console.log("#############################################################");
-        console.log(params);
-        console.log("#############################################################");
+        //console.log("#############################################################");
+        //console.log(params);
+        //console.log("#############################################################");
         return Repository.get('/travellers_filter', {
             params: params
         });
@@ -211,7 +211,7 @@ export default {
     },
 
     createUser(payload) {
-        return Repository.post('/travellers', payload); 
+        return Repository.post('/travellers', payload);
     },
 
     updateUser(id, payload) {

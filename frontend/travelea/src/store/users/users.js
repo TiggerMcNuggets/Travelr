@@ -27,14 +27,71 @@ export default {
         }
     },
     actions: {
-        async getUsers({commit}, params) {
-          try {
-            const response = await UserRepository.getUsers(params);
-            console.log(response['data']);
-            commit('setUsers', response['data']);
-          } catch (e) {
-            return;
-          }
+        async getUsers({ commit }, params) {
+            let new_params = {};
+            if (params) {
+                if (params.firstName !== '') {
+                    new_params.firstName = params.firstName;
+                }
+                if (params.lastName !== '') {
+                    new_params.lastName = params.lastName;
+                }
+                if (params.gender !== '') {
+                    new_params.gender = params.gender;
+                }
+                if (params.minAge !== '') {
+                    new_params.minAge = params.minAge;
+                }
+                if (params.maxAge !== '') {
+                    new_params.maxAge = params.maxAge;
+                }
+                if (params.nationality.length !== 0) {
+                    new_params.nationality = params.nationality;
+                }
+                if (params.travellerType.length !== 0) {
+                    new_params.travellerType = params.travellerType;
+                }
+                if (params.orderBy !== '') {
+                    new_params.orderBy = params.orderBy;
+                }
+            }
+            try {
+                const response = await UserRepository.getUsers(new_params);
+                let filtered_data = [];
+                for (let i = 0; i < response['data'].length; i++) {
+                    let meets_nationality_param = true;
+                    let meets_traveller_param = true;
+                    if (new_params.nationality) {
+                        meets_nationality_param = false;
+                        for (let l = 0; l < response['data'][i]['nationalities'].length; l++) {
+                            if (new_params.nationality.includes(response['data'][i]['nationalities'][l]['name'])) {
+                                meets_nationality_param = true;
+                            }
+                        }
+                    }
+                    if (new_params.travellerType) {
+                        meets_traveller_param = false;
+                        for (let l = 0; l < response['data'][i]['travellerTypes'].length; l++) {
+                            if (new_params.travellerType.includes(response['data'][i]['travellerTypes'][l]['name'])) {
+                                meets_traveller_param = true;
+                            }
+                        }
+                    }
+                    if (meets_nationality_param && meets_traveller_param) {
+                        filtered_data.push(response['data'][i]);
+                    }
+                }
+                if (new_params.orderBy) {
+                    if (new_params.orderBy === 'Nationality') {
+                        filtered_data.sort((a, b) => (a.nationalities[0] > b.nationalities[0]) ? -1 : 1);
+                    } else {
+                        filtered_data.sort((a, b) => (a.travellerTypes[0] > b.travellerTypes[0]) ? -1 : 1);
+                    }
+                }
+                commit('setUsers', filtered_data);
+            } catch (e) {
+                return;
+            }
         },
     },
     getters: {
