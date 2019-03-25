@@ -14,8 +14,6 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 
-import { store } from "../../src/store/index";
-
 Vue.use(Router);
 let router = new Router({
   mode: 'history',
@@ -91,26 +89,26 @@ let router = new Router({
       path: "/admin_dash",
       name: 'admin_dash',
       component: AdminDashboard,
-      beforeEnter(to, from, next) {
-        console.log(to);
-        console.log(from);
-        if (store.getters.getIsUserAdmin) {
-          next();
-        }
+      meta: {
+      requiresAdmin: true,
+          requiresAuth: true
       }
     }
   ]
-})
-
-function myFunction() {
-
-}
+});
 
 router.beforeEach((to, from, next) => {
 
-  let user = store.getters.getUser;
+  // let user = store.getters.getUser;
       
   if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (to.matched.some(rec => rec.meta.requiresAdmin)) {
+      if (store.getters.getIsUserAdmin) {
+        next();
+      } else {
+        return;
+      }
+    }
     if (store.getters.isLoggedIn) {
       next();
       return;
@@ -128,7 +126,7 @@ router.beforeEach((to, from, next) => {
       })
     .catch(e => console.log(e));
   } else {
-    next() 
+    next();
   }
 });
 

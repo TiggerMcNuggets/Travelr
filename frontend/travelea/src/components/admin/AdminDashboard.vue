@@ -56,7 +56,8 @@
     import TravellerForm from "../common/travellerForm/TravellerForm";
     import SignupFields from "../signup/SignupFields";
 
-    import signup from "../signup/signup.js";
+    // import signup from "../signup/signup.js";
+    import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
     import dateTime from "../common/dateTime/dateTime.js";
 
     import {store} from "../../store/index";
@@ -81,18 +82,22 @@
         },
         methods: {
             setTraveller() {
-                this.$set(this.traveller, "nationalities", signup.nationalitiesAsObject(this.nationalities, this.passports));
-                this.$set(this.traveller, "dateOfBirth", dateTime.convertDate(this.dateOfBirth));
+                this.traveller.nationalities =  travellerFormHelper.convertToNationalitiesReq(this.nationalities, this.passports);
+                this.traveller.dateOfBirth = dateTime.convertStringToTimestamp(this.dateOfBirth);
                 if (this.checkbox) {
-                    this.$set(this.traveller, "accountType", 1);
+                    this.traveller.accountType = 1;
                 }
             },
 
             async signup() {
+                console.log(this.traveller);
                 const response = await store.dispatch("signupOtherUser", this.traveller);
 
                 if (!response) {
                     this.emailAlert = true;
+                    setTimeout(() => {
+                        this.emailAlert = false;
+                    }, 5000);
                     return false;
                 }
                 return true;
