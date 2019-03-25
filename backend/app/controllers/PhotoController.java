@@ -1,30 +1,26 @@
 package controllers;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.LocalAttribute;
-import controllers.actions.Attrs;
+//import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
-import play.i18n.MessagesApi;
 import play.libs.Files;
-import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.PersonalPhotoRepository;
 import utils.FileHelper;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class PhotoController extends Controller {
 
@@ -115,7 +111,7 @@ public class PhotoController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUserPhoto(Http.Request request, Long id) {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
-        User user = request.attrs().get(Attrs.USER);
+//        User user = request.attrs().get(Attrs.USER);
 
         if (updatePhotoForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
@@ -138,30 +134,17 @@ public class PhotoController extends Controller {
     }
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> setProfilePhoto(Http.Request request, Long id, boolean upload) {
-        if (upload) {
-            Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
-            Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-            if (picture != null) {
-                String fileName = picture.getFilename();
-                long fileSize = picture.getFileSize();
-                String contentType = picture.getContentType();
-                Files.TemporaryFile file = picture.getRef();
-                FileHelper fh = new FileHelper();
-                fh.make_directory("resources/images");
-                file.copyTo(Paths.get("resources/images/"+ fileName), true);
-                return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
-                    if (photoName != null) {
-                        return ok("Your profile image was successfully set to " + photoName);
-                    } else {
-                        return badRequest("Error setting profile image");
-                    }
-                });
-            } else {
-                return CompletableFuture.completedFuture(badRequest("Missing file"));
-            }
-        } else {
-            String fileName = request.body().toString();
+    public CompletionStage<Result> uploadProfilePhoto(Http.Request request, Long id) {
+        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+        if (picture != null) {
+            String fileName = picture.getFilename();
+            long fileSize = picture.getFileSize();
+            String contentType = picture.getContentType();
+            Files.TemporaryFile file = picture.getRef();
+            FileHelper fh = new FileHelper();
+            fh.make_directory("resources/images");
+            file.copyTo(Paths.get("resources/images/"+ fileName), true);
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
@@ -169,6 +152,22 @@ public class PhotoController extends Controller {
                     return badRequest("Error setting profile image");
                 }
             });
+        } else {
+            return CompletableFuture.completedFuture(badRequest("Missing file"));
         }
+    }
+
+    @Authorization.RequireAuth
+    public CompletionStage<Result> chooseProfilePhoto(Http.Request request, Long id) {
+        Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
+        ChooseProfilePicReq req = chooseProfilePicForm.get();
+        String fileName = req.fileName;
+        return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
+            if (photoName != null) {
+                return ok("Your profile image was successfully set to " + photoName);
+            } else {
+                return badRequest("Error setting profile image");
+            }
+        });
     }
 }

@@ -25,6 +25,7 @@ create table personal_photo (
   id                            bigint auto_increment not null,
   traveller_id                  bigint,
   photo_filename                varchar(255) not null,
+  is_public                     boolean default 0 not null,
   constraint pk_personal_photo primary key (id)
 );
 

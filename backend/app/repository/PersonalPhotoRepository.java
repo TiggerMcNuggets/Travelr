@@ -97,10 +97,14 @@ public class PersonalPhotoRepository {
      */
     public CompletableFuture<Object> setUserProfilePic(Long id, String fileName) {
         return supplyAsync(() -> {
-            User user = userFinder.findById(id);
-            user.userProfilePhoto = fileName;
-            user.save();
-            return user.userProfilePhoto;
+            try {
+                User user = userFinder.findById(id);
+                user.userProfilePhoto = fileName;
+                user.save();
+                return user.userProfilePhoto;
+            } catch (Error e) {
+                return null;
+            }
         });
     }
 }

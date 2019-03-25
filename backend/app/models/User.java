@@ -6,7 +6,6 @@ import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
 import io.ebean.annotation.NotNull;
 import play.data.validation.Constraints;
-import scala.math.Ordering;
 
 import javax.persistence.*;
 import java.io.UnsupportedEncodingException;
@@ -28,7 +27,7 @@ public class User extends BaseModel {
 
     @NotNull
     @Constraints.Required
-    public Ordering.String firstName;
+    public String firstName;
 
     public String middleName;
 
