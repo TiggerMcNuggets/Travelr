@@ -14,20 +14,18 @@ export default {
     },
     mutations: {
         setUsers(state, users) {
-            //const users = await getAllUsers();
             state.users = users;
         },
-        async setNationalities(state) {
-            const nationalities = await getAllNationalities();
+        setNationalities(state, nationalities) {
             state.nationalities = nationalities;
         },
-        async setTravellers(state) {
-            const travellerTypes = await getAllTravellerTypes();
+        setTravellerTypes(state, travellerTypes) {
             state.travellerTypes = travellerTypes;
         }
     },
     actions: {
         async getUsers({ commit }, params) {
+            //Creating new params so the original params sent through don't get edited
             let new_params = {};
             if (params) {
                 if (params.firstName !== '') {
@@ -93,10 +91,33 @@ export default {
                 return;
             }
         },
-    },
-    getters: {
-        users: (state) => state.users,
-        nationalities: (state) => state.nationalities,
-        travellers: (state) => state.travellerTypes
+        async getAllTravellerTypes({ commit }) {
+            try {
+                const response = await UserRepository.getTravellerTypes();
+                let types = [];
+                //Go throught each object and return only a list of strings
+                for (let i = 0; i < response['data'].length; i++) {
+                    types.push(response['data'][i]['name']);
+                }
+                types.sort();
+                commit('setTravellerTypes', types);
+            } catch (e) {
+                return;
+            }
+        },
+        async getAllNationalities({ commit }) {
+            try {
+                const response = await UserRepository.getNationalities();
+                let nationalities = [];
+                //Go throught each object and return only a list of strings
+                for (let i = 0; i < response['data'].length; i++) {
+                    nationalities.push(response['data'][i]['name']);
+                }
+                nationalities.sort();
+                commit('setNationalities', nationalities);
+            } catch (e) {
+                return;
+            }
+        }
     }
 }

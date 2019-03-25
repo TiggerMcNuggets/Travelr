@@ -90,7 +90,7 @@ export default {
     data() {
         return {  
             ageRules: [
-                v => (parseInt(v) >= 0 || v.length == 0) || 'Age must be positive and number'
+                v => (v >= 0 || v <= 150) || 'Age must be positive and less than 150'
             ],
             search_params: {
                 firstName: '',
@@ -107,10 +107,6 @@ export default {
     methods: {
         async searchUsers() {
             await store.dispatch("getUsers", this.search_params);
-            
-            /*getAllUsers(this.search_params).then(function(result) {
-                store.state.users.users = result;
-            })*/
         },
         resetSearch: function() {
             this.search_params.firstName = '';
@@ -134,8 +130,8 @@ export default {
         }
     },
     created: async function() {
-        store.commit("setNationalities");
-        store.commit("setTravellers");
+        await store.dispatch("getAllTravellerTypes");
+        await store.dispatch("getAllNationalities");
     }
 }
 </script>
