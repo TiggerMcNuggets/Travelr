@@ -99,8 +99,6 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
 
-  // let user = store.getters.getUser;
-      
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (to.matched.some(rec => rec.meta.requiresAdmin)) {
       if (store.getters.getIsUserAdmin) {
@@ -119,7 +117,6 @@ router.beforeEach((to, from, next) => {
       next('/login');
       return;
     }
-    // maybe getTime returns non error even when token null, yoiu have to figure out how to handle res
     store.dispatch("fetchMe")
     .then(() => {
       next();

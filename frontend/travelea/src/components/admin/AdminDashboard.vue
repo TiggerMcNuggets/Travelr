@@ -90,7 +90,6 @@
             },
 
             async signup() {
-                console.log(this.traveller);
                 const response = await store.dispatch("signupOtherUser", this.traveller);
 
                 if (!response) {
