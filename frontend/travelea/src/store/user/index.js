@@ -73,7 +73,8 @@ export default {
         commit('setProfile', response.data);
       },
 
-      async updateUser({commit}, editData, id) {
+      async updateUser({commit}, editData) {
+        let id = this.getters.getId;
         await ProfileRepository.editProfile(editData, id);
         commit('setProfile', editData.data);
       },

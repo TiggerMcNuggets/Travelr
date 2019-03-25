@@ -16,6 +16,7 @@
                 <v-btn :disabled="!isValid" color="primary" @click="handleEdit">
                     Save
                 </v-btn>
+
             </v-card>
         </v-flex>
     </v-form>
@@ -65,7 +66,9 @@ export default {
 
     setTravellerToFields() {
       [this.nationalities, this.passports] = travellerFormHelper.convertFromNationalitiesRes(this.traveller.nationalities);
+      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(this.traveller.travellerTypes)
       this.dateOfBirth = dateTime.convertTimestampToString(this.traveller.dateOfBirth);
+      
     },
 
     setFieldsToTraveller() {
@@ -76,9 +79,16 @@ export default {
     async handleEdit() {
       if (this.$refs.form.validate()) {
         this.setFieldsToTraveller();
-        console.log(this.traveller);        
-        // await store.dispatch("updateUser", this.traveller);
-        // this.$router.push("/profile");
+        let id = store.getters.getId;
+
+        store.dispatch("updateUser", this.traveller)
+        .then((response) => {
+          this.$router.push("/profile");
+        })
+        .catch((e) => {
+            console.log(e);
+        })
+        
       }
      },
   },

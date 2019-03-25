@@ -16,14 +16,13 @@ export default {
     return {};
   },
   mounted() {
-    console.log("here");
-    logout();
+    this.logout();
   },
   methods: {
     async logout() {
       await store.dispatch("logout");
       localStorage.setItem("token", "");
-      console.log("did i get here?");
+
       this.$router.push("/login");
     }
   }

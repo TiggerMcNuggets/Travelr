@@ -30,7 +30,7 @@
                 </v-text-field>
             </v-flex>
             <v-flex sm6 xs12>
-                <Datepicker :dob.sync="tDob" />
+                <Datepicker v-on:updateDob="updateDob" :dob="dob" />
             </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -98,7 +98,6 @@ export default {
   data() {
     return {
       rules,
-      tDob: this.dob,
       //Select lists
       genderList: ["Male", "Female", "Other"],
       typeList: [],
@@ -108,17 +107,16 @@ export default {
   mounted() {
       this.populateSelects();
   },
-  watch: {
-    tDob: function() {
-      this.$emit("update:dob", this.tDob);
-    },
-  },
+
   methods: {
       async populateSelects() {
           const nationalities = await SelectDataRepository.nationalities();
           this.nationalityList = nationalities.data;
           const travellerTypes = await SelectDataRepository.travellerTypes();
           this.typeList = travellerTypes.data;
+      },
+      updateDob(val) {
+        this.$emit("update:dob", val);
       }
   }
 };
