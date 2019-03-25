@@ -64,7 +64,7 @@ h1 {
 
 <script>
 
-import {attemptLogin} from "../../repository/LoginRepository";
+import loginRepository from "../../repository/LoginRepository";
 import {RepositoryFactory} from "../../repository/RepositoryFactory"
 import { store } from "../../store/index";
 
@@ -87,8 +87,9 @@ export default {
     },
     methods: {
         attemptLogin: function() {
-            attemptLogin (this.user).then((response) => {
-                this.$refs.form.reset();
+            loginRepository.attemptLogin(this.user).then((response) => {
+                // this.$refs.form.reset();
+                console.log(response);
                 store.commit("setToken", response.token);
                 store.commit("setId", response.id);
                 })
