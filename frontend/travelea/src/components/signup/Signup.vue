@@ -72,7 +72,7 @@ export default {
     async signup() {
       await store.dispatch("signup", this.traveller);
       const id = store.getters.getUser.id;
-      console.log(id);
+
       if (!id) {
         this.emailAlert = true;
       }
