@@ -17,11 +17,18 @@ public class PersonalPhoto extends BaseModel {
     public User traveller;
 
     /**
-     * The longtitude coordinatte value of the destination.
+     * The photo filename.
      */
     @NotNull
     @Constraints.Required
     public String photo_filename;
+
+    /**
+     * The photo filename.
+     */
+    @NotNull
+    @Column(columnDefinition = "boolean default 0")
+    public Boolean is_public = false;
 
     /**
      * The PersonalPhoto constructor.
