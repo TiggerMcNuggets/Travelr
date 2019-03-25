@@ -2,6 +2,7 @@ package repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.dto.Photo.UpdatePhotoReq;
+import finders.UserFinder;
 import finders.PhotoFinder;
 import io.ebean.Ebean;
 import io.ebean.EbeanServer;
@@ -26,6 +27,7 @@ public class PersonalPhotoRepository {
     private final EbeanServer ebeanServer;
     private final DatabaseExecutionContext executionContext;
     private PhotoFinder photoFinder = new PhotoFinder();
+    private UserFinder userFinder = new UserFinder();
 
     @Inject
     public PersonalPhotoRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
@@ -87,6 +89,20 @@ public class PersonalPhotoRepository {
         return supplyAsync(() -> photoFinder.findByPhotoId(id), executionContext);
     }
 
+    /**
+     * Finds the User given their id and sets their profile pic filename
+     * @param id the user ig
+     * @param fileName the name of the photo
+     * @return the name of the photo
+     */
+    public CompletableFuture<Object> setUserProfilePic(Long id, String fileName) {
+        return supplyAsync(() -> {
+            User user = userFinder.findById(id);
+            user.userProfilePhoto = fileName;
+            user.save();
+            return user.userProfilePhoto;
+        });
+    }
 }
 
 

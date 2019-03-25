@@ -6,6 +6,7 @@ import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
 import io.ebean.annotation.NotNull;
 import play.data.validation.Constraints;
+import scala.math.Ordering;
 
 import javax.persistence.*;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +28,7 @@ public class User extends BaseModel {
 
     @NotNull
     @Constraints.Required
-    public String firstName;
+    public Ordering.String firstName;
 
     public String middleName;
 
@@ -55,6 +56,9 @@ public class User extends BaseModel {
     @JsonIgnore
     @Column(length = 64)
     private byte[] password;
+
+    @Column(columnDefinition = "string default default")
+    public String userProfilePhoto;
 
     @JsonIgnore
     @NotNull

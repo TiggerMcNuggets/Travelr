@@ -9,12 +9,15 @@ import controllers.dto.User.*;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
+import utils.FileHelper;
 
 import javax.inject.Inject;
+import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -193,7 +196,13 @@ public class UserController extends Controller {
         });
     }
 
-
+    /**
+     * sets a user's profile photo field to either the filename of a new image of an existing one
+     * @param request the http request
+     * @param id the user id
+     * @param upload a boolean informing of whether it is a new image
+     * @return a http response code depending on success(200) or failure(400)
+     */
 
 
 
