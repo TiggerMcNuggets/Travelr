@@ -56,7 +56,6 @@ public class User extends BaseModel {
     @Column(length = 64)
     private byte[] password;
 
-    @Column(columnDefinition = "string default default")
     public String userProfilePhoto;
 
     @JsonIgnore
