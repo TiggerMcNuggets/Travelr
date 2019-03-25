@@ -1,6 +1,6 @@
 name := "team300-travelea"
 
-version := "0.0.1-SNAPSHOT"
+version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.12.8"
 
@@ -26,6 +26,7 @@ javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
 
 
 
+// FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
 
 scalacOptions in (Compile, doc) += "-no-java-comments"
 
