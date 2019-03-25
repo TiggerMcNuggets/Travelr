@@ -1,73 +1,38 @@
 package models;
 
+import controllers.dto.Trip.TripDestinationReq;
 import models.Destination;
 import models.Trip;
 import play.data.format.Formats;
 import play.data.validation.Constraints;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import java.util.Date;
 
-/**
- * Computer entity managed by Ebean
- */
 @Entity
 public class TripDestination extends BaseModel {
 
     @ManyToOne
     public Trip trip;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     public Destination destination ;
 
-    @Formats.DateTime(pattern="yyyy-MM-dd")
-    public Date arrivalDate;
+    public int arrivalDate;
 
-    @Formats.DateTime(pattern="yyyy-MM-dd")
-    public Date departureDate;
+    public int departureDate;
 
-    public int orderNo;
+    @Constraints.Required
+    public int ordinal;
 
-    public TripDestination(Trip trip, Destination destination, Date arrivalDate, Date departureDate, int orderNo) {
+    public TripDestination(int arrivalDate, int departureDate, int ordinal, Trip trip, Destination destination) {
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
+        this.ordinal = ordinal;
         this.trip = trip;
         this.destination = destination;
-        this.arrivalDate = arrivalDate;
-        this.departureDate = departureDate;
-        this.orderNo = orderNo;
-    }
 
-    public Date getArrivalDate() {
-        return arrivalDate;
     }
-
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-    public Date getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
-    }
-
-    public Trip getTrip() {
-        return trip;
-    }
-
-    public Destination getDestination() {
-        return destination;
-    }
-
-    public int getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(int orderNo) {
-        this.orderNo = orderNo;
-    }
-
-    public void orderNoSubtract() { this.orderNo -= 1; }
 }

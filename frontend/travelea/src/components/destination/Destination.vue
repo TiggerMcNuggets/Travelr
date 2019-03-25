@@ -48,7 +48,7 @@
           <li>
             <p>
               <strong>TYPE:</strong>
-              {{ item.destination_type }}
+              {{ item.type }}
             </p>
           </li>
           <li>
@@ -60,13 +60,13 @@
           <li>
             <p>
               <strong>LATITUDE:</strong>
-              {{ item.crd_latitude }}
+              {{ item.latitude }}
             </p>
           </li>
           <li>
             <p>
               <strong>LONGITUDE:</strong>
-              {{ item.crd_longitude }}
+              {{ item.longitude }}
             </p>
           </li>
         </ul>
@@ -77,14 +77,6 @@
 
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-
-.outer-container {
-  text-align: center;
-}
-
-.destination-container {
-  display: flex;
-}
 
 .horizontal-details {
   padding-top: 15px;
@@ -125,8 +117,9 @@ ul {
 
 <script>
 import { store } from "../../store/index";
-import DestinationCreate from "./DestinationCreate.vue";
-import { deleteDestination } from "../../repository/DestinationEditRepository";
+import {RepositoryFactory} from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
+import DestinationCreate from "./DestinationCreate"
 
 export default {
   store,
@@ -151,18 +144,11 @@ export default {
     toggleShowCreateDestination: function() {
       this.showCreateDestination = !this.showCreateDestination;
     },
-    deleteDestination: function(id) {
-      for (var i = 0; i < this.destinations.length; i++) {
-        if (this.destinations[i].id === id) {
-          this.destinations.splice(i, 1);
-        }
-      }
-      deleteDestination(id).then(result => {
-        console.log(result);
-      });
+    deleteDestination: function(id) {      
+        // SPRINT 2 TODO
     }
   },
-  created: async function() {
+  created: function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     store.commit("setDestinations");
   }

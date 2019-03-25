@@ -1,8 +1,15 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.actions.Attrs;
+import controllers.actions.Authorization;
+import controllers.dto.Destination.CreateDestReq;
+import controllers.dto.Destination.CreateDestRes;
 import io.ebean.Ebean;
-import play.i18n.MessagesApi;
-import play.libs.concurrent.HttpExecutionContext;
+import models.User;
+import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -12,117 +19,109 @@ import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import static play.libs.Scala.asScala;
-
 public class DestinationController extends Controller {
 
-    /**
-     * Destination Repository needed for database interaction for dealing with databases.
-     */
-    private  final DestinationRepository destinationRepository;
+    @Inject
+    FormFactory formFactory;
 
-    /**
-     * The Destination Controller Constructor.
-     * @param destinationRepository The instance of the destination repository for database methods.
-     */
+    private final DestinationRepository destinationRepository;
 
     @Inject
-    public DestinationController(
-            DestinationRepository destinationRepository
-    ) {
+    public DestinationController(DestinationRepository destinationRepository) {
         this.destinationRepository = destinationRepository;
     }
 
     /**
-     * Allows user to see a display of all the destinations.
-     * @return 200 response and list of destinations in JSON format when successful, 401 in case user is not authorised
+     * Gets list of all destinations that belong to a user
+     * @param request the http request
+     * @return 200 with list of destinations if all ok
      */
-
-    public CompletionStage<Result> list(Http.Request request) {
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return destinationRepository.list().thenApplyAsync((destinations) -> {
-                return ok(Ebean.json().toJson(destinations));
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
-
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserDestinations(Http.Request request) {
+        User user = request.attrs().get(Attrs.USER);
+        return destinationRepository
+                .getUserDestinations(user.id)
+                .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
     }
 
     /**
+     * Creates destination for a user
+     * @param request the http request
+     * @return 201 with json object of new id if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> createDestination(Http.Request request) {
+        Form<CreateDestReq> createDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
+
+        User user = request.attrs().get(Attrs.USER);
+
+        if (createDestinationForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateDestReq req = createDestinationForm.get();
+
+        return destinationRepository.add(req,user.id).thenApplyAsync(id -> {
+            CreateDestRes response = new CreateDestRes(id);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return created(jsonResponse);
+        });
+    }
+
+    /**
+     * Gets a single destination that belongs to a user and matches the given id
      * @param request the http request
      * @param id the destination id
-     * @return 200 response and JSON format when successful, 401 in case user is not authorised
+     * @return 200 with destination if all ok
      */
-    public CompletionStage<Result> getOne(Http.Request request, Long id) {
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return destinationRepository.getOne(id).thenApplyAsync((destination) -> {
-                return ok(Ebean.json().toJson(destination));
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
-
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserDestination(Http.Request request, Long id) {
+        User user = request.attrs().get(Attrs.USER);
+        return destinationRepository.getOneDestination(id).thenApplyAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return notFound("Destination not found");
+            }
+            // Forbidden Check
+            if (destination.user.id != user.id) {
+                return forbidden("Forbidden: Access Denied");
+            }
+            return ok(Ebean.json().toJson(destination));
+        });
     }
 
     /**
-     * Allows the user to add a destination to the database directly by POST request.
-     * @param request The HTTP POST request which contains information about the destination to be added.
-     * @return A response message which describes if the insert was successful.
+     * Updates a destination that belongs to a user
+     * @param request the http request
+     * @param id the id of the destination
+     * @return 200 with string if all ok
      */
-    public CompletionStage<Result> add(Http.Request request) {
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return destinationRepository.add(request).thenApplyAsync((destination) -> {
-                if (destination == null) {
-                    return badRequest("Bad Request - Failed to add the destination");
-                }
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserDestination(Http.Request request, Long id) {
+        Form<CreateDestReq> updateDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
 
-                return ok("Destination: " + destination + " added");
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+        User user = request.attrs().get(Attrs.USER);
+
+        if(updateDestinationForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 
+        CreateDestReq req = updateDestinationForm.get();
+
+        return destinationRepository.getOneDestination(id).thenComposeAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return CompletableFuture.completedFuture(notFound("Destination not found"));
+            }
+            // Forbidden Check
+            if (destination.user.id != user.id) {
+                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+            }
+            return destinationRepository.update(req, id).thenApplyAsync(destId -> ok("Destination updated"));
+
+        });
+
     }
 
-    /**
-     * Allows the user to delete a destination instance based on an destination id value.
-     * @param id The destination id of the destination to be deleted.
-     * @return A response message describing if the deletion was successful.
-     */
-    public CompletionStage<Result> delete(Http.Request request, Long id) {
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return destinationRepository.delete(id).thenApplyAsync((destination) ->
-                ok("Destination: " + destination +  "deleted")
-            );
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
-
-    }
-
-    /**
-     * Allows the user to update a destination instance which was previously created.
-     * @param request The request containing data to update the destination instance.
-     * @param id The id of the destination to be updated.
-     * @return A response message describing if the destination was updated successfully.
-     */
-    public CompletionStage<Result> update(Http.Request request, Long id) {
-        System.out.println("Here");
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return destinationRepository.update(request, id).thenApplyAsync((destination) ->
-                    ok("Destination: " + destination +  "updated")
-            );
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
-    }
-
-    /**
-     * A dummy home page
-     * @return 200
-     */
-    public Result index() {
-        return ok("Travel EA - Home");
-    }
 }

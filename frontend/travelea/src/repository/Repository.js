@@ -1,12 +1,17 @@
 import axios from "axios"
 
 // Base URL used by all requests
-const baseUrl = "localhost:9000"
+const baseUrl = "http://localhost:9000"
 
 // Create the axios object
 const repo = axios.create({
-    baseURL: baseUrl
+    baseURL: baseUrl,
+    headers: {
+        "X-Authorization": "123"
+    }
 });
+
+repo.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 
 // Add the auth header if it exists
 repo.interceptors.request.use(
@@ -14,7 +19,7 @@ repo.interceptors.request.use(
         let token = localStorage.getItem('token');
 
         if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers['X-Authorization'] = token;
         }
 
         return config;

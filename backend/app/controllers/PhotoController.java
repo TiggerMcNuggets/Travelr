@@ -1,6 +1,6 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import controllers.actions.Authorization;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import play.i18n.MessagesApi;
@@ -10,30 +10,23 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.PersonalPhotoRepository;
-import repository.TravellerRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class PhotoController extends Controller {
 
-    private final HttpExecutionContext httpExecutionContext;
-    private final MessagesApi messagesApi;
     private final PersonalPhotoRepository personalPhotoRepository;
 
     @Inject
     public PhotoController(
-            HttpExecutionContext httpExecutionContext,
-            MessagesApi messagesApi,
             PersonalPhotoRepository personalPhotoRepository
     ) {
         this.personalPhotoRepository = personalPhotoRepository;
-        this.httpExecutionContext = httpExecutionContext;
-        this.messagesApi = messagesApi;
     }
 
     /**
@@ -44,19 +37,24 @@ public class PhotoController extends Controller {
      *         400 response if user is invalid
      *         401 response if access is denied
      */
+    @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id) {
-        if (controllers.LoginController.isLoggedIn(request)) {
-            return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
-                PathProperties pathProperties = PathProperties.parse("id,photo_filename");
-                return ok(Ebean.json().toJson(photos, pathProperties));
-            });
-        } else {
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
-        }
+        FileHelper fh = new FileHelper();
+        fh.make_directory("resources/images");
+
+        return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
+            PathProperties pathProperties = PathProperties.parse("id,photo_filename");
+            return ok(Ebean.json().toJson(photos, pathProperties));
+        });
     }
 
-
-
+    /**
+     * Uploads a personal photo to the server file system.
+     * @param request The request containing the image data to upload.
+     * @param id The id of the traveller/user uploading the image.
+     * @return A result whether the image upload was successful or not.
+     */
+    @Authorization.RequireAuth
     public CompletionStage<Result> uploadPersonalPhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
@@ -77,6 +75,22 @@ public class PhotoController extends Controller {
             });
         } else {
             return  CompletableFuture.completedFuture(badRequest("Missing file"));
+        }
+    }
+
+    /**
+      * Gets a raw image from the file system and sends this as response data.
+      * @param filename The file name of the image to get.
+     * @return The raw image file which corresponds to the filename given.
+     */
+    @Authorization.RequireAuth
+    public Result getImageFromDatabase(String filename) {
+        File file = new File("resources/images/" + filename);
+        try {
+            return ok(file);
+        } catch (Exception e) {
+            System.out.println(e);
+            return badRequest("Missing file");
         }
     }
 }
