@@ -51,6 +51,9 @@ export default {
           { name: "Log Out", icon: "lock_open", link: "/logout"}
         ];
       }
+      if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
+        menuOptions.push({ name: "Admin Panel", icon: "lock_open", link: "/admin_dash" });
+      }
 
       return menuOptions;
     },

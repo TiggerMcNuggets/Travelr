@@ -9,7 +9,7 @@ export default {
     },
     mutations: {
         async setTrips(state) {
-            const trips = await tripRepository.getTrips()
+            const trips = await tripRepository.getTrips();
             state.trips = trips;
         },
     },
