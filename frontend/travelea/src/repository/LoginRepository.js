@@ -10,9 +10,21 @@ export const attemptLogin = async (data) => {
         },
         body: JSON.stringify(data), // body data type must match "Content-Type" header
     })
-        .then(response => {
-            return response;
+        .then(
+            response => {
+                console.log(response);
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Request Failed");
+            },
+            networkError => {
+                console.log(networkError.message);
+            }
+        ).then(jsonResponse => {
+            console.log(jsonResponse)
+            return jsonResponse
         });
 
     return result;
-}
+};
