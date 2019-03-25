@@ -4,6 +4,7 @@ import {store} from "../store/index";
 
 // Components
 import Profile from "../components/profile/Profile"
+import userSearch from "../components/userSearch/userSearch"
 import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
@@ -68,6 +69,11 @@ let router = new Router({
       path: '/signup',
       name: 'signup',
       component: Signup
+    },
+    {
+        path: '/users',
+        name: 'userSearch',
+        component: userSearch
     },
     {
       path: '/profile/edit',
