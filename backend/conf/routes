@@ -1,6 +1,6 @@
 
 # SERVES VUE FILES ON PROD BUILD DONT DELETE -  MUST STAY AT TOP I HAVE NO CLUE WHY
-GET         /                                   controllers.FrontendController.index()
+GET         /api                               controllers.FrontendController.index()
 
 # Populate static data
 POST        /api/populate                       controllers.PopulateController.populateDatabase()

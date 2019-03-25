@@ -11,11 +11,11 @@ import DestinationEdit from "../components/destination/DestinationEdit"
 import Login from "../components/login/Login"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
 import CreateTrips from "../components/trips/CreateTrips.vue";
+import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 
-Vue.use(Router)
-
+Vue.use(Router);
 let router = new Router({
   mode: 'history',
   routes: [
@@ -90,19 +90,29 @@ let router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: "/admin_dash",
+      name: 'admin_dash',
+      component: AdminDashboard,
+      meta: {
+      requiresAdmin: true,
+          requiresAuth: true
+      }
     }
   ]
-})
-
-function myFunction() {
-
-}
+});
 
 router.beforeEach((to, from, next) => {
 
-  let user = store.getters.getUser;
-      
   if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (to.matched.some(rec => rec.meta.requiresAdmin)) {
+      if (store.getters.getIsUserAdmin) {
+        next();
+      } else {
+        return;
+      }
+    }
     if (store.getters.isLoggedIn) {
       next();
       return;
@@ -113,14 +123,13 @@ router.beforeEach((to, from, next) => {
       next('/login');
       return;
     }
-    // maybe getTime returns non error even when token null, yoiu have to figure out how to handle res
     store.dispatch("fetchMe")
     .then(() => {
       next();
       })
     .catch(e => console.log(e));
   } else {
-    next() 
+    next();
   }
 });
 
