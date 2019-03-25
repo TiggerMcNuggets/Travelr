@@ -4,6 +4,9 @@ import {store} from "../store/index";
 
 // Components
 import Profile from "../components/profile/Profile"
+import ProfilePhotos from "../components/profile/ProfilePhotos"
+import ProfileTrips from "../components/profile/ProfileTrips"
+import ProfileDestinations from "../components/profile/ProfileDestinations"
 import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
@@ -22,6 +25,42 @@ let router = new Router({
       path: '/home',
       name: 'profile',
       component: Profile,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/photos',
+      name: 'profilePhotos',
+      component: ProfilePhotos,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/trips',
+      name: 'profileTrips',
+      component: ProfileTrips,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/destinations',
+      name: 'profileDestinations',
+      component: ProfileDestinations,
       meta: { 
         requiresAuth: true
       }
