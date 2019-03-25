@@ -1,3 +1,5 @@
+import Repository from "./Repository";
+
 
 // Basic fetch POST function to upload the image to the server.
 export const storeImage = async (id, data) => {
@@ -8,7 +10,7 @@ export const storeImage = async (id, data) => {
       method: 'POST',
       body: data,
       headers:{
-        'X-Authorization': "81df8afd-7623-4938-9d07-e72d651211c8"
+        'X-Authorization': "123"
       }
     }).then(function (response) {
         return response
@@ -23,7 +25,7 @@ export const getImages = async (id) => {
     let url = "http://localhost:9000/travellers/" + id + "/photo";
     
     const result = await fetch(url, {headers:{
-        'X-Authorization': "81df8afd-7623-4938-9d07-e72d651211c8"
+        'X-Authorization': "123"
       }})
         .then(
             response => {
@@ -44,3 +46,8 @@ export const getImages = async (id) => {
 
     return result;
 }
+
+export const updatePersonalPhoto = async (payload) => {
+    console.log('updating the photo')
+    return Repository.post(`/travellers/photo/${payload.id}`, payload);
+}   
