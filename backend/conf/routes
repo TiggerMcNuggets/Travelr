@@ -30,6 +30,8 @@ GET         /api/travellers/:id/photo           controllers.PhotoController.list
 GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
 POST        /api/travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
 POST        /api/travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
+PUT         /api/travellers/:id/uploadphoto     controllers.PhotoController.uploadProfilePhoto(request: Request, id: Long)
+PUT         /api/travellers/:id/setphoto        controllers.PhotoController.chooseProfilePhoto(request: Request, id: Long)
 
 # Destinations
 GET         /api/destinations                   controllers.DestinationController.getUserDestinations(request: Request)

@@ -56,6 +56,9 @@ public class User extends BaseModel {
     @Column(length = 64)
     private byte[] password;
 
+    @Column(columnDefinition = "varchar(255) default 'defaultPic'")
+    public String userProfilePhoto;
+
     @JsonIgnore
     @NotNull
     public int timestamp;

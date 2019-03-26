@@ -9,13 +9,19 @@ import controllers.dto.User.*;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
+import utils.FileHelper;
 
 import javax.inject.Inject;
+
+import java.nio.file.Paths;
+
 import java.util.List;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -210,10 +216,6 @@ public class UserController extends Controller {
             }
         });
     }
-
-
-
-
 
     public Result index() {
         return ok("Travel EA - Home");
