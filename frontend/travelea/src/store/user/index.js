@@ -40,17 +40,17 @@ export default {
             })
         },
 
-        // signup({ commit }, signupData) {
-        //     return new Promise((resolve, reject) => {
-        //         AuthRepository.signup(signupData)
-        //         .then(response => {
-        //             // TODO SIGN UP
-        //         })
-        //         .catch(err => {
-        //             reject(err)
-        //         })         
-        //     })
-        // },
+        signup({ commit }, signupData) {
+            return new Promise((resolve, reject) => {
+                AuthRepository.signup(signupData)
+                .then(response => {
+                    resolve();
+                })
+                .catch(err => {
+                    reject(err)
+                })         
+            })
+        },
         // updateUser({ commit }, editData) {
         //     return new Promise((resolve, reject) => {
         //         ProfileRepository.editProfile(editData, state.user.user.id)
