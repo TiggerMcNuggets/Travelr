@@ -74,7 +74,7 @@ export default {
             commit('setProfile', response.data);
         },
 
-        async fetchMe({commit}, id) {
+        async fetchMe({commit}) {
             const response = await ProfileRepository.getMe();
             commit('setId', response.data.id);
             commit('setToken', localStorage.getItem('token'));

@@ -79,7 +79,8 @@ export default {
             const token = store.getters.getToken;
             if (token) {
                 localStorage.setItem("token", token);
-                this.$router.push("/home");
+                await store.dispatch("fetchMe");
+                this.$router.push("/profile/edit");
             } else {
                 this.loginAlert = true;
             }
