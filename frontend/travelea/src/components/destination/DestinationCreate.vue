@@ -1,9 +1,10 @@
 /* eslint-disable */
 
 <template>
-  <div class="width-for-container">
+  <!-- <div class="width-for-container"> -->
+    <v-layout white>
     <v-form ref="form" lazy-validation>
-      <v-container grid-list-xl v-if="showAddDestination">
+      <v-container grid-list-xl>
         <h4>Add new destination</h4>
         <v-layout justify-space-around="true">
           <v-flex xs12 md6 class="row-input-margin">
@@ -76,7 +77,8 @@
         </div>
       </v-container>
     </v-form>
-  </div>
+  <!-- </div> -->
+    </v-layout>
 </template>
 
 <style>
@@ -102,8 +104,7 @@ import { store } from "../../store/index";
 export default {
   store,
   props: {
-    showAddDestination: Boolean,
-    toggleShowCreateDestination: Function
+    createDestinationCallback: Function
   },
   data() {
     return {
@@ -113,13 +114,15 @@ export default {
   },
   methods: {
     createDestination: function() {
-      console.log("Destination to create", this.destination);
       if (this.$refs.form.validate()) {
-        destinationRepository.createDestination(this.destination).then(() => {
+        destinationRepository.createDestination(this.destination)
+        .then(() => {
           this.$refs.form.reset();
-          this.toggleShowCreateDestination();
-          store.commit("setDestinations");
-        });
+          this.createDestinationCallback();
+        })
+        .catch(() => {
+          console.log("error creating destination");
+        })
       }
     },
     resetValues: function() {
