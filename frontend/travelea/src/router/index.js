@@ -4,6 +4,9 @@ import {store} from "../store/index";
 
 // Components
 import Profile from "../components/profile/Profile"
+import ProfilePhotos from "../components/profile/ProfilePhotos"
+import ProfileTrips from "../components/profile/ProfileTrips"
+import ProfileDestinations from "../components/profile/ProfileDestinations"
 import userSearch from "../components/userSearch/userSearch"
 import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
@@ -19,10 +22,46 @@ Vue.use(Router);
 let router = new Router({
   mode: 'history',
   routes: [
+    // {
+    //   path: '/home',
+    //   name: 'profile',
+    //   component: Profile,
+    //   meta: { 
+    //     requiresAuth: true
+    //   }
+    // },
+
     {
-      path: '/home',
+      path: '/profile',
       name: 'profile',
       component: Profile,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/photos',
+      name: 'profilePhotos',
+      component: ProfilePhotos,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/trips',
+      name: 'profileTrips',
+      component: ProfileTrips,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/destinations',
+      name: 'profileDestinations',
+      component: ProfileDestinations,
       meta: { 
         requiresAuth: true
       }
