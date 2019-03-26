@@ -47,7 +47,7 @@ export const getImages = async (id) => {
     
 
     // return result;
-    console.log('storing the photo')
+    console.log('getting the photo')
     return Repository.get(`/travellers/${id}/photo`);
 }
 

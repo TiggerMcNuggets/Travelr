@@ -1,12 +1,16 @@
 /* eslint-disable */
 
 <template>
-  <!-- <div class="outer-container"> -->
-  <div>
-    <div class="banner">
+  <div class="outer-container">
+  <!-- <div> -->
+    <!-- <div class="banner">
 
       <h1 class='display-3 font-weight-light'>MY PHOTOS</h1>
-    </div>
+    </div> -->
+     <!-- <v-img
+          src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+          aspect-ratio="2.75"
+        ></v-img> -->
     <div class="inner-container">
       <div class="section">
         <h2 class="headline">MY PHOTOS</h2>
@@ -109,7 +113,8 @@
 }
 
 .upload-toggle-button {
-  /* position: absolute; */
+  position: relative;
+  top: 10px;
   align-self: flex-end;
 }
 
@@ -135,6 +140,7 @@
 .personal-photo-element {
   height: 100%;
   overflow: hidden;
+
 }
 
 .personal-photo-row {
@@ -163,6 +169,7 @@ hr {
 
 .outer-container {
   text-align: center;
+  padding-bottom: 15px;
 }
 
 .inner-container {
@@ -307,8 +314,9 @@ export default {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
     this.id = store.getters.getId;
+    console.log(this.id)
     getImages(this.id).then(result => {
-      this.files = this.groupImages(result);
+      this.files = this.groupImages(result.data);
     });
   }
 };

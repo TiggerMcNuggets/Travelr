@@ -33,7 +33,7 @@
                   </v-card>
                 </router-link>
                 <router-link to="/profile/destinations">
-                
+                  
                   <v-card d-flex class="destinations-tile">
                         <v-img
           src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
@@ -50,7 +50,8 @@
                   <v-flex d-flex>
                         <router-link to="/profile/trips">
                     <v-card d-flex class="trips-tile">
-                      <!-- <trips></trips> -->
+                      <h5>Trips</h5>
+                      <trips></trips>
                     </v-card>
                         </router-link>
                   </v-flex>
