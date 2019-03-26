@@ -156,7 +156,6 @@ public class PhotoController extends Controller {
             return CompletableFuture.completedFuture(badRequest("Missing file"));
         }
     }
-
     @Authorization.RequireAuth
     public CompletionStage<Result> chooseProfilePhoto(Http.Request request, Long id) {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
