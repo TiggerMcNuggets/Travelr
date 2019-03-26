@@ -40,6 +40,7 @@ export default {
             try {
                 const response = await AuthRepository.login(loginData);
                 commit('setToken', response.data.token);
+                commit('setId', response.data.id);
             } catch (e) {
                 return;
             }
@@ -73,7 +74,7 @@ export default {
             commit('setProfile', response.data);
         },
 
-        async fetchMe({commit}, id) {
+        async fetchMe({commit}) {
             const response = await ProfileRepository.getMe();
             commit('setId', response.data.id);
             commit('setToken', localStorage.getItem('token'));

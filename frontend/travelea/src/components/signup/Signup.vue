@@ -94,7 +94,8 @@ export default {
         
         if (await this.signup()) {
           await this.login();
-          this.$router.push("/profile");
+          await store.dispatch("fetchMe");
+          this.$router.push("/home");
         }
       }
     },
