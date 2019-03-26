@@ -118,6 +118,13 @@ export default {
             } catch (e) {
                 return;
             }
+        },
+        async deleteUser({commit}, userId) {
+            try {
+                const response = await UserRepository.deleteUser(userId);
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 }

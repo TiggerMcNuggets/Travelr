@@ -27,7 +27,9 @@ export default {
 
     getNationalities() {
         return Repository.get(`/nationalities`);
+    },
+
+    deleteUser(userId) {
+        return Repository.delete(`/travellers/${userId}`);
     }
-
-
 }
