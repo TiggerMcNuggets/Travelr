@@ -26,8 +26,17 @@ release-artifacts:
     - backend/target/universal/*.zip
  only:
     - tags
-
-
     
-    
-
+update-sonar:
+    stage: deploy
+    script:
+        - cd ./backend
+        - sbt dist
+        - ls -la
+        - cd ../
+        - echo $PWD
+        - chmod -R 777 .
+        - /opt/sonarqubeScanner/bin/sonar-scanner
+    only:
+        - vue-restructure@seng302-2019/team-300
+        - S223-gitlab-runner@seng302-2019/team-300

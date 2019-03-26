@@ -44,12 +44,15 @@ export default {
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
-          { name: "Dashboard", icon: "lock_open", link: "/home" },
+          { name: "Dashboard", icon: "lock_open", link: "/profile" },
           { name: "Users", icon: "lock_open", link: "/users" },
           { name: "My Trips", icon: "lock_open", link: "/trips/create" },
           { name: "My Destinations", icon: "lock_open", link: "/destination" },
           { name: "Log Out", icon: "lock_open", link: "/logout"}
         ];
+      }
+      if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
+        menuOptions.push({ name: "Admin Panel", icon: "lock_open", link: "/admin_dash" });
       }
 
       return menuOptions;
