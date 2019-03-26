@@ -69,24 +69,24 @@ export default {
     },
 
     handleSignup() {
-      if (this.$refs.form.validate()) {
-        this.setTraveller();
-        
-        store.dispatch("signup", this.traveller)
-        .then(() => {
-            let loginInfo = {
-                email: this.traveller.email,
-                password: this.traveller.password
-            };
-            return store.dispatch("login", loginInfo);
-        })
-        .then(() => {
-            this.$router.push("/profile");
-        })
-        .catch((err) => {
-            this.emailAlert = true;
-        });
-      }
+        if (this.$refs.form.validate()) {
+            this.setTraveller();
+            
+            store.dispatch("signup", this.traveller)
+            .then(() => {
+                let loginInfo = {
+                    email: this.traveller.email,
+                    password: this.traveller.password
+                };
+                return store.dispatch("login", loginInfo);
+            })
+            .then(() => {
+                this.$router.push("/profile");
+            })
+            .catch((err) => {
+                this.emailAlert = true;
+            });
+        }
     },
   },
 };

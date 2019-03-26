@@ -1,5 +1,5 @@
 import AuthRepository from "../../repository/AuthRepository";
-// import ProfileRepository from "../../repository/ProfileRepository";
+import ProfileRepository from "../../repository/ProfileRepository";
 import UserRepository from "../../repository/UserRepository";
 
 
@@ -51,19 +51,19 @@ export default {
                 })         
             })
         },
-        // updateUser({ commit }, editData) {
-        //     return new Promise((resolve, reject) => {
-        //         ProfileRepository.editProfile(editData, state.user.user.id)
-        //         .then(resp => {
-        //             // UPDATE USER
-
-        //         })
-        //         .catch(err => {
-        //             reject(err)
-        //         })
-        //     })            
-        // },
-        fetchMe({ commit }) {
+        updateUser({ commit, state }, editData) {
+            return new Promise(function (resolve, reject) {
+                ProfileRepository.editProfile(editData, state.user.id)
+                .then(resp => {
+                    commit('setUser', editData)
+                    resolve()
+                })
+                .catch(err => {
+                    reject(err)
+                })
+            })            
+        },
+        fetchMe({ commit, state }) {
             return new Promise((resolve, reject) => {
                 UserRepository.getMe()
                     .then(response => {
@@ -90,15 +90,15 @@ export default {
                         commit('logout')
                         localStorage.removeItem("token")
                         reject(err);
-                    })
-            })
+                    });
+            });
         }
     },
     getters: {
         getUser: state => state.user,
         getToken: state => state.token,
         getIsUserAdmin: state => (state.user && state.user.accountType > 0),
-        isLoggedIn: state => (state.user)
+        isLoggedIn: state => state.user
     }
 
 }

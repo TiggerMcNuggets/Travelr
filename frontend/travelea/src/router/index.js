@@ -30,9 +30,12 @@ const authGuard = (to, from, next) => {
             // invalid token, send to login
             return next("/login");
         })
+    } else {
+        // TODO ADD META ADMIN CHECK HERE
+        console.log(store.getters.getToken && store.getters.getUser);
+        return next();
     }
-    // TODO ADD META ADMIN CHECK HERE
-    return next();
+
 };
 const unauthGuard = (to, from, next) => {
     if (!store.getters.getToken) return next();

@@ -11,7 +11,7 @@
           :lname.sync="traveller.lastName"
           :dob.sync="dateOfBirth"
           :gender.sync="traveller.gender"
-          :types.sync="traveller.travellerTypes"
+          :types.sync="travellerTypes"
           :nationalities.sync="nationalities"
           :passports.sync="passports"
         />
@@ -32,7 +32,6 @@
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
-// import ProfileRepository from "../../repository/ProfileRepository";
 
 import { store } from "../../store/index";
 
@@ -48,6 +47,7 @@ export default {
 
       dateOfBirth: "",
       nationalities: [],
+      travellerTypes: [],
       passports: []
     };
   },
@@ -56,11 +56,9 @@ export default {
   },
   methods: {
     getTraveller() {
-      let user = store.getters.getUser;
-      this.traveller = user.profile;
+      this.traveller = store.getters.getUser;
+      console.log(this.traveller);
       this.setTravellerToFields();
-      delete this.traveller.email;
-      delete this.traveller.id;
     },
 
     setTravellerToFields() {
@@ -70,7 +68,7 @@ export default {
       ] = travellerFormHelper.convertFromNationalitiesRes(
         this.traveller.nationalities
       );
-      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
+      this.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
         this.traveller.travellerTypes
       );
       this.dateOfBirth = dateTime.convertTimestampToString(
@@ -86,20 +84,22 @@ export default {
       this.traveller.dateOfBirth = dateTime.convertStringToTimestamp(
         this.dateOfBirth
       );
+      this.traveller.travellerTypes = this.travellerTypes;
     },
 
-    async handleEdit() {
+    handleEdit() {
       if (this.$refs.form.validate()) {
         this.setFieldsToTraveller();
-        // let id = store.getters.getId;
-
         store.dispatch("updateUser", this.traveller)
+        .then(() => {
+          return store.dispatch("fetchMe");
+        })
         .then(() => {
           this.$router.push("/profile");
         })
         .catch((e) => {
-            console.log(e);
-          });
+          console.log(e);
+        });
       }
     }
   }
