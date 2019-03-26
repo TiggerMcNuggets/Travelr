@@ -188,7 +188,7 @@ public class UserController extends Controller {
     }
 
     /**
-     * Gets a user by given id
+     * Deletes a user by given id
      * @param request the http request
      * @param id the user id
      * @return 200 with user if all ok
