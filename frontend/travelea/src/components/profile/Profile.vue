@@ -97,25 +97,28 @@ export default {
   },
 
   created: function() {
-    let id = this.$route.params.id;
-    // CHECK IF /PROFILE or /User/ID - Ask Adam if confused
-    if(!id) {
-      id = this.$store.getters.getUser.id
-    }
-    ProfileRepository.getProfile(id)
-    .then((response) => {
-      this.traveller = response.data
-      console.log(response.data)
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+    // Yo, are we going with seeing any profile this sprint or just your own? -Marvin
+
+    // let id = this.$route.params.id;
+    // // CHECK IF /PROFILE or /User/ID - Ask Adam if confused
+    // if(!id) {
+    //   id = this.$store.getters.getUser.id;
+    // }
+    // ProfileRepository.getProfile(id)
+    // .then((response) => {
+    //   this.traveller = response.data;
+    //   console.log(response.data);
+    // })
+    // .catch((err) => {
+    //     console.log(err);
+    // })
+
+    this.getTraveller();
   },
 
   methods: {
     getTraveller() {
-      let user = store.getters.getUser;
-      this.traveller = user.profile;
+      this.traveller = store.getters.getUser;
       this.setTravellerToFields();
     },
 
@@ -126,9 +129,7 @@ export default {
       ] = travellerFormHelper.convertFromNationalitiesRes(
         this.traveller.nationalities
       );
-      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
-        this.traveller.travellerTypes
-      );
+
       this.dateOfBirth = dateTime.convertTimestampToString(
         this.traveller.dateOfBirth
       );
