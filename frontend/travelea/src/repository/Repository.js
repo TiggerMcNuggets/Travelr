@@ -1,7 +1,7 @@
 import axios from "axios"
 
 // Base URL used by all requests
-const baseUrl = "http://localhost:9000/api"
+const baseUrl = "http://localhost:9000/api";
 
 // Create the axios object
 const repo = axios.create({

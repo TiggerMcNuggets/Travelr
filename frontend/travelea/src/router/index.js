@@ -4,24 +4,64 @@ import {store} from "../store/index";
 
 // Components
 import Profile from "../components/profile/Profile"
+import ProfilePhotos from "../components/profile/ProfilePhotos"
+import ProfileTrips from "../components/profile/ProfileTrips"
+import ProfileDestinations from "../components/profile/ProfileDestinations"
+import userSearch from "../components/userSearch/userSearch"
 import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import Login from "../components/login/Login"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
 import CreateTrips from "../components/trips/CreateTrips.vue";
+import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 
-Vue.use(Router)
-
+Vue.use(Router);
 let router = new Router({
   mode: 'history',
   routes: [
+    // {
+    //   path: '/home',
+    //   name: 'profile',
+    //   component: Profile,
+    //   meta: { 
+    //     requiresAuth: true
+    //   }
+    // },
+
     {
-      path: '/home',
+      path: '/profile',
       name: 'profile',
       component: Profile,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/photos',
+      name: 'profilePhotos',
+      component: ProfilePhotos,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/trips',
+      name: 'profileTrips',
+      component: ProfileTrips,
+      meta: { 
+        requiresAuth: true
+      }
+    },
+
+    {
+      path: '/profile/destinations',
+      name: 'profileDestinations',
+      component: ProfileDestinations,
       meta: { 
         requiresAuth: true
       }
@@ -54,7 +94,10 @@ let router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: {
+        requiresUnauth: true
+      }
     },
     {
       path: '/personalphotos/:id',
@@ -67,7 +110,18 @@ let router = new Router({
     {
       path: '/signup',
       name: 'signup',
-      component: Signup
+      component: Signup,
+      meta: {
+        requiresUnauth: true
+      }
+    },
+    {
+      path: '/users',
+      name: 'userSearch',
+      component: userSearch,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/profile/edit',
@@ -84,38 +138,68 @@ let router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: "/admin_dash",
+      name: 'admin_dash',
+      component: AdminDashboard,
+      meta: {
+      requiresAdmin: true,
+      requiresAuth: true
+      }
     }
   ]
-})
+});
 
-function myFunction() {
-
-}
-
+/**
+ * Routes user depending if they are authenticated or not
+ * If route needs authentication and user is not, route to /login
+ * If route needs unauthentication and user is, route to /home
+ * Otherwise continue
+ */
 router.beforeEach((to, from, next) => {
-
-  let user = store.getters.getUser;
-      
   if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (to.matched.some(rec => rec.meta.requiresAdmin)) {
+      if (store.getters.getIsUserAdmin) {
+        next();
+      } else {
+        return;
+      }
+    }
     if (store.getters.isLoggedIn) {
       next();
       return;
     }
     const tokenFromCookies = localStorage.getItem("token");
-    console.log(tokenFromCookies);
     if (tokenFromCookies === "") {
       next('/login');
       return;
     }
-    // maybe getTime returns non error even when token null, yoiu have to figure out how to handle res
     store.dispatch("fetchMe")
     .then(() => {
       next();
       })
     .catch(e => console.log(e));
   } else {
-    next() 
+      if(to.matched.some(record => record.meta.requiresUnauth)) {
+        if (store.getters.isLoggedIn) {
+          next("/home");
+          return;
+        }
+        const tokenFromCookies = localStorage.getItem("token");
+        if (tokenFromCookies === "") {
+          next();
+          return;
+        } else {
+          next("/home");
+          return;
+        }
+      }
+    next();
+    return;
   }
+  next();
+  return;
 });
 
 export default router;

@@ -97,7 +97,13 @@ public class User extends BaseModel {
         return this.token;
     }
 
+    public int getAccountType() {
+        return accountType;
+    }
 
+    public void setAccountType(int accountType) {
+        this.accountType = accountType;
+    }
 
     public void deleteAuthToken() {
         token = null;

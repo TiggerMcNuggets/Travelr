@@ -1,32 +1,31 @@
 <template>
-    <v-form ref="form" v-model="isValid" lazy-validation>
-        <v-flex lg6 offset-lg3 sm8 offset-sm2 text-xs-center>
-            <v-card class="profile-card">
+  <v-form ref="form" v-model="isValid" lazy-validation>
+    <v-flex lg6 offset-lg3 sm8 offset-sm2 text-xs-left>
+      <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+        <v-icon dark>keyboard_arrow_left</v-icon>
+      </v-btn>
+      <v-card class="profile-card">
+        <TravellerForm
+          :fname.sync="traveller.firstName"
+          :mname.sync="traveller.middleName"
+          :lname.sync="traveller.lastName"
+          :dob.sync="dateOfBirth"
+          :gender.sync="traveller.gender"
+          :types.sync="traveller.travellerTypes"
+          :nationalities.sync="nationalities"
+          :passports.sync="passports"
+        />
 
-                <TravellerForm 
-                    :fname.sync="traveller.firstName" 
-                    :mname.sync="traveller.middleName" 
-                    :lname.sync="traveller.lastName" 
-                    :dob.sync="dateOfBirth" 
-                    :gender.sync="traveller.gender" 
-                    :types.sync="traveller.travellerTypes" 
-                    :nationalities.sync="nationalities" 
-                    :passports.sync="passports" />
-
-                <v-btn :disabled="!isValid" color="primary" @click="handleEdit">
-                    Save
-                </v-btn>
-
-            </v-card>
-        </v-flex>
-    </v-form>
+        <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
+      </v-card>
+    </v-flex>
+  </v-form>
 </template>
 
 <style>
 .profile-card {
-    margin-top: 20px;
+  margin-top: 20px;
 }
-
 </style>
 
 <script>
@@ -35,11 +34,11 @@ import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
 import ProfileRepository from "../../repository/ProfileRepository";
 
-import {store} from "../../store/index";
+import { store } from "../../store/index";
 
 export default {
   name: "EditProfile",
-  components: { TravellerForm }, 
+  components: { TravellerForm },
   store,
   data() {
     return {
@@ -49,7 +48,7 @@ export default {
 
       dateOfBirth: "",
       nationalities: [],
-      passports: [],
+      passports: []
     };
   },
   mounted() {
@@ -65,15 +64,28 @@ export default {
     },
 
     setTravellerToFields() {
-      [this.nationalities, this.passports] = travellerFormHelper.convertFromNationalitiesRes(this.traveller.nationalities);
-      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(this.traveller.travellerTypes)
-      this.dateOfBirth = dateTime.convertTimestampToString(this.traveller.dateOfBirth);
-      
+      [
+        this.nationalities,
+        this.passports
+      ] = travellerFormHelper.convertFromNationalitiesRes(
+        this.traveller.nationalities
+      );
+      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
+        this.traveller.travellerTypes
+      );
+      this.dateOfBirth = dateTime.convertTimestampToString(
+        this.traveller.dateOfBirth
+      );
     },
 
     setFieldsToTraveller() {
-      this.traveller.nationalities = travellerFormHelper.convertToNationalitiesReq(this.nationalities, this.passports);
-      this.traveller.dateOfBirth = dateTime.convertStringToTimestamp(this.dateOfBirth);
+      this.traveller.nationalities = travellerFormHelper.convertToNationalitiesReq(
+        this.nationalities,
+        this.passports
+      );
+      this.traveller.dateOfBirth = dateTime.convertStringToTimestamp(
+        this.dateOfBirth
+      );
     },
 
     async handleEdit() {
@@ -81,16 +93,16 @@ export default {
         this.setFieldsToTraveller();
         let id = store.getters.getId;
 
-        store.dispatch("updateUser", this.traveller)
-        .then((response) => {
-          this.$router.push("/profile");
-        })
-        .catch((e) => {
+        store
+          .dispatch("updateUser", this.traveller)
+          .then(response => {
+            this.$router.push("/profile");
+          })
+          .catch(e => {
             console.log(e);
-        })
-        
+          });
       }
-     },
-  },
+    }
+  }
 };
 </script>
