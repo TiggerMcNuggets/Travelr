@@ -107,6 +107,18 @@ public class PersonalPhotoRepository {
             }
         });
     }
+
+    public CompletionStage<Object> getUserProfilePic(long id) {
+        return supplyAsync(() -> {
+            try {
+                User user = userFinder.findById(id);
+                String filename = user.userProfilePhoto;
+                return filename;
+            } catch (Error e) {
+                return null;
+            }
+        });
+    }
 }
 
 

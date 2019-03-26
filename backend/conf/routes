@@ -27,6 +27,8 @@ DELETE      /api/travellers/:id                 controllers.UserController.delet
 ## Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
 GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
+GET         /api/travellers/profile-photo/:id    controllers.PhotoController.getProfilePic(id: Long)
+
 POST        /api/travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
 POST        /api/travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
 PUT         /api/travellers/:id/uploadphoto     controllers.PhotoController.uploadProfilePhoto(request: Request, id: Long)

@@ -156,6 +156,8 @@ public class PhotoController extends Controller {
             return CompletableFuture.completedFuture(badRequest("Missing file"));
         }
     }
+
+
     @Authorization.RequireAuth
     public CompletionStage<Result> chooseProfilePhoto(Http.Request request, Long id) {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
@@ -166,6 +168,24 @@ public class PhotoController extends Controller {
                 return ok("Your profile image was successfully set to " + photoName);
             } else {
                 return badRequest("Error setting profile image");
+            }
+        });
+    }
+
+
+    /**
+     * retrieves user profile pic using the user's id
+     * @param id user id
+     * @return 200 http response code if successful, else 404
+     */
+    public CompletionStage<Result> getProfilePic(long id) {
+        return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync((fileName) -> {
+            try {
+                File file = new File("resources/images/" + fileName);
+                return ok(file);
+            } catch (Exception e) {
+                System.out.println(e);
+                return notFound("File not found");
             }
         });
     }
