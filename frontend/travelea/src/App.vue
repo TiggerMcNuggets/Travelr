@@ -48,9 +48,9 @@ export default {
         { name: "Log In", icon: "lock_open", link: "/login" }
       ];
 
-      if (store.getters.isLoggedIn) {
+      if (store.getters.getToken) {
         menuOptions = [
-          { name: "Dashboard", icon: "lock_open", link: "/home" },
+          { name: "Dashboard", icon: "lock_open", link: "/" },
           { name: "Users", icon: "lock_open", link: "/users" },
           { name: "My Trips", icon: "lock_open", link: "/trips/create" },
           { name: "My Destinations", icon: "lock_open", link: "/destination" },
