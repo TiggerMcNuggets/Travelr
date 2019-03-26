@@ -13,6 +13,7 @@ import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import Login from "../components/login/Login"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
+import ProfileDashboard from "../components/profile/ProfileDashboard"
 import CreateTrips from "../components/trips/CreateTrips.vue";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
@@ -61,28 +62,33 @@ let router = new Router({
             path: '/profile',
             name: 'profile',
             component: Profile,
-            beforeEnter: authGuard
+            beforeEnter: authGuard,
+            children: [
+                {
+                    path: '/',
+                    name: 'profileDashboard',
+                    component: ProfileDashboard                    
+                },
+                {
+                    path: '/photos',
+                    name: 'profilePhotos',
+                    component: ProfilePhotos                    
+                },
+        
+                {
+                    path: '/trips',
+                    name: 'profileTrips',
+                    component: ProfileTrips                    
+                },
+        
+                {
+                    path: '/destinations',
+                    name: 'profileDestinations',
+                    component: ProfileDestinations                   
+                },
+            ]
         },
-        {
-            path: '/profile/photos',
-            name: 'profilePhotos',
-            component: ProfilePhotos,
-            beforeEnter: authGuard
-        },
-
-        {
-            path: '/profile/trips',
-            name: 'profileTrips',
-            component: ProfileTrips,
-            beforeEnter: authGuard
-        },
-
-        {
-            path: '/profile/destinations',
-            name: 'profileDestinations',
-            component: ProfileDestinations,
-            beforeEnter: authGuard
-        },
+       
 
         {
             path: '/destination',
