@@ -46,7 +46,6 @@
 
       <div class="field-section">
         <ul class="chip-list">
-          <p class="body-1 font-weight-normal">{{nationalities}}</p>
           <li v-for="type in types" :value="type.value" :key="type.value">
             <v-chip>{{type.name}}</v-chip>
           </li>
