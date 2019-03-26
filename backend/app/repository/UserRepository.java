@@ -75,7 +75,8 @@ public class UserRepository {
             // Insert user
             User user = new User(request);
             // int in Java defaults to 0
-            user.accountType = request.accountType;
+            System.out.println("Account Type of inserterted user " + request.accountType);
+            user.setAccountType(request.accountType);
             user.insert();
 
             // Insert nationalities
@@ -142,4 +143,5 @@ public class UserRepository {
             return user.id;
         }, context);
     }
+
 }
