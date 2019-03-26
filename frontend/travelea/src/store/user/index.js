@@ -81,10 +81,10 @@ export default {
         logout({ commit }) {
             return new Promise((resolve, reject) => {
                 AuthRepository.logout()
-                    .then((response) => {
+                    .then(() => {
                         commit('logout')
                         localStorage.removeItem("token")
-                        resolve(response);
+                        resolve();
                     })
                     .catch(err => {
                         commit('logout')
@@ -97,7 +97,8 @@ export default {
     getters: {
         getUser: state => state.user,
         getToken: state => state.token,
-        getIsUserAdmin: state => (state.user && state.user.accountType > 0)
+        getIsUserAdmin: state => (state.user && state.user.accountType > 0),
+        isLoggedIn: state => (state.user)
     }
 
 }
