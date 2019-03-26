@@ -145,12 +145,13 @@
                         } 
                     ]
                 },
+                destins: [],
                 ...rules,
             };
         },
         computed: {
             destinations() {
-                return store.state.destinations.destinations;
+                return this.destins;
             },
             noSameDestinationNameConsecutiveRule() {
                 return noSameDestinationNameConsecutiveRule(this.trip.destinations)
@@ -201,6 +202,16 @@
                 }
             }
 
+        },
+        mounted() {
+            this.destins = store.getters.destinations;
+            if (this.destins.length == 0) {
+                store.dispatch("setDestinations").then(() => {
+                this.destins = store.getters.destinations;
+                });
+            }
+            console.log("here");
+            console.log(this.destins);
         }
     };
 </script>

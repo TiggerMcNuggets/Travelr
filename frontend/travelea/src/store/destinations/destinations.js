@@ -11,19 +11,25 @@ export default {
     },
     mutations: {
         setDestinations(state) {
-            const destinations = DestinationRepository.getDestinations()
-            .then((res) => {
-                state.destinations = res.data;
-  
-
-            })
-            .catch((err) => {
-                console.log(err)
-            });
+          const destinations = DestinationRepository.getDestinations()
+          .then((res) => {
+              state.destinations = res.data;
+          })
+          .catch((err) => {
+              console.log(err)
+          });
         },
     },
     actions: {
-
+      setDestinations(state) {
+        const destinations = DestinationRepository.getDestinations()
+        .then((res) => {
+            state.destinations = res.data;
+        })
+        .catch((err) => {
+            console.log(err)
+        });
+      },
     },
     getters: {
         destinations(state) {
