@@ -83,7 +83,7 @@ export default {
         .then(() => {
             this.$router.push("/profile");
         })
-        .catch((err) => {
+        .catch(() => {
             this.emailAlert = true;
         });
       }

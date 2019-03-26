@@ -18,43 +18,7 @@
         </aside>
 
         <main class="profile-main">
-          <v-layout row>
-            <v-flex d-flex xs4 order-xs5>
-              <v-layout column>
-                <router-link to="/profile/photos">
-                  <v-card d-flex class="photos-tile">
-                    <v-img
-                      src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-                      aspect-ratio="2.75"
-                    ></v-img>
-
-                    <h5>Photos</h5>
-                  </v-card>
-                </router-link>
-                <router-link to="/profile/destinations">
-                  <v-card d-flex class="destinations-tile">
-                    <v-img
-                      src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-                      aspect-ratio="2.75"
-                    ></v-img>
-                    <h5>Destinations</h5>
-                  </v-card>
-                </router-link>
-              </v-layout>
-            </v-flex>
-            <v-flex d-flex x8 order-xs5>
-              <v-layout column>
-                <v-flex d-flex>
-                  <router-link to="/profile/trips">
-                    <v-card d-flex class="trips-tile">
-                      <h5>Trips</h5>
-                      <trips></trips>
-                    </v-card>
-                  </router-link>
-                </v-flex>
-              </v-layout>
-            </v-flex>
-          </v-layout>
+          <router-view></router-view>
         </main>
       </v-layout>
     </div>
@@ -105,10 +69,10 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
-import Trips from "../trips/Trips";
+// import Trips from "../trips/Trips";
 // import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
-// import ProfileRepository from "../../repository/ProfileRepository";
+import ProfileRepository from "../../repository/ProfileRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import { store } from "../../store/index";
 
@@ -128,12 +92,24 @@ export default {
 
   components: {
     ProfileNav,
-    Trips,
+    // Trips,
     // PersonalPhotos
   },
 
-  mounted() {
-    this.getTraveller();
+  created: function() {
+    let id = this.$route.params.id;
+    // CHECK IF /PROFILE or /User/ID - Ask Adam if confused
+    if(!id) {
+      id = this.$store.getters.getUser.id
+    }
+    ProfileRepository.getProfile(id)
+    .then((response) => {
+      this.traveller = response.data
+      console.log(response.data)
+    })
+    .catch((err) => {
+        console.log(err)
+    })
   },
 
   methods: {

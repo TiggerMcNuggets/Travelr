@@ -40,10 +40,10 @@ export default {
             })
         },
 
-        signup({ commit }, signupData) {
+        signup(signupData) {
             return new Promise((resolve, reject) => {
                 AuthRepository.signup(signupData)
-                .then(response => {
+                .then(() => {
                     resolve();
                 })
                 .catch(err => {
