@@ -83,9 +83,9 @@ export default {
     },
     created: async function() {
         await store.dispatch("getUsers", false);
-        // if (store.getters.getIsUserAdmin) {
+        if (store.getters.getIsUserAdmin) {
             this.isAdmin = true;
-        // }
+        }
     }
 }
 </script>
