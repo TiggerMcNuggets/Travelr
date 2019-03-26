@@ -133,6 +133,12 @@ public class PhotoController extends Controller {
         });
     }
 
+    /**
+     * uploads new photo as user profile pic
+     * @param request http request containing an image
+     * @param id id of user to change profile pic
+     * @return 200 http response if successful, else 400 for bad request
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> uploadProfilePhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
@@ -158,6 +164,12 @@ public class PhotoController extends Controller {
     }
 
 
+    /**
+     * sets existing photo to user profile pic
+     * @param request http request containing the filename of the photo
+     * @param id id of user to change profile pic
+     * @return 200 http response if successful, else 400 for bad request
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> chooseProfilePhoto(Http.Request request, Long id) {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);

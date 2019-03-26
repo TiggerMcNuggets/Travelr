@@ -108,6 +108,11 @@ public class PersonalPhotoRepository {
         });
     }
 
+    /**
+     * retrieves profile pic for user
+     * @param id user id
+     * @return file name of profile pic, otherwise null
+     */
     public CompletionStage<Object> getUserProfilePic(long id) {
         return supplyAsync(() -> {
             try {
