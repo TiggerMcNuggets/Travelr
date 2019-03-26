@@ -107,6 +107,23 @@ public class PersonalPhotoRepository {
             }
         });
     }
+
+    /**
+     * retrieves profile pic for user
+     * @param id user id
+     * @return file name of profile pic, otherwise null
+     */
+    public CompletionStage<Object> getUserProfilePic(long id) {
+        return supplyAsync(() -> {
+            try {
+                User user = userFinder.findById(id);
+                String filename = user.userProfilePhoto;
+                return filename;
+            } catch (Error e) {
+                return null;
+            }
+        });
+    }
 }
 
 
