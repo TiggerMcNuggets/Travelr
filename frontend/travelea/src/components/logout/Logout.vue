@@ -19,11 +19,16 @@ export default {
     this.logout();
   },
   methods: {
-    async logout() {
-      await store.dispatch("logout");
-      localStorage.setItem("token", "");
+    logout() {
+      store.dispatch("logout").then(() => {
+        localStorage.setItem("token", "");
+        this.$router.push("/login");
+      })
+      .catch(() => {
+        localStorage.setItem("token", "");
+        this.$router.push("/login");
+      });
 
-      this.$router.push("/login");
     }
   }
 };

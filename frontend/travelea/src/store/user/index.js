@@ -24,19 +24,19 @@ export default {
 
     actions: {
         login({ commit }, loginData) {
-            return new Promise((resolve, reject) => {          
+            return new Promise((resolve, reject) => {
                 AuthRepository.login(loginData)
-                .then(response => {
-                    commit('setToken', response.data.token);
-                    commit('setUser', response.data.user);
-                    localStorage.setItem("token", response.data.token);
-                    resolve(response);
-                })
-                .catch(err => {
-                    commit('setToken', "");
-                    commit('setUser', null);
-                    reject(err);
-                })
+                    .then(response => {
+                        commit('setToken', response.data.token);
+                        commit('setUser', response.data.user);
+                        localStorage.setItem("token", response.data.token);
+                        resolve(response);
+                    })
+                    .catch(err => {
+                        commit('setToken', "");
+                        commit('setUser', null);
+                        reject(err);
+                    })
             })
         },
 
@@ -45,7 +45,6 @@ export default {
         //         AuthRepository.signup(signupData)
         //         .then(response => {
         //             // TODO SIGN UP
-        //             console.log(response)
         //         })
         //         .catch(err => {
         //             reject(err)
@@ -58,7 +57,6 @@ export default {
         //         .then(resp => {
         //             // UPDATE USER
 
-        //             console.log(resp);
         //         })
         //         .catch(err => {
         //             reject(err)
@@ -68,29 +66,31 @@ export default {
         fetchMe({ commit }) {
             return new Promise((resolve, reject) => {
                 UserRepository.getMe()
-                .then(response => {
-                    commit('setUser', response.data);
-                })
-                .catch (err => {
-                    localStorage.removeItem("token");
-                    commit('logout');
-                    reject(err);
-                })
+                    .then(response => {
+                        commit('setUser', response.data);
+                        resolve(response);
+                    })
+                    .catch(err => {
+                        localStorage.removeItem("token");
+                        commit('logout');
+                        reject(err);
+                    })
             })
         },
 
         logout({ commit }) {
             return new Promise((resolve, reject) => {
                 AuthRepository.logout()
-                .then(() => {
-                    commit('logout')
-                    localStorage.removeItem("token")
-                })
-                .catch (err => {
-                    commit('logout')
-                    localStorage.removeItem("token")
-                    reject(err);
-                })
+                    .then((response) => {
+                        commit('logout')
+                        localStorage.removeItem("token")
+                        resolve(response);
+                    })
+                    .catch(err => {
+                        commit('logout')
+                        localStorage.removeItem("token")
+                        reject(err);
+                    })
             })
         }
     },
