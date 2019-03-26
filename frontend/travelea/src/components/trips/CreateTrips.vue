@@ -25,7 +25,7 @@
                                                     v-model="destination.title"
                                                     label="Select an existing destination"
                                             ></v-combobox>
-                                            <v-btn flat small color="error" v-on:click="deleteDestination(index)">Remove</v-btn>
+                                            <v-btn flat small color="error" v-if="index > 1" v-on:click="deleteDestination(index)">Remove</v-btn>
                                         </v-flex>
 
                                         <v-flex xs12 md4>
@@ -129,7 +129,21 @@
             return {
                 trip: {
                     title: "",
-                    destinations: []
+                    destinations: [
+                        {
+                            title: null,
+                            arrivalDate: null,
+                            departureDate: null,
+                            arrivalDateMenu: false,
+                            departureDateMenu: false,
+                        },{
+                            title: null,
+                            arrivalDate: null,
+                            departureDate: null,
+                            arrivalDateMenu: false,
+                            departureDateMenu: false,
+                        } 
+                    ]
                 },
                 ...rules,
             };
