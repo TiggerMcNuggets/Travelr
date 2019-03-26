@@ -22,14 +22,14 @@
             <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
               <a>Edit</a>
             </router-link>
-            <a v-on:click="deleteDestination(item.id)">Delete</a>
+            <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
           </span>
         </div>
         <ul class="horizontal-details">
           <li>
             <p>
               <strong>COUNTRY:</strong>
-              {{ item.id }}
+              {{ item.country }}
             </p>
           </li>
           <li>
@@ -60,9 +60,10 @@
       </li>
     </ul>
 
-    <v-dialog v-model="dialog" width="500">
+    <v-dialog v-model="dialog" width="800">
        <destination-create :createDestinationCallback="updateDestinationList" />
     </v-dialog>
+
   </v-container>
 </template>
 
