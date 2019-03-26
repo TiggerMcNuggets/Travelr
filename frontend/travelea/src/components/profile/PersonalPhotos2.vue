@@ -13,7 +13,19 @@
         ></v-img> -->
     <div class="inner-container">
       <div class="section">
+
+            <v-btn
+          class="upload-toggle-button"
+          fab
+          small
+          dark
+          color="indigo"
+          @click="$router.go(-1)"
+        >
+          <v-icon dark>keyboard_arrow_left</v-icon>
+        </v-btn>
         <h2 class="headline">MY PHOTOS</h2>
+   
               <v-btn
           class="upload-toggle-button"
           fab
