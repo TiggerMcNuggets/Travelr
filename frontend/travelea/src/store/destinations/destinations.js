@@ -14,8 +14,6 @@ export default {
             DestinationRepository.getDestinations()
             .then((res) => {
                 state.destinations = res.data;
-  
-
             })
             .catch((err) => {
                 console.log(err)
@@ -23,7 +21,9 @@ export default {
         },
     },
     actions: {
-
+      async setDestinations(state) {
+        state.destinations = await DestinationRepository.getDestinations().data;
+      },
     },
     getters: {
         destinations(state) {
