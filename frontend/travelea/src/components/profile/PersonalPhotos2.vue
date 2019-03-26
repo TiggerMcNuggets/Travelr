@@ -2,31 +2,14 @@
 
 <template>
   <div class="outer-container">
-  <!-- <div> -->
-    <!-- <div class="banner">
-
-      <h1 class='display-3 font-weight-light'>MY PHOTOS</h1>
-    </div> -->
-     <!-- <v-img
-          src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
-          aspect-ratio="2.75"
-        ></v-img> -->
     <div class="inner-container">
       <div class="section">
-
-            <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          @click="$router.go(-1)"
-        >
+        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
         <h2 class="headline">MY PHOTOS</h2>
-   
-              <v-btn
+
+        <v-btn
           class="upload-toggle-button"
           fab
           small
@@ -152,7 +135,6 @@
 .personal-photo-element {
   height: 100%;
   overflow: hidden;
-
 }
 
 .personal-photo-row {
@@ -188,7 +170,6 @@ hr {
   margin: 0px 20px;
 }
 
-
 .buttons-div {
   margin-top: 2em;
 }
@@ -197,38 +178,6 @@ hr {
   margin-top: 1em;
   width: 49%;
 }
-
-/* .container {
-  margin: 10px 100px;
-  align-self: center;
-  display: inline-block;
-  text-align: left;
-} */
-
-.banner {
-  height: 250px;
-  width: 100%;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("https://gallery.yopriceville.com/var/albums/Backgrounds/Autumn_Landscape_Background.jpg?m=1442666745");
-  background-position: center;
-  text-align: left;
-}
-
-/* .banner h1 {
-  font-family: "Karla", sans-serif;
-  text-align: center;
-  color: white;
-  padding-top: 60px;
-  font-size: 65px;
-  font-weight: bold;
-} */
-
-/* .banner hr {
-  margin: 10px 200px;
-  margin-top: 30px;
-  color: white;
-  opacity: 0.5;
-} */
 </style>
 
 
@@ -326,7 +275,7 @@ export default {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
     this.id = store.getters.getId;
-    console.log(this.id)
+    console.log(this.id);
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });

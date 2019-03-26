@@ -40,14 +40,6 @@
   </div>
 </template>
 
-  <!-- <v-flex xs9 ml-5>
-                <v-card color="blue">
-                    <v-card-text>
-                            
-                    </v-card-text>                
-                </v-card>
-            </v-flex> -->
-
 <style>
 .trips-tile {
   margin-left: 20px;
@@ -74,7 +66,6 @@ main {
 .profile-inner-container {
   width: 100%;
   margin: 20px;
-  /* align-self: center; */
 }
 
 .profile-outer-container {
@@ -92,15 +83,12 @@ main {
 
 
 <script>
-// import {RepositoryFactory} from "../../repository/RepositoryFactory"
 import ProfileNav from "./profileNav";
 import Trips from "../trips/Trips";
 import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
 import ProfileRepository from "../../repository/ProfileRepository";
-
 import { store } from "../../store/index";
-// let profileRepository = RepositoryFactory.get("profile")
 
 export default {
   name: "Profile",
