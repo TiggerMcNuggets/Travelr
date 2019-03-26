@@ -1,41 +1,49 @@
-GET         /                               controllers.UserController.index()
+
+# SERVES VUE FILES ON PROD BUILD DONT DELETE -  MUST STAY AT TOP I HAVE NO CLUE WHY
+GET         /api                               controllers.FrontendController.index()
 
 # Populate static data
-POST        /populate                       controllers.PopulateController.populateDatabase()
+POST        /api/populate                       controllers.PopulateController.populateDatabase()
 
-POST        /login                          controllers.SecurityController.login(request: Request)
-POST        /logout                         controllers.SecurityController.logout(request: Request)
+POST        /api/login                          controllers.SecurityController.login(request: Request)
+POST        /api/logout                         controllers.SecurityController.logout(request: Request)
 
 # Nationalities
-GET         /nationalities                  controllers.NationalityController.getNationalities()
+GET         /api/nationalities                  controllers.NationalityController.getNationalities()
 
 #Traveller Types
-GET         /traveller-types                controllers.TravellerTypeController.getTravellerTypes()
+GET         /api/traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Travellers
-GET         /travellers                     controllers.UserController.getUsers(request: Request)
-POST        /travellers                     controllers.UserController.createUser(request: Request)
-GET         /travellers/me                  controllers.UserController.getMe(request: Request)
-GET         /travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
-PUT         /travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
-DELETE      /travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
+GET         /api/travellers_filter              controllers.UserController.getFilteredUsers(request: Request, firstName: String ?= null, lastName: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,travellerType: java.util.List[String] ?= null, orderBy: String ?= null)
+GET         /api/travellers                     controllers.UserController.getUsers(request: Request)
+POST        /api/travellers                     controllers.UserController.createUser(request: Request)
+GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
+GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
+PUT         /api/travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
+DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
 
 
 #
 ## Photos
-GET         /travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
-GET         /travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
-POST        /travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
-POST        /travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
+GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
+GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
+POST        /api/travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
+POST        /api/travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
 
 # Destinations
-GET         /destinations                   controllers.DestinationController.getUserDestinations(request: Request)
-POST        /destinations                   controllers.DestinationController.createDestination(request: Request)
-GET         /destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
-PUT         /destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
+GET         /api/destinations                   controllers.DestinationController.getUserDestinations(request: Request)
+POST        /api/destinations                   controllers.DestinationController.createDestination(request: Request)
+GET         /api/destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
+PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
 # Trips
-GET         /trips                          controllers.TripController.getUserTrips(request: Request)
-POST        /trips                          controllers.TripController.createTrip(request: Request)
-GET         /trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
-PUT         /trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
+GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
+POST        /api/trips                          controllers.TripController.createTrip(request: Request)
+GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
+PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
+
+
+
+# NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
+GET     /*file                      controllers.FrontendController.assetOrDefault(file)

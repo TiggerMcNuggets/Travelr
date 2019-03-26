@@ -15,11 +15,10 @@
                     type="password"
             ></v-text-field>
 
-
             <v-btn class="login-button" large round v-on:click="attemptLogin" color="primary">Login</v-btn>
 
+            <v-alert :value="loginAlert" color="error">Incorrect email and/or password</v-alert>
         </div>
-
      </div>
 </template>
 
@@ -42,7 +41,6 @@
     width: 50%;
     margin: 50px 0px;
     padding: 20px;
-
 }
 
 h1 {
@@ -50,15 +48,12 @@ h1 {
     font-size: 42px;
 }
 
-
-
 .width-for-container {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     vertical-align: middle;
-
 }
 </style>
 
@@ -74,25 +69,21 @@ export default {
     data() {
         return {
           user: {},
-          loggedIn: false
+          loggedIn: false,
+          loginAlert: false,
         };
       },
-    computed: {
-        token() {
-            return store.state.user.token;
-        },
-        id() {
-            return store.state.user.id;
-        }
-    },
     methods: {
-        attemptLogin: function() {
-            loginRepository.attemptLogin(this.user).then((response) => {
-                // this.$refs.form.reset();
-                console.log(response);
-                store.commit("setToken", response.token);
-                store.commit("setId", response.id);
-                })
+        async attemptLogin() {
+            await store.dispatch("login", this.user);
+            const token = store.getters.getToken;
+            if (token) {
+                localStorage.setItem("token", token);
+                await store.dispatch("fetchMe");
+                this.$router.push("/home");
+            } else {
+                this.loginAlert = true;
+            }
         }
     }
 }

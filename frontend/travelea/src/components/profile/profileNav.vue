@@ -8,8 +8,8 @@
                     <img src="https://specials-images.forbesimg.com/imageserve/5b153a1031358e612fbb0afb/416x416.jpg?background=000000&cropX1=642&cropX2=2255&cropY1=29&cropY2=1641">
                 </v-avatar>
             </v-layout>
-            <v-flex xs10>{{ profile.profile.firstName}} {{ profile.profile.firstName}}      </v-flex> 
-            <v-flex xs10>DOB: {{ profile.profile.dateOfBirth }}       </v-flex>         
+            <v-flex xs10>{{ profile.firstName}} {{ profile.firstName}}      </v-flex> 
+            <v-flex xs10>DOB: {{ profile.dateOfBirth }}       </v-flex>         
         </v-layout>
   </v-container>-->
   <v-card class="profile-sidebar">
@@ -116,8 +116,7 @@ li {
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let profileRepository = RepositoryFactory.get("profile");
 
-export default {
-    props: ["fname", "mname", "lname", "dob", "gender", "types", "nationalities", "passports", "email"],
+import { store } from "../../store/index";
 
   data() {
     return {
@@ -131,4 +130,5 @@ export default {
     console.log(this.profile);
   }
 };
+    store,
 </script>

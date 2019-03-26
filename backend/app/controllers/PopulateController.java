@@ -39,6 +39,7 @@ public class PopulateController extends Controller {
         User user1 = new User("Adam", "Conway", "adam@test.com", 1);
         user1.setPassword("123");
         user1.setToken("123");
+        user1.setAccountType(1);
         User user2 = new User("John", "Smith", "john@test.com", 1);
         User user3 = new User("Test", "123", "123@test.com", 1);
         User user4 = new User("123", "123", "123333@test.com", 1);

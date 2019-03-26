@@ -15,6 +15,7 @@ import play.mvc.Result;
 import repository.UserRepository;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -39,6 +40,23 @@ public class UserController extends Controller {
 //    @Authorization.RequireAuth
     public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
+
+            GetUsersRes response = new GetUsersRes(users);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response.getGetUserRes());
+
+            return ok(jsonResponse);
+        });
+    }
+
+    /**
+     * Gets a list of users
+     * @param request the http request
+     * @return 200 with list of users if all ok
+     */
+//    @Authorization.RequireAuth
+    public CompletionStage<Result> getFilteredUsers(Http.Request request, String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> traveller_types, String orderBy) {
+        return userRepository.getFilteredUsers(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy).thenApplyAsync(users -> {
 
             GetUsersRes response = new GetUsersRes(users);
             ObjectMapper mapper = new ObjectMapper();

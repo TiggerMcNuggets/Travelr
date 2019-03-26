@@ -43,7 +43,6 @@ import SignupFields from "./SignupFields";
 
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper.js";
 import dateTime from "../common/dateTime/dateTime.js";
-import AuthRepository from "../../repository/AuthRepository";
 
 import {store} from "../../store/index";
 
@@ -83,7 +82,7 @@ export default {
       const loginData = {
         email: this.traveller.email,
         password: this.traveller.password,
-      }
+      };
       await store.dispatch("login", loginData);
       const token = store.getters.getUser.token;
       localStorage.setItem("token", token);
@@ -95,7 +94,8 @@ export default {
         
         if (await this.signup()) {
           await this.login();
-          this.$router.push("/profile");
+          await store.dispatch("fetchMe");
+          this.$router.push("/home");
         }
       }
     },
