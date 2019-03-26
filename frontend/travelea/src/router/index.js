@@ -65,26 +65,20 @@ let router = new Router({
             beforeEnter: authGuard,
             children: [
                 {
-                    path: '/',
+                    path: '/profile',
                     name: 'profileDashboard',
                     component: ProfileDashboard                    
                 },
                 {
-                    path: '/photos',
+                    path: '/profile/photos',
                     name: 'profilePhotos',
                     component: ProfilePhotos                    
                 },
         
                 {
-                    path: '/trips',
+                    path: '/profile/trips',
                     name: 'profileTrips',
                     component: ProfileTrips                    
-                },
-        
-                {
-                    path: '/destinations',
-                    name: 'profileDestinations',
-                    component: ProfileDestinations                   
                 },
             ]
         },

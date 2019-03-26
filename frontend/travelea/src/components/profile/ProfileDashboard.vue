@@ -24,12 +24,15 @@
       </v-layout>
     </v-flex>
     <v-flex d-flex x8 order-xs5>
-      <v-layout column>
-        <v-flex d-flex>
+      <v-layout column >
+        <v-flex d-flex >
           <router-link to="/profile/trips">
             <v-card d-flex class="trips-tile">
+              <v-img
+                src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+                aspect-ratio="2.75"
+              ></v-img>
               <h5>Trips</h5>
-              <trips></trips>
             </v-card>
           </router-link>
         </v-flex>
@@ -39,7 +42,9 @@
 </template>
 
 <style>
-
+.trips-tile {
+    height: 100%;
+}
 </style>
 
 

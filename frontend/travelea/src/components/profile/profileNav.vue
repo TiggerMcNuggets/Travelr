@@ -146,7 +146,7 @@ export default {
     };
   },
   created: function() {
-    this.profile = profileRepository.getProfile();
+    this.traveller = store.getters.getUser;
   }
 };
 </script>
