@@ -85,6 +85,7 @@ export default {
                 .then(() => {
                     commit('logout')
                     localStorage.removeItem("token")
+                    resolve();
                 })
                 .catch (err => {
                     commit('logout')
@@ -97,7 +98,8 @@ export default {
     getters: {
         getUser: state => state.user,
         getToken: state => state.token,
-        getIsUserAdmin: state => (state.user && state.user.accountType > 0)
+        getIsUserAdmin: state => (state.user && state.user.accountType > 0),
+        isLoggedIn: state => (state.user)
     }
 
 }
