@@ -78,7 +78,7 @@ export default {
             store.dispatch("login", this.user)
             .then(() => {
                 console.log("valid login")
-                router.next("/");
+                this.$router.push("/profile");
             })
             .catch(() => {
                 console.log("invalid login")
