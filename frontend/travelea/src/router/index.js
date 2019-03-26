@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import {store} from "../store/index";
+import { store } from "../store/index";
 
 // Components
 import Profile from "../components/profile/Profile"
@@ -17,150 +17,143 @@ import Logout from "../components/logout/Logout.vue"
 
 Vue.use(Router);
 let router = new Router({
-  mode: 'history',
-  routes: [
-    {
-      path: '/home',
-      name: 'profile',
-      component: Profile,
-      meta: { 
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/destination',
-      name: 'destination',
-      component: Destination,
-      meta: { 
-        requiresAuth: true
-      }
-    },
+    mode: 'history',
+    routes: [
+        {
+            path: '/home',
+            name: 'profile',
+            component: Profile,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/destination',
+            name: 'destination',
+            component: Destination,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
 
-    {
-      path: '/destination/edit/:id',
-      name: 'edit-destination',
-      component: DestinationEdit,
-      meta: { 
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/trips/create',
-      name: 'create-trip',
-      component: CreateTrips,
-      meta: { 
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login,
-      meta: {
-        requiresUnauth: true
-      }
-    },
-    {
-      path: '/personalphotos/:id',
-      name: 'personal-photos',
-      component: PersonalPhotos,
-      meta: { 
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: Signup,
-      meta: {
-        requiresUnauth: true
-      }
-    },
-    {
-      path: '/users',
-      name: 'userSearch',
-      component: userSearch,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/profile/edit',
-      name: 'editProfile',
-      component: EditProfile,
-      meta: { 
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/logout',
-      name: 'logout',
-      component: Logout,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/admin_dash",
-      name: 'admin_dash',
-      component: AdminDashboard,
-      meta: {
-      requiresAdmin: true,
-      requiresAuth: true
-      }
-    }
-  ]
+        {
+            path: '/destination/edit/:id',
+            name: 'edit-destination',
+            component: DestinationEdit,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/trips/create',
+            name: 'create-trip',
+            component: CreateTrips,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: Login,
+            beforeEnter: authGuard,
+            meta: {
+                requiresUnauth: true
+            }
+        },
+        {
+            path: '/personalphotos/:id',
+            name: 'personal-photos',
+            component: PersonalPhotos,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/signup',
+            name: 'signup',
+            component: Signup,
+            beforeEnter: authGuard,
+            meta: {
+                requiresUnauth: true
+            }
+        },
+        {
+            path: '/users',
+            name: 'userSearch',
+            component: userSearch,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/profile/edit',
+            name: 'editProfile',
+            component: EditProfile,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/logout',
+            name: 'logout',
+            component: Logout,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: "/admin_dash",
+            name: 'admin_dash',
+            component: AdminDashboard,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAdmin: true,
+                requiresAuth: true
+            }
+        }
+    ]
 });
 
-/**
- * Routes user depending if they are authenticated or not
- * If route needs authentication and user is not, route to /login
- * If route needs unauthentication and user is, route to /home
- * Otherwise continue
- */
-router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.requiresAuth)) {
-    if (to.matched.some(rec => rec.meta.requiresAdmin)) {
-      if (store.getters.getIsUserAdmin) {
-        next();
-      } else {
-        return;
-      }
-    }
-    if (store.getters.isLoggedIn) {
-      next();
-      return;
-    }
-    const tokenFromCookies = localStorage.getItem("token");
-    if (tokenFromCookies === "") {
-      next('/login');
-      return;
-    }
-    store.dispatch("fetchMe")
-    .then(() => {
-      next();
-      })
-    .catch(e => console.log(e));
-  } else {
-      if(to.matched.some(record => record.meta.requiresUnauth)) {
-        if (store.getters.isLoggedIn) {
-          next("/home");
-          return;
-        }
-        const tokenFromCookies = localStorage.getItem("token");
-        if (tokenFromCookies === "") {
-          next();
-          return;
-        } else {
-          next("/home");
-          return;
-        }
-      }
-    next();
-    return;
-  }
-  next();
-  return;
-});
+
+const authGuard = (to, from, next) => {
+    if (!store.getters.getToken) return next("/login");
+    if (store.getters.getToken && !store.getters.getUser) {
+        return store.dispatch("fetchMe")
+        .then(() => {
+            // valid token, go next page
+            next();
+        })
+        .catch(() => {
+            // invalid token, send to login
+            next("/login");
+        })
+    };
+
+    return next();
+};
+let unauthGuard = (to, from, next) => {
+    if (!store.getters.getToken) return next();
+    if (store.getters.getToken && !store.getters.getUser) {
+        return store.dispatch("fetchMe")
+        .then(() => {
+            // valid token, go next page
+            next("/home");
+        })
+        .catch(() => {
+            // invalid token, send to login
+            next();
+        })
+    };
+
+    next("/home");
+}
 
 export default router;
