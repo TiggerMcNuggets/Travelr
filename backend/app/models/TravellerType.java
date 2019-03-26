@@ -1,6 +1,7 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
 import play.data.validation.Constraints;
 import finders.TravellerTypeFinder;
@@ -10,6 +11,10 @@ import javax.persistence.*;
 public class TravellerType extends BaseModel {
 
     public static final Finder<Long, TravellerType> find = new Finder<>(TravellerType.class);
+
+    @JsonIgnore
+    @ManyToMany
+    public User user;
 
     @Constraints.Required
     public String name;
