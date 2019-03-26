@@ -122,7 +122,6 @@ li {
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let profileRepository = RepositoryFactory.get("profile");
-import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 
 import { store } from "../../store/index";
 

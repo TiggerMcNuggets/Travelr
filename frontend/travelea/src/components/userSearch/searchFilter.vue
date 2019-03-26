@@ -82,7 +82,7 @@
 </style>
 
 <script>
-import { getAllUsers } from "../../repository/UserRepository";
+// import { getAllUsers } from "../../repository/UserRepository";
 import { store } from "../../store/index";
 
 export default {

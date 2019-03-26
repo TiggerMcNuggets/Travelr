@@ -25,6 +25,10 @@ export default {
         return Repository.get(`/traveller-types`);
     },
 
+    getMe() {
+        return Repository.get('/travellers/me');
+      },
+
     getNationalities() {
         return Repository.get(`/nationalities`);
     },

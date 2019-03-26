@@ -240,6 +240,7 @@ export default {
 
     // Gets the local image file path
     getImgUrl(item, place = "somewhere else") {
+      console.log(place)
       return require("../../../../../backend/resources/images/" +
         item.photo_filename);
     },

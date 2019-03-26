@@ -1,80 +1,19 @@
-/* eslint-disable */
-
 <template>
-  <div class="profile-outer-container">
-    <div class="profile-inner-container">
-      <v-layout row>
-        <aside>
-          <ProfileNav
-            :fname.sync="traveller.firstName"
-            :mname.sync="traveller.middleName"
-            :lname.sync="traveller.lastName"
-            :dob.sync="dateOfBirth"
-            :gender.sync="traveller.gender"
-            :types.sync="traveller.travellerTypes"
-            :nationalities.sync="nationalities"
-            :passports.sync="passports"
-          />
-        </aside>
-
-        <main class="profile-main">
-          <v-card>
-            <personalPhotos></personalPhotos>
-          </v-card>
-        </main>
-      </v-layout>
-    </div>
-  </div>
+  <v-card>
+    <personalPhotos></personalPhotos>
+  </v-card>
 </template>
 
 
 <style>
-.trips-tile {
-  margin-left: 20px;
-}
 
-.destinations-tile {
-  margin-top: 20px;
-  height: 290px;
-}
-
-.photos-tile {
-  height: 300px;
-}
-
-aside {
-  width: 25%;
-  margin-right: 20px;
-}
-
-main {
-  margin-left: 20px;
-}
-
-.profile-inner-container {
-  width: 100%;
-  margin: 20px;
-}
-
-.profile-outer-container {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-}
-
-.profile-main {
-  width: 100%;
-  margin: 0px;
-}
 </style>
 
 
 <script>
 import ProfileNav from "./profileNav";
-import Trips from "../trips/Trips";
 import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
-import ProfileRepository from "../../repository/ProfileRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import { store } from "../../store/index";
 
@@ -94,7 +33,7 @@ export default {
 
   components: {
     ProfileNav,
-    Trips,
+//Trips,
     PersonalPhotos
   },
 

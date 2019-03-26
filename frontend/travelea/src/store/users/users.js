@@ -1,6 +1,3 @@
-import { getAllUsers } from "../../repository/UserRepository";
-import { getAllNationalities } from "../../repository/UserRepository";
-import { getAllTravellerTypes } from "../../repository/UserRepository";
 import UserRepository from "../../repository/UserRepository";
 
 /**

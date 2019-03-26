@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 <template>
   <div class="profile-outer-container">
     <div class="profile-inner-container">
@@ -80,12 +78,14 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
-import Trips from "../trips/Trips";
-import PersonalPhotos from "./PersonalPhotos2";
+// import Trips from "../trips/Trips";
+// import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
-import ProfileRepository from "../../repository/ProfileRepository";
+// import ProfileRepository from "../../repository/ProfileRepository";
 import Destination from "../destination/Destination";
 import { store } from "../../store/index";
+import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
+
 
 export default {
   name: "Profile",
@@ -103,8 +103,8 @@ export default {
 
   components: {
     ProfileNav,
-    Trips,
-    PersonalPhotos,
+ //   Trips,
+  //  PersonalPhotos,
     Destination
   },
 

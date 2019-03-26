@@ -8,6 +8,12 @@
           </v-list-tile-action>
           <v-list-tile-content>{{ item.name }}</v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="loggedIn" v-on:click="logout">
+          <v-list-tile-action>
+            <v-icon>lock_open</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
 
       </v-list>
     </v-navigation-drawer>
@@ -47,8 +53,7 @@ export default {
           { name: "Dashboard", icon: "lock_open", link: "/profile" },
           { name: "Users", icon: "lock_open", link: "/users" },
           { name: "My Trips", icon: "lock_open", link: "/trips/create" },
-          { name: "My Destinations", icon: "lock_open", link: "/destination" },
-          { name: "Log Out", icon: "lock_open", link: "/logout"}
+          { name: "My Destinations", icon: "lock_open", link: "/destination" },         
         ];
       }
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
@@ -57,6 +62,22 @@ export default {
 
       return menuOptions;
     },
+
+    loggedIn() {
+      return store.getters.isLoggedIn
+    }
+  },
+  methods: {
+    logout() {
+      store.dispatch("logout")
+      .then(() => {
+        
+        this.$router.push("/login")
+      })
+      .catch(() => {
+        this.$router.push("/login")
+      })
+    }
   }
 };
 </script>
