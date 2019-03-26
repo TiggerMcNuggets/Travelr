@@ -15,7 +15,7 @@
                     type="password"
             ></v-text-field>
 
-            <v-btn class="login-button" large round v-on:click="attemptLogin" color="primary">Login</v-btn>
+            <v-btn class="login-button" large round v-on:click="login" color="primary">Login</v-btn>
 
             <v-alert :value="loginAlert" color="error">Incorrect email and/or password</v-alert>
         </div>
@@ -59,8 +59,7 @@ h1 {
 
 <script>
 
-import loginRepository from "../../repository/LoginRepository";
-import {RepositoryFactory} from "../../repository/RepositoryFactory"
+
 import { store } from "../../store/index";
 
 
@@ -74,16 +73,17 @@ export default {
         };
       },
     methods: {
-        async attemptLogin() {
-            await store.dispatch("login", this.user);
-            const token = store.getters.getToken;
-            if (token) {
-                localStorage.setItem("token", token);
-                await store.dispatch("fetchMe");
-                this.$router.push("/home");
-            } else {
+        login() {
+            this.loginAlert = false;
+            store.dispatch("login", this.user)
+            .then(() => {
+                console.log("valid login")
+                router.next("/");
+            })
+            .catch(() => {
+                console.log("invalid login")
                 this.loginAlert = true;
-            }
+            })
         }
     }
 }

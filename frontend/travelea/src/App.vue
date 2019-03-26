@@ -8,6 +8,12 @@
           </v-list-tile-action>
           <v-list-tile-content>{{ item.name }}</v-list-tile-content>
         </v-list-tile>
+        <v-list-tile v-if="loggedIn">
+          <v-list-tile-action>
+            <v-icon>lock_open</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
 
       </v-list>
     </v-navigation-drawer>
@@ -57,6 +63,10 @@ export default {
 
       return menuOptions;
     },
+
+    loggedIn() {
+      return store.getters.isLoggedIn
+    }
   }
 };
 </script>

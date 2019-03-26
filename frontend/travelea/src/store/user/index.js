@@ -1,24 +1,12 @@
-import { getImages } from "../../repository/PersonalPhotosRepository";
 import AuthRepository from "../../repository/AuthRepository";
-import ProfileRepository from "../../repository/ProfileRepository";
+// import ProfileRepository from "../../repository/ProfileRepository";
 import UserRepository from "../../repository/UserRepository";
 
-const emptyProfile = {
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    dateOfBirth: null,
-    gender: "",
-    nationalities: [],
-    travellerTypes: [],
-    email: null,
-    accountType: 0
-};
 
 export default {
     state: {
         user: null,
-        token: localStorage.getItem("token")
+        token: localStorage.getItem("token") || ""
     },
 
     mutations: {
@@ -36,76 +24,80 @@ export default {
 
     actions: {
         login({ commit }, loginData) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const response = await AuthRepository.login(loginData);
+            return new Promise((resolve, reject) => {          
+                AuthRepository.login(loginData)
+                .then(response => {
                     commit('setToken', response.data.token);
                     commit('setUser', response.data.user);
-                    localStorage.setItem("token", response.data.token)
-                    resolve()
-                } catch (e) {
+                    localStorage.setItem("token", response.data.token);
+                    resolve(response);
+                })
+                .catch(err => {
                     commit('setToken', "");
                     commit('setUser', null);
-                    reject(e);
-                }
+                    reject(err);
+                })
             })
         },
 
-        signup({ commit }, signupData) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const response = await AuthRepository.signup(signupData);
-                    commit('setId', response.data.id);
-                } catch (e) {
-                    reject(e);
-                }
-            })
+        // signup({ commit }, signupData) {
+        //     return new Promise((resolve, reject) => {
+        //         AuthRepository.signup(signupData)
+        //         .then(response => {
+        //             // TODO SIGN UP
+        //             console.log(response)
+        //         })
+        //         .catch(err => {
+        //             reject(err)
+        //         })         
+        //     })
+        // },
+        // updateUser({ commit }, editData) {
+        //     return new Promise((resolve, reject) => {
+        //         ProfileRepository.editProfile(editData, state.user.user.id)
+        //         .then(resp => {
+        //             // UPDATE USER
 
-        },
-        updateUser({ commit }, editData) {
-            return new Promise((resolve, reject) => {
-                try {
-                    const response = await ProfileRepository.editProfile(editData, state.user.id);
-                    user
-                } catch (e) {
-                    reject(e)
-                }
-            })
-
-            commit('setProfile', editData.data);
-        },
+        //             console.log(resp);
+        //         })
+        //         .catch(err => {
+        //             reject(err)
+        //         })
+        //     })            
+        // },
         fetchMe({ commit }) {
             return new Promise((resolve, reject) => {
-                try {
-                    const response = await UserRepository.getMe();
+                UserRepository.getMe()
+                .then(response => {
                     commit('setUser', response.data);
-                } catch (e) {
+                })
+                .catch (err => {
                     localStorage.removeItem("token");
                     commit('logout');
-                    reject(e);
-                }
+                    reject(err);
+                })
             })
         },
 
         logout({ commit }) {
             return new Promise((resolve, reject) => {
-                try {
-                    const response = await AuthRepository.logout();
+                AuthRepository.logout()
+                .then(() => {
                     commit('logout')
                     localStorage.removeItem("token")
-                } catch (e) {
+                })
+                .catch (err => {
                     commit('logout')
                     localStorage.removeItem("token")
-                    reject(e);
-                }
+                    reject(err);
+                })
             })
         }
-
     },
     getters: {
         getUser: state => state.user,
         getToken: state => state.token,
-        getIsUserAdmin: state => (state.user.profile.accountType > 0)
+        getIsUserAdmin: state => (state.user && state.user.accountType > 0)
     }
 
 }

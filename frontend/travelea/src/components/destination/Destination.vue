@@ -117,8 +117,8 @@ ul {
 
 <script>
 import { store } from "../../store/index";
-import {RepositoryFactory} from "../../repository/RepositoryFactory";
-let destinationRepository = RepositoryFactory.get("destination");
+// import {RepositoryFactory} from "../../repository/RepositoryFactory";
+// let destinationRepository = RepositoryFactory.get("destination");
 import DestinationCreate from "./DestinationCreate"
 
 export default {
@@ -144,7 +144,7 @@ export default {
     toggleShowCreateDestination: function() {
       this.showCreateDestination = !this.showCreateDestination;
     },
-    deleteDestination: function(id) {      
+    deleteDestination: function() {      
         // SPRINT 2 TODO
     }
   },

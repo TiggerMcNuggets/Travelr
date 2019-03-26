@@ -11,7 +11,7 @@ export default {
     },
     mutations: {
         setDestinations(state) {
-            const destinations = DestinationRepository.getDestinations()
+            DestinationRepository.getDestinations()
             .then((res) => {
                 state.destinations = res.data;
   

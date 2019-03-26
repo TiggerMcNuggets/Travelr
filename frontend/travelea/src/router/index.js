@@ -20,94 +20,66 @@ let router = new Router({
     mode: 'history',
     routes: [
         {
-            path: '/home',
+            path: '/',
             name: 'profile',
             component: Profile,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
         },
         {
             path: '/destination',
             name: 'destination',
             component: Destination,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
         },
 
         {
             path: '/destination/edit/:id',
             name: 'edit-destination',
             component: DestinationEdit,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
         },
         {
             path: '/trips/create',
             name: 'create-trip',
             component: CreateTrips,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
         },
         {
             path: '/login',
             name: 'login',
             component: Login,
-            beforeEnter: authGuard,
-            meta: {
-                requiresUnauth: true
-            }
+            beforeEnter: unauthGuard
         },
         {
             path: '/personalphotos/:id',
             name: 'personal-photos',
             component: PersonalPhotos,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
         },
         {
             path: '/signup',
             name: 'signup',
             component: Signup,
-            beforeEnter: authGuard,
-            meta: {
-                requiresUnauth: true
-            }
+            beforeEnter: authGuard
         },
         {
             path: '/users',
             name: 'userSearch',
             component: userSearch,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
+
         },
         {
             path: '/profile/edit',
             name: 'editProfile',
             component: EditProfile,
-            beforeEnter: authGuard,
-            meta: {
-                requiresAuth: true
-            }
+            beforeEnter: authGuard
+
         },
         {
             path: '/logout',
             name: 'logout',
-            component: Logout,
-            meta: {
-                requiresAuth: true
-            }
+            component: Logout
         },
         {
             path: "/admin_dash",
@@ -115,8 +87,7 @@ let router = new Router({
             component: AdminDashboard,
             beforeEnter: authGuard,
             meta: {
-                requiresAdmin: true,
-                requiresAuth: true
+                requiresAdmin: true
             }
         }
     ]
@@ -135,8 +106,8 @@ const authGuard = (to, from, next) => {
             // invalid token, send to login
             next("/login");
         })
-    };
-
+    }
+    // TODO ADD META ADMIN CHECK HERE
     return next();
 };
 let unauthGuard = (to, from, next) => {
@@ -145,15 +116,15 @@ let unauthGuard = (to, from, next) => {
         return store.dispatch("fetchMe")
         .then(() => {
             // valid token, go next page
-            next("/home");
+            next("/");
         })
         .catch(() => {
             // invalid token, send to login
             next();
         })
-    };
+    }
 
-    next("/home");
+    next("/");
 }
 
 export default router;

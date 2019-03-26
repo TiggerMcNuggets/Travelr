@@ -33,7 +33,7 @@
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
-import ProfileRepository from "../../repository/ProfileRepository";
+// import ProfileRepository from "../../repository/ProfileRepository";
 
 import {store} from "../../store/index";
 
@@ -79,10 +79,10 @@ export default {
     async handleEdit() {
       if (this.$refs.form.validate()) {
         this.setFieldsToTraveller();
-        let id = store.getters.getId;
+        // let id = store.getters.getId;
 
         store.dispatch("updateUser", this.traveller)
-        .then((response) => {
+        .then(() => {
           this.$router.push("/profile");
         })
         .catch((e) => {
