@@ -92,27 +92,9 @@ export default {
 
   components: {
     ProfileNav,
-    // Trips,
-    // PersonalPhotos
   },
 
   created: function() {
-    // Yo, are we going with seeing any profile this sprint or just your own? -Marvin
-
-    // let id = this.$route.params.id;
-    // // CHECK IF /PROFILE or /User/ID - Ask Adam if confused
-    // if(!id) {
-    //   id = this.$store.getters.getUser.id;
-    // }
-    // ProfileRepository.getProfile(id)
-    // .then((response) => {
-    //   this.traveller = response.data;
-    //   console.log(response.data);
-    // })
-    // .catch((err) => {
-    //     console.log(err);
-    // })
-
     this.getTraveller();
   },
 
