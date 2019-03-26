@@ -57,7 +57,6 @@ export default {
   methods: {
     getTraveller() {
       this.traveller = store.getters.getUser;
-      console.log(this.traveller);
       this.setTravellerToFields();
     },
 

@@ -71,7 +71,6 @@ export default {
     handleSignup() {
         if (this.$refs.form.validate()) {
             this.setTraveller();
-            
             store.dispatch("signup", this.traveller)
             .then(() => {
                 let loginInfo = {

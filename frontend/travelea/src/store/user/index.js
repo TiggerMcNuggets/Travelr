@@ -40,7 +40,7 @@ export default {
             })
         },
 
-        signup(signupData) {
+        signup({ commit }, signupData) {
             return new Promise((resolve, reject) => {
                 AuthRepository.signup(signupData)
                 .then(() => {
