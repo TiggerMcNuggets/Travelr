@@ -80,7 +80,7 @@ export default {
             if (token) {
                 localStorage.setItem("token", token);
                 await store.dispatch("fetchMe");
-                this.$router.push("/profile/edit");
+                this.$router.push("/home");
             } else {
                 this.loginAlert = true;
             }
