@@ -15,6 +15,40 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 
+const authGuard = (to, from, next) => {
+    console.log("did i get here?");
+    if (!store.getters.getToken) return next("/login");
+    if (store.getters.getToken && !store.getters.getUser) {
+        return store.dispatch("fetchMe")
+        .then(() => {
+            // valid token, go next page
+            next();
+        })
+        .catch(() => {
+            // invalid token, send to login
+            next("/login");
+        })
+    }
+    // TODO ADD META ADMIN CHECK HERE
+    return next();
+};
+const unauthGuard = (to, from, next) => {
+    if (!store.getters.getToken) return next();
+    if (store.getters.getToken && !store.getters.getUser) {
+        return store.dispatch("fetchMe")
+        .then(() => {
+            // valid token, go next page
+            next("/");
+        })
+        .catch(() => {
+            // invalid token, send to login
+            next();
+        })
+    }
+
+    next("/");
+}
+
 Vue.use(Router);
 let router = new Router({
     mode: 'history',
@@ -92,39 +126,5 @@ let router = new Router({
         }
     ]
 });
-
-
-const authGuard = (to, from, next) => {
-    if (!store.getters.getToken) return next("/login");
-    if (store.getters.getToken && !store.getters.getUser) {
-        return store.dispatch("fetchMe")
-        .then(() => {
-            // valid token, go next page
-            next();
-        })
-        .catch(() => {
-            // invalid token, send to login
-            next("/login");
-        })
-    }
-    // TODO ADD META ADMIN CHECK HERE
-    return next();
-};
-let unauthGuard = (to, from, next) => {
-    if (!store.getters.getToken) return next();
-    if (store.getters.getToken && !store.getters.getUser) {
-        return store.dispatch("fetchMe")
-        .then(() => {
-            // valid token, go next page
-            next("/");
-        })
-        .catch(() => {
-            // invalid token, send to login
-            next();
-        })
-    }
-
-    next("/");
-}
 
 export default router;
