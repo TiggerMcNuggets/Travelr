@@ -13,12 +13,25 @@
         </v-layout>
   </v-container>-->
   <v-card class="profile-sidebar">
+   
     <div>
+      
       <v-avatar size="100px" class="profile-photo">
         <img
           src="https://specials-images.forbesimg.com/imageserve/5b153a1031358e612fbb0afb/416x416.jpg?background=000000&cropX1=642&cropX2=2255&cropY1=29&cropY2=1641"
         >
       </v-avatar>
+      <router-link to="/profile/edit">
+       <v-btn
+          class="profile-edit-button"
+          fab
+          small
+          dark
+          color="indigo"
+        >
+          <v-icon dark>edit</v-icon>
+        </v-btn>
+         </router-link>
     </div>
 
     <div>
@@ -61,6 +74,20 @@
 </template>
 
 <style>
+.profile-edit-button {
+  position: absolute;
+  right: 25%;
+  top: 100px;
+  
+}
+
+.profile-edit-button:active {
+  position: absolute;
+  right: 25%;
+  top: 100px;
+  
+}
+
 li {
     list-style: none;
 }
