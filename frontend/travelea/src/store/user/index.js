@@ -1,98 +1,104 @@
-import { getImages } from "../../repository/PersonalPhotosRepository";
 import AuthRepository from "../../repository/AuthRepository";
 import ProfileRepository from "../../repository/ProfileRepository";
+import UserRepository from "../../repository/UserRepository";
 
-const emptyProfile = {
-  firstName: "",
-  middleName: "",
-  lastName: "",
-  dateOfBirth: null,
-  gender: "",
-  nationalities: [],
-  travellerTypes: [],
-  email: null,
-  accountType: 0
-};
 
 export default {
     state: {
-        user: {
-          id: null,
-          token: "",
-          profile: emptyProfile,
-        },
+        user: null,
+        token: localStorage.getItem("token") || ""
     },
 
     mutations: {
-      setId(state, id) {
-        state.user.id = id;
-      },
-      setToken(state, token) {
-        state.user.token = token;
-      },
-      setProfile(state, profile) {
-        state.user.profile = profile;
-      }
+        setToken(state, token) {
+            state.token = token;
+        },
+        setUser(state, user) {
+            state.user = user;
+        },
+        logout(state) {
+            state.user = null;
+            state.token = "";
+        }
     },
 
     actions: {
-        async login({commit}, loginData) {
-            try {
-                const response = await AuthRepository.login(loginData);
-                commit('setToken', response.data.token);
-                commit('setId', response.data.id);
-            } catch (e) {
-                return;
-            }
+        login({ commit }, loginData) {
+            return new Promise((resolve, reject) => {
+                AuthRepository.login(loginData)
+                    .then(response => {
+                        commit('setToken', response.data.token);
+                        commit('setUser', response.data.user);
+                        localStorage.setItem("token", response.data.token);
+                        resolve(response);
+                    })
+                    .catch(err => {
+                        commit('setToken', "");
+                        commit('setUser', null);
+                        reject(err);
+                    })
+            })
         },
 
-        async signup({commit}, signupData) {
-            try {
-                const response = await AuthRepository.signup(signupData);
-                commit('setId', response.data.id);
-            } catch (e) {
-                return;
-            }
+        signup({ commit }, signupData) {
+            return new Promise((resolve, reject) => {
+                AuthRepository.signup(signupData)
+                .then(() => {
+                    resolve();
+                })
+                .catch(err => {
+                    reject(err)
+                })         
+            })
         },
-        async signupOtherUser({ commit }, signupData) {
-            try {
-                await AuthRepository.signup(signupData);
-                return true;
-            } catch (e) {
-                return false;
-            }
+        updateUser({ commit, state }, editData) {
+            return new Promise(function (resolve, reject) {
+                ProfileRepository.editProfile(editData, state.user.id)
+                .then(resp => {
+                    commit('setUser', editData)
+                    resolve()
+                })
+                .catch(err => {
+                    reject(err)
+                })
+            })            
         },
-        async logout({commit}) {
-            await AuthRepository.logout();
-            commit('setId', null);
-            commit('setToken', "");
-            commit('setProfile', emptyProfile);
+        fetchMe({ commit, state }) {
+            return new Promise((resolve, reject) => {
+                UserRepository.getMe()
+                    .then(response => {
+                        commit('setUser', response.data);
+                        resolve(response);
+                    })
+                    .catch(err => {
+                        localStorage.removeItem("token");
+                        commit('logout');
+                        reject(err);
+                    })
+            })
         },
 
-        async fetchUser({commit}, id) {
-            const response = await ProfileRepository.getProfile(id);
-            commit('setProfile', response.data);
-        },
-
-        async fetchMe({commit}) {
-            const response = await ProfileRepository.getMe();
-            commit('setId', response.data.id);
-            commit('setToken', localStorage.getItem('token'));
-            commit('setProfile', response.data);
-        },
-
-        async updateUser({commit}, editData) {
-            let id = this.getters.getId;
-            await ProfileRepository.editProfile(editData, id);
-            commit('setProfile', editData.data);
-        },
+        logout({ commit }) {
+            return new Promise((resolve, reject) => {
+                AuthRepository.logout()
+                    .then(() => {
+                        commit('logout')
+                        localStorage.removeItem("token")
+                        resolve();
+                    })
+                    .catch(err => {
+                        commit('logout')
+                        localStorage.removeItem("token")
+                        reject(err);
+                    });
+            });
+        }
     },
     getters: {
-      getUser: state => state.user,
-      getId: state => state.user.id,
-      getToken: state => state.user.token,
-      isLoggedIn: state => {return (state.user.id !== null && state.user.token !== "")},
-      getIsUserAdmin: state => (state.user.profile.accountType > 0)
+        getUser: state => state.user,
+        getToken: state => state.token,
+        getIsUserAdmin: state => (state.user && state.user.accountType > 0),
+        isLoggedIn: state => state.user
     }
 
 }

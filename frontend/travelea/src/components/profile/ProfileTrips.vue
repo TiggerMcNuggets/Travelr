@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 <template>
   <div class="profile-outer-container">
     <div class="profile-inner-container">
@@ -18,13 +16,27 @@
         </aside>
 
         <main class="profile-main">
-          <router-view></router-view>
+           
+          <v-card>
+            <v-btn
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              @click="$router.go(-1)"
+            >
+         
+              <v-icon dark>keyboard_arrow_left</v-icon>
+            </v-btn>
+              
+            <trips></trips>
+          </v-card>
         </main>
       </v-layout>
     </div>
   </div>
 </template>
-
 
 <style>
 .trips-tile {
@@ -63,18 +75,20 @@ main {
 .profile-main {
   width: 100%;
   margin: 0px;
+  text-align: left;
 }
 </style>
 
 
 <script>
 import ProfileNav from "./profileNav";
-// import Trips from "../trips/Trips";
+import Trips from "../trips/Trips";
 // import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
-import ProfileRepository from "../../repository/ProfileRepository";
-import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
+// import ProfileRepository from "../../repository/ProfileRepository";
 import { store } from "../../store/index";
+import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
+
 
 export default {
   name: "Profile",
@@ -92,33 +106,18 @@ export default {
 
   components: {
     ProfileNav,
-    // Trips,
-    // PersonalPhotos
+    Trips,
+    //PersonalPhotos
   },
 
-  created: function() {
-    // Yo, are we going with seeing any profile this sprint or just your own? -Marvin
-
-    // let id = this.$route.params.id;
-    // // CHECK IF /PROFILE or /User/ID - Ask Adam if confused
-    // if(!id) {
-    //   id = this.$store.getters.getUser.id;
-    // }
-    // ProfileRepository.getProfile(id)
-    // .then((response) => {
-    //   this.traveller = response.data;
-    //   console.log(response.data);
-    // })
-    // .catch((err) => {
-    //     console.log(err);
-    // })
-
+  mounted() {
     this.getTraveller();
   },
 
   methods: {
     getTraveller() {
-      this.traveller = store.getters.getUser;
+      let user = store.getters.getUser;
+      this.traveller = user.profile;
       this.setTravellerToFields();
     },
 
@@ -129,7 +128,9 @@ export default {
       ] = travellerFormHelper.convertFromNationalitiesRes(
         this.traveller.nationalities
       );
-
+      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
+        this.traveller.travellerTypes
+      );
       this.dateOfBirth = dateTime.convertTimestampToString(
         this.traveller.dateOfBirth
       );

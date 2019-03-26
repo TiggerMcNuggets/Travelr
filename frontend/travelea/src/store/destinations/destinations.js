@@ -11,13 +11,13 @@ export default {
     },
     mutations: {
         setDestinations(state) {
-          const destinations = DestinationRepository.getDestinations()
-          .then((res) => {
-              state.destinations = res.data;
-          })
-          .catch((err) => {
-              console.log(err)
-          });
+            DestinationRepository.getDestinations()
+            .then((res) => {
+                state.destinations = res.data;
+            })
+            .catch((err) => {
+                console.log(err)
+            });
         },
     },
     actions: {

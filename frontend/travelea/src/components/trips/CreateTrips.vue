@@ -206,7 +206,7 @@
                     tripRepository.createTrip(trip).then((res) => {
                             this.toggleShowCreateTrip();
                             store.commit("setTrips");
-                            console.log(response);
+                            console.log(res);
                     });
 
                 }
