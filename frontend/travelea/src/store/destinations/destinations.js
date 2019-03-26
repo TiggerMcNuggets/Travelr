@@ -21,14 +21,8 @@ export default {
         },
     },
     actions: {
-      setDestinations(state) {
-        const destinations = DestinationRepository.getDestinations()
-        .then((res) => {
-            state.destinations = res.data;
-        })
-        .catch((err) => {
-            console.log(err)
-        });
+      async setDestinations(state) {
+        state.destinations = await DestinationRepository.getDestinations().data;
       },
     },
     getters: {

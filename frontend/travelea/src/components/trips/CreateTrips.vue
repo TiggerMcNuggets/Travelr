@@ -161,6 +161,16 @@
             }
         },
         methods: {
+            updateStore: async function() {
+                this.destins = store.getters.destinations;
+                if (this.destins.length == 0) {
+                    await store.dispatch("setDestinations")
+                    this.destins = store.getters.destinations;
+                    console.log("2");
+                    console.log(this.destins);
+                }
+                console.log(this.destins);
+            },
             resetValues: function() {
                 this.$refs.form.reset();
             },
@@ -204,14 +214,7 @@
 
         },
         mounted() {
-            this.destins = store.getters.destinations;
-            if (this.destins.length == 0) {
-                store.dispatch("setDestinations").then(() => {
-                this.destins = store.getters.destinations;
-                });
-            }
-            console.log("here");
-            console.log(this.destins);
+            this.updateStore();
         }
     };
 </script>
