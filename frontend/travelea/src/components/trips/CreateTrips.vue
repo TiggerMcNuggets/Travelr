@@ -124,7 +124,7 @@
         components: {
         },
         props: {
-
+            toggleShowCreateTrip: Function()
         },
         data() {
             return {
@@ -197,7 +197,7 @@
 
                     tripRepository.createTrip(trip)
                     .then((res) => {
-                        this.$router.push("/trips");
+                        this.toggleShowCreateTrip();
                     })
                     .catch((e) => {
                         console.log(e);
