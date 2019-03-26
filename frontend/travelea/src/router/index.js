@@ -22,14 +22,14 @@ Vue.use(Router);
 let router = new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/home',
-      name: 'profile',
-      component: Profile,
-      meta: { 
-        requiresAuth: true
-      }
-    },
+    // {
+    //   path: '/home',
+    //   name: 'profile',
+    //   component: Profile,
+    //   meta: { 
+    //     requiresAuth: true
+    //   }
+    // },
 
     {
       path: '/profile',

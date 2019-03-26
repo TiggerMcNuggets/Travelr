@@ -96,7 +96,7 @@ import Trips from  "../trips/Trips"
 import PersonalPhotos from  "./PersonalPhotos2"
 import dateTime from "../common/dateTime/dateTime.js";
 import ProfileRepository from "../../repository/ProfileRepository";
-
+import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import {store} from "../../store/index";
 // let profileRepository = RepositoryFactory.get("profile")
 

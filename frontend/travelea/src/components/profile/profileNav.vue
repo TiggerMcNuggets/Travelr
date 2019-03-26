@@ -115,20 +115,25 @@ li {
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let profileRepository = RepositoryFactory.get("profile");
+import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
+
 
 import { store } from "../../store/index";
+
+export default {
+  store,
+
+  props: ["fname", "mname", "lname", "dob", "gender", "types", "nationalities", "passports", "email"],
 
   data() {
     return {
       profile: {}
     };
   },
-
-
   created: function() {
     this.profile = profileRepository.getProfile();
     console.log(this.profile);
   }
 };
-    store,
+
 </script>

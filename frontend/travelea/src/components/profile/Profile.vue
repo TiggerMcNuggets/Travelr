@@ -50,7 +50,7 @@
                   <v-flex d-flex>
                         <router-link to="/profile/trips">
                     <v-card d-flex class="trips-tile">
-                      <trips></trips>
+                      <!-- <trips></trips> -->
                     </v-card>
                         </router-link>
                   </v-flex>
@@ -120,11 +120,11 @@ main {
 <script>
 // import {RepositoryFactory} from "../../repository/RepositoryFactory"
 import ProfileNav from "./profileNav";
-import Trips from "../trips/Trips";
+// import Trips from "../trips/Trips";
 import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
 import ProfileRepository from "../../repository/ProfileRepository";
-
+import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import { store } from "../../store/index";
 // let profileRepository = RepositoryFactory.get("profile")
 
@@ -144,7 +144,7 @@ export default {
 
   components: {
     ProfileNav,
-    Trips,
+    // Trips,
     PersonalPhotos
   },
 
@@ -156,6 +156,7 @@ export default {
     getTraveller() {
       let user = store.getters.getUser;
       this.traveller = user.profile;
+      console.log(this.traveller.firstName);
       this.setTravellerToFields();
     },
 
