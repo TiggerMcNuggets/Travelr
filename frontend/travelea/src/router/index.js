@@ -55,7 +55,10 @@ let router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: {
+        requiresUnauth: true
+      }
     },
     {
       path: '/personalphotos/:id',
@@ -68,12 +71,18 @@ let router = new Router({
     {
       path: '/signup',
       name: 'signup',
-      component: Signup
+      component: Signup,
+      meta: {
+        requiresUnauth: true
+      }
     },
     {
-        path: '/users',
-        name: 'userSearch',
-        component: userSearch
+      path: '/users',
+      name: 'userSearch',
+      component: userSearch,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/profile/edit',
@@ -97,14 +106,19 @@ let router = new Router({
       component: AdminDashboard,
       meta: {
       requiresAdmin: true,
-          requiresAuth: true
+      requiresAuth: true
       }
     }
   ]
 });
 
+/**
+ * Routes user depending if they are authenticated or not
+ * If route needs authentication and user is not, route to /login
+ * If route needs unauthentication and user is, route to /home
+ * Otherwise continue
+ */
 router.beforeEach((to, from, next) => {
-
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (to.matched.some(rec => rec.meta.requiresAdmin)) {
       if (store.getters.getIsUserAdmin) {
@@ -118,7 +132,6 @@ router.beforeEach((to, from, next) => {
       return;
     }
     const tokenFromCookies = localStorage.getItem("token");
-    console.log(tokenFromCookies);
     if (tokenFromCookies === "") {
       next('/login');
       return;
@@ -129,7 +142,22 @@ router.beforeEach((to, from, next) => {
       })
     .catch(e => console.log(e));
   } else {
+      if(to.matched.some(record => record.meta.requiresUnauth)) {
+        if (store.getters.isLoggedIn) {
+          next("/home");
+          return;
+        }
+        const tokenFromCookies = localStorage.getItem("token");
+        if (tokenFromCookies === "") {
+          next();
+          return;
+        } else {
+          next("/home");
+          return;
+        }
+      }
     next();
+    return;
   }
 });
 

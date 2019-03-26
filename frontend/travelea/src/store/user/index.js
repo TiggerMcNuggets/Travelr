@@ -40,6 +40,7 @@ export default {
             try {
                 const response = await AuthRepository.login(loginData);
                 commit('setToken', response.data.token);
+                commit('setId', response.data.id);
             } catch (e) {
                 return;
             }
