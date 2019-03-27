@@ -62,6 +62,7 @@ create table user (
   gender                        varchar(255) not null,
   email                         varchar(256) not null,
   password                      varbinary(64),
+  user_profile_photo            varchar(255),
   timestamp                     integer not null,
   account_type                  integer default 0 not null,
   constraint uq_user_email unique (email),

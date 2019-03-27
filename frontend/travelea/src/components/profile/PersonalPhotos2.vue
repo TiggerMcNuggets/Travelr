@@ -52,9 +52,9 @@
         </li>
       </ul>
 
-      <v-dialog v-model="dialog" width="500">
+      <v-dialog v-model="dialog" :width="clickedImageWidth">
         <v-card>
-          <v-img :src="clickedImageURL" class="dialogue-image"></v-img>
+          <v-img :src="clickedImageURL"></v-img>
 
           <v-card-title primary-title>
             <div>
@@ -201,9 +201,10 @@ export default {
       files: [],
       clickedImageURL: "",
       clickedImage: {},
+      clickedImageWidth: 0,
       dialog: false,
       publicPhotoSwitch: false,
-      showUploadSection: false
+      showUploadSection: false,
     };
   },
 
@@ -250,18 +251,23 @@ export default {
     },
 
     // Gets the local image file path
-    getImgUrl(item, place = "somewhere else") {
-      console.log(place)
+    getImgUrl(item) {
+
       return require("../../../../../backend/resources/images/" +
         item.photo_filename);
     },
 
     // Gets the local image file path
     setDialogueContent(selectedImage = "") {
+
       this.dialog = true;
       this.clickedImage = selectedImage;
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
+      const myImage = new Image();
+      myImage.src = require("../../../../../backend/resources/images/"  + selectedImage.photo_filename);
+      this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+
     },
 
     // Groups the images into rows
