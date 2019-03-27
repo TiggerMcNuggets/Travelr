@@ -95,7 +95,7 @@ export default {
   methods: {
     getTraveller() {
       let user = store.getters.getUser;
-      this.traveller = user.profile;
+      this.traveller = user;
       this.setTravellerToFields();
     },
 

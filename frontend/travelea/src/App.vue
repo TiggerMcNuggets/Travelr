@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer fixed clipped app v-model="drawer">
+    <v-navigation-drawer temporary clipped app v-model="drawer">
       <v-list>
         <v-list-tile v-for="item in menuOptions" :key="item.name" :to="item.link">
           <v-list-tile-action>
@@ -52,8 +52,7 @@ export default {
         menuOptions = [
           { name: "Profile", icon: "lock_open", link: "/profile" },
           { name: "Users", icon: "lock_open", link: "/users" },
-          { name: "My Trips", icon: "lock_open", link: "/trips/create" },
-          { name: "My Destinations", icon: "lock_open", link: "/destination" },         
+          { name: "My Destinations", icon: "lock_open", link: "/destinations" },         
         ];
       }
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {

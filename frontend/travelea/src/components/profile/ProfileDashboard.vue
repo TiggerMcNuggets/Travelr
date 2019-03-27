@@ -1,5 +1,5 @@
 <template>
-  <v-layout row>
+  <v-layout row class="dashboard">
     <v-flex d-flex xs4 order-xs5>
       <v-layout column>
         <router-link to="/profile/photos">
@@ -8,11 +8,10 @@
               src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
               aspect-ratio="2.75"
             ></v-img>
-
             <h5>Photos</h5>
           </v-card>
         </router-link>
-        <router-link to="/profile/destinations">
+        <router-link to="/destinations">
           <v-card d-flex class="destinations-tile">
             <v-img
               src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
@@ -45,6 +44,12 @@
 .trips-tile {
     height: 100%;
 }
+.dashboard h5 {
+    font-size: 2em;
+    text-decoration: none !important;
+    text-align: center;
+}
+
 </style>
 
 

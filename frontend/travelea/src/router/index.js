@@ -82,10 +82,8 @@ let router = new Router({
                 },
             ]
         },
-       
-
         {
-            path: '/destination',
+            path: '/destinations',
             name: 'destination',
             component: Destination,
             beforeEnter: authGuard
