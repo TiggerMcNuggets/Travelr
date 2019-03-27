@@ -5,7 +5,7 @@
     <div>
       <v-avatar size="100px" class="profile-photo">
         <img
-            :src="getImgUrl()"
+            :src="getImgUrl"
         >
       </v-avatar>
       <router-link to="/profile/edit">
@@ -166,12 +166,15 @@ export default {
     this.traveller = store.getters.getUser;
   },
   methods: {
-        // Gets the local image file path
-    getImgUrl(place = "somewhere else") {
+        // Gets the local image file path    
+  },
+  computed: {
+      getImgUrl(place = "somewhere else") {
       console.log(place)
       return require("../../../../../backend/resources/images/" +
         this.profilePic);
     }
-  }
+  },
+
 };
 </script>

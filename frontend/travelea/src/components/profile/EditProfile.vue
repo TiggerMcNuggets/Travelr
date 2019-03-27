@@ -29,7 +29,6 @@
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
-
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
       </v-card>
     </v-flex>
@@ -73,8 +72,16 @@
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
+import {
+  getProfilePic,
+  uploadProfilePic,
+  setProfilePic
+} from "../../repository/PersonalPhotosRepository";
 
 import { store } from "../../store/index";
+import {
+  storeImage
+ } from "../../repository/PersonalPhotosRepository";
 
 export default {
   name: "EditProfile",
@@ -86,6 +93,7 @@ export default {
 
       traveller: {},
 
+
       dateOfBirth: "",
       nationalities: [],
       travellerTypes: [],
@@ -96,6 +104,21 @@ export default {
     this.getTraveller();
   },
   methods: {
+    // Sets the file property to the new file uploaded
+    handleFileUpload() {
+      this.file = this.$refs.file.files[0];
+      console.log(this.file);
+      console.log("hi");
+    },
+    submitFile() {
+      let formData = new FormData();
+      formData.append("picture", this.file);
+      console.log(formData);
+
+      uploadProfilePic(this.id, formData).then(() => {
+        store.dispatch("fetchMe");
+      });
+    },
     getTraveller() {
       this.traveller = store.getters.getUser;
       this.setTravellerToFields();
@@ -142,6 +165,12 @@ export default {
         });
       }
     }
+  },
+
+  created: function() {
+    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
+    // store.commit("setPersonalImages", this.$route.params.id);
+    this.id = store.getters.getUser.id;
   }
 };
 </script>
