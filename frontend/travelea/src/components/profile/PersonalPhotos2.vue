@@ -53,9 +53,9 @@
         </li>
       </ul>
 
-      <v-dialog v-model="dialog" width="500">
+      <v-dialog v-model="dialog" :width="clickedImageWidth">
         <v-card>
-          <v-img :src="clickedImageURL" class="dialogue-image"></v-img>
+          <v-img :src="clickedImageURL"></v-img>
 
           <v-card-title primary-title>
             <div>
@@ -70,7 +70,10 @@
             <v-spacer></v-spacer>
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
+          </v-card-actions>
+          <v-card-actions>
+          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -187,6 +190,7 @@ import { store } from "../../store/index";
 import {
   storeImage,
   getImages,
+  setProfilePic,
   updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
 
@@ -198,6 +202,7 @@ export default {
       files: [],
       clickedImageURL: "",
       clickedImage: {},
+      clickedImageWidth: 0,
       dialog: false,
       publicPhotoSwitch: false,
       showUploadSection: false,
@@ -229,6 +234,13 @@ export default {
       updatePersonalPhoto(this.clickedImage);
     },
 
+    //sets the user's profile photo as the selected
+    setProfilePhoto() {
+      setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
+        window.location = "/profile/photos";
+      });
+    },
+
     // Submits the image file and uploads it to the server
     submitFile() {
       let formData = new FormData();
@@ -242,18 +254,23 @@ export default {
     },
 
     // Gets the local image file path
-    getImgUrl(item, place = "somewhere else") {
-      console.log(place)
+    getImgUrl(item) {
+
       return require("../../../../../backend/resources/images/" +
         item.photo_filename);
     },
 
     // Gets the local image file path
     setDialogueContent(selectedImage = "") {
+
       this.dialog = true;
       this.clickedImage = selectedImage;
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
+      const myImage = new Image();
+      myImage.src = require("../../../../../backend/resources/images/"  + selectedImage.photo_filename);
+      this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+
     },
 
     // Groups the images into rows

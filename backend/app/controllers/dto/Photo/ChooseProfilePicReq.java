@@ -4,5 +4,5 @@ import play.data.validation.Constraints;
 
 public class ChooseProfilePicReq {
     @Constraints.Required
-    public String fileName;
+    public String photo_filename;
 }

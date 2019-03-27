@@ -178,7 +178,7 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> chooseProfilePhoto(Http.Request request, Long id) {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
         ChooseProfilePicReq req = chooseProfilePicForm.get();
-        String fileName = req.fileName;
+        String fileName = req.photo_filename;
         return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
             if (photoName != null) {
                 return ok("Your profile image was successfully set to " + photoName);

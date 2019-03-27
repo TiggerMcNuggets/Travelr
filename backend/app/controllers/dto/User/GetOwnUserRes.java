@@ -19,6 +19,7 @@ public class GetOwnUserRes {
     private List<TravellerType> travellerTypes;
     private String email;
     private int accountType;
+    private String userProfilePhoto;
 
     public GetOwnUserRes(User user) {
         this.id = user.id;
@@ -31,6 +32,7 @@ public class GetOwnUserRes {
         this.setNationalities(user.nationalities);
         this.email = user.email;
         this.accountType = user.accountType;
+        this.userProfilePhoto = user.userProfilePhoto;
 
     }
 
@@ -88,4 +90,6 @@ public class GetOwnUserRes {
     public void setAccountType(int accountType) {
         this.accountType = accountType;
     }
+
+    public String getUserProfilePhoto() {return userProfilePhoto;}
 }
