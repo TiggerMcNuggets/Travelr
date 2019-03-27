@@ -1,6 +1,7 @@
 package controllers;
 
 //import controllers.actions.Attrs;
+import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
@@ -49,7 +50,10 @@ public class PhotoController extends Controller {
         FileHelper fh = new FileHelper();
         fh.make_directory("resources/images");
 
-        return personalPhotoRepository.list(id).thenApplyAsync((photos) -> {
+        User user = request.attrs().get(Attrs.USER);
+
+
+        return personalPhotoRepository.list(id, user.id == id).thenApplyAsync((photos) -> {
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });

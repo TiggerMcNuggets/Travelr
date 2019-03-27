@@ -17,7 +17,7 @@
                 :search="search"
                 >
                 <template v-slot:items="props">
-                    <td class="text-xs-right">{{ props.item.firstName }}</td>
+                    <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
                     <td class="text-xs-right">{{ props.item.lastName }}</td>
                     <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
                     <td class="text-xs-right">{{ props.item.gender }}</td>
@@ -79,10 +79,15 @@ export default {
         async deleteUser(userId) {
             await store.dispatch("deleteUser", userId);
             await store.dispatch("getUsers", false);
+        },
+        goToUser(id) {
+            var endpoint = '/user/' + id
+            this.$router.push(endpoint)
         }
     },
     created: async function() {
         await store.dispatch("getUsers", false);
+        console.log(this.users);
         if (store.getters.getIsUserAdmin) {
             this.isAdmin = true;
         }

@@ -122,7 +122,6 @@ export default {
     getTrips: function() {
         tripRepository.getTrips()
         .then((res) => {
-          //console.log(res.data);
             this.trips = res.data;
         })
         .catch((err) => {

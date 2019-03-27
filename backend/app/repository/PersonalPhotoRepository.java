@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.dto.Photo.UpdatePhotoReq;
 import finders.UserFinder;
 import finders.PhotoFinder;
-import io.ebean.Ebean;
-import io.ebean.EbeanServer;
-import io.ebean.ExpressionList;
-import io.ebean.Transaction;
+import io.ebean.*;
 import models.Nationality;
 import models.PersonalPhoto;
 import models.User;
@@ -56,13 +53,12 @@ public class PersonalPhotoRepository {
      * @param id user id The user id
      * @return CompletionStage<List<PersonalPhoto>> The list of personal photos associated with the user.
      */
-    public CompletionStage<List<PersonalPhoto>> list(Long id) {
+    public CompletionStage<List<PersonalPhoto>> list(Long id, Boolean privatePhotos) {
         return supplyAsync(() -> {
-            ExpressionList<PersonalPhoto> query = ebeanServer.find(PersonalPhoto.class).where().eq("traveller_id", id);
+            ExpressionList<PersonalPhoto> query = ebeanServer.find(PersonalPhoto.class).where().eq("traveller_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
             return query.findList();
         }, executionContext);
     }
-
 
     /**
      * Updates a photo that belongs to a user
