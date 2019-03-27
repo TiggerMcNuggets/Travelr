@@ -28,18 +28,6 @@
 
 
 <style>
-.trips-tile {
-  margin-left: 20px;
-}
-
-.destinations-tile {
-  margin-top: 20px;
-  height: 290px;
-}
-
-.photos-tile {
-  height: 300px;
-}
 
 aside {
   width: 25%;
@@ -63,6 +51,7 @@ main {
 
 .profile-main {
   width: 100%;
+  height: 100%;
   margin: 0px;
 }
 </style>
@@ -70,8 +59,6 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
-// import Trips from "../trips/Trips";
-// import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
 import ProfileRepository from "../../repository/ProfileRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
