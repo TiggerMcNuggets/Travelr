@@ -80,6 +80,12 @@ let router = new Router({
                     name: 'profileTrips',
                     component: ProfileTrips                    
                 },
+                {
+                    path: '/profile/edit',
+                    name: 'editProfile',
+                    component: EditProfile,
+                },
+
             ]
         },
         {
@@ -123,13 +129,6 @@ let router = new Router({
             path: '/users',
             name: 'userSearch',
             component: userSearch,
-            beforeEnter: authGuard
-
-        },
-        {
-            path: '/profile/edit',
-            name: 'editProfile',
-            component: EditProfile,
             beforeEnter: authGuard
 
         },
