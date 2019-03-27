@@ -140,7 +140,8 @@ public class PhotoController extends Controller {
      * @return 200 http response if successful, else 400 for bad request
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> uploadProfilePhoto(Http.Request request, Long id) {
+    public CompletionStage<Result>
+    uploadProfilePhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
@@ -174,7 +175,7 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> chooseProfilePhoto(Http.Request request, Long id) {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
         ChooseProfilePicReq req = chooseProfilePicForm.get();
-        String fileName = req.fileName;
+        String fileName = req.photo_filename;
         return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
             if (photoName != null) {
                 return ok("Your profile image was successfully set to " + photoName);

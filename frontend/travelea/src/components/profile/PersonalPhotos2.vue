@@ -69,7 +69,10 @@
             <v-spacer></v-spacer>
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
+          </v-card-actions>
+          <v-card-actions>
+          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -186,6 +189,7 @@ import { store } from "../../store/index";
 import {
   storeImage,
   getImages,
+  setProfilePic,
   updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
 
@@ -225,6 +229,13 @@ export default {
     updatePhotoVisability() {
       this.clickedImage.is_public = this.publicPhotoSwitch;
       updatePersonalPhoto(this.clickedImage);
+    },
+
+    //sets the user's profile photo as the selected
+    setProfilePhoto() {
+      setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
+        store.dispatch("fetchMe");
+      });
     },
 
     // Submits the image file and uploads it to the server

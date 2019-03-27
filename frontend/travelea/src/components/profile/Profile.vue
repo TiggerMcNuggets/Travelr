@@ -14,6 +14,7 @@
             :types.sync="traveller.travellerTypes"
             :nationalities.sync="nationalities"
             :passports.sync="passports"
+            :profilePic.sync = "traveller.userProfilePhoto"
           />
         </aside>
 

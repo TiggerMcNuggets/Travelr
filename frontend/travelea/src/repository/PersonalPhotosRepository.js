@@ -3,7 +3,7 @@ import Repository from "./Repository";
 
 // Basic fetch POST function to upload the image to the server.
 export const storeImage = async (id, data) => {
-
+    console.log(data);
     // let url = "http://localhost:9000/api/travellers/" + id + "/photo";
     
     // const result = await fetch(url, {
@@ -52,6 +52,13 @@ export const getImages = async (id) => {
 }
 
 export const updatePersonalPhoto = async (payload) => {
-    console.log('updating the photo')
     return Repository.post(`/travellers/photo/${payload.id}`, payload);
 }   
+
+export const uploadProfilePic = async (id, payload) => {
+    return Repository.put(`/travellers/${id}/uploadphoto`, payload);
+}
+
+export const setProfilePic = async (id, payload) => {
+    return Repository.put(`/travellers/${id}/setphoto`, payload);
+}
