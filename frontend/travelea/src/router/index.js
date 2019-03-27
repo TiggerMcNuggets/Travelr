@@ -19,6 +19,7 @@ import CreateTrips from "../components/trips/CreateTrips.vue";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
+import ViewTrip from "../components/trips/ViewTrip.vue";
 
 const authGuard = (to, from, next) => {
     if (!store.getters.getToken) return next("/login");
@@ -148,6 +149,11 @@ let router = new Router({
                 requiresAdmin: true
             }
         },
+        {
+            path: '/trips/view/:id',
+            name: 'view-trip',
+            component: ViewTrip
+        }
     ]
 });
 

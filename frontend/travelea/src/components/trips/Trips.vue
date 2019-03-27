@@ -37,7 +37,7 @@
         :value="item.value"
         :key="item.value"
       >
-        <v-card>
+        <v-card  v-on:click="openTrip(item.id)">
           <div class="top-destination-content">
             <h2>{{ item.name }}</h2>
           </div>
@@ -108,7 +108,9 @@ export default {
   computed: {
 
     tripsFiltered() {
-      return this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
+      const filteredList = this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
+      //Currently sorting trips by id, in future we will sort trips by creation time
+      return filteredList.sort(function(a, b){ return a.id - b.id; });
     }
 
   },
@@ -120,11 +122,16 @@ export default {
     getTrips: function() {
         tripRepository.getTrips()
         .then((res) => {
+          //console.log(res.data);
             this.trips = res.data;
         })
         .catch((err) => {
-            console.log(e);
+            console.log(err);
         })
+    },
+
+    openTrip: function(id) {
+        this.$router.push("/trips/view/"+id);//window.location.href = '/#/trips/view/'+id;
     },
 
     toggleShowCreateTrip: function() {
