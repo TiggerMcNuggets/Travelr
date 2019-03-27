@@ -1,0 +1,14 @@
+logs
+target
+resources/images/*.png
+resources/images/*.jpg
+resources/images/*.jpeg
+build
+/.idea
+/.idea_modules
+/.classpath
+/.project
+/.settings
+/.gradle
+/RUNNING_PID
+

@@ -1,0 +1,1222 @@
+{
+	"info": {
+		"_postman_id": "5f85ca44-580a-49c2-8462-0305c830d8a6",
+		"name": "SENG302",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Nationality",
+			"item": [
+				{
+					"name": "list user nationalities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/nationalities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"nationalities"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add user nationality",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nationalities\": [\n\t\t{ \"country\": \"Lituania\", \"has_passport\": true }, \n\t\t{ \"country\": \"Romania\", \"has_passport\": false }\n\t]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/nationalities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"nationalities"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete traveller nationalities",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"nationalities\": [\n\t\t{ \"country\": \"Lituania\", \"has_passport\": true }, \n\t\t{ \"country\": \"Italy\", \"has_passport\": false }\n\t]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/nationalities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"nationalities"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Traveller types",
+			"item": [
+				{
+					"name": "get traveller types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/travellers_type",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"travellers_type"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add traveller types",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"types\": \n\t[\n\t\t{\"type\":\"granma\"}\n\t]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/travellers_type",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"travellers_type"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete traveller type",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"types\" : [\n\t\t{\"type\": \"Thrillseeker\"},\n\t\t{\"type\": \"Not type for this user\"}\n\t]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/travellers_type",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"travellers_type"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "FLAWS: currently we are not sure how to enforce the fact that users cannot delete the last type or a type that does not exist so this will be improved in next sprints"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Traveller",
+			"item": [
+				{
+					"name": "add travellers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fname\": \"Lorenzo\",\n\t\"mname\": \"None\",\n\t\"lname\": \"Fasano\",\n\t\"dob\": \"1980-12-20\",\n\t\"gender\": \"f\",\n\t\"email\": \"lorenzo@dana.com\",\n\t\"password\":\"danaisthebest\",\n\t\"nationalities\": [{\"country\": \"Italy\", \"has_passport\": true} , {\"country\": \"Slovenia\", \"has_passport\": false}],\n\t\"types\" : [{\"type\": \"Thrillseeker\"}, {\"type\": \"grandpaHoliday\"}]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers"
+							]
+						},
+						"description": "Requirements:\n0+ passports,\n1+ nationality,\n1+ type,\n1 fname,\n1 mname,\n1 lname,\n1 dob in yyyy-MM-dd format,\n1 email that is not already existing,\n1 password"
+					},
+					"response": []
+				},
+				{
+					"name": "update traveller",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fname\": \"Dana\",\n\t\"mname\": \"Helena\",\n\t\"lname\": \"Lambert\",\n\t\"dob\": \"2010-12-20\",\n\t\"gender\": \"f\",\n\t\"password\":\"danaisthebest\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete traveller",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all travellers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get list of travellers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get profile by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST travellers/:id/photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/photo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET travellers/:id/photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/photo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Destination",
+			"item": [
+				{
+					"name": "add destinations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"15 Mile Creek\",\r\n    \"type\": \"Stream\",\r\n    \"district\": \"Nelson\",\r\n    \"crd_latitude\": -40.79825,\r\n    \"crd_longitude\": 172.514222,\r\n    \"country\": \"New Zealand\"\r\n  }"
+						},
+						"url": {
+							"raw": "http://localhost:9000/destinations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"destinations"
+							]
+						},
+						"description": "Unique by name enforced on database"
+					},
+					"response": []
+				},
+				{
+					"name": "update destination",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"16 Mile Creek\",\r\n    \"type\": \"Stream\",\r\n    \"district\": \"Greymouth\",\r\n    \"crd_latitude\": -40.79825,\r\n    \"crd_longitude\": 172.514222,\r\n    \"country\": \"New Zealand\"\r\n  }"
+						},
+						"url": {
+							"raw": "http://localhost:9000/destinations/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"destinations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete destination",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/destinations/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"destinations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all destinations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/destinations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"destinations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trip",
+			"item": [
+				{
+					"name": "add trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Auckland\",\n\t\"travellerID\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips"
+							]
+						},
+						"description": "Trip creation, requires a traveller to exist"
+					},
+					"response": []
+				},
+				{
+					"name": "add trip destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trip\": \"1\",\n\t\"destination\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination"
+							]
+						},
+						"description": "adds the trip destionation"
+					},
+					"response": []
+				},
+				{
+					"name": "update trip",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Red > Krugs > Bot\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete trip",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Red > Krugs > Bot\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view trips",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trip Destination",
+			"item": [
+				{
+					"name": "add trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"second trip\",\n\t\"travellerID\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips"
+							]
+						},
+						"description": "Trip creation, requires a traveller to exist"
+					},
+					"response": []
+				},
+				{
+					"name": "add second destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 15040,\r\n    \"name\": \"second\",\r\n    \"type\": \"Stream\",\r\n    \"district\": \"Nelson\",\r\n    \"crd_latitude\": -40.79825,\r\n    \"crd_longitude\": 172.514222,\r\n    \"country\": \"New Zealand\"\r\n  }"
+						},
+						"url": {
+							"raw": "http://localhost:9000/destinations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"destinations"
+							]
+						},
+						"description": "Unique by name enforced on database"
+					},
+					"response": []
+				},
+				{
+					"name": "add third destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 15040,\r\n    \"name\": \"third destination\",\r\n    \"type\": \"Stream\",\r\n    \"district\": \"Nelson\",\r\n    \"crd_latitude\": -40.79825,\r\n    \"crd_longitude\": 172.514222,\r\n    \"country\": \"New Zealand\"\r\n  }"
+						},
+						"url": {
+							"raw": "http://localhost:9000/destinations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"destinations"
+							]
+						},
+						"description": "Unique by name enforced on database"
+					},
+					"response": []
+				},
+				{
+					"name": "add trip destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trip\": \"2\",\n\t\"destination\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination"
+							]
+						},
+						"description": "adds the trip destionation"
+					},
+					"response": []
+				},
+				{
+					"name": "add second trip destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trip\": 2,\n\t\"destination\": 3\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination"
+							]
+						},
+						"description": "adds the trip destionation"
+					},
+					"response": []
+				},
+				{
+					"name": "add third trip destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trip\": \"2\",\n\t\"destination\": \"4\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination"
+							]
+						},
+						"description": "adds the trip destionation"
+					},
+					"response": []
+				},
+				{
+					"name": "add fourth trip destination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trip\": \"2\",\n\t\"destination\": \"1\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination"
+							]
+						},
+						"description": "adds the trip destionation"
+					},
+					"response": []
+				},
+				{
+					"name": "update trip destination",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"arrivalDate\": \"2019-01-01\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination/2/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination",
+								"2",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "swap trip destination",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first\": 0,\n    \"second\": 2\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination/:trip/swap",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination",
+								":trip",
+								"swap"
+							],
+							"variable": [
+								{
+									"key": "trip",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "swap trip destination",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first\": 0,\n    \"second\": 1\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination/:trip/swap",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination",
+								":trip",
+								"swap"
+							],
+							"variable": [
+								{
+									"key": "trip",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete trip destination",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination/2/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination",
+								"2",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view trip destinations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/destination",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"destination"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"lorenzo@dana.com\",\n\t\"password\":\"danaisthebest\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:9000/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
