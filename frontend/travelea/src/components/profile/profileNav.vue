@@ -170,8 +170,14 @@ export default {
   },
   computed: {
       getImgUrl(place = "somewhere else") {
-      return require("../../../../../backend/resources/images/" +
-        this.profilePic);
+      console.log(this.profilePic);
+      if(!this.profilePic) {
+        return require("../../../../../backend/resources/images/defaultPic.png")
+      } else {
+        return require("../../../../../backend/resources/images/" +
+                this.profilePic);
+      }
+      
     }
   },
 

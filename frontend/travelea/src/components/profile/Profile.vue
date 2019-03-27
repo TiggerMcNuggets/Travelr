@@ -14,7 +14,7 @@
             :types.sync="traveller.travellerTypes"
             :nationalities.sync="nationalities"
             :passports.sync="passports"
-            :profilePic.sync = "traveller.userProfilePhoto"
+            :profilePic.sync="traveller.profilePic"
           />
         </aside>
         <main class="profile-main">
@@ -28,6 +28,18 @@
 
 
 <style>
+.trips-tile {
+  margin-left: 20px;
+}
+
+.destinations-tile {
+  margin-top: 20px;
+  height: 290px;
+}
+
+.photos-tile {
+  height: 300px;
+}
 
 aside {
   width: 25%;
@@ -51,7 +63,6 @@ main {
 
 .profile-main {
   width: 100%;
-  height: 100%;
   margin: 0px;
 }
 </style>
@@ -59,6 +70,8 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
+// import Trips from "../trips/Trips";
+// import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
 import UserRepository from "../../repository/UserRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
@@ -91,7 +104,6 @@ export default {
     if(!id) { 
       id = store.getters.getUser.id
     }
-    console.log("HERE" + id);
     UserRepository.getUser(id)
       .then(response => {
         this.traveller = response.data
