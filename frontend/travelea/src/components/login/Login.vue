@@ -77,7 +77,6 @@ export default {
             this.loginAlert = false;
             store.dispatch("login", this.user)
             .then(() => {
-                console.log("valid login")
                 this.$router.push("/profile");
             })
             .catch(() => {
