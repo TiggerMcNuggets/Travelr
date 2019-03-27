@@ -1,5 +1,5 @@
 <template>
-  <v-layout row>
+  <v-layout row class="dashboard">
     <v-flex d-flex xs4 order-xs5>
       <v-layout column>
         <router-link to="/profile/photos">
@@ -8,14 +8,13 @@
               src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
               aspect-ratio="2.75"
             ></v-img>
-
             <h5>Photos</h5>
           </v-card>
         </router-link>
-        <router-link to="/profile/destinations">
+        <router-link to="/destinations">
           <v-card d-flex class="destinations-tile">
             <v-img
-              src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/All_Gizah_Pyramids.jpg/1024px-All_Gizah_Pyramids.jpg"
               aspect-ratio="2.75"
             ></v-img>
             <h5>Destinations</h5>
@@ -24,12 +23,15 @@
       </v-layout>
     </v-flex>
     <v-flex d-flex x8 order-xs5>
-      <v-layout column>
-        <v-flex d-flex>
-          <router-link to="/profile/trips">
+      <v-layout column >
+        <v-flex d-flex >
+          <router-link to="/trips">
             <v-card d-flex class="trips-tile">
+              <v-img
+                src="https://www.publicdomainpictures.net/pictures/260000/nahled/airplane-sunset-travel.jpg"
+                aspect-ratio="2.75"
+              ></v-img>
               <h5>Trips</h5>
-              <trips></trips>
             </v-card>
           </router-link>
         </v-flex>
@@ -39,6 +41,14 @@
 </template>
 
 <style>
+.trips-tile {
+    height: 100%;
+}
+.dashboard h5 {
+    font-size: 2em;
+    text-decoration: none !important;
+    text-align: center;
+}
 
 </style>
 

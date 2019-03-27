@@ -233,7 +233,7 @@ export default {
 
       storeImage(this.id, formData).then(() => {
         getImages(this.id).then(result => {
-          this.files = this.groupImages(result);
+          this.files = this.groupImages(result.data);
         });
       });
     },
@@ -275,8 +275,7 @@ export default {
   created: function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
-    this.id = store.getters.getId;
-    console.log(this.id);
+    this.id = store.getters.getUser.id;
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });

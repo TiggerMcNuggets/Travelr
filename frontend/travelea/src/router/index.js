@@ -3,6 +3,7 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
+import Home from "../components/home/Home.vue"
 import Profile from "../components/profile/Profile"
 import ProfilePhotos from "../components/profile/ProfilePhotos"
 import ProfileTrips from "../components/profile/ProfileTrips"
@@ -44,14 +45,14 @@ const unauthGuard = (to, from, next) => {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            return next("/");
+            return next("/profile");
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    return next("/");
+    return next("/profile");
 }
 
 Vue.use(Router);
@@ -59,18 +60,24 @@ let router = new Router({
     mode: 'history',
     routes: [
         {
+            path:'',
+            name: 'home',
+            component: Home,
+            beforeEnter: unauthGuard
+        },
+        {
             path: '/profile',
             name: 'profile',
             component: Profile,
             beforeEnter: authGuard,
             children: [
                 {
-                    path: '/',
+                    path: '/profile',
                     name: 'profileDashboard',
                     component: ProfileDashboard                    
                 },
                 {
-                    path: '/photos',
+                    path: '/profile/photos',
                     name: 'profilePhotos',
                     component: ProfilePhotos                    
                 },
@@ -80,34 +87,23 @@ let router = new Router({
                     name: 'profileTrips',
                     component: ProfileTrips                    
                 },
-        
+                {
+                    path: '/profile/edit',
+                    name: 'editProfile',
+                    component: EditProfile,
+                },
                 {
                     path: '/destinations',
-                    name: 'profileDestinations',
-                    component: ProfileDestinations                   
+                    name: 'destination',
+                    component: Destination
+                },
+                {
+                    path: '/destinations/edit/:id',
+                    name: 'edit-destination',
+                    component: DestinationEdit,
+                    beforeEnter: authGuard
                 },
             ]
-        },
-       
-
-        {
-            path: '/destination',
-            name: 'destination',
-            component: Destination,
-            beforeEnter: authGuard
-        },
-
-        {
-            path: '/destination/edit/:id',
-            name: 'edit-destination',
-            component: DestinationEdit,
-            beforeEnter: authGuard
-        },
-        {
-            path: '/trips/create',
-            name: 'create-trip',
-            component: CreateTrips,
-            beforeEnter: authGuard
         },
         {
             path: '/login',
@@ -135,13 +131,6 @@ let router = new Router({
 
         },
         {
-            path: '/profile/edit',
-            name: 'editProfile',
-            component: EditProfile,
-            beforeEnter: authGuard
-
-        },
-        {
             path: '/logout',
             name: 'logout',
             component: Logout
@@ -154,7 +143,7 @@ let router = new Router({
             meta: {
                 requiresAdmin: true
             }
-        }
+        },
     ]
 });
 

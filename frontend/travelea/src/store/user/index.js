@@ -23,15 +23,17 @@ export default {
     },
 
     actions: {
-        login({ commit }, loginData) {
+        login({ commit, dispatch }, loginData) {
             return new Promise((resolve, reject) => {
                 AuthRepository.login(loginData)
                     .then(response => {
                         commit('setToken', response.data.token);
-                        commit('setUser', response.data.user);
                         localStorage.setItem("token", response.data.token);
-                        resolve(response);
+                        return dispatch('fetchMe')
                     })
+                    .then(response => {
+                        resolve(response);
+                    })  
                     .catch(err => {
                         commit('setToken', "");
                         commit('setUser', null);
