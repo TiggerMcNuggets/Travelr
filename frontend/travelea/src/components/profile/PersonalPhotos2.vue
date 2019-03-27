@@ -234,6 +234,7 @@ export default {
     //sets the user's profile photo as the selected
     setProfilePhoto() {
       setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
+        window.location = "/profile/photos";
       });
     },
 
