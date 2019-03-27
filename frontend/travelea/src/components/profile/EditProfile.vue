@@ -107,16 +107,13 @@ export default {
     // Sets the file property to the new file uploaded
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
-      console.log(this.file);
-      console.log("hi");
     },
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
-      console.log(formData);
 
       uploadProfilePic(this.id, formData).then(() => {
-        store.dispatch("fetchMe");
+        window.location = "/profile/edit";
       });
     },
     getTraveller() {
