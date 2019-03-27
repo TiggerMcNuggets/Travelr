@@ -7,7 +7,6 @@ import Home from "../components/home/Home.vue"
 import Profile from "../components/profile/Profile"
 import ProfilePhotos from "../components/profile/ProfilePhotos"
 import ProfileTrips from "../components/profile/ProfileTrips"
-import ProfileDestinations from "../components/profile/ProfileDestinations"
 import userSearch from "../components/userSearch/userSearch"
 import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
@@ -15,7 +14,6 @@ import DestinationEdit from "../components/destination/DestinationEdit"
 import Login from "../components/login/Login"
 import PersonalPhotos from "../components/profile/PersonalPhotos"
 import ProfileDashboard from "../components/profile/ProfileDashboard"
-import CreateTrips from "../components/trips/CreateTrips.vue";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
@@ -107,6 +105,19 @@ let router = new Router({
                     path: '/trips',
                     name: 'trips',
                     component: ProfileTrips,
+                }
+            ]
+        },
+        {
+            path: '/user/:id',
+            name: 'userProfile',
+            component: Profile,
+            beforeEnter: authGuard,
+            children: [
+                {
+                    path: '/',
+                    name: 'profilePhotos',
+                    component: ProfilePhotos                    
                 }
             ]
         },

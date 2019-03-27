@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import moment from "moment";
 // set of rules
 
@@ -9,7 +8,7 @@ export const rules = {
   ],
   numberRules: [
     v => !!v || "This field is required",
-    v => (v && _.isNumber(v)) || "This field must be a numeric value"
+    v => (v && (isInt(v) || isFloat(v)))  || "This field must be a numeric value"
   ]
 };
 
@@ -52,3 +51,11 @@ export const arrivalBeforeDepartureAndDestinationsOneAfterTheOther = (destinatio
         (noDestinationsTimesCrossOver) || "Cannot plan to be in 2 places at the same time",
         ].concat(rules.nameRules);
 };
+
+function isInt(n){
+  return Number(n) === n && n % 1 === 0;
+}
+
+function isFloat(n){
+  return Number(n) === n && n % 1 !== 0;
+}

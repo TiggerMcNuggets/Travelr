@@ -3,8 +3,8 @@
 <template>
   <div class="profile-outer-container">
     <div class="profile-inner-container">
-      <v-layout row>
-        <aside>
+      <v-layout row>        
+        <aside>          
           <ProfileNav
             :fname.sync="traveller.firstName"
             :mname.sync="traveller.middleName"
@@ -16,9 +16,9 @@
             :passports.sync="passports"
           />
         </aside>
-
         <main class="profile-main">
           <router-view></router-view>
+          
         </main>
       </v-layout>
     </div>
@@ -72,7 +72,7 @@ import ProfileNav from "./profileNav";
 // import Trips from "../trips/Trips";
 // import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
-import ProfileRepository from "../../repository/ProfileRepository";
+import UserRepository from "../../repository/UserRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import { store } from "../../store/index";
 
@@ -86,7 +86,8 @@ export default {
 
       dateOfBirth: "",
       nationalities: [],
-      passports: []
+      passports: [],
+      isMyProfile: false
     };
   },
 
@@ -95,9 +96,25 @@ export default {
   },
 
   created: function() {
-    this.getTraveller();
-  },
+    console.log("here")
 
+    let id = this.$route.params.id;
+    
+    if(!id) { 
+      id = store.getters.getUser.id
+    }
+    console.log("HERE" + id);
+    UserRepository.getUser(id)
+      .then(response => {
+        this.traveller = response.data
+        this.setTravellerToFields(); 
+        this.isMyProfile = (store.getters.getUser.id == id)
+      })    
+      .catch(err => {
+        console.log(err);
+      })
+
+  },
   methods: {
     getTraveller() {
       this.traveller = store.getters.getUser;
@@ -115,7 +132,7 @@ export default {
       this.dateOfBirth = dateTime.convertTimestampToString(
         this.traveller.dateOfBirth
       );
-    }
+    }    
   }
 };
 </script>

@@ -7,7 +7,7 @@
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
-        <h2 class="headline">MY PHOTOS</h2>
+        <h2 class="headline">PHOTOS</h2>
 
         <v-btn
           class="upload-toggle-button"
@@ -16,6 +16,7 @@
           dark
           color="indigo"
           @click="toggleShowUploadPhoto"
+          v-if="isMyProfile"
         >
           <v-icon dark>add</v-icon>
         </v-btn>
@@ -199,7 +200,9 @@ export default {
       clickedImage: {},
       dialog: false,
       publicPhotoSwitch: false,
-      showUploadSection: false
+      showUploadSection: false,
+      id: null,
+      isMyProfile: false
     };
   },
 
@@ -275,7 +278,14 @@ export default {
   created: function() {
     // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
     // store.commit("setPersonalImages", this.$route.params.id);
-    this.id = store.getters.getUser.id;
+    this.id = this.$route.params.id;
+    
+    if(!this.id) { 
+      this.id = store.getters.getUser.id
+    }
+
+    this.isMyProfile = (store.getters.getUser.id == this.id)
+    console.log("HERE" + this.id)
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });
