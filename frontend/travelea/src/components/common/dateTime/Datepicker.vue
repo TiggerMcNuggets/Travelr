@@ -3,7 +3,7 @@
         <template v-slot:activator="{ on }">
             <v-text-field label="Date of Birth" :value="dob" :rules="rules.required" @input="$emit('update:dob', $event)" readonly v-on="on"></v-text-field>
         </template>
-        <v-date-picker :value="dob" :rules="rules.required" @input="$emit('update:dob', $event); dob_menu=false"></v-date-picker>
+        <v-date-picker :value="dob" :rules="rules.required" @input="$emit('updateDob', $event); dob_menu=false"></v-date-picker>
     </v-menu>
 </template>
 
@@ -20,6 +20,6 @@ export default {
       rules,
       dob_menu: null,
     };
-  },
+  }
 };
 </script>

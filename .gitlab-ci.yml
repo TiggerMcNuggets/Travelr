@@ -1,14 +1,42 @@
-tag_checker:
-  stage: build
+junit:
+  stage: test
   script:
-    - python tag_checker.py $CI_COMMIT_TAG
-  only:
-    - tags
-    
-release-artifacts-frontend:
+    - cd ./backend
+    - sbt test
+
+recent-artifacts:
   stage: deploy
   script:
-    - cd ./frontend && npm install && npm run build 
+    - cd ./backend
+    - sbt dist
   artifacts:
     paths:
-      - frontend
+      - backend/target/universal/*.zip
+    expire_in: 1 week
+  except:
+    - tags
+
+release-artifacts:
+ stage: deploy
+ script:
+    - cd ./backend
+    - sbt dist
+ artifacts:
+    paths:
+    - backend/target/universal/*.zip
+ only:
+    - tags
+    
+update-sonar:
+    stage: deploy
+    script:
+        - cd ./backend
+        - sbt dist
+        - ls -la
+        - cd ../
+        - echo $PWD
+        - chmod -R 777 .
+        - /opt/sonarqubeScanner/bin/sonar-scanner
+    only:
+        - vue-restructure@seng302-2019/team-300
+        - S223-gitlab-runner@seng302-2019/team-300

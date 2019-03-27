@@ -30,7 +30,7 @@
                 </v-text-field>
             </v-flex>
             <v-flex sm6 xs12>
-                <Datepicker :dob.sync="tDob" />
+                <Datepicker v-on:updateDob="updateDob" :dob="dob" />
             </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -89,6 +89,7 @@
 
 <script>
 import Datepicker from "../dateTime/Datepicker";
+import SelectDataRepository from "../../../repository/SelectDataRepository";
 import rules from "../formRules";
 export default {
   name: "TravellerForm",
@@ -97,17 +98,26 @@ export default {
   data() {
     return {
       rules,
-      tDob: this.dob,
       //Select lists
       genderList: ["Male", "Female", "Other"],
-      typeList: [{ id: 1, name: "Type1" }, { id: 2, name: "Type2" }],
-      nationalityList: [{ id: 1, name: "Nat1" }, { id: 2, name: "Nat2" }],
+      typeList: [],
+      nationalityList: [],
     };
   },
-  watch: {
-    tDob: function() {
-      this.$emit("update:dob", this.tDob);
-    },
+  mounted() {
+      this.populateSelects();
   },
+
+  methods: {
+      async populateSelects() {
+          const nationalities = await SelectDataRepository.nationalities();
+          this.nationalityList = nationalities.data;
+          const travellerTypes = await SelectDataRepository.travellerTypes();
+          this.typeList = travellerTypes.data;
+      },
+      updateDob(val) {
+        this.$emit("update:dob", val);
+      }
+  }
 };
 </script>

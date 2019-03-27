@@ -21,11 +21,11 @@
                                         <v-flex xs12 md4>
                                             <v-combobox
                                                     :rules="noSameDestinationNameConsecutiveRule"
-                                                    :items="destinations.map(dest => dest.name)"
+                                                    :items="userDestinations.map(dest => dest.name)"
                                                     v-model="destination.title"
                                                     label="Select an existing destination"
                                             ></v-combobox>
-                                            <v-btn flat small color="error" v-on:click="deleteDestination(index)">Remove</v-btn>
+                                            <v-btn flat small color="error" v-if="index > 1" v-on:click="deleteDestination(index)">Remove</v-btn>
                                         </v-flex>
 
                                         <v-flex xs12 md4>
@@ -113,7 +113,10 @@
 
 <script>
     import { store } from "../../store/index";
-    import { createTrip } from '../../repository/TripRepository';
+    import moment from "moment"
+    import  { RepositoryFactory } from "../../repository/RepositoryFactory"
+    let tripRepository = RepositoryFactory.get("trip");
+    let destinationRepository = RepositoryFactory.get("destination")
     import {rules, noSameDestinationNameConsecutiveRule, arrivalBeforeDepartureAndDestinationsOneAfterTheOther} from '../form_rules';
 
     export default {
@@ -121,21 +124,34 @@
         components: {
         },
         props: {
-            toggleShowCreateTrip: Function
+            toggleShowCreateTrip: Function,
+            regetTrips: Function,
         },
         data() {
             return {
                 trip: {
                     title: "",
-                    destinations: []
+                    destinations: [
+                        {
+                            title: null,
+                            arrivalDate: null,
+                            departureDate: null,
+                            arrivalDateMenu: false,
+                            departureDateMenu: false,
+                        },{
+                            title: null,
+                            arrivalDate: null,
+                            departureDate: null,
+                            arrivalDateMenu: false,
+                            departureDateMenu: false,
+                        } 
+                    ]
                 },
+                userDestinations: [],
                 ...rules,
             };
         },
         computed: {
-            destinations() {
-                return store.state.destinations.destinations;
-            },
             noSameDestinationNameConsecutiveRule() {
                 return noSameDestinationNameConsecutiveRule(this.trip.destinations)
             },
@@ -144,6 +160,14 @@
             }
         },
         methods: {
+            getDestinations: function() {
+                destinationRepository.getDestinations().then((res) => {
+                    this.userDestinations = res.data;
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+            },
             resetValues: function() {
                 this.$refs.form.reset();
             },
@@ -153,7 +177,6 @@
                 this.trip.destinations = newDestinations;
             },
             addDestinationToTrip: function() {
-                console.log(this.trip.destinations);
                 const template = {
                         title: null,
                         arrivalDate: null,
@@ -165,27 +188,27 @@
                 newDestinations.push(template);
                 this.trip.destinations = newDestinations;
             },
-            createTrip: async function() {
+            createTrip: function() {
                 if (this.$refs.form.validate()) {
-                    // FIXME: traveller id needs to be retrieved from STORE when the store will have it
-                    // FIXME: for now traveller id is hardcoded, which means that for testing we need to create a traveller through postman first
-                    let trip = {travellerID: 1, name: this.trip.title, destinations: [] };
+                    let trip = {name: this.trip.title, destinations: [] };
                     this.trip.destinations.forEach((destination, index) => {
-                        const destById = this.destinations.find(dest => destination.title === dest.name);
-                        trip.destinations.push({destId: destById.id, ordinal: index, arrivalDate: destination.arrivalDate, departureDate: destination.departureDate});
+                        const destById = this.userDestinations.find(dest => destination.title === dest.name);
+                        trip.destinations.push({id: destById.id, ordinal: index, arrivalDate: moment(destination.arrivalDate).unix, departureDate: moment(destination.departureDate).unix});
                     });
-                    console.log(trip);
-                    // TODO: wait for auth frontend
-                    const response = await createTrip(trip);
-                    this.toggleShowCreateTrip();
-                    store.commit("setTrips", 0);
-                    console.log(response);
-                    // if (response.status) {
-                    //
-                    // }
+
+                    tripRepository.createTrip(trip)
+                    .then((res) => {
+                        this.regetTrips();
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                    });
                 }
             }
-
+        },
+        mounted() {
+            this.getDestinations();
         }
     };
+
 </script>

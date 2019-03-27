@@ -1,11 +1,11 @@
 import axios from "axios"
 
 // Base URL used by all requests
-const baseUrl = "http://localhost:9000"
+const baseUrl = "http://localhost:9000/api";
 
 // Create the axios object
 const repo = axios.create({
-    baseURL: baseUrl
+    baseURL: baseUrl,
 });
 
 repo.defaults.headers.post["Access-Control-Allow-Origin"] = "*";

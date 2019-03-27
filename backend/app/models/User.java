@@ -56,6 +56,9 @@ public class User extends BaseModel {
     @Column(length = 64)
     private byte[] password;
 
+    @Column(columnDefinition = "varchar(255) default 'default-pic.png'")
+    public String userProfilePhoto;
+
     @JsonIgnore
     @NotNull
     public int timestamp;
@@ -67,7 +70,7 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<UserNationality> nationalities;
 
-    @ManyToMany
+    @ManyToMany(cascade=CascadeType.ALL)
     public List<TravellerType> travellerTypes;
 
 
@@ -94,7 +97,13 @@ public class User extends BaseModel {
         return this.token;
     }
 
+    public int getAccountType() {
+        return accountType;
+    }
 
+    public void setAccountType(int accountType) {
+        this.accountType = accountType;
+    }
 
     public void deleteAuthToken() {
         token = null;
@@ -125,6 +134,7 @@ public class User extends BaseModel {
         this.lastName = request.lastName;
         setEmail(request.email);
         setPassword(request.password);
+        this.userProfilePhoto = "defaultPic.png";
         this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
         this.accountType = request.accountType;
@@ -134,6 +144,7 @@ public class User extends BaseModel {
         this.firstName = first;
         this.lastName = last;
         this.email = email;
+        this.userProfilePhoto = "defaultPic.png";
         this.dateOfBirth = dob;
         this.gender = "Male";
     }
