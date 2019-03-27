@@ -23,45 +23,16 @@ export default {
 
   data() {
     return {
-      traveller: {},
-
-      dateOfBirth: "",
-      nationalities: [],
-      passports: []
     };
   },
 
   components: {
-    ProfileNav,
-//Trips,
     PersonalPhotos
   },
 
-  mounted() {
-    this.getTraveller();
-  },
 
-  methods: {
-    getTraveller() {
-      let user = store.getters.getUser;
-      this.traveller = user.profile;
-      this.setTravellerToFields();
-    },
 
-    setTravellerToFields() {
-      [
-        this.nationalities,
-        this.passports
-      ] = travellerFormHelper.convertFromNationalitiesRes(
-        this.traveller.nationalities
-      );
-      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
-        this.traveller.travellerTypes
-      );
-      this.dateOfBirth = dateTime.convertTimestampToString(
-        this.traveller.dateOfBirth
-      );
-    }
-  }
+  methods: {}
+  
 };
 </script>

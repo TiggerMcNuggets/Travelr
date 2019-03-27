@@ -67,7 +67,6 @@ a {
     text-decoration:none;
 }
 
-
 .profile-edit-button {
     position: absolute;
     right: 25%;
@@ -75,6 +74,18 @@ a {
 }
 
 .profile-edit-button:hover {
+    position: absolute;
+    right: 25%;
+    top: 100px;
+}
+
+.profile-edit-button:active {
+    position: absolute;
+    right: 25%;
+    top: 100px;
+}
+
+.profile-edit-button:focus {
     position: absolute;
     right: 25%;
     top: 100px;
