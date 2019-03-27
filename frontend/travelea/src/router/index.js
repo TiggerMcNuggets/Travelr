@@ -83,7 +83,7 @@ let router = new Router({
                 },
         
                 {
-                    path: '/trips',
+                    path: '/profile/trips',
                     name: 'profileTrips',
                     component: ProfileTrips                    
                 },
