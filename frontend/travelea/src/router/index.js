@@ -101,8 +101,12 @@ let router = new Router({
                     path: '/destinations/edit/:id',
                     name: 'edit-destination',
                     component: DestinationEdit,
-                    beforeEnter: authGuard
                 },
+                {
+                    path: '/trips',
+                    name: 'trips',
+                    component: ProfileTrips,
+                }
             ]
         },
         {
