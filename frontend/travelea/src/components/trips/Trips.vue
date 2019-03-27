@@ -108,7 +108,9 @@ export default {
   computed: {
 
     tripsFiltered() {
-      return this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
+      const filteredList = this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
+      //Currently sorting trips by id, in future we will sort trips by creation time
+      return filteredList.sort(function(a, b){ return a.id - b.id; });
     }
 
   },
@@ -120,7 +122,7 @@ export default {
     getTrips: function() {
         tripRepository.getTrips()
         .then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
             this.trips = res.data;
         })
         .catch((err) => {
