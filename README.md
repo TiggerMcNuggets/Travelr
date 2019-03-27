@@ -36,6 +36,6 @@ To run the project for **development**:
 3. To run the **backend**, navigate to `/backend` and run the command: `sbt dist`
 4. Once the backend is built and running, navigate to: `localhost:9000` and click "Apply the script now!", you should see an Action Not Found screen.
 5. To populate the database, run the following command: `curl -X POST localhost:9000/api/populate`
- 6. To run the **frontend**, navigate to `/frontend/travelea` and run the commands: `npm install` and `npm run serve`
+6. To run the **frontend**, navigate to `/frontend/travelea` and run the commands: `npm install` and `npm run serve`
 7. Navigate to: `localhost:8080` OR whatever the console states when running the previous command
 8. To populate the database, run the following command: `curl -X POST localhost:9000/api/populate`
