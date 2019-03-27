@@ -61,58 +61,19 @@ main {
 <script>
 import ProfileNav from "./profileNav";
 import Trips from "../trips/Trips";
-// import PersonalPhotos from "./PersonalPhotos2";
-import dateTime from "../common/dateTime/dateTime.js";
-// import ProfileRepository from "../../repository/ProfileRepository";
-import { store } from "../../store/index";
-import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
-
 
 export default {
   name: "Profile",
-  store,
 
   data() {
     return {
-      traveller: {},
-
-      dateOfBirth: "",
-      nationalities: [],
-      passports: []
     };
   },
-
   components: {
     ProfileNav,
     Trips,
-    //PersonalPhotos
   },
-
-  mounted() {
-    this.getTraveller();
-  },
-
   methods: {
-    getTraveller() {
-      let user = store.getters.getUser;
-      this.traveller = user;
-      this.setTravellerToFields();
-    },
-
-    setTravellerToFields() {
-      [
-        this.nationalities,
-        this.passports
-      ] = travellerFormHelper.convertFromNationalitiesRes(
-        this.traveller.nationalities
-      );
-      this.traveller.travellerTypes = travellerFormHelper.convertFromTravellerTypesRes(
-        this.traveller.travellerTypes
-      );
-      this.dateOfBirth = dateTime.convertTimestampToString(
-        this.traveller.dateOfBirth
-      );
-    }
   }
 };
 </script>

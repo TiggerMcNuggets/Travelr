@@ -14,7 +14,7 @@
         <router-link to="/destinations">
           <v-card d-flex class="destinations-tile">
             <v-img
-              src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/All_Gizah_Pyramids.jpg/1024px-All_Gizah_Pyramids.jpg"
               aspect-ratio="2.75"
             ></v-img>
             <h5>Destinations</h5>
@@ -25,10 +25,10 @@
     <v-flex d-flex x8 order-xs5>
       <v-layout column >
         <v-flex d-flex >
-          <router-link to="/profile/trips">
+          <router-link to="/trips">
             <v-card d-flex class="trips-tile">
               <v-img
-                src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"
+                src="https://www.publicdomainpictures.net/pictures/260000/nahled/airplane-sunset-travel.jpg"
                 aspect-ratio="2.75"
               ></v-img>
               <h5>Trips</h5>
