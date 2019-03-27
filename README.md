@@ -28,6 +28,7 @@ To run the project for **production**:
 8. To populate the database, run the following command: `curl -X POST localhost:9000/api/populate`
 9. Navigate to: `localhost:9000`
 10. Login with email: *adam@test.com*, password: *123*
+
 **Note: If there are permission issues executing the `run` file, simply give the `run` file execution permissions by running the  command:** `chmod -R 777 ./run`
  
 To run the project for **development**:
