@@ -5,7 +5,7 @@
     <div>
       <v-avatar size="100px" class="profile-photo">
         <img
-          src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+            :src="getImgUrl()"
         >
       </v-avatar>
       <router-link to="/profile/edit">
@@ -153,7 +153,8 @@ export default {
     "types",
     "nationalities",
     "passports",
-    "email"
+    "email",
+    "profilePic"
   ],
 
   data() {
@@ -163,6 +164,14 @@ export default {
   },
   created: function() {
     this.traveller = store.getters.getUser;
+  },
+  methods: {
+        // Gets the local image file path
+    getImgUrl(place = "somewhere else") {
+      console.log(place)
+      return require("../../../../../backend/resources/images/" +
+        this.profilePic);
+    }
   }
 };
 </script>

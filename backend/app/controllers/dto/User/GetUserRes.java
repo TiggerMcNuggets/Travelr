@@ -17,6 +17,7 @@ public class GetUserRes {
     private String gender;
     private List<NationalityRes> nationalities;
     private List<TravellerType> travellerTypes;
+    private String userProfilePhoto;
 
     public GetUserRes(User user) {
         this.id = user.id;
@@ -27,6 +28,7 @@ public class GetUserRes {
         this.gender = user.gender;
         this.travellerTypes = user.travellerTypes;
         this.setNationalities(user.nationalities);
+        this.userProfilePhoto = user.userProfilePhoto;
 
     }
 
@@ -68,5 +70,7 @@ public class GetUserRes {
     public List<TravellerType> getTravellerTypes() {
         return travellerTypes;
     }
+
+    public String getUserProfilePhoto() {return userProfilePhoto;}
 
 }
