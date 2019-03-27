@@ -140,8 +140,7 @@ public class PhotoController extends Controller {
      * @return 200 http response if successful, else 400 for bad request
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result>
-    uploadProfilePhoto(Http.Request request, Long id) {
+    public CompletionStage<Result> uploadProfilePhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
