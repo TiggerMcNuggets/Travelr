@@ -37,11 +37,11 @@
         :value="item.value"
         :key="item.value"
       >
-            <v-card  v-on:click="openTrip(item.id)">
-              <div class="top-destination-content">
-                <h2>{{ item.name }}</h2>
-              </div>
-            </v-card>
+        <v-card  v-on:click="openTrip(item.id)">
+          <div class="top-destination-content">
+            <h2>{{ item.name }}</h2>
+          </div>
+        </v-card>
       </li>
     </ul>
   </v-container>
@@ -83,7 +83,6 @@ ul {
 
 .trips-list-element {
   padding-top: 20px;
-  margin-right: 30%
 }
 
 </style>
@@ -121,23 +120,26 @@ export default {
     getTrips: function() {
         tripRepository.getTrips()
         .then((res) => {
+          console.log(res.data);
             this.trips = res.data;
         })
         .catch((err) => {
-            console.log(e);
+            console.log(err);
         })
+    },
+
+    openTrip: function(id) {
+        this.$router.push("/trips/view/"+id);//window.location.href = '/#/trips/view/'+id;
     },
 
     toggleShowCreateTrip: function() {
       this.showCreateTrip = !this.showCreateTrip;
     },
+
     regetTrips: function() {
       this.toggleShowCreateTrip();
       this.getTrips();
     }
-    openTrip: function(id) {
-        window.location.href = '/#/trips/view/'+id;
-      }
   },
   created: function() {
     this.getTrips();

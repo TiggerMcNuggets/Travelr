@@ -26,10 +26,11 @@
 
 
 <script>
-import { getTripWithId } from "../../repository/TripRepository";
+import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 
 export default {
+  store,
   // local variables
   data() {
     return {
@@ -43,8 +44,14 @@ export default {
     }
   },
   created: function() {
-      getTripWithId(this.$route.params.id).then(result => {
-          this.trip = result;
+      tripRepo.getTrip(this.$route.params.id).then((result) => {
+          let trip = result.data;
+          console.log(trip);
+          let ordered_dests = trip.destinations.sort(function(a, b){
+              return a.ordinal - b.ordinal;
+          });
+          trip.destinations = ordered_dests;
+          this.trip = trip;
       });
   }
 };

@@ -52,10 +52,6 @@ const unauthGuard = (to, from, next) => {
             // invalid token, go next page
             return next();
         })
-    {
-        path: '/trips/view/:id',
-        name: 'view-trip',
-        component: ViewTrip
     }
     return next("/profile");
 }
@@ -153,6 +149,11 @@ let router = new Router({
                 requiresAdmin: true
             }
         },
+        {
+            path: '/trips/view/:id',
+            name: 'view-trip',
+            component: ViewTrip
+        }
     ]
 });
 
