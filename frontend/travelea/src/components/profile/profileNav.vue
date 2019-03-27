@@ -170,7 +170,6 @@ export default {
   },
   computed: {
       getImgUrl(place = "somewhere else") {
-      console.log(place)
       return require("../../../../../backend/resources/images/" +
         this.profilePic);
     }
