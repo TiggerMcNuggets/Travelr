@@ -12,6 +12,7 @@ export default {
     getTrip(id) {
         return Repository.get(`/trips/${id}`)
     },
+
     updateTrip(id, tripBody) {
         return Repository.put(`/trips/${id}`, tripBody)
     }    
