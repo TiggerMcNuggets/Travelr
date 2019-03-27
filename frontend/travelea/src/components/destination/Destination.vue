@@ -1,25 +1,17 @@
 /* eslint-disable */
 
 <template>
-  <v-container>
-    <div v-if="!showCreateDestination">
+<v-card>
+  <v-container style="margin-left: 0px; margin-top: -20px;">
+    
+    <v-btn fab small dark color="indigo" @click="$router.go(-1)">
+        <v-icon dark>keyboard_arrow_left</v-icon>
+    </v-btn>
+    <div >
       <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new destination
-      </v-btn>
-      <destination-create
-        v-bind:showAddDestination="showCreateDestination"
-        v-bind:toggleShowCreateDestination="toggleShowCreateDestination"
-      />
-    </div>
-    <div v-if="showCreateDestination">
-      <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
-        <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
-      </v-btn>
-      <destination-create
-        v-bind:showAddDestination="showCreateDestination"
-        v-bind:toggleShowCreateDestination="toggleShowCreateDestination"
-      />
-    </div>
+      </v-btn>      
+    </div>    
     <ul>
       <h2>Public destinations</h2>
       <li
@@ -35,14 +27,14 @@
             <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
               <a>Edit</a>
             </router-link>
-            <a v-on:click="deleteDestination(item.id)">Delete</a>
+            <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
           </span>
         </div>
         <ul class="horizontal-details">
           <li>
             <p>
               <strong>COUNTRY:</strong>
-              {{ item.id }}
+              {{ item.country }}
             </p>
           </li>
           <li>
@@ -72,7 +64,14 @@
         </ul>
       </li>
     </ul>
+    
+
+    <v-dialog v-model="dialog" width="800">
+       <destination-create :createDestinationCallback="updateDestinationList" />
+    </v-dialog>
+    
   </v-container>
+  </v-card>
 </template>
 
 <style>
@@ -126,31 +125,38 @@ export default {
   // local variables
   data() {
     return {
-      showCreateDestination: false,
-      showEditDestination: false
+      dialog: false,
+      showEditDestination: false,
+      destinations: []
     };
-  },
-  // the place where you want to make the store values readable
-  computed: {
-    destinations() {
-      return store.state.destinations.destinations;
-    }
-  },
-  // child components
+  }, 
+   // child components
   components: {
     DestinationCreate: DestinationCreate
   },
   methods: {
     toggleShowCreateDestination: function() {
-      this.showCreateDestination = !this.showCreateDestination;
+      this.dialog = !this.dialog;
     },
-    deleteDestination: function(id) {      
+    deleteDestination: function() {      
         // SPRINT 2 TODO
+    },
+    updateDestinationList: function()  {
+      this.getDestinationList();
+      this.dialog = false;
+    },
+    getDestinationList: function () {
+      destinationRepository.getDestinations()
+      .then(response => {
+          this.destinations = response.data
+      })
+      .catch(err => {
+          console.log(err)
+    })
     }
   },
   created: function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    store.commit("setDestinations");
-  }
+    this.getDestinationList();
+  }  
 };
 </script>

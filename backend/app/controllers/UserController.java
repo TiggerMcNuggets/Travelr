@@ -17,7 +17,11 @@ import repository.UserRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
+
 import java.nio.file.Paths;
+
+import java.util.List;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -42,6 +46,23 @@ public class UserController extends Controller {
 //    @Authorization.RequireAuth
     public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
+
+            GetUsersRes response = new GetUsersRes(users);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response.getGetUserRes());
+
+            return ok(jsonResponse);
+        });
+    }
+
+    /**
+     * Gets a list of users
+     * @param request the http request
+     * @return 200 with list of users if all ok
+     */
+//    @Authorization.RequireAuth
+    public CompletionStage<Result> getFilteredUsers(Http.Request request, String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> traveller_types, String orderBy) {
+        return userRepository.getFilteredUsers(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy).thenApplyAsync(users -> {
 
             GetUsersRes response = new GetUsersRes(users);
             ObjectMapper mapper = new ObjectMapper();
@@ -167,7 +188,7 @@ public class UserController extends Controller {
     }
 
     /**
-     * Gets a user by given id
+     * Deletes a user by given id
      * @param request the http request
      * @param id the user id
      * @return 200 with user if all ok
@@ -195,16 +216,6 @@ public class UserController extends Controller {
             }
         });
     }
-
-    /**
-     * sets a user's profile photo field to either the filename of a new image of an existing one
-     * @param request the http request
-     * @param id the user id
-     * @param upload a boolean informing of whether it is a new image
-     * @return a http response code depending on success(200) or failure(400)
-     */
-
-
 
     public Result index() {
         return ok("Travel EA - Home");

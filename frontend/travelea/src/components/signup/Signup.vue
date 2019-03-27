@@ -43,7 +43,6 @@ import SignupFields from "./SignupFields";
 
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper.js";
 import dateTime from "../common/dateTime/dateTime.js";
-import AuthRepository from "../../repository/AuthRepository";
 
 import {store} from "../../store/index";
 
@@ -69,35 +68,24 @@ export default {
       this.$set(this.traveller, "dateOfBirth", dateTime.convertStringToTimestamp(this.dateOfBirth));
     },
 
-    async signup() {
-      await store.dispatch("signup", this.traveller);
-      const id = store.getters.getUser.id;
-
-      if (!id) {
-        this.emailAlert = true;
-      }
-      return id
-      
-    },
-    async login() {
-      const loginData = {
-        email: this.traveller.email,
-        password: this.traveller.password,
-      }
-      await store.dispatch("login", loginData);
-      const token = store.getters.getUser.token;
-      localStorage.setItem("token", token);
-
-    },
-    async handleSignup() {
-      if (this.$refs.form.validate()) {
-        this.setTraveller();
-        
-        if (await this.signup()) {
-          await this.login();
-          this.$router.push("/profile");
+    handleSignup() {
+        if (this.$refs.form.validate()) {
+            this.setTraveller();
+            store.dispatch("signup", this.traveller)
+            .then(() => {
+                let loginInfo = {
+                    email: this.traveller.email,
+                    password: this.traveller.password
+                };
+                return store.dispatch("login", loginInfo);
+            })
+            .then(() => {
+                this.$router.push("/profile");
+            })
+            .catch((err) => {
+                this.emailAlert = true;
+            });
         }
-      }
     },
   },
 };
