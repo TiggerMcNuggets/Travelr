@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 <template>
-  <v-container>
+  <v-container style="margin-left: 0px;">
     <div v-if="!showCreateTrip">
       <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
@@ -15,11 +15,13 @@
       <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
         <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
       </v-btn>
-      <create-trip
+        <create-trip style="margin-left: -100px;"
         v-if="showCreateTrip"
-        v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
-      />
+        :toggleShowCreateTrip="toggleShowCreateTrip"
+        :regetTrips="regetTrips"
+        />
     </div>
+
     <ul>
       <h2>My Trips</h2>
       <div class="input-field-right-margin">
@@ -38,10 +40,6 @@
         <v-card>
           <div class="top-destination-content">
             <h2>{{ item.name }}</h2>
-            <span>
-              <!-- item.id -->
-              <a v-on:click="deleteTrip(item.id)">Delete</a>
-            </span>
           </div>
         </v-card>
       </li>
@@ -93,7 +91,8 @@ ul {
 <script>
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
-import { deleteTripById } from "../../repository/TripRepository";
+import  { RepositoryFactory } from "../../repository/RepositoryFactory"
+let tripRepository = RepositoryFactory.get("trip");
 
 export default {
   store,
@@ -102,16 +101,13 @@ export default {
     return {
       showCreateTrip: false,
       searchValue: "",
+      trips: []
     };
   },
   // the place where you want to make the store values readable
   computed: {
-    trips() {
-      return store.state.trips.trips;
-    },
 
     tripsFiltered() {
-      console.log('here');
       return this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
     }
 
@@ -121,20 +117,27 @@ export default {
     CreateTrip: CreateTrips
   },
   methods: {
+    getTrips: function() {
+        tripRepository.getTrips()
+        .then((res) => {
+            this.trips = res.data;
+        })
+        .catch((err) => {
+            console.log(e);
+        })
+    },
+
     toggleShowCreateTrip: function() {
       this.showCreateTrip = !this.showCreateTrip;
     },
-    deleteTrip: function(id) {
-      deleteTripById(id).then(function(result) {
-        console.log(result);
-        store.commit("setTrips");
-      });
+
+    regetTrips: function() {
+      this.toggleShowCreateTrip();
+      this.getTrips();
     }
   },
-  created: async function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    store.commit("setTrips");
-    store.commit("setDestinations");
+  created: function() {
+    this.getTrips();
   }
 };
 </script>

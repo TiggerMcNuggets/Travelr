@@ -1,6 +1,6 @@
 <template>
   <v-form ref="form" v-model="isValid" lazy-validation>
-    <v-flex lg6 offset-lg3 sm8 offset-sm2 text-xs-left>
+    <v-flex text-xs-left>
       <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
         <v-icon dark>keyboard_arrow_left</v-icon>
       </v-btn>

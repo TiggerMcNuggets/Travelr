@@ -1,7 +1,12 @@
 /* eslint-disable */
 
 <template>
-  <v-container>
+<v-card>
+  <v-container style="margin-left: 0px; margin-top: -20px;">
+    
+    <v-btn fab small dark color="indigo" @click="$router.go(-1)">
+        <v-icon dark>keyboard_arrow_left</v-icon>
+    </v-btn>
     <div >
       <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new destination
@@ -59,12 +64,14 @@
         </ul>
       </li>
     </ul>
+    
 
     <v-dialog v-model="dialog" width="800">
        <destination-create :createDestinationCallback="updateDestinationList" />
     </v-dialog>
-
+    
   </v-container>
+  </v-card>
 </template>
 
 <style>
