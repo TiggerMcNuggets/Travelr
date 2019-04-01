@@ -11,7 +11,7 @@ To view project analytics, simply log into a UC lab computer and access the url:
 
 To login as the PO, you may login with the credentials: Login: *Moffat*, Password: *Moffat*.
     
-## Running the Project
+## Running the Project (Lab Machine)
 To run the project for **production**:
 1. Navigate to the eng-git repository located [here](https://eng-git.canterbury.ac.nz/seng302-2019/team-300) 
 2. Ensure that the Master branch is selected and download the latest artifact
@@ -19,7 +19,7 @@ To run the project for **production**:
 4. Unzip: `team300-travelea-1.0.0-SNAPSHOT.zip`
 5. Navigate to: `team300-travelea-1.0.0-SNAPSHOT/bin`
 6. Create a file called `run` with the contents below:
-	```bash
+	```
 	#!/bin/bash
 	chmod +x team300-travelea
 	./team300-travelea -Dplay.http.secret.key=QCYtAnfkaZiwrNwnxIlR6CTfG3gf90Latabg5241ABR5W1uDFNIk1 -Dplay.evolutions.db.default.autoApply=true
