@@ -14,7 +14,7 @@
             :types.sync="traveller.travellerTypes"
             :nationalities.sync="nationalities"
             :passports.sync="passports"
-            :profilePic.sync="traveller.profilePic"
+            :profilePic.sync="traveller.userProfilePhoto"
           />
         </aside>
         <main class="profile-main">
@@ -107,6 +107,8 @@ export default {
     UserRepository.getUser(id)
       .then(response => {
         this.traveller = response.data
+              console.log('traveller')
+      console.log(this.traveller);
         this.setTravellerToFields(); 
         this.isMyProfile = (store.getters.getUser.id == id)
       })    
@@ -118,6 +120,8 @@ export default {
   methods: {
     getTraveller() {
       this.traveller = store.getters.getUser;
+      console.log('traveller')
+      console.log(this.traveller);
       this.setTravellerToFields();
     },
 

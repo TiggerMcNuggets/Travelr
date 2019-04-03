@@ -253,11 +253,22 @@ export default {
       });
     },
 
+    getFilePath() {
+      filepath = "../../../../../backend/resources/images/";
+      try {
+        require(filepath + item.photo_filename)
+      } catch (e) {
+        filepath = "./resources/images/";
+        console.log('using alternate filepath')
+      }
+      console.log(filepath + item.photo_filename);
+      return filepath;
+    },
+
     // Gets the local image file path
     getImgUrl(item) {
 
-      return require("../../../../../backend/resources/images/" +
-        item.photo_filename);
+      return require(getFilePath() + item.photo_filename);
     },
 
     // Gets the local image file path
