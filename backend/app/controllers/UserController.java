@@ -14,6 +14,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
+import repository.TripRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
@@ -33,9 +34,12 @@ public class UserController extends Controller {
 
     private UserRepository userRepository;
 
+    private TripRepository tripRepository;
+
     @Inject
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, TripRepository tripRepository) {
         this.userRepository = userRepository;
+        this.tripRepository = tripRepository;
     }
 
     /**
@@ -184,6 +188,21 @@ public class UserController extends Controller {
                 return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
             return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
+        });
+    }
+
+    /**
+     * Gets a users trips by given id
+     * @param id the user id
+     * @return 200 if item exists
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getTrips(Long id) {
+        return tripRepository.getTrips(id).thenApplyAsync(trips -> {
+            System.out.println(trips);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(trips);
+            return ok(jsonResponse);
         });
     }
 
