@@ -34,7 +34,6 @@ public class TripRepository {
      */
     private void insertDestinations(Trip trip, List<TripDestinationReq> destinations) {
         for (TripDestinationReq destinationReq : destinations) {
-            System.out.println(destinationReq.arrivalDate);
             Destination destination = destinationFinder.findById(destinationReq.id);
             TripDestination tripDestination = new TripDestination(destinationReq.arrivalDate, destinationReq.departureDate, destinationReq.ordinal, trip, destination);
             tripDestination.insert();
