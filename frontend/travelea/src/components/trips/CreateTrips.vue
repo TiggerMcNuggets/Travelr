@@ -232,7 +232,6 @@ export default {
             departureDate: moment(destination.departureDate).unix()
           });
         });
-        console.log("Trip", trip.destinations[0].departureDate);
         tripRepository
           .createTrip(trip)
           .then(res => {
