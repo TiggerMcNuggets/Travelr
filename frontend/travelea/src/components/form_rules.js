@@ -33,29 +33,17 @@ export const noSameDestinationNameConsecutiveRule = destinations => {
 
 export const arrivalBeforeDepartureAndDestinationsOneAfterTheOther = destinations => {
   let noArrivalAfterDeparture = true;
-  let noDestinationsTimesCrossOver = true;
   for (let i = 0; i < destinations.length; i++) {
     if (
       moment(destinations[i].arrivalDate).isAfter(
         moment(destinations[i].departureDate)
       )
     ) {
-      noArrivalAfterDeparture = false;
-    }
-    if (i < destinations.length - 1) {
-      if (
-        moment(destinations[i].departureDate).isAfter(
-          moment(destinations[i + 1].arrivalDate)
-        )
-      ) {
-        noDestinationsTimesCrossOver = false;
-      }
+        noArrivalAfterDeparture = false;
     }
   }
   return [
     noArrivalAfterDeparture || "Arrival time must be before departure",
-    noDestinationsTimesCrossOver ||
-      "Cannot plan to be in 2 places at the same time"
   ];
 };
 
