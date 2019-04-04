@@ -47,6 +47,7 @@
                 v-on:click="setDialogueContent(item)"
                 class="personal-photo-element"
                 :src="getImgUrl(item)"
+         
               ></v-img>
             </div>
           </div>
@@ -253,22 +254,9 @@ export default {
       });
     },
 
-    getFilePath() {
-      filepath = "../../../../../backend/resources/images/";
-      try {
-        require(filepath + item.photo_filename)
-      } catch (e) {
-        filepath = "./resources/images/";
-        console.log('using alternate filepath')
-      }
-      console.log(filepath + item.photo_filename);
-      return filepath;
-    },
-
-    // Gets the local image file path
+    // Gets the image from the server
     getImgUrl(item) {
-
-      return require(getFilePath() + item.photo_filename);
+      return "http://localhost:9000/assets/images/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -279,7 +267,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = require("../../../../../backend/resources/images/"  + selectedImage.photo_filename);
+      myImage.src = "http://localhost:9000/assets/images/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
 
     },
@@ -313,7 +301,6 @@ export default {
     }
 
     this.isMyProfile = (store.getters.getUser.id == this.id)
-    console.log("HERE" + this.id)
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });
