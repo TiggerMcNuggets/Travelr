@@ -75,8 +75,9 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.make_directory("resources/images");
-            file.copyTo(Paths.get("resources/images/"+ fileName), true);
+            // fh.make_directory("resources/images");
+            fh.make_directory("public/images");
+            file.copyTo(Paths.get("public/images/" + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
@@ -100,7 +101,6 @@ public class PhotoController extends Controller {
         try {
             return ok(file);
         } catch (Exception e) {
-            System.out.println(e);
             return badRequest("Missing file");
         }
     }
@@ -153,8 +153,11 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.make_directory("resources/images");
+       
+           fh.make_directory("resources/images");
+
             file.copyTo(Paths.get("resources/images/"+ fileName), true);
+     
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
