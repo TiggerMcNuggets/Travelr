@@ -9,6 +9,8 @@ import models.Nationality;
 import models.PersonalPhoto;
 import models.User;
 import play.db.ebean.EbeanConfig;
+import play.db.ebean.EbeanDynamicEvolutions;
+
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,11 +25,16 @@ public class PersonalPhotoRepository {
 
     private final EbeanServer ebeanServer;
     private final DatabaseExecutionContext executionContext;
+
+    // @rowanl, https://github.com/playframework/playframework/issues/7017
+    private final EbeanDynamicEvolutions ebeanDynamicEvolutions;
+
     private PhotoFinder photoFinder = new PhotoFinder();
     private UserFinder userFinder = new UserFinder();
 
     @Inject
-    public PersonalPhotoRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
+    public PersonalPhotoRepository(EbeanConfig ebeanConfig, EbeanDynamicEvolutions ebeanDynamicEvolutions, DatabaseExecutionContext executionContext) {
+        this.ebeanDynamicEvolutions = ebeanDynamicEvolutions;
         this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
         this.executionContext = executionContext;
     }

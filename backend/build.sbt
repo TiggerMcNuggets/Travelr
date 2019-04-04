@@ -31,4 +31,6 @@ javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
 scalacOptions in (Compile, doc) += "-no-java-comments"
 
 
+// Maintainer
+maintainer := "frd15@uclive.ac.nz"
 
