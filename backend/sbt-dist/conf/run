@@ -1,0 +1,3 @@
+#!/bin/bash
+chmod +x team300-travelea
+./team300-travelea -Dplay.http.secret.key=QCYtAnfkaZiwrNwnxIlR6CTfG3gf90Latabg5241ABR5W1uDFNIk1 -Dplay.evolutions.db.default.autoApply=true
