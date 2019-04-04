@@ -12,7 +12,7 @@ public class TripDestinationReq {
     @Constraints.Required
     public int ordinal;
 
-    public int arrivalDate;
+    public Integer arrivalDate;
 
-    public int departureDate;
+    public Integer departureDate;
 }

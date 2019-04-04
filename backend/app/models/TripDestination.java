@@ -1,5 +1,6 @@
 package models;
 
+import com.sun.istack.Nullable;
 import controllers.dto.Trip.TripDestinationReq;
 import models.Destination;
 import models.Trip;
@@ -20,14 +21,14 @@ public class TripDestination extends BaseModel {
     @ManyToOne(cascade = CascadeType.ALL)
     public Destination destination ;
 
-    public int arrivalDate;
+    public Integer arrivalDate;
 
-    public int departureDate;
+    public Integer departureDate;
 
     @Constraints.Required
     public int ordinal;
 
-    public TripDestination(int arrivalDate, int departureDate, int ordinal, Trip trip, Destination destination) {
+    public TripDestination(Integer arrivalDate, Integer departureDate, int ordinal, Trip trip, Destination destination) {
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
         this.ordinal = ordinal;
