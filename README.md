@@ -7,7 +7,9 @@
 -   conf/  					Configuration files required to build the project
 
 ### SonarQube Analytics
-To view project analytics, simply log into a UC lab computer and access the url: `http://csse-s302g3.canterbury.ac.nz:9000`
+To view project analytics, simply log into a UC lab computer and access the url: `http://csse-s302g3.canterbury.ac.nz:9090`
+
+For remote access to project analytics, open a terminal and run: `ssh -L 50000:localhost:9090 sengstudent@csse-s302g3.canterbury.ac.nz`. This will open a tunnel into UC's network, and will enable you to access SonarQube locally (`localhost:9090`).
 
 To login as the PO, you may login with the credentials: Login: *Moffat*, Password: *Moffat*.
     
