@@ -11,7 +11,15 @@
           </v-flex>
         </v-layout>
         <ul>
-          <li v-for="(destination, index) in trip.destinations" :v-bind="index" :key="index">
+          <draggable
+                  :list="trip.destinations"
+                  :disabled="!draggableEnabled"
+                  class="list-group"
+                  ghost-class="ghost"
+                  @start="dragging = true"
+                  @end="dragging = false"
+          >
+          <li v-for="(destination, index) in trip.destinations" :v-bind="index" :key="index" class="list-group-item">
             <v-card class="destination-form-padding">
               <v-layout>
                 <v-flex xs12 md4>
@@ -101,6 +109,7 @@
               </v-layout>
             </v-card>
           </li>
+          </draggable>
         </ul>
         <div>
           <v-btn color="red" v-on:click="resetValues">RESET</v-btn>
@@ -124,6 +133,17 @@
 .times-padding {
   padding: 1em;
 }
+
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.list-group-item {
+  cursor: move;
+}
+.list-group-item:hover i {
+  cursor: pointer !important;
+}
 </style>
 
 
@@ -131,6 +151,8 @@
 import { store } from "../../store/index";
 import moment from "moment";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import draggable from 'vuedraggable';
+
 let tripRepository = RepositoryFactory.get("trip");
 let destinationRepository = RepositoryFactory.get("destination");
 import {
@@ -141,13 +163,16 @@ import {
 
 export default {
   store,
-  components: {},
+  components: {
+      draggable: draggable
+  },
   props: {
     toggleShowCreateTrip: Function,
     regetTrips: Function
   },
   data() {
     return {
+      draggableEnabled: true,
       trip: {
         title: "",
         destinations: [
