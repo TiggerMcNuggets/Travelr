@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.dto.Trip.GetTripRes;
 import controllers.dto.User.*;
+import models.Trip;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -21,6 +23,7 @@ import javax.inject.Inject;
 
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
@@ -199,9 +202,13 @@ public class UserController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> getTrips(Long id) {
         return tripRepository.getTrips(id).thenApplyAsync(trips -> {
-            System.out.println(trips);
+            ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
+            for (Trip trip: trips) {
+                GetTripRes tripRes = new GetTripRes(trip);
+                correctTrips.add(tripRes);
+            }
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonResponse = mapper.valueToTree(trips);
+            JsonNode jsonResponse = mapper.valueToTree(correctTrips);
             return ok(jsonResponse);
         });
     }
