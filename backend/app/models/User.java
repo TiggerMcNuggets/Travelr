@@ -79,6 +79,114 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public static UserFinder getFind() {
+        return find;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public int getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(int dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public byte[] getPassword() {
+        return password;
+    }
+
+    public void setPassword(byte[] password) {
+        this.password = password;
+    }
+
+    public String getUserProfilePhoto() {
+        return userProfilePhoto;
+    }
+
+    public void setUserProfilePhoto(String userProfilePhoto) {
+        this.userProfilePhoto = userProfilePhoto;
+    }
+
+    public int getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public List<UserNationality> getNationalities() {
+        return nationalities;
+    }
+
+    public void setNationalities(List<UserNationality> nationalities) {
+        this.nationalities = nationalities;
+    }
+
+    public List<TravellerType> getTravellerTypes() {
+        return travellerTypes;
+    }
+
+    public void setTravellerTypes(List<TravellerType> travellerTypes) {
+        this.travellerTypes = travellerTypes;
+    }
+
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
+    }
+
+    public List<Destination> getDestinations() {
+        return destinations;
+    }
+
+    public void setDestinations(List<Destination> destinations) {
+        this.destinations = destinations;
+    }
+
     public String setToken() {
         this.token = UUID.randomUUID().toString();
         save();
