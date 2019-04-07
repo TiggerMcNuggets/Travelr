@@ -18,6 +18,7 @@ public class StateSingleton {
     @Inject
     private Application application;
     private int travellerId;
+    private int destinationId;
     private String token;
     private JsonNode requestData;
     private Result result;
@@ -58,6 +59,10 @@ public class StateSingleton {
     public int getTravellerId() { return travellerId; }
 
     public void setTravellerId(int travellerId) { this.travellerId = travellerId; }
+
+    public int getDestinationId() { return destinationId; }
+
+    public void setDestinationId(int travellerId) { this.destinationId = travellerId; }
 
     public String getToken() {
         return token;
