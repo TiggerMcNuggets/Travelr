@@ -28,4 +28,8 @@ public class NationalityController extends Controller {
             return ok(Json.toJson(nationalities));
         });
     }
+
+    public Result test() {
+        return ok();
+    }
 }

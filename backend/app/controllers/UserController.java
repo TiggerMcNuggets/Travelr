@@ -43,7 +43,7 @@ public class UserController extends Controller {
      * @param request the http request
      * @return 200 with list of users if all ok
      */
-//    @Authorization.RequireAuth
+    @Authorization.RequireAuth
     public CompletionStage<Result> getUsers(Http.Request request) {
         return userRepository.getAllUsers().thenApplyAsync(users -> {
 
