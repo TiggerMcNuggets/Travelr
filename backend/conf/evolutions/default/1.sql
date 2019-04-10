@@ -46,8 +46,8 @@ create table trip_destination (
   id                            bigint auto_increment not null,
   trip_id                       bigint,
   destination_id                bigint,
-  arrival_date                  integer not null,
-  departure_date                integer not null,
+  arrival_date                  integer,
+  departure_date                integer,
   ordinal                       integer not null,
   constraint pk_trip_destination primary key (id)
 );

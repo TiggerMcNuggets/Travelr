@@ -10,8 +10,9 @@ POST        /api/logout                         controllers.SecurityController.l
 
 # Nationalities
 GET         /api/nationalities                  controllers.NationalityController.getNationalities()
+GET         /api/ok                             controllers.NationalityController.test()
 
-#Traveller Types
+# Traveller Types
 GET         /api/traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Travellers
@@ -25,11 +26,10 @@ DELETE      /api/travellers/:id                 controllers.UserController.delet
 GET         /api/travellers/:id/trips           controllers.UserController.getTrips(id: Long)
 
 
-#
-## Photos
+# Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
 GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
-GET         /api/travellers/profile-photo/:id    controllers.PhotoController.getProfilePic(id: Long)
+GET         /api/travellers/profile-photo/:id   controllers.PhotoController.getProfilePic(id: Long)
 
 POST        /api/travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
 POST        /api/travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
@@ -51,4 +51,4 @@ PUT         /api/trips/:id                      controllers.TripController.updat
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
-GET     /*file                      controllers.FrontendController.assetOrDefault(file)
+GET     /*file                                  controllers.FrontendController.assetOrDefault(file)

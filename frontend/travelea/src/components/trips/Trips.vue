@@ -108,7 +108,7 @@ export default {
   computed: {
 
     tripsFiltered() {
-      const filteredList = this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
+      const filteredList = this.trips.filter(trip => trip.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1);
       //Currently sorting trips by id, in future we will sort trips by creation time
       return filteredList.sort(function(a, b){ return a.id - b.id; });
     }
