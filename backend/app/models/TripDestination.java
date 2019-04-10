@@ -28,6 +28,46 @@ public class TripDestination extends BaseModel {
     @Constraints.Required
     public int ordinal;
 
+    public Trip getTrip() {
+        return trip;
+    }
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
+
+    public Integer getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(Integer arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
+    public Integer getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(Integer departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
+    }
+
     public TripDestination(Integer arrivalDate, Integer departureDate, int ordinal, Trip trip, Destination destination) {
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;

@@ -9,8 +9,8 @@ create table destination (
   latitude                      double not null,
   longitude                     double not null,
   type                          varchar(255) not null,
-  district                      varchar(255),
-  country                       varchar(255),
+  district                      varchar(255) not null,
+  country                       varchar(255) not null,
   user_id                       bigint not null,
   constraint pk_destination primary key (id)
 );
