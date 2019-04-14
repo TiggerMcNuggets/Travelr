@@ -65,14 +65,4 @@ public class EditDestinationSteps {
             Assert.assertTrue(false);
         }
     }
-
-    @Given("Another user has created a destination with id {int}")
-    public void another_user_has_created_a_destination_with_id(Integer int1) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new cucumber.api.PendingException();
-    }
-
-
-
-
 }
