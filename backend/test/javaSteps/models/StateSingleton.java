@@ -21,6 +21,7 @@ public class StateSingleton {
     private String token;
     private JsonNode requestData;
     private Result result;
+    private int destinationId;
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
@@ -58,6 +59,10 @@ public class StateSingleton {
     public int getTravellerId() { return travellerId; }
 
     public void setTravellerId(int travellerId) { this.travellerId = travellerId; }
+
+    public void setDestinationId(int destinationId) { this.destinationId = destinationId; }
+
+    public int getDestinationId() { return destinationId; }
 
     public String getToken() {
         return token;
