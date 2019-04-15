@@ -58,6 +58,12 @@ public class CommonSteps  {
     public void theTravellerIdIs(int id) {state.setTravellerId(id);}
 
     /**
+     * Sets the destination id to the given id value
+     */
+    @Given("The destination id is {int}")
+    public void theDestinationIdIs(int id) {state.setDestinationId(id);}
+
+    /**
      * Asserts that the actual response is equal to the expected response
      * @param responseCode the three digit expected response code
      */
