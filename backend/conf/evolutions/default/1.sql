@@ -48,6 +48,7 @@ create table trip_destination (
   destination_id                bigint,
   arrival_date                  integer,
   departure_date                integer,
+  name                          varchar(255),
   ordinal                       integer not null,
   constraint pk_trip_destination primary key (id)
 );

@@ -6,8 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Trip.GetTripRes;
+import controllers.dto.Trip.TripDestinationRes;
 import controllers.dto.User.*;
+import models.Destination;
 import models.Trip;
+import models.TripDestination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -205,6 +208,13 @@ public class UserController extends Controller {
             ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
             for (Trip trip: trips) {
                 GetTripRes tripRes = new GetTripRes(trip);
+                List<TripDestination> correctDests = new ArrayList<TripDestination>();
+                for (TripDestination dest: trip.destinations) {
+                    dest.name = dest.destination.getName();
+                    correctDests.add(dest);
+                    System.out.println(dest.destination.getName());
+                }
+                tripRes.setDestinations(correctDests);
                 correctTrips.add(tripRes);
             }
             ObjectMapper mapper = new ObjectMapper();

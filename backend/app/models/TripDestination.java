@@ -25,6 +25,8 @@ public class TripDestination extends BaseModel {
 
     public Integer departureDate;
 
+    public String name;
+
     @Constraints.Required
     public int ordinal;
 
@@ -74,6 +76,6 @@ public class TripDestination extends BaseModel {
         this.ordinal = ordinal;
         this.trip = trip;
         this.destination = destination;
-
+        this.name = destination.getName();
     }
 }
