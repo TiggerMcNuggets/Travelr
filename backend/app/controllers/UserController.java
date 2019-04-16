@@ -206,13 +206,14 @@ public class UserController extends Controller {
     public CompletionStage<Result> getTrips(Long id) {
         return tripRepository.getTrips(id).thenApplyAsync(trips -> {
             ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
+            //Turning the trip into trip response types
             for (Trip trip: trips) {
                 GetTripRes tripRes = new GetTripRes(trip);
                 List<TripDestination> correctDests = new ArrayList<TripDestination>();
+                //Setting the blank name to the correct destination name
                 for (TripDestination dest: trip.destinations) {
                     dest.name = dest.destination.getName();
                     correctDests.add(dest);
-                    System.out.println(dest.destination.getName());
                 }
                 tripRes.setDestinations(correctDests);
                 correctTrips.add(tripRes);
