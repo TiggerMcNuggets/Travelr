@@ -4,8 +4,8 @@
   <div class="width-for-container">
     <v-form ref="form" lazy-validation>
       <v-container grid-list-xl>
-        <h4>Create a new trip</h4>
-        <v-layout justify-space-around="true">
+        <h4>{{this.dialogName}}</h4>
+        <v-layout justify-="true">
           <v-flex xs12 md12 class="row-input-margin">
             <v-text-field v-model="trip.title" :rules="nameRules" :counter="20" label="Trip Name"></v-text-field>
           </v-flex>
@@ -113,7 +113,7 @@
         </ul>
         <div>
           <v-btn color="red" v-on:click="resetValues">RESET</v-btn>
-          <v-btn v-on:click="createTrip">CREATE TRIP</v-btn>
+          <v-btn v-on:click="onConfirm">CONFIRM</v-btn>
           <v-btn v-on:click="addDestinationToTrip">ADD DESTINATION</v-btn>
         </div>
       </v-container>
@@ -168,11 +168,15 @@ export default {
   },
   props: {
     toggleShowCreateTrip: Function,
-    regetTrips: Function
+    regetTrips: Function,
+    passedTrip: Object
   },
   data() {
     return {
+      tripToDisplay: null,
+      passedTripData: this.passedTrip,
       draggableEnabled: true,
+      dialogName: "Create a new trip",
       trip: {
         title: "",
         destinations: [
@@ -243,6 +247,13 @@ export default {
       newDestinations.push(template);
       this.trip.destinations = newDestinations;
     },
+    onConfirm: function() {
+      if(this.passedTrip === null){
+        this.createTrip();
+      } else {
+
+      }
+    },
     createTrip: function() {
       if (this.$refs.form.validate()) {
         let trip = { name: this.trip.title, destinations: [] };
@@ -259,7 +270,7 @@ export default {
         });
         tripRepository
           .createTrip(trip)
-          .then(res => {
+          .then( () => {
             this.regetTrips();
           })
           .catch(e => {
@@ -270,6 +281,27 @@ export default {
   },
   mounted() {
     this.getDestinations();
+    console.log('ciao', this.$props);
+    console.log(this.passedTripData);
+    if (this.passedTripData !== null) {
+      console.log('past if');
+      this.dialogName = "Edit current trip";
+      const tripToEdit = {title: "", destinations: []};
+      tripToEdit.title = this.$props.passedTrip.title;
+      console.log(this.$props.passedTrip);
+      for (let i = 0; i < this.$props.passedTrip.destinations.length; i++){
+        const destToAdd = {};
+        const currentDest = this.$props.passedTrip.destinations[i];
+        destToAdd.title = currentDest.title;
+        destToAdd.arrivalDate = currentDest.arrivalDate === null ? null : moment.unix(currentDest.arrivalDate).format('YYYY-MM-DD');
+        destToAdd.departureDate = currentDest.departureDate === null ? null : moment.unix(currentDest.departureDate).format('YYYY-MM-DD');
+        destToAdd.arrivalDateMenu = false;
+        destToAdd.departureDateMenu = false;
+        tripToEdit.destinations.push(destToAdd);
+      }
+      console.log('here');
+      this.trip = tripToEdit;
+    }
   }
 };
 </script>

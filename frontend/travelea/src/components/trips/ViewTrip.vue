@@ -1,8 +1,17 @@
 /* eslint-disable */
 
 <template>
+
 <v-container>
    <v-btn round color="primary" v-on:click="goBack" dark>Go Back</v-btn>
+    <v-btn round color="#FF5722" v-on:click="toggleShouldDisplayButton" dark>Edit trip</v-btn>
+    <v-dialog v-model="shouldDisplayDialog" max-width="1600px">
+        <create-trip style="background-color: white;"
+                     v-if="true"
+                     :regetTrips="() => console.log('no need')"
+                     :passedTrip="trip"
+        />
+    </v-dialog>
     <h1>{{ trip.name }}</h1>
     <v-card>
     <v-list two-line>
@@ -21,6 +30,7 @@
     </v-list>
     </v-card>
 </v-container>
+
 </template>
 
 
@@ -28,6 +38,8 @@
 <script>
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
+import CreateTrips from "./CreateTrips.vue";
+
 
 export default {
   store,
@@ -35,14 +47,21 @@ export default {
   data() {
     return {
       is_inset: true,
-      trip: {}
+      trip: {},
+        shouldDisplayDialog: false
     };
   },
   methods: {
     goBack: function() {
       window.history.back();
-    }
+    },
+      toggleShouldDisplayButton: function() {
+        this.shouldDisplayDialog = !this.shouldDisplayDialog;
+      }
   },
+    components: {
+        CreateTrip: CreateTrips
+    },
   created: function() {
       tripRepo.getTrip(this.$route.params.id).then((result) => {
           let trip = result.data;

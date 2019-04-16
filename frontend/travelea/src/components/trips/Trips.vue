@@ -15,10 +15,11 @@
       <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
         <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
       </v-btn>
-        <create-trip style="margin-left: -100px;"
+        <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
         :regetTrips="regetTrips"
+        :passedTrip="null"
         />
     </div>
 
