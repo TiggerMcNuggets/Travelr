@@ -5,13 +5,7 @@ Feature: GetTravellerTrips
     Given I populate the database
     Then I will receive a 200 response
 
-  Scenario: Get all trips for user 1 when populating
+  Scenario: Get all trips for traveller successfully
     Given I provide the token "123"
-    When I get traveller
+    When I get all trips for traveller "1"
     Then I will receive a 200 response
-
-  Scenario: Get travellers without token
-    Given I provide the token "64646"
-    When I get travellers
-    Then I will receive a 401 response
-

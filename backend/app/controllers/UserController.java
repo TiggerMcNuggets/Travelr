@@ -204,23 +204,30 @@ public class UserController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> getTrips(Long id) {
-        return tripRepository.getTrips(id).thenApplyAsync(trips -> {
-            ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
-            //Turning the trip into trip response types
-            for (Trip trip: trips) {
-                GetTripRes tripRes = new GetTripRes(trip);
-                List<TripDestination> correctDests = new ArrayList<TripDestination>();
-                //Setting the blank name to the correct destination name
-                for (TripDestination dest: trip.destinations) {
-                    dest.name = dest.destination.getName();
-                    correctDests.add(dest);
-                }
-                tripRes.setDestinations(correctDests);
-                correctTrips.add(tripRes);
+        System.out.println(userRepository.getUser(id));
+        return userRepository.getUser(id).thenApplyAsync(user -> {
+            if (user == null) {
+                return notFound("Traveller not found");
+            } else {
+                return tripRepository.getTrips(id).thenApplyAsync(trips -> {
+                    ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
+                    //Turning the trip into trip response types
+                    for (Trip trip : trips) {
+                        GetTripRes tripRes = new GetTripRes(trip);
+                        List<TripDestination> correctDests = new ArrayList<TripDestination>();
+                        //Setting the blank name to the correct destination name
+                        for (TripDestination dest : trip.destinations) {
+                            dest.name = dest.destination.getName();
+                            correctDests.add(dest);
+                        }
+                        tripRes.setDestinations(correctDests);
+                        correctTrips.add(tripRes);
+                    }
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResponse = mapper.valueToTree(correctTrips);
+                    return ok(jsonResponse);
+                });
             }
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonResponse = mapper.valueToTree(correctTrips);
-            return ok(jsonResponse);
         });
     }
 
