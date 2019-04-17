@@ -204,19 +204,11 @@ public class UserController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> getTrips(Long id) {
-        CompletableFuture user_exists = userRepository.getUser(id).thenApplyAsync(user -> {
+        return userRepository.getUser(id).thenComposeAsync(user -> {
             if (user == null) {
-                return "0";
-            } else {
-                return "1";
+                return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
-        });
-        //This section breaks the code -- begin
-        /*if (user_exists.getNow(null) == "0") {
-            return CompletableFuture.completedFuture(notFound("Traveller not found"));
-        }*/
-        // -- end
-        return tripRepository.getTrips(id).thenApplyAsync(trips -> {
+            return tripRepository.getTrips(user.id).thenApplyAsync(trips -> {
                 ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
                 for (Trip trip : trips) {
                     GetTripRes tripRes = new GetTripRes(trip);
@@ -232,6 +224,7 @@ public class UserController extends Controller {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode jsonResponse = mapper.valueToTree(correctTrips);
                 return ok(jsonResponse);
+            });
         });
     }
 
