@@ -20,6 +20,7 @@
         :toggleShowCreateTrip="toggleShowCreateTrip"
         :regetTrips="regetTrips"
         :passedTrip="null"
+        :updateViewTripPage="() => console.log()"
         />
     </div>
 

@@ -5,7 +5,7 @@
     <v-form ref="form" lazy-validation>
       <v-container grid-list-xl>
         <h4>{{this.dialogName}}</h4>
-        <v-layout justify-="true">
+        <v-layout>
           <v-flex xs12 md12 class="row-input-margin">
             <v-text-field v-model="trip.title" :rules="nameRules" :counter="20" label="Trip Name"></v-text-field>
           </v-flex>
@@ -152,14 +152,14 @@ import { store } from "../../store/index";
 import moment from "moment";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import draggable from 'vuedraggable';
-
-let tripRepository = RepositoryFactory.get("trip");
-let destinationRepository = RepositoryFactory.get("destination");
 import {
   rules,
   noSameDestinationNameConsecutiveRule,
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
+
+let tripRepository = RepositoryFactory.get("trip");
+let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
@@ -169,12 +169,12 @@ export default {
   props: {
     toggleShowCreateTrip: Function,
     regetTrips: Function,
-    passedTrip: Object
+    passedTrip: String,
+    updateViewTripPage: Function
   },
   data() {
     return {
       tripToDisplay: null,
-      passedTripData: this.passedTrip,
       draggableEnabled: true,
       dialogName: "Create a new trip",
       trip: {
@@ -208,9 +208,10 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.destinations
       );
-    }
+    },
   },
   methods: {
+
     getDestinations: function() {
       destinationRepository
         .getDestinations()
@@ -221,20 +222,24 @@ export default {
           console.log(e);
         });
     },
+
     resetValues: function() {
       this.$refs.form.reset();
     },
+
     resetDestinationDate: function(destIndex) {
       let newDestinations = this.trip.destinations;
       newDestinations[destIndex].arrivalDate = null;
       newDestinations[destIndex].departureDate = null;
       this.trip.destinations = newDestinations;
     },
+
     deleteDestination: function(index) {
       let newDestinations = this.trip.destinations;
       newDestinations.splice(index, 1);
       this.trip.destinations = newDestinations;
     },
+
     addDestinationToTrip: function() {
       const template = {
         title: null,
@@ -247,27 +252,18 @@ export default {
       newDestinations.push(template);
       this.trip.destinations = newDestinations;
     },
+
     onConfirm: function() {
       if(this.passedTrip === null){
         this.createTrip();
       } else {
-
+          this.updateTrip();
       }
     },
+
     createTrip: function() {
       if (this.$refs.form.validate()) {
-        let trip = { name: this.trip.title, destinations: [] };
-        this.trip.destinations.forEach((destination, index) => {
-          const destById = this.userDestinations.find(
-            dest => destination.title === dest.name
-          );
-          trip.destinations.push({
-            id: destById.id,
-            ordinal: index,
-            arrivalDate: moment(destination.arrivalDate).unix(),
-            departureDate: moment(destination.departureDate).unix()
-          });
-        });
+        const trip = this.tripAssembler();
         tripRepository
           .createTrip(trip)
           .then( () => {
@@ -277,30 +273,71 @@ export default {
             console.log(e);
           });
       }
+    },
+
+    updateTrip: function() {
+        if (this.$refs.form.validate()) {
+            const trip = this.tripAssembler();
+            tripRepository
+                .updateTrip(parseInt(this.passedTrip),trip)
+                .then( () => {
+                    this.updateViewTripPage()
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+    },
+
+    /**
+     * Creates a trip object from the data passed that conforms with the API specs
+     * @return trip
+     **/
+    tripAssembler: function() {
+      let trip = { name: this.trip.title, destinations: [] };
+      this.trip.destinations.forEach((destination, index) => {
+          const destById = this.userDestinations.find(
+              dest => destination.title === dest.name
+          );
+          trip.destinations.push({
+              id: destById.id,
+              ordinal: index,
+              arrivalDate: moment(destination.arrivalDate).unix(),
+              departureDate: moment(destination.departureDate).unix()
+          });
+    });
+    return trip;
     }
   },
-  mounted() {
-    this.getDestinations();
-    console.log('ciao', this.$props);
-    console.log(this.passedTripData);
-    if (this.passedTripData !== null) {
-      console.log('past if');
-      this.dialogName = "Edit current trip";
-      const tripToEdit = {title: "", destinations: []};
-      tripToEdit.title = this.$props.passedTrip.title;
-      console.log(this.$props.passedTrip);
-      for (let i = 0; i < this.$props.passedTrip.destinations.length; i++){
-        const destToAdd = {};
-        const currentDest = this.$props.passedTrip.destinations[i];
-        destToAdd.title = currentDest.title;
-        destToAdd.arrivalDate = currentDest.arrivalDate === null ? null : moment.unix(currentDest.arrivalDate).format('YYYY-MM-DD');
-        destToAdd.departureDate = currentDest.departureDate === null ? null : moment.unix(currentDest.departureDate).format('YYYY-MM-DD');
-        destToAdd.arrivalDateMenu = false;
-        destToAdd.departureDateMenu = false;
-        tripToEdit.destinations.push(destToAdd);
-      }
-      console.log('here');
-      this.trip = tripToEdit;
+    /**
+     * When the component finished mounting, the destinations for the combobox are retrieved and then
+     * in case the parent component passed a valid trip id, the trip is retrieved and the
+     * existing trip params populate the form.
+     * Makes component usable for both create and edit component
+     */
+    mounted() {
+      this.getDestinations();
+      if (this.passedTrip !== null) {
+        console.log('past if');
+        this.dialogName = "Edit current trip";
+        let tripToEdit = {title: '', destinations: []};
+        tripRepository.getTrip(this.passedTrip)
+            .then((result) => {
+                const tripById = result.data;
+                tripToEdit.title = tripById.name;
+                console.log(tripById);
+                for (let i = 0; i < tripById.destinations.length; i++){
+                  const destToAdd = {};
+                  const currentDest = tripById.destinations[i];
+                  destToAdd.title = currentDest.name;
+                  destToAdd.arrivalDate = currentDest.arrivalDate === null ? null : moment.unix(currentDest.arrivalDate).format('YYYY-MM-DD');
+                  destToAdd.departureDate = currentDest.departureDate === null ? null : moment.unix(currentDest.departureDate).format('YYYY-MM-DD');
+                  destToAdd.arrivalDateMenu = false;
+                  destToAdd.departureDateMenu = false;
+                  tripToEdit.destinations.push(destToAdd);
+                  this.trip = tripToEdit;
+                }
+            });
     }
   }
 };
