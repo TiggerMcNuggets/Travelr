@@ -211,7 +211,9 @@ export default {
     },
   },
   methods: {
-
+    /**
+     * Gets the list of valid destinations available to a user
+     */
     getDestinations: function() {
       destinationRepository
         .getDestinations()
@@ -223,10 +225,17 @@ export default {
         });
     },
 
+    /**
+     * Resets the form
+     */
     resetValues: function() {
       this.$refs.form.reset();
     },
 
+    /**
+     * Resets arrival and departure date for given destination while editing/creating a trip
+     * @param destIndex the index of the destination
+     */
     resetDestinationDate: function(destIndex) {
       let newDestinations = this.trip.destinations;
       newDestinations[destIndex].arrivalDate = null;
@@ -234,12 +243,18 @@ export default {
       this.trip.destinations = newDestinations;
     },
 
+    /**
+     * Deletes the given destination from the created/modified trip
+     */
     deleteDestination: function(index) {
       let newDestinations = this.trip.destinations;
       newDestinations.splice(index, 1);
       this.trip.destinations = newDestinations;
     },
 
+    /**
+     * Adds a template empty destination object to the form
+     */
     addDestinationToTrip: function() {
       const template = {
         title: null,
