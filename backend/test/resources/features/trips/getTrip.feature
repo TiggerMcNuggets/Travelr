@@ -19,3 +19,8 @@ Feature: GetTrip
     And I provide a tripId of "100"
     When I get a trip
     Then I will receive a 404 response
+
+  Scenario: get a trip with a invalid tripId and it does not exist
+    And I provide a tripId of "1"
+    When I get a trip without an auth token
+    Then I will receive a 401 response

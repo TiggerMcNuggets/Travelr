@@ -21,7 +21,6 @@ public class GetTripSteps {
 
     @Given("I provide a tripId of {string}")
     public void i_provide_a_tripId_of(String string) {
-        // Write code here that turns the phrase above into concrete actions
         if (string != "") {
             tripId = string;
             Assert.assertTrue(true);
@@ -30,9 +29,24 @@ public class GetTripSteps {
         }
     }
 
+    @When("I get a trip without an auth token")
+    public void i_get_a_trip_without_an_auth_token() {
+        try {
+            // Create request object
+            Http.RequestBuilder getTrip = Helpers.fakeRequest()
+                    .method("GET")
+                    .uri("http://localhost:9000/api/trips/" + tripId);
+
+            // Send request
+            state.setResult(route(state.getApplication(), getTrip));
+        } catch (Exception e) {
+            System.out.println(e);
+            Assert.assertTrue(false);
+        }
+    }
+
     @When("I get a trip")
     public void i_get_a_trip() {
-        // Write code here that turns the phrase above into concrete actions
         try {
             // Create request object
             Http.RequestBuilder getTrip = Helpers.fakeRequest()
