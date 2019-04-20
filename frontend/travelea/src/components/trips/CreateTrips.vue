@@ -318,14 +318,12 @@ export default {
     mounted() {
       this.getDestinations();
       if (this.passedTrip !== null) {
-        console.log('past if');
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};
         tripRepository.getTrip(this.passedTrip)
             .then((result) => {
                 const tripById = result.data;
                 tripToEdit.title = tripById.name;
-                console.log(tripById);
                 for (let i = 0; i < tripById.destinations.length; i++){
                   const destToAdd = {};
                   const currentDest = tripById.destinations[i];
