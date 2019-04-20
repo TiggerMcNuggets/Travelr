@@ -56,10 +56,10 @@ export default {
       return new Promise((resolve, reject) => {
         AuthRepository.signup(signupData)
           .then(() => {
-            return resolve();
+            resolve();
           })
           .catch(err => {
-            return reject(err);
+            reject(err);
           });
       });
     },
