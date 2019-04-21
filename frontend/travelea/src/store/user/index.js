@@ -52,11 +52,11 @@ export default {
           });
       });
     },
-    signupOtherUser({ commit }, signupData) {
-      return new Promise((resolve, reject) => {
+    async signupOtherUser({ commit }, signupData) {
+      return await new Promise((resolve, reject) => {
         AuthRepository.signup(signupData)
-          .then(() => {
-            resolve();
+          .then(res => {
+            resolve(res);
           })
           .catch(err => {
             reject(err);
