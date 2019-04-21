@@ -20,12 +20,7 @@ public class EditTripsSteps {
 
     @Given("I provide the trip id {string}")
     public void i_provide_the_trip_id(String string) {
-        if (string != "") {
-            tripId = string;
-            Assert.assertTrue(true);
-        } else {
-            Assert.assertTrue(false);
-        }
+        tripId = string;
     }
 
     @Given("A trip with id {string} exists")
@@ -142,13 +137,7 @@ public class EditTripsSteps {
 
     @Given("I do not provide a token")
     public void i_do_not_provide_a_token() {
-        try {
-            state.setToken(null);
-            Assert.assertTrue(true);
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
-        }
+        state.setToken(null);
     }
 
     @When("I edit a trip")
