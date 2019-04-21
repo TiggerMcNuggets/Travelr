@@ -160,7 +160,6 @@ export default {
   created: function() {
     destinationRepository.getDestination(this.$route.params.id).then(result => {
       this.destination = result.data;
-      console.log(this.destination)
     });
   }
 };

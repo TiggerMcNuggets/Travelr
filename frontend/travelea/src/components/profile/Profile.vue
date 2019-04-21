@@ -97,8 +97,6 @@ export default {
   },
 
   created: function() {
-    console.log("here")
-
     let id = this.$route.params.id;
     
     if(!id) { 
