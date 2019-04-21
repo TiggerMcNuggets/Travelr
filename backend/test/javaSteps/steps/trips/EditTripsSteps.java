@@ -60,8 +60,6 @@ public class EditTripsSteps {
                     "        }" +
                     "    ]" +
                     "}");
-            Assert.assertTrue(true);
-
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
@@ -82,8 +80,6 @@ public class EditTripsSteps {
                     "        }" +
                     "    ]" +
                     "}");
-            Assert.assertTrue(true);
-
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
@@ -110,8 +106,6 @@ public class EditTripsSteps {
                     "        }" +
                     "    ]" +
                     "}");
-            Assert.assertTrue(true);
-
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
@@ -152,7 +146,6 @@ public class EditTripsSteps {
 
             // Send request
             state.setResult(route(state.getApplication(), getTrip));
-            Assert.assertTrue(true);
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
@@ -179,8 +172,6 @@ public class EditTripsSteps {
                     "        }" +
                     "    ]" +
                     "}");
-            Assert.assertTrue(true);
-
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
