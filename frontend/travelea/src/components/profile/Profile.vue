@@ -70,8 +70,6 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
-// import Trips from "../trips/Trips";
-// import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
 import UserRepository from "../../repository/UserRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
@@ -97,8 +95,6 @@ export default {
   },
 
   created: function() {
-    console.log("here")
-
     let id = this.$route.params.id;
     
     if(!id) { 

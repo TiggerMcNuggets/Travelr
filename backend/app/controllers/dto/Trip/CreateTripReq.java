@@ -23,4 +23,20 @@ public class CreateTripReq {
         }
         return false;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<TripDestinationReq> getDestinations() {
+        return destinations;
+    }
+
+    public void setDestinations(List<TripDestinationReq> destinations) {
+        this.destinations = destinations;
+    }
 }

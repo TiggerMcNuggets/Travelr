@@ -18,6 +18,7 @@ public class StateSingleton {
     @Inject
     private Application application;
     private int travellerId;
+    private int destinationId;
     private String token;
     private JsonNode requestData;
     private Result result;
