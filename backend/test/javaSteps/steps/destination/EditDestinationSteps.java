@@ -35,14 +35,6 @@ public class EditDestinationSteps {
         destinationEditData = Json.parse("{}");
     }
 
-    /**
-     * Sets the destination id to the desired integer value. This value will be used to specify which destination will be edited.
-     * @param id The id of the destination.
-     */
-    @Given("The destination id is {int}")
-    public void the_destination_id_is(Integer id) {
-        state.setDestinationId(id);
-    }
 
     /**
      * Performs a fake request to edit the destination using the correct api endpoint.

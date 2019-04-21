@@ -22,7 +22,6 @@ public class StateSingleton {
     private String token;
     private JsonNode requestData;
     private Result result;
-    private int destinationId;
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
