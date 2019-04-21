@@ -15,5 +15,5 @@ export default {
 
     updateTrip(id, tripBody) {
         return Repository.put(`/trips/${id}`, tripBody)
-    }    
+    }
 }

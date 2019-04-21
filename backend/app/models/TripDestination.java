@@ -18,7 +18,7 @@ public class TripDestination extends BaseModel {
     @ManyToOne
     public Trip trip;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public Destination destination ;
 
     public Integer arrivalDate;
