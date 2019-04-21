@@ -21,12 +21,7 @@ public class GetTripSteps {
 
     @Given("I provide a tripId of {string}")
     public void i_provide_a_tripId_of(String string) {
-        if (string != "") {
-            tripId = string;
-            Assert.assertTrue(true);
-        } else {
-            Assert.assertTrue(false);
-        }
+        tripId = string;
     }
 
     @When("I get a trip without an auth token")
