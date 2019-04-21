@@ -23,7 +23,7 @@ GET         /api/travellers/me                  controllers.UserController.getMe
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /api/travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
-GET         /api/travellers/:id/trips           controllers.UserController.getTrips(id: Long)
+GET         /api/travellers/:id/trips           controllers.UserController.getTrips(request: Request, id: Long)
 
 
 # Photos

@@ -203,10 +203,17 @@ public class UserController extends Controller {
      * @return 200 if item exists
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> getTrips(Long id) {
+    public CompletionStage<Result> getTrips(Http.Request request, Long id) {
+        User requestUser = request.attrs().get(Attrs.USER);
         return userRepository.getUser(id).thenComposeAsync(user -> {
+            // Not Found Check
             if (user == null) {
                 return CompletableFuture.completedFuture(notFound("Traveller not found"));
+            }
+
+            // Forbidden Check
+            if (id != requestUser.getId()) {
+                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
             }
             return tripRepository.getTrips(user.id).thenApplyAsync(trips -> {
                 ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
