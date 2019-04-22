@@ -18,6 +18,11 @@ public class EditTripsSteps {
     private JsonNode tripData;
     private String tripId;
 
+    @Given("I provide the invalid token {string}")
+    public void i_provide_the_invalid_token(String string) {
+        state.setToken(string);
+    }
+
     @Given("I provide the trip id {string}")
     public void i_provide_the_trip_id(String string) {
         tripId = string;
@@ -137,6 +142,7 @@ public class EditTripsSteps {
     @When("I edit a trip")
     public void i_edit_a_trip() {
         try {
+            System.out.println(state.getToken());
             // Create request object
             Http.RequestBuilder getTrip = Helpers.fakeRequest()
                     .method("PUT")
