@@ -9,7 +9,8 @@ Feature: EditTrip
     Given I provide the token "123"
     And I provide the trip id "1"
     And A trip with id "1" exists
-    When I provide complete trip information
+    And provide complete trip information
+    When I edit a trip
     Then I will receive a 200 response
 
   Scenario: Edit trip with missing name and 2 valid destinations
