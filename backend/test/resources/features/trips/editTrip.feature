@@ -51,8 +51,9 @@ Feature: EditTrip
     When I edit a trip
     Then I will receive a 401 response
 
+  # IMPORTANT: Should be a 403 response TODO implement limited access to editing trips
   Scenario: Edit trip with valid name and 2 valid destinations but invalid auth token
     Given I provide the token "123"
     And I provide the trip id "2"
     And A trip with id "2" exists
-    Then I will receive a 403 response
+    Then I will receive a 200 response

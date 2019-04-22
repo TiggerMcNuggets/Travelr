@@ -17,7 +17,7 @@ public class CreateTripReq {
 
     public boolean hasSameConsecutiveDestinations() {
         for (int i = 0; i < destinations.size() - 1; i++) {
-            if (destinations.get(i).id == destinations.get(i + 1).id) {
+            if (destinations.get(i).getId() == destinations.get(i + 1).getId()) {
                 return true;
             }
         }
