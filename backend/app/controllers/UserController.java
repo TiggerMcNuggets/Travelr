@@ -124,14 +124,15 @@ public class UserController extends Controller {
                 return notFound("Traveller not found");
             }
 
-            boolean isSameUser = true;
+
             User userGivenToken = request.attrs().get(Attrs.USER);
+            Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
             Object response;
 
-            if (userGivenToken.id != id) {
-                response = new GetUserRes(user);
-            } else {
+            if (userGivenToken.id == id || isAdmin) {
                 response = new GetOwnUserRes(user);
+            } else {
+                response = new GetUserRes(user);
             }
 
             ObjectMapper mapper = new ObjectMapper();

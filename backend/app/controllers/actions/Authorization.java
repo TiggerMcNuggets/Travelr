@@ -29,7 +29,7 @@ public class Authorization {
 
     public static class RequireAuthAction extends Action<RequireAuth> {
         public CompletionStage<Result> call(Http.Request req) {
-            String authToken = null;
+            String authToken;
             try {
                 authToken = req.header(SecurityController.AUTH_TOKEN_HEADER).get();
             } catch (Exception e) {
@@ -38,7 +38,7 @@ public class Authorization {
             if(authToken != null) {
                 Optional<User> user = models.User.find.findByAuthToken(authToken);
                 if (user.isPresent()) {
-                    return delegate.call(req.addAttr(Attrs.USER, user.get()));
+                    return delegate.call(req.addAttr(Attrs.USER, user.get()).addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0));
                 }
             }
 
