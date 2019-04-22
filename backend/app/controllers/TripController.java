@@ -102,11 +102,6 @@ public class TripController extends Controller {
                 return notFound("Trip not found");
             }
 
-            // Forbidden Check
-            if (trip.user.id != user.id) {
-                return forbidden("Forbidden: Access Denied");
-            }
-
             List<TripDestinationRes> destinations = new ArrayList<TripDestinationRes>();
 
             GetTripRes response = new GetTripRes(trip);
