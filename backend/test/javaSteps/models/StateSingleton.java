@@ -60,9 +60,9 @@ public class StateSingleton {
 
     public void setTravellerId(int travellerId) { this.travellerId = travellerId; }
 
-    public int getDestinationId() { return destinationId; }
+    public void setDestinationId(int destinationId) { this.destinationId = destinationId; }
 
-    public void setDestinationId(int travellerId) { this.destinationId = travellerId; }
+    public int getDestinationId() { return destinationId; }
 
     public String getToken() {
         return token;

@@ -5,7 +5,6 @@ Feature: CreateDestination
     Given I populate the database
     Then I will receive a 200 response
 
-
   Scenario: Create a destination successfully
     Given I provide the token "123"
     And I provide complete destination information
