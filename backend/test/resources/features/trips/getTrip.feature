@@ -13,7 +13,7 @@ Feature: GetTrip
   Scenario: get someone else's trip with a valid tripId and it exists
     And I provide a tripId of "2"
     When I get a trip
-    Then I will receive a 200 response
+    Then I will receive a 403 response
 
   Scenario: get a trip with a invalid tripId and it does not exist
     And I provide a tripId of "100"

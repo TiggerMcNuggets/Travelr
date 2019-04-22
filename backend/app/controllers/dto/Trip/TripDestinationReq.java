@@ -6,16 +6,6 @@ import javax.validation.Constraint;
 
 public class TripDestinationReq {
 
-    @Constraints.Required
-    public Long id;
-
-    @Constraints.Required
-    public int ordinal;
-
-    public Integer arrivalDate;
-
-    public Integer departureDate;
-
     public Long getId() {
         return id;
     }
@@ -47,4 +37,15 @@ public class TripDestinationReq {
     public void setDepartureDate(Integer departureDate) {
         this.departureDate = departureDate;
     }
+
+    @Constraints.Required
+    public Long id;
+
+    @Constraints.Required
+    public int ordinal;
+
+    public Integer arrivalDate;
+
+    public Integer departureDate;
+
 }

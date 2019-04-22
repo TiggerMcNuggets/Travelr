@@ -5,7 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.dto.Trip.GetTripRes;
+import controllers.dto.Trip.TripDestinationRes;
 import controllers.dto.User.*;
+import models.Destination;
+import models.Trip;
+import models.TripDestination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -14,12 +19,14 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
+import repository.TripRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
 
 import java.nio.file.Paths;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,9 +40,12 @@ public class UserController extends Controller {
 
     private UserRepository userRepository;
 
+    private TripRepository tripRepository;
+
     @Inject
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, TripRepository tripRepository) {
         this.userRepository = userRepository;
+        this.tripRepository = tripRepository;
     }
 
     /**
@@ -184,6 +194,44 @@ public class UserController extends Controller {
                 return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
             return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
+        });
+    }
+
+    /**
+     * Gets a users trips by given id
+     * @param id the user id
+     * @return 200 if item exists
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getTrips(Http.Request request, Long id) {
+        User requestUser = request.attrs().get(Attrs.USER);
+        return userRepository.getUser(id).thenComposeAsync(user -> {
+            // Not Found Check
+            if (user == null) {
+                return CompletableFuture.completedFuture(notFound("Traveller not found"));
+            }
+
+            // Forbidden Check
+            if (id != requestUser.getId()) {
+                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+            }
+            return tripRepository.getTrips(user.id).thenApplyAsync(trips -> {
+                ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
+                for (Trip trip : trips) {
+                    GetTripRes tripRes = new GetTripRes(trip);
+                    List<TripDestination> correctDests = new ArrayList<TripDestination>();
+                    //Setting the blank name to the correct destination name
+                    for (TripDestination dest : trip.destinations) {
+                        dest.name = dest.destination.getName();
+                        correctDests.add(dest);
+                    }
+                    tripRes.setDestinations(correctDests);
+                    correctTrips.add(tripRes);
+                }
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonResponse = mapper.valueToTree(correctTrips);
+                return ok(jsonResponse);
+            });
         });
     }
 

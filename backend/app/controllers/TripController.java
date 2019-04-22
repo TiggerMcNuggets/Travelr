@@ -12,6 +12,7 @@ import controllers.dto.Trip.GetTripRes;
 import controllers.dto.Trip.TripDestinationRes;
 import io.ebean.Ebean;
 
+import models.TripDestination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -102,7 +103,14 @@ public class TripController extends Controller {
                 return notFound("Trip not found");
             }
 
-            List<TripDestinationRes> destinations = new ArrayList<TripDestinationRes>();
+            // Forbidden Check
+            if (trip.user.id != user.id) {
+                return forbidden("Forbidden: Access Denied");
+            }
+            //Hacky work around to get the arrival and departure dates returning
+            for (TripDestination dest: trip.destinations) {
+                dest.getArrivalDate();
+            }
 
             GetTripRes response = new GetTripRes(trip);
             ObjectMapper mapper = new ObjectMapper();

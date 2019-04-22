@@ -53,9 +53,7 @@ Feature: EditTrip
     Then I will receive a 401 response
 
   Scenario: Edit trip with valid name and 2 valid destinations but invalid auth token
-    Given I provide the token "abc"
-    And I provide the trip id "1"
-    And A trip with id "1" exists
-    And provide complete trip information
-    When I edit a trip
+    Given I provide the token "123"
+    And I provide the trip id "2"
+    And A trip with id "2" exists
     Then I will receive a 403 response
