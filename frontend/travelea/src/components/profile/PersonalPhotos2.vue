@@ -16,7 +16,7 @@
           dark
           color="indigo"
           @click="toggleShowUploadPhoto"
-          v-if="isMyProfile"
+          v-if="isMyProfile || isAdminUser"
         >
           <v-icon dark>add</v-icon>
         </v-btn>
@@ -254,7 +254,8 @@ export default {
       publicPhotoSwitch: false,
       showUploadSection: false,
       id: null,
-      isMyProfile: false
+      isMyProfile: false,
+      isAdminUser: false
     };
   },
 
@@ -341,7 +342,9 @@ export default {
       this.id = store.getters.getUser.id
     }
 
-    this.isMyProfile = (store.getters.getUser.id == this.id)
+    this.isMyProfile = (store.getters.getUser.id == this.id);
+    this.isAdminUser = (store.getters.getIsUserAdmin);
+    console.log(this.isAdminUser);
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });
