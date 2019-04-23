@@ -95,8 +95,6 @@ export default {
   },
 
   created: function() {
-    console.log("here")
-
     let id = this.$route.params.id;
     
     if(!id) { 
@@ -105,7 +103,6 @@ export default {
     UserRepository.getUser(id)
       .then(response => {
         this.traveller = response.data
-        console.log(this.traveller);
         this.setTravellerToFields(); 
         this.isMyProfile = (store.getters.getUser.id == id)
       })    

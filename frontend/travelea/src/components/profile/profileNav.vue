@@ -136,8 +136,7 @@ li {
 
 
 <script>
-// import { RepositoryFactory } from "../../repository/RepositoryFactory";
-// let profileRepository = RepositoryFactory.get("profile");
+
 
 import { store } from "../../store/index";
 
@@ -145,7 +144,7 @@ export default {
   store,
 
   props: [
-    "fname",
+    "fname",  
     "mname",
     "lname",
     "dob",
@@ -170,7 +169,6 @@ export default {
   },
   computed: {
       getImgUrl() {
-      console.log(this.profilePic)
       if(!this.profilePic) {
         return "http://localhost:9000/assets/profile_images/defaultPic.png";
       } else {

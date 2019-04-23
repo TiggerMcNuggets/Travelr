@@ -46,7 +46,6 @@ export default {
   created: function() {
       tripRepo.getTrip(this.$route.params.id).then((result) => {
           let trip = result.data;
-          console.log(trip);
           let ordered_dests = trip.destinations.sort(function(a, b){
               return a.ordinal - b.ordinal;
           });

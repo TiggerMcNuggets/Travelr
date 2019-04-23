@@ -87,7 +87,6 @@ export default {
     },
     created: async function() {
         await store.dispatch("getUsers", false);
-        console.log(this.users);
         if (store.getters.getIsUserAdmin) {
             this.isAdmin = true;
         }

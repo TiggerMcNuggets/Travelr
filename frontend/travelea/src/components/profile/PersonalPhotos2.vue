@@ -350,8 +350,6 @@ export default {
     this.isMyProfile = (store.getters.getUser.id == this.id)
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
-       console.log("files")
-          console.log(this.files);
     });
   }
 };
