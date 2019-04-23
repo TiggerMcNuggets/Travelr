@@ -16,6 +16,62 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Destination extends BaseModel {
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public models.User getUser() {
+        return user;
+    }
+
+    public void setUser(models.User user) {
+        this.user = user;
+    }
+
     @Constraints.Required
     public String name;
 
@@ -32,15 +88,18 @@ public class Destination extends BaseModel {
     @Constraints.Required
     public String type;
 
+    @NotNull
+    @Constraints.Required
     public String district;
 
+    @NotNull
+    @Constraints.Required
     public String country;
 
     @NotNull
     @ManyToOne
     @JsonIgnore
     public User user;
-
 
     public Destination(CreateDestReq request, User user) {
         this.name = request.name;
