@@ -114,11 +114,18 @@ let router = new Router({
             beforeEnter: authGuard,
             children: [
                 {
+                    path: 'edit',
+                    name: 'editUserProfile',
+                    component: EditProfile                    
+                },
+                {
                     path: '/',
                     name: 'profilePhotos',
                     component: ProfilePhotos                    
                 }
+                
             ]
+            
         },
         {
             path: '/login',
