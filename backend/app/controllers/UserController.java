@@ -124,7 +124,6 @@ public class UserController extends Controller {
                 return notFound("Traveller not found");
             }
 
-
             User userGivenToken = request.attrs().get(Attrs.USER);
             Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
             Object response;

@@ -5,12 +5,37 @@ Feature: GetTraveller
     Given I populate the database
     Then I will receive a 200 response
 
-  Scenario: Get traveller information with valid ID
+  Scenario: Get traveller information with my valid ID as admin
     Given I provide the token "123"
     And The traveller id is 1
     When I get traveller information
     Then I will receive a 200 response
     And I will receive the id 1
+    And I will receive the email "adam@test.com"
+
+  Scenario: Get traveller information with my valid ID as not an admin
+    Given I provide the token "abc"
+    And The traveller id is 2
+    When I get traveller information
+    Then I will receive a 200 response
+    And I will receive the id 2
+    And I will receive the email "john@test.com"
+
+  Scenario: Get traveller information with my valid ID as not an admin
+    Given I provide the token "abc"
+    And The traveller id is 3
+    When I get traveller information
+    Then I will receive a 200 response
+    And I will receive the id 3
+    And I will receive not receive the email back
+
+  Scenario: Get traveller information with other user valid ID as an admin
+    Given I provide the token "123"
+    And The traveller id is 2
+    When I get traveller information
+    Then I will receive a 200 response
+    And I will receive the id 2
+    And I will receive the email "john@test.com"
 
   Scenario: Get traveller information with invalid ID
     Given I provide the token "123"
