@@ -11,11 +11,17 @@
         >
       </div>
       <!-- </v-avatar> -->
-      <router-link to="/profile/edit">
-        <v-btn class="profile-edit-button" fab small dark color="indigo">
+      <router-link v-if="isMyProfile" to="/profile/edit">
+        <v-btn  class="profile-edit-button" fab small dark color="indigo">
           <v-icon dark>edit</v-icon>
         </v-btn>
       </router-link>
+
+   
+        <v-btn  v-else-if="isAdminUser" class="profile-edit-button"  @click="goToUserEdit" fab small dark color="indigo">
+          <v-icon dark>edit</v-icon>
+        </v-btn>
+    
     </div>
 
     <div>
@@ -103,11 +109,6 @@ li {
   list-style: none;
 }
 
-.duel-section {
-  display: flex;
-  justify-content: space-between;
-}
-
 .traveller-name {
   font-size: 36px;
   line-height: 0px;
@@ -178,14 +179,24 @@ export default {
 
   data() {
     return {
-      profile: {}
+      isAdminUser: false,
+      isMyProfile: false,
+      id: this.$route.params.id 
     };
   },
+
+  
   created: function() {
     this.traveller = store.getters.getUser;
+    this.isAdminUser = store.getters.getIsUserAdmin;
+    this.isMyProfile = store.getters.getUser.id === this.$route.params.id || this.$route.params.id == null;
   },
   methods: {
         // Gets the local image file path    
+    goToUserEdit() {
+        const endpoint = "/user/" + this.$route.params.id + "/edit";
+        this.$router.push(endpoint)
+    }
   },
   computed: {
       getImgUrl() {
@@ -196,6 +207,8 @@ export default {
       }
       
     }
+
+   
   },
 
 };
