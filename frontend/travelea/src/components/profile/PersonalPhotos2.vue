@@ -79,7 +79,7 @@
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
             <v-btn color="primary" flat @clocklick="setProfilePhoto()">Set Profile Photo</v-btn>
-          </v-card-actions>lock
+          </v-card-actions>
           <v-card-actions>
           <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
           </v-card-actions>  
@@ -257,12 +257,6 @@ export default {
       isMyProfile: false
     };
   },
-
-  // computed: {
-  //     personalPhotos() {
-  //     return store.state.personalPhotos.personalPhotos;
-  //   }
-  // },
 
   methods: {
     // Sets the file property the the file being uploaded.

@@ -2,12 +2,15 @@
 
 <template>
   <v-card class="profile-sidebar">
-    <div>
-      <v-avatar size="100px" class="profile-photo">
+    <div class="profile-top">
+      <!-- <v-avatar size="100%" class="profile-photo"> -->
+      <div class="profile-container">
         <img
+            class="profile-image"
             :src="getImgUrl"
         >
-      </v-avatar>
+      </div>
+      <!-- </v-avatar> -->
       <router-link to="/profile/edit">
         <v-btn class="profile-edit-button" fab small dark color="indigo">
           <v-icon dark>edit</v-icon>
@@ -91,6 +94,11 @@ a {
     top: 100px;
 }
 
+.profile-top {
+  display: flex;
+  justify-content: center;
+}
+
 li {
   list-style: none;
 }
@@ -117,7 +125,7 @@ li {
 .field-title {
   line-height: 0px;
   color: grey;
-}
+} 
 
 .profile-sidebar {
   text-align: center;
@@ -129,6 +137,18 @@ li {
   margin: 17px 0px;
   clear: both;
 }
+
+.profile-image {
+  height: 120px !important;
+}
+
+.profile-container {
+  height: 120px !important;
+  width: 120px !important;
+  overflow: hidden !important;
+  border-radius: 120px !important;
+}
+
 .profile-nav {
   border: 1px solid black;
 }
