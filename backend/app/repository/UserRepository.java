@@ -77,21 +77,24 @@ public class UserRepository {
             // int in Java defaults to 0
             System.out.println("Account Type of inserterted user " + request.accountType);
             user.setAccountType(request.accountType);
+
+
             user.insert();
 
             // Insert nationalities
             for(NationalityReq nationality: request.nationalities) {
+
                 Nationality nationalityNew = Nationality.find.byId(nationality.id);
                 UserNationality userNationality = new UserNationality(user, nationalityNew, nationality.hasPassport);
                 userNationality.insert();
             }
-
             // Insert traveller types
+            user.travellerTypes = new ArrayList<TravellerType>();
             for(long i: request.travellerTypes) {
                 user.travellerTypes.add(TravellerType.find.byId(i));
+
             }
             user.save();
-
             return user.id;
         }, context);
     }
@@ -123,6 +126,7 @@ public class UserRepository {
             user.nationalities.clear();
             user.travellerTypes.clear();
 
+
             List<UserNationality> userNationalities = UserNationality.find.query().where().eq("user.id", id).findList();
             for (UserNationality un : userNationalities) {
                 un.delete();
@@ -135,6 +139,7 @@ public class UserRepository {
                 user.nationalities.add(userNationality);
             }
 
+            user.travellerTypes = new ArrayList<TravellerType>();
             for(long i: request.travellerTypes) {
                 user.travellerTypes.add(TravellerType.find.byId(i));
             }

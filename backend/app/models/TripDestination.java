@@ -1,5 +1,6 @@
 package models;
 
+import com.sun.istack.Nullable;
 import controllers.dto.Trip.TripDestinationReq;
 import models.Destination;
 import models.Trip;
@@ -17,22 +18,64 @@ public class TripDestination extends BaseModel {
     @ManyToOne
     public Trip trip;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public Destination destination ;
 
-    public int arrivalDate;
+    public Integer arrivalDate;
 
-    public int departureDate;
+    public Integer departureDate;
+
+    public String name;
 
     @Constraints.Required
     public int ordinal;
 
-    public TripDestination(int arrivalDate, int departureDate, int ordinal, Trip trip, Destination destination) {
+    public Trip getTrip() {
+        return trip;
+    }
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
+
+    public Integer getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(Integer arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
+    public Integer getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(Integer departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
+    }
+
+    public TripDestination(Integer arrivalDate, Integer departureDate, int ordinal, Trip trip, Destination destination) {
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
         this.ordinal = ordinal;
         this.trip = trip;
         this.destination = destination;
-
+        this.name = destination.getName();
     }
 }

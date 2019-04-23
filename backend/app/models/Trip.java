@@ -35,6 +35,5 @@ public class Trip extends BaseModel {
         this.name = name;
         this.user = user;
     }
-
 }
 

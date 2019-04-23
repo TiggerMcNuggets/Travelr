@@ -6,8 +6,8 @@ public class TripDestinationRes {
     private Long id;
     private String name;
     private int ordinal;
-    private int arrivalDate;
-    private int departureDate;
+    private Integer arrivalDate;
+    private Integer departureDate;
 
     public TripDestinationRes(TripDestination tripDestination) {
         this.id = tripDestination.destination.id;
@@ -29,11 +29,11 @@ public class TripDestinationRes {
         return ordinal;
     }
 
-    public int getArrivalDate() {
+    public Integer getArrivalDate() {
         return arrivalDate;
     }
 
-    public int getDepartureDate() {
+    public Integer getDepartureDate() {
         return departureDate;
     }
 }

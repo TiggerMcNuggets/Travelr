@@ -15,10 +15,12 @@
       <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
         <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
       </v-btn>
-        <create-trip style="margin-left: -100px;"
+        <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
         :regetTrips="regetTrips"
+        :passedTrip="null"
+        :updateViewTripPage="() => console.log()"
         />
     </div>
 
@@ -108,7 +110,7 @@ export default {
   computed: {
 
     tripsFiltered() {
-      const filteredList = this.trips.filter(trip => trip.name.search(this.searchValue) !== -1);
+      const filteredList = this.trips.filter(trip => trip.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1);
       //Currently sorting trips by id, in future we will sort trips by creation time
       return filteredList.sort(function(a, b){ return a.id - b.id; });
     }
