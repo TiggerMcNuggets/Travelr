@@ -75,7 +75,6 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            // fh.make_directory("resources/images");
             fh.make_directory("public/images");
             file.copyTo(Paths.get("public/images/" + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
@@ -115,7 +114,6 @@ public class PhotoController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUserPhoto(Http.Request request, Long id) {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
-//        User user = request.attrs().get(Attrs.USER);
 
         if (updatePhotoForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
@@ -147,17 +145,15 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> uploadProfilePhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+        System.out.println(picture.getFilename());
         if (picture != null) {
             String fileName = picture.getFilename();
             long fileSize = picture.getFileSize();
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-       
-           fh.make_directory("resources/images");
-
-            file.copyTo(Paths.get("resources/images/"+ fileName), true);
-     
+            fh.make_directory("public/profile_images");
+            file.copyTo(Paths.get("public/profile_images/" + fileName), true);
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
@@ -166,7 +162,7 @@ public class PhotoController extends Controller {
                 }
             });
         } else {
-            return CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest("Missing file"));
         }
     }
 

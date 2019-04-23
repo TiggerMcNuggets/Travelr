@@ -51,4 +51,5 @@ PUT         /api/trips/:id                      controllers.TripController.updat
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file               controllers.Assets.at(path="/public/images", file)
+GET     /assets/profile_images/*file       controllers.Assets.at(path="/public/profile_images", file)
 GET     /*file                      controllers.FrontendController.assetOrDefault(file)

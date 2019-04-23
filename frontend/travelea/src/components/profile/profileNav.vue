@@ -136,8 +136,8 @@ li {
 
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let profileRepository = RepositoryFactory.get("profile");
+// import { RepositoryFactory } from "../../repository/RepositoryFactory";
+// let profileRepository = RepositoryFactory.get("profile");
 
 import { store } from "../../store/index";
 
@@ -169,13 +169,12 @@ export default {
         // Gets the local image file path    
   },
   computed: {
-      getImgUrl(place = "somewhere else") {
-      console.log(this.profilePic);
+      getImgUrl() {
+      console.log(this.profilePic)
       if(!this.profilePic) {
-        return require("../../../../../backend/resources/images/defaultPic.png")
+        return "http://localhost:9000/assets/profile_images/defaultPic.png";
       } else {
-        return require("../../../../../backend/resources/images/" +
-                this.profilePic);
+        return "http://localhost:9000/assets/profile_images/" + this.profilePic;
       }
       
     }

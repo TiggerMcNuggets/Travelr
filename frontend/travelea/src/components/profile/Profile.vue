@@ -19,7 +19,6 @@
         </aside>
         <main class="profile-main">
           <router-view></router-view>
-          
         </main>
       </v-layout>
     </div>
@@ -84,7 +83,6 @@ export default {
   data() {
     return {
       traveller: {},
-
       dateOfBirth: "",
       nationalities: [],
       passports: [],
@@ -107,8 +105,7 @@ export default {
     UserRepository.getUser(id)
       .then(response => {
         this.traveller = response.data
-              console.log('traveller')
-      console.log(this.traveller);
+        console.log(this.traveller);
         this.setTravellerToFields(); 
         this.isMyProfile = (store.getters.getUser.id == id)
       })    
@@ -120,8 +117,6 @@ export default {
   methods: {
     getTraveller() {
       this.traveller = store.getters.getUser;
-      console.log('traveller')
-      console.log(this.traveller);
       this.setTravellerToFields();
     },
 
