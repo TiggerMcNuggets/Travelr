@@ -144,7 +144,6 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> uploadProfilePhoto(Http.Request request, Long id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-        System.out.println("Uploading photo");
         if (picture != null) {
             String fileName = picture.getFilename();
             long fileSize = picture.getFileSize();
