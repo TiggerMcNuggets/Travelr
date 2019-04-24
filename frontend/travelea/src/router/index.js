@@ -115,10 +115,15 @@ let router = new Router({
             beforeEnter: authGuard,
             children: [
                 {
-                    path: '/',
-                    name: 'profilePhotos',
-                    component: ProfilePhotos                    
-                }
+                    path: '/user/:id',
+                    name: 'profileDashboard',
+                    component: ProfileDashboard                      
+                },
+                {
+                    path: '/user/:id/destinations',
+                    name: 'destination',
+                    component: Destination                    
+                },
             ]
         },
         {

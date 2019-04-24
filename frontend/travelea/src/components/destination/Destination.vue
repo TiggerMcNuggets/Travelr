@@ -7,11 +7,11 @@
     <v-btn fab small dark color="indigo" @click="$router.go(-1)">
         <v-icon dark>keyboard_arrow_left</v-icon>
     </v-btn>
-    <div >
+    <div v-if="this.isMyProfile">
       <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new destination
       </v-btn>      
-    </div>    
+    </div>
     <ul>
       <h2>Public destinations</h2>
       <li
@@ -24,7 +24,7 @@
           <h2>{{ item.name }}</h2>
           <span>
             <!-- item.id -->
-            <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
+            <router-link to="{name: 'edit-destination', params: {id: item.id}}">
               <a>Edit</a>
             </router-link>
             <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
@@ -118,6 +118,7 @@ ul {
 import { store } from "../../store/index";
 import {RepositoryFactory} from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
+import UserRepository from "../../repository/UserRepository";
 import DestinationCreate from "./DestinationCreate"
 
 export default {
@@ -127,7 +128,8 @@ export default {
     return {
       dialog: false,
       showEditDestination: false,
-      destinations: []
+      destinations: [],
+      isMyProfile: false
     };
   }, 
    // child components
@@ -153,10 +155,24 @@ export default {
       .catch(err => {
           console.log(err)
     })
+    },
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      if(!id) { 
+        id = store.getters.getUser.id
+      }
+      UserRepository.getUser(id)
+        .then(response => {
+          this.isMyProfile = (store.getters.getUser.id == id)
+        })    
+        .catch(err => {
+          console.log(err);
+        })
     }
   },
   created: function() {
     this.getDestinationList();
+    this.checkIfProfileOwner();
   }  
 };
 </script>

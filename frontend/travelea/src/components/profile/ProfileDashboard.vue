@@ -13,7 +13,8 @@
           </v-card>
            </div>
         </router-link>
-        <router-link to="/destinations">
+        
+        <router-link v-if="this.isMyProfile" to="/destinations">
          <div >
           <v-card d-flex class="destinations-tile tile">
                  
@@ -25,8 +26,20 @@
             
           </v-card>
           </div>
-         
         </router-link>
+        <div v-else @click="goToUserDesinations(user_id)">
+         <div>
+          <v-card d-flex class="destinations-tile tile">
+                 
+            <v-img
+              class="tile-image"
+              src="https://www.rd.com/wp-content/uploads/2017/11/this-is-the-one-destination-people-want-to-visit-before-they-die-hint-its-not-in-europe_458190886_maria-savenko-1024x683.jpg"
+            ></v-img>
+            <h2 class="headline font-weight-light tile-heading">User Destinations</h2>
+            
+          </v-card>
+          </div>
+        </div>
       </v-layout>
     </v-flex>
     <v-flex d-flex x8 order-xs5>
@@ -90,7 +103,9 @@
 
 
 <script>
+import UserRepository from "../../repository/UserRepository";
 import Trips from "../trips/Trips";
+import { store } from "../../store/index";
 // import PersonalPhotos from "./PersonalPhotos2";
 
 export default {
@@ -102,8 +117,32 @@ export default {
 
       dateOfBirth: "",
       nationalities: [],
-      passports: []
+      passports: [],
+      isMyProfile: false,
+      user_id: this.$route.params.id
     };
+  },
+  methods: {
+      goToUserDesinations(id) {
+          var endpoint = '/user/' + id + '/destinations'
+          this.$router.push(endpoint)
+      },
+      checkIfProfileOwner() {
+        let id = this.$route.params.id;
+        if(!id) { 
+          id = store.getters.getUser.id
+        }
+        UserRepository.getUser(id)
+          .then(response => {
+            this.isMyProfile = (store.getters.getUser.id == id)
+          })    
+          .catch(err => {
+            console.log(err);
+          })
+      }
+  },
+  created: function() {
+    this.checkIfProfileOwner();
   },
 
   components: {
