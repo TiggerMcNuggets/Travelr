@@ -1,6 +1,7 @@
 package javaSteps.steps.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.typesafe.config.ConfigException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import javaSteps.models.StateSingleton;
@@ -80,5 +81,24 @@ public class CommonSteps  {
     public void iWillReceiveMyAccountIdAndAToken(int id) {
         JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
         Assert.assertTrue(responseBody.get("id").asInt() == id);
+    }
+
+    @Then("I will receive the email {string}")
+    public void i_will_receive_the_email(String email) {
+        JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
+        Assert.assertEquals(responseBody.get("email").asText(), email);
+    }
+
+    @Then("I will receive not receive the email back")
+    public void i_will_receive_not_receive_the_email_back() {
+        boolean noEmail = false;
+        try {
+            JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
+            responseBody.get("email").asText();
+        } catch (NullPointerException e) {
+            noEmail = true;
+        } finally {
+            Assert.assertTrue(noEmail);
+        }
     }
 }
