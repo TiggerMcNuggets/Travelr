@@ -75,8 +75,13 @@ public class DestinationController extends Controller {
      * @param userId the user id to create a trip for
      * @return 201 with json object of new id if all ok
      */
-    @Authorization.RequireAuthActionUserId
+    @Authorization.RequireAuth
     public CompletionStage<Result> createDestinationGivenUser(Http.Request request, Long userId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
         Form<CreateDestReq> createDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
 
 
@@ -93,7 +98,7 @@ public class DestinationController extends Controller {
             return created(jsonResponse);
         });
     }
-
+//
     /**
      * Gets a single destination that belongs to a user and matches the given id
      * @param request the http request
