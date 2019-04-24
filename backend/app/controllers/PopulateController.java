@@ -36,7 +36,7 @@ public class PopulateController extends Controller {
         new TravellerType("Groupies").insert();
 
 
-        User user1 = new User("Adam", "Conway", "adam@test.com", 1);
+        User user1 = new User("Global", "Admin", "admin@test.com", 1);
         user1.setPassword("123");
         user1.setToken("123");
         user1.setAccountType(1);

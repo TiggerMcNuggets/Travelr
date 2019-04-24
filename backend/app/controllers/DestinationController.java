@@ -45,6 +45,18 @@ public class DestinationController extends Controller {
     }
 
     /**
+     * Gets a list of avaliable destinations that a user can view
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getAvaliableDestinations(Http.Request request) {
+        User user = request.attrs().get(Attrs.USER);
+        return destinationRepository
+                .getAvaliableDestinations(user.id)
+                .thenApplyAsync(destinations -> ok())
+
+    }
+
+    /**
      * Creates destination for a user
      * @param request the http request
      * @return 201 with json object of new id if all ok
