@@ -1,4 +1,4 @@
-Feature: AdminCreateTraveller
+Feature: AdminCreateDestinationForUser
   Description: The purpose of this feature is to test the api endpoint related to creating travellers as an admin
 
   Background: The database is populated and I am signed in
