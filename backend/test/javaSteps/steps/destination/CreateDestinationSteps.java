@@ -46,6 +46,25 @@ public class CreateDestinationSteps {
         }
     }
 
+    @When("I create a destination for user with id {int}")
+    public void i_create_a_destination_for_user_with_id(Integer int1) {
+        try {
+            // Create request object
+            Http.RequestBuilder createDestinationForUser = Helpers.fakeRequest()
+                    .method("POST")
+                    .header("X-Authorization", state.getToken())
+                    .bodyJson(destinationData)
+                    .uri("http://localhost:9000/api/travellers/"+ int1 +"/destinations");
+
+            // Send request
+            state.setResult(route(state.getApplication(), createDestinationForUser));
+
+        } catch (Exception e) {
+            System.out.println(e);
+            Assert.assertTrue(false);
+        }
+    }
+
     @Given("I provide incomplete destination information")
     public void iProvideIncompleteDestinationInformation() {
         destinationData = Json.parse("{}");
