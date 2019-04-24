@@ -47,7 +47,7 @@ public class GetTripSteps {
             Http.RequestBuilder getTrip = Helpers.fakeRequest()
                     .method("GET")
                     .header("X-Authorization", state.getToken())
-                    .uri("http://localhost:9000/api/trips/" + tripId);
+                    .uri("https://localhost:9000/api/trips/" + tripId);
 
             // Send request
             state.setResult(route(state.getApplication(), getTrip));

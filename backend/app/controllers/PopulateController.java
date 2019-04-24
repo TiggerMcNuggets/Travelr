@@ -45,10 +45,15 @@ public class PopulateController extends Controller {
         user2.setToken("abc");
         User user3 = new User("Test", "123", "123@test.com", 1);
         User user4 = new User("123", "123", "123333@test.com", 1);
+        User user5 = new User("Master", "Splinter", "bigMouse@masterAdmin.net", 1);
+        user5.setPassword("master");
+        user5.setToken("111");
+        user5.setAccountType(2);
         user1.insert();
         user2.insert();
         user3.insert();
         user4.insert();
+        user5.insert();
 
         new Destination("River", 1.0, 1.0, "123", "123", "123", user1).insert();
         new Destination("Mountain", 1.0, 1.0, "123", "123", "123", user1).insert();
