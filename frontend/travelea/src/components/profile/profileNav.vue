@@ -8,11 +8,11 @@
             :src="getImgUrl"
         >
       </v-avatar>
-      <router-link to="/profile/edit">
+      <div v-if="isMyProfile" @click="goToEdit(user_id)">
         <v-btn class="profile-edit-button" fab small dark color="indigo">
           <v-icon dark>edit</v-icon>
         </v-btn>
-      </router-link>
+      </div>
     </div>
 
     <div>
@@ -159,14 +159,31 @@ export default {
 
   data() {
     return {
-      profile: {}
+      profile: {},
+      isMyProfile: false,
+      user_id: this.$route.params.id
     };
   },
-  created: function() {
-    this.traveller = store.getters.getUser;
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
   },
-  methods: {
-        // Gets the local image file path    
+  created: function() {
+    this.init();
+  },
+  methods: {  
+    init() {
+      this.traveller = store.getters.getUser;
+      this.checkIfProfileOwner();
+    },
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == id);
+    },
+    goToEdit(id) {
+      this.$router.push("/user/"+id+"/edit")
+    }
   },
   computed: {
       getImgUrl(place = "somewhere else") {
