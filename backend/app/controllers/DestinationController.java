@@ -45,6 +45,46 @@ public class DestinationController extends Controller {
     }
 
     /**
+     * Gets a list of all destinations that belong to the specified user
+     * @param request the http request
+     * @param userId the id of the specified user
+     * @return 200 with list of destinations if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserDestinationsGivenUser(Http.Request request, Long userId) {
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        User user = request.attrs().get(Attrs.USER);
+        return destinationRepository
+                .getUserDestinations(userId)
+                .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
+    }
+
+    /**
+     * Gets specific destination that belongs to the specified user
+     * @param request the http request
+     * @param userId the id of the specified user
+     * @return 200 with list of destinations if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserDestinationGivenUser(Http.Request request, Long userId, Long dest_id) {
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        return destinationRepository.getOneDestination(dest_id).thenApplyAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return notFound("Destination not found");
+            }
+
+            return ok(Ebean.json().toJson(destination));
+        });
+    }
+
+    /**
      * Creates destination for a user
      * @param request the http request
      * @return 201 with json object of new id if all ok
