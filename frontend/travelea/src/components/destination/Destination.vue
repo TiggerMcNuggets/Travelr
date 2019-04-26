@@ -7,7 +7,7 @@
     <v-btn fab small dark color="indigo" @click="$router.go(-1)">
         <v-icon dark>keyboard_arrow_left</v-icon>
     </v-btn>
-    <div v-if="this.isMyProfile">
+    <div v-if="isMyProfile">
       <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new destination
       </v-btn>      
@@ -24,7 +24,7 @@
           <h2>{{ item.name }}</h2>
           <span>
             <!-- item.id -->
-            <router-link to="{name: 'edit-destination', params: {id: item.id}}">
+            <router-link v-if="isMyProfile" to="{name: 'edit-destination', params: {id: item.id}}">
               <a>Edit</a>
             </router-link>
             <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
@@ -158,21 +158,12 @@ export default {
     },
     checkIfProfileOwner() {
       let id = this.$route.params.id;
-      if(!id) { 
-        id = store.getters.getUser.id
-      }
-      UserRepository.getUser(id)
-        .then(response => {
-          this.isMyProfile = (store.getters.getUser.id == id)
-        })    
-        .catch(err => {
-          console.log(err);
-        })
+      this.isMyProfile = (store.getters.getUser.id == id);
     }
   },
   created: function() {
-    this.getDestinationList();
     this.checkIfProfileOwner();
+    this.getDestinationList();
   }  
 };
 </script>

@@ -124,6 +124,11 @@ let router = new Router({
                     name: 'destination',
                     component: Destination                    
                 },
+                {
+                    path: '/user/:id/trips',
+                    name: 'trips',
+                    component: ProfileTrips                    
+                }
             ]
         },
         {

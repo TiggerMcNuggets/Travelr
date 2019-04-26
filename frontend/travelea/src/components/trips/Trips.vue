@@ -2,7 +2,7 @@
 
 <template>
   <v-container style="margin-left: 0px;">
-    <div v-if="!showCreateTrip">
+    <div v-if="!showCreateTrip && this.isMyProfile">
       <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
       </v-btn>
@@ -103,7 +103,9 @@ export default {
     return {
       showCreateTrip: false,
       searchValue: "",
-      trips: []
+      trips: [],
+      isMyProfile: false,
+      user_id: this.$route.params.id
     };
   },
   // the place where you want to make the store values readable
@@ -130,6 +132,15 @@ export default {
             console.log(err);
         })
     },
+    getUserTrips: function() {
+        tripRepository.getUserTrips(this.user_id)
+        .then((res) => {
+            this.trips = res.data;
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    },
 
     openTrip: function(id) {
         this.$router.push("/trips/view/"+id);//window.location.href = '/#/trips/view/'+id;
@@ -142,10 +153,20 @@ export default {
     regetTrips: function() {
       this.toggleShowCreateTrip();
       this.getTrips();
+    },
+
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == id);
     }
   },
   created: function() {
-    this.getTrips();
+    this.checkIfProfileOwner();
+    if (this.isMyProfile) {
+      this.getTrips();
+    } else {
+      this.getUserTrips();
+    }
   }
 };
 </script>

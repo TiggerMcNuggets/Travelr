@@ -211,10 +211,6 @@ public class UserController extends Controller {
                 return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
 
-            // Forbidden Check
-            if (id != requestUser.getId()) {
-                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-            }
             return tripRepository.getTrips(user.id).thenApplyAsync(trips -> {
                 ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
                 for (Trip trip : trips) {

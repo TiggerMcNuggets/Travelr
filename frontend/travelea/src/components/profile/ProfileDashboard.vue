@@ -45,7 +45,7 @@
     <v-flex d-flex x8 order-xs5>
       <v-layout column>
         <v-flex d-flex>
-          <router-link to="/trips">
+          <router-link v-if="this.isMyProfile" to="/trips">
             <v-card d-flex class="trips-tile tile">
         
               <v-img
@@ -56,6 +56,17 @@
               <h2 class="headline font-weight-light tile-heading">My Trips</h2>
             </v-card>
           </router-link>
+          <div v-else @click="goToUserTrips(user_id)">
+            <v-card d-flex class="trips-tile tile">
+        
+              <v-img
+                src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1353&q=80"
+                class="tile-image"
+              ></v-img>
+              
+              <h2 class="headline font-weight-light tile-heading">User Trips</h2>
+            </v-card>
+          </div>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -123,23 +134,18 @@ export default {
     };
   },
   methods: {
-      goToUserDesinations(id) {
-          var endpoint = '/user/' + id + '/destinations'
-          this.$router.push(endpoint)
-      },
-      checkIfProfileOwner() {
-        let id = this.$route.params.id;
-        if(!id) { 
-          id = store.getters.getUser.id
-        }
-        UserRepository.getUser(id)
-          .then(response => {
-            this.isMyProfile = (store.getters.getUser.id == id)
-          })    
-          .catch(err => {
-            console.log(err);
-          })
-      }
+    goToUserDesinations(id) {
+        var endpoint = '/user/' + id + '/destinations'
+        this.$router.push(endpoint)
+    },
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == id);
+    },
+    goToUserTrips(id) {
+        var endpoint = '/user/' + id + '/trips'
+        this.$router.push(endpoint)
+    }
   },
   created: function() {
     this.checkIfProfileOwner();
