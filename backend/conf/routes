@@ -43,7 +43,7 @@ GET         /api/users/:id/destinations         controllers.DestinationControlle
 POST        /api/destinations                   controllers.DestinationController.createDestination(request: Request)
 
 # accepting id
-POST        /api/travellers/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
+POST        /api/users/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
 
 GET         /api/destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
 GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)

@@ -14,7 +14,7 @@
           </v-card>
            </div>
         </div>
-        <div v-if="isMyProfile" @click="goToUserDesinations(user_id)">
+        <div v-if="isMyProfile || $store.getters.getIsUserAdmin" @click="goToUserDesinations(user_id)">
          <div>
           <v-card d-flex class="destinations-tile tile">
             <v-img
@@ -97,6 +97,7 @@ import { store } from "../../store/index";
 
 export default {
   name: "ProfileDashboard",
+  store,
 
   data() {
     return {

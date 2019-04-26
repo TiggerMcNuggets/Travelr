@@ -24,6 +24,12 @@ const authGuard = (to, from, next) => {
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
+            // duplicated for now
+             if (`/user/${to.params.id}/destinations` === to.fullPath) {
+                if (to.params.id !== store.getters.getUser.id && !store.getIsUserAdmin) {
+                    return next(from.fullPath);
+                }
+            }
             // valid token, go next page
             return next();
         })
@@ -32,8 +38,12 @@ const authGuard = (to, from, next) => {
             return next("/login");
         })
     } else {
-        // TODO ADD META ADMIN CHECK HERE
-        console.log(store.getters.getToken && store.getters.getUser);
+        // duplicated for now
+        if (`/user/${to.params.id}/destinations` === to.fullPath) {
+            if (to.params.id !== store.getters.getUser.id && !store.getIsUserAdmin) {
+                return next(from.fullPath);
+            }
+        }
         return next();
     }
 
