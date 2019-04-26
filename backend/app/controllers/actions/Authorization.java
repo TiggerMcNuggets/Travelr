@@ -79,18 +79,36 @@ public class Authorization {
         }
     }
 
+    /**
+     * Checks a user with given user id exists
+     * @param id
+     * @return a 404 'Not Found' response
+     */
     public static CompletionStage<Result> doesUserByIdExist(Long id) {
         User user = User.find.findById(id);
         if (user != null) return null;
         return CompletableFuture.completedFuture(Results.notFound("No user with id " + id));
     }
 
+    /**
+     *
+     * @param isAdmin
+     * @param userIdByToken id of the user that has been retrieved from db using the auth token
+     * @param userIdById id of the user retrieved from db using user id
+     * @return a 401 response when users are not admin and not same user, null otherwise
+     */
     public static CompletionStage<Result> isUserAuthorised(Boolean isAdmin, Long userIdByToken, Long userIdById) {
         if (isAdmin) return null;
         if (userIdByToken == userIdById) return null;
         return CompletableFuture.completedFuture(Results.unauthorized("Not admin and id from token does not match user id parameter"));
     }
 
+    /**
+     *
+     * @param request
+     * @param userId
+     * @return 404 if not found user, 401 if user unauthorized, null otherwise
+     */
     public static CompletionStage<Result> userIdRequiredMiddlewareStack(Http.Request request, Long userId) {
 
         // User not found middleware
