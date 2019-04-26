@@ -45,6 +45,24 @@ public class DestinationController extends Controller {
     }
 
     /**
+     * Gets a list of all destinations that belong to the specified user
+     * @param request the http request
+     * @param id the id of the specified user
+     * @return 200 with list of destinations if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserDestinationsGivenUser(Http.Request request, Long id) {
+        User user = request.attrs().get(Attrs.USER);
+        if (request.attrs().get(Attrs.IS_USER_ADMIN) || user.id == id) {
+            return destinationRepository
+                    .getUserDestinations(user.id)
+                    .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
+        } else {
+            return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+        }
+    }
+
+    /**
      * Creates destination for a user
      * @param request the http request
      * @return 201 with json object of new id if all ok

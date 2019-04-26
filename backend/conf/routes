@@ -39,6 +39,7 @@ PUT         /api/travellers/:id/setphoto        controllers.PhotoController.choo
 
 # Destinations
 GET         /api/destinations                   controllers.DestinationController.getUserDestinations(request: Request)
+GET         /api/trvellers/:id/destinations     controllers.DestinationController.getUserDestinations(request: Request)
 POST        /api/destinations                   controllers.DestinationController.createDestination(request: Request)
 GET         /api/destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
