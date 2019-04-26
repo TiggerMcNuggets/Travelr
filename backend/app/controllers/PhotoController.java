@@ -51,7 +51,7 @@ public class PhotoController extends Controller {
         fh.make_directory("resources/images");
 
         User user = request.attrs().get(Attrs.USER);
-        Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN)
+        Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
         return personalPhotoRepository.list(id, user.id == id || isAdmin).thenApplyAsync((photos) -> {
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
