@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import models.User;
-import org.springframework.validation.DataBinder;
 import play.data.Form;
 import play.data.FormFactory;
 import play.data.validation.Constraints;

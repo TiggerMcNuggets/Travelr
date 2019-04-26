@@ -17,6 +17,12 @@ Feature: GetTravellerTrips
     When I get all trips for traveller
     Then I will receive a 401 response
 
+  Scenario: Get all trips for another traveller
+    Given I provide the token "123"
+    And The traveller id is 2
+    When I get all trips for traveller
+    Then I will receive a 403 response
+
   Scenario: Get all trips for traveller that does not exist
     Given I provide the token "123"
     And The traveller id is 200
