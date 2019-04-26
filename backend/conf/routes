@@ -26,7 +26,6 @@ PUT         /api/travellers/:id                 controllers.UserController.updat
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
 
 
-
 # Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
 GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
@@ -40,6 +39,10 @@ PUT         /api/travellers/:id/setphoto        controllers.PhotoController.choo
 # Destinations
 GET         /api/destinations                   controllers.DestinationController.getUserDestinations(request: Request)
 POST        /api/destinations                   controllers.DestinationController.createDestination(request: Request)
+
+# accepting id
+POST        /api/travellers/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
+
 GET         /api/destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
@@ -48,8 +51,6 @@ GET         /api/trips                          controllers.TripController.getUs
 POST        /api/trips                          controllers.TripController.createTrip(request: Request)
 GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
-
-
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /*file                                  controllers.FrontendController.assetOrDefault(file)
