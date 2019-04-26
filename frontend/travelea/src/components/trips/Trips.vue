@@ -157,7 +157,7 @@ export default {
 
     checkIfProfileOwner() {
       let id = this.$route.params.id;
-      this.isMyProfile = (store.getters.getUser.id == id);
+      this.isMyProfile = (store.getters.getUser.id == id || id == undefined);
     }
   },
   created: function() {

@@ -116,18 +116,23 @@ let router = new Router({
             children: [
                 {
                     path: '/user/:id',
-                    name: 'profileDashboard',
+                    name: 'travellerProfileDashboard',
                     component: ProfileDashboard                      
                 },
                 {
                     path: '/user/:id/destinations',
-                    name: 'destination',
+                    name: 'travellerDestination',
                     component: Destination                    
                 },
                 {
                     path: '/user/:id/trips',
-                    name: 'trips',
+                    name: 'travellerTrips',
                     component: ProfileTrips                    
+                },
+                {
+                    path: '/user/:id/photos',
+                    name: 'travellerProfilePhotos',
+                    component: ProfilePhotos                    
                 }
             ]
         },
