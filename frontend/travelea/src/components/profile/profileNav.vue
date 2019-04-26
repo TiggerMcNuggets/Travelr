@@ -164,11 +164,19 @@ export default {
       user_id: this.$route.params.id
     };
   },
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
   created: function() {
-    this.traveller = store.getters.getUser;
-    this.checkIfProfileOwner();
+    this.init();
   },
   methods: {  
+    init() {
+      this.traveller = store.getters.getUser;
+      this.checkIfProfileOwner();
+    },
     checkIfProfileOwner() {
       let id = this.$route.params.id;
       this.isMyProfile = (store.getters.getUser.id == id);

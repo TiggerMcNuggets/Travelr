@@ -137,7 +137,16 @@ export default {
   components: {
     DestinationCreate: DestinationCreate
   },
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
   methods: {
+    init() {
+      this.checkIfProfileOwner();
+      this.getDestinationList();
+    },
     editDestination(id) {
       this.$router.push("/user/"+this.user_id+"/destinations/edit/"+id);
     },
@@ -167,8 +176,7 @@ export default {
     }
   },
   created: function() {
-    this.checkIfProfileOwner();
-    this.getDestinationList();
+    this.init();
   }  
 };
 </script>

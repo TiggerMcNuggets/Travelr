@@ -109,7 +109,15 @@ export default {
       user_id: this.$route.params.id
     };
   },
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
   methods: {
+    init() {
+      this.checkIfProfileOwner();
+    },
     goToUserDesinations(id) {
         var endpoint = '/user/' + id + '/destinations'
         this.$router.push(endpoint)
@@ -128,7 +136,7 @@ export default {
     }
   },
   created: function() {
-    this.checkIfProfileOwner();
+    this.init();
   },
 
   components: {
