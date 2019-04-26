@@ -24,9 +24,9 @@
           <h2>{{ item.name }}</h2>
           <span>
             <!-- item.id -->
-            <router-link v-if="isMyProfile" to="{name: 'edit-destination', params: {id: item.id}}">
+            <div v-if="isMyProfile" @click="editDestination(item.id)">
               <a>Edit</a>
-            </router-link>
+            </div>
             <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
           </span>
         </div>
@@ -129,7 +129,8 @@ export default {
       dialog: false,
       showEditDestination: false,
       destinations: [],
-      isMyProfile: false
+      isMyProfile: false,
+      user_id: null
     };
   }, 
    // child components
@@ -137,6 +138,9 @@ export default {
     DestinationCreate: DestinationCreate
   },
   methods: {
+    editDestination(id) {
+      this.$router.push("/user/"+this.user_id+"/destinations/edit/"+id);
+    },
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
     },
@@ -158,7 +162,8 @@ export default {
     },
     checkIfProfileOwner() {
       let id = this.$route.params.id;
-      this.isMyProfile = (store.getters.getUser.id == id || id == undefined);
+      this.user_id = id;
+      this.isMyProfile = (store.getters.getUser.id);
     }
   },
   created: function() {

@@ -8,11 +8,11 @@
             :src="getImgUrl"
         >
       </v-avatar>
-      <router-link v-if="isMyProfile" to="/profile/edit">
+      <div v-if="isMyProfile" @click="goToEdit(user_id)">
         <v-btn class="profile-edit-button" fab small dark color="indigo">
           <v-icon dark>edit</v-icon>
         </v-btn>
-      </router-link>
+      </div>
     </div>
 
     <div>
@@ -171,7 +171,10 @@ export default {
   methods: {  
     checkIfProfileOwner() {
       let id = this.$route.params.id;
-      this.isMyProfile = (store.getters.getUser.id == id || id == undefined);
+      this.isMyProfile = (store.getters.getUser.id == id);
+    },
+    goToEdit(id) {
+      this.$router.push("/user/"+id+"/edit")
     }
   },
   computed: {

@@ -25,7 +25,8 @@
     </div>
 
     <ul>
-      <h2>My Trips</h2>
+      <h2 v-if="isMyProfile">My Trips</h2>
+      <h2 v-else>User Trips</h2>
       <div class="input-field-right-margin">
         <v-text-field
                 v-model="searchValue"
@@ -157,7 +158,7 @@ export default {
 
     checkIfProfileOwner() {
       let id = this.$route.params.id;
-      this.isMyProfile = (store.getters.getUser.id == id || id == undefined);
+      this.isMyProfile = (store.getters.getUser.id == id);
     }
   },
   created: function() {

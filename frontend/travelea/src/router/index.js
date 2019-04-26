@@ -65,50 +65,6 @@ let router = new Router({
             beforeEnter: unauthGuard
         },
         {
-            path: '/profile',
-            name: 'profile',
-            component: Profile,
-            beforeEnter: authGuard,
-            children: [
-                {
-                    path: '/profile',
-                    name: 'profileDashboard',
-                    component: ProfileDashboard                    
-                },
-                {
-                    path: '/profile/photos',
-                    name: 'profilePhotos',
-                    component: ProfilePhotos                    
-                },
-        
-                {
-                    path: '/profile/trips',
-                    name: 'profileTrips',
-                    component: ProfileTrips                    
-                },
-                {
-                    path: '/profile/edit',
-                    name: 'editProfile',
-                    component: EditProfile,
-                },
-                {
-                    path: '/destinations',
-                    name: 'destination',
-                    component: Destination
-                },
-                {
-                    path: '/destinations/edit/:id',
-                    name: 'edit-destination',
-                    component: DestinationEdit,
-                },
-                {
-                    path: '/trips',
-                    name: 'trips',
-                    component: ProfileTrips,
-                }
-            ]
-        },
-        {
             path: '/user/:id',
             name: 'userProfile',
             component: Profile,
@@ -120,9 +76,9 @@ let router = new Router({
                     component: ProfileDashboard                      
                 },
                 {
-                    path: '/user/:id/destinations',
-                    name: 'travellerDestination',
-                    component: Destination                    
+                    path: '/user/:id/edit',
+                    name: 'editProfile',
+                    component: EditProfile,
                 },
                 {
                     path: '/user/:id/trips',
@@ -133,6 +89,16 @@ let router = new Router({
                     path: '/user/:id/photos',
                     name: 'travellerProfilePhotos',
                     component: ProfilePhotos                    
+                },
+                {
+                    path: '/user/:id/destinations',
+                    name: 'travellerDestination',
+                    component: Destination                    
+                },
+                {
+                    path: '/user/:id/destinations/edit/:dest_id',
+                    name: 'edit-destination',
+                    component: DestinationEdit,
                 }
             ]
         },
