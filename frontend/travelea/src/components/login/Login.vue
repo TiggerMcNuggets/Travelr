@@ -77,7 +77,7 @@ export default {
             this.loginAlert = false;
             store.dispatch("login", this.user)
             .then(() => {
-                this.$router.push("/profile");
+                this.$router.push("/");
             })
             .catch(() => {
                 console.log("invalid login")
