@@ -19,7 +19,6 @@
         </aside>
         <main class="profile-main">
           <router-view></router-view>
-          
         </main>
       </v-layout>
     </div>
@@ -82,7 +81,6 @@ export default {
   data() {
     return {
       traveller: {},
-
       dateOfBirth: "",
       nationalities: [],
       passports: [],
@@ -95,11 +93,25 @@ export default {
   },
 
   created: function() {
-    let id = this.$route.params.id;
+    this.init();
+  },
+
+  watch: {
+    '$route.params.id': function (id) {
+      this.init()
+    }
+  },
+
+
+  methods: {
+
+    init() {
+      let id = this.$route.params.id;
     
     if(!id) { 
       id = store.getters.getUser.id
     }
+
     UserRepository.getUser(id)
       .then(response => {
         this.traveller = response.data
@@ -109,9 +121,8 @@ export default {
       .catch(err => {
         console.log(err);
       })
+    },
 
-  },
-  methods: {
     getTraveller() {
       this.traveller = store.getters.getUser;
       this.setTravellerToFields();

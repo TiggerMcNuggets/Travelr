@@ -52,8 +52,7 @@ public class PhotoController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
 
-
-        return personalPhotoRepository.list(id, user.id == id).thenApplyAsync((photos) -> {
+        return personalPhotoRepository.list(id, user.id == id || user.accountType > 0).thenApplyAsync((photos) -> {
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
@@ -75,8 +74,8 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.make_directory("resources/images");
-            file.copyTo(Paths.get("resources/images/"+ fileName), true);
+            fh.make_directory("public/images");
+            file.copyTo(Paths.get("public/images/" + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
@@ -100,7 +99,6 @@ public class PhotoController extends Controller {
         try {
             return ok(file);
         } catch (Exception e) {
-            System.out.println(e);
             return badRequest("Missing file");
         }
     }
@@ -115,7 +113,6 @@ public class PhotoController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUserPhoto(Http.Request request, Long id) {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
-//        User user = request.attrs().get(Attrs.USER);
 
         if (updatePhotoForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
@@ -153,8 +150,8 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.make_directory("resources/images");
-            file.copyTo(Paths.get("resources/images/"+ fileName), true);
+            fh.make_directory("public/profile_images");
+            file.copyTo(Paths.get("public/profile_images/" + fileName), true);
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
@@ -163,7 +160,7 @@ public class PhotoController extends Controller {
                 }
             });
         } else {
-            return CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest("Missing file"));
         }
     }
 

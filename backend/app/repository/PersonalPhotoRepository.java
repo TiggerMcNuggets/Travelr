@@ -95,7 +95,7 @@ public class PersonalPhotoRepository {
         return supplyAsync(() -> {
             try {
                 User user = userFinder.findById(id);
-                user.userProfilePhoto = fileName;
+                user.setUserProfilePhoto(fileName);
                 user.save();
                 return user.userProfilePhoto;
             } catch (Error e) {
@@ -114,6 +114,8 @@ public class PersonalPhotoRepository {
             try {
                 User user = userFinder.findById(id);
                 String filename = user.userProfilePhoto;
+                System.out.println("user profile photo");
+                System.out.println(filename);
                 return filename;
             } catch (Error e) {
                 return null;

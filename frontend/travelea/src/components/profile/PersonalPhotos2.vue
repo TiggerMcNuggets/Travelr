@@ -16,7 +16,7 @@
           dark
           color="indigo"
           @click="toggleShowUploadPhoto"
-          v-if="isMyProfile"
+          v-if="isMyProfile || isAdminUser"
         >
           <v-icon dark>add</v-icon>
         </v-btn>
@@ -42,23 +42,31 @@
         <li v-for="row in files" :value="row.value" :key="row.value">
           <div class="personal-photo-row">
             <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
+              <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
+              <v-icon v-else class="lock-icon" left>lock</v-icon>
+                
+                <div v-if="item.is_public" class="triangle pink-color" > </div>
+                <div v-else class="triangle" > </div>
+                
               <v-img
                 @click.stop="dialog = true"
                 v-on:click="setDialogueContent(item)"
                 class="personal-photo-element"
                 :src="getImgUrl(item)"
+         
               ></v-img>
             </div>
           </div>
         </li>
       </ul>
+    
 
       <v-dialog v-model="dialog" :width="clickedImageWidth">
         <v-card>
           <v-img :src="clickedImageURL"></v-img>
 
           <v-card-title primary-title>
-            <div>
+            <div>  
               <h5 class="headline mb-0">Image Name</h5>
               <div>Description/Other meta info</div>
             </div>
@@ -70,19 +78,57 @@
             <v-spacer></v-spacer>
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
+            <v-btn color="primary" flat @clocklick="setProfilePhoto()">Set Profile Photo</v-btn>
           </v-card-actions>
           <v-card-actions>
           <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-          </v-card-actions>
+          </v-card-actions>  
         </v-card>
       </v-dialog>
+    
     </div>
   </div>
-</template>
+</template>relative
 
 
 <style>
+
+.pink-color {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 100px 100px 0 0;
+  border-color: hotpink transparent transparent transparent !important;
+  opacity: 0.3;
+  position: absolute;
+  z-index: 10;
+
+}
+
+
+.lock-icon {
+  color: white !important;
+  opacity: 1;
+  position: absolute;   
+  z-index: 12;
+  font-size: 2.3em;
+  margin-top: 0.3em;
+  margin-left: 0.3em;
+  align-self: flex-start !important;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 100px 100px 0 0;
+  border-color: #007bff transparent transparent transparent;
+  opacity: 0.3;
+  position: absolute;
+  z-index: 10;
+
+}
+
 .choose-file-button {
   background-color: #f5f5f5;
   color: rgba(0, 0, 0, 0.87);
@@ -125,10 +171,11 @@
   width: 24%;
   height: 270px;
   border: 1px solid lightgrey;
-
   background-position: center;
   padding: 7px;
   overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .image-container:hover .personal-photo-element {
@@ -207,15 +254,10 @@ export default {
       publicPhotoSwitch: false,
       showUploadSection: false,
       id: null,
-      isMyProfile: false
+      isMyProfile: false,
+      isAdminUser: false
     };
   },
-
-  // computed: {
-  //     personalPhotos() {
-  //     return store.state.personalPhotos.personalPhotos;
-  //   }
-  // },
 
   methods: {
     // Sets the file property the the file being uploaded.
@@ -249,15 +291,14 @@ export default {
       storeImage(this.id, formData).then(() => {
         getImages(this.id).then(result => {
           this.files = this.groupImages(result.data);
+         
         });
       });
     },
 
-    // Gets the local image file path
+    // Gets the image from the server
     getImgUrl(item) {
-
-      return require("../../../../../backend/resources/images/" +
-        item.photo_filename);
+      return "http://localhost:9000/assets/images/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -268,7 +309,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = require("../../../../../backend/resources/images/"  + selectedImage.photo_filename);
+      myImage.src = "http://localhost:9000/assets/images/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
 
     },
@@ -301,8 +342,9 @@ export default {
       this.id = store.getters.getUser.id
     }
 
-    this.isMyProfile = (store.getters.getUser.id == this.id)
-    console.log("HERE" + this.id)
+    this.isMyProfile = (store.getters.getUser.id == this.id);
+    this.isAdminUser = (store.getters.getIsUserAdmin);
+    console.log(this.isAdminUser);
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });
