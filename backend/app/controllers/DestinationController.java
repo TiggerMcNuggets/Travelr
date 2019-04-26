@@ -68,7 +68,37 @@ public class DestinationController extends Controller {
             return created(jsonResponse);
         });
     }
+// NEW, ADDED FOR ADMIN REFACTORING
+    /**
+     * Creates destination for a user
+     * @param request the http request
+     * @param userId the user id to create a trip for
+     * @return 201 with json object of new id if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> createDestinationGivenUser(Http.Request request, Long userId) {
 
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        Form<CreateDestReq> createDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
+
+
+        if (createDestinationForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateDestReq req = createDestinationForm.get();
+
+        return destinationRepository.add(req,userId).thenApplyAsync(id -> {
+            CreateDestRes response = new CreateDestRes(id);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return created(jsonResponse);
+        });
+    }
+//
     /**
      * Gets a single destination that belongs to a user and matches the given id
      * @param request the http request
