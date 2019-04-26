@@ -10,7 +10,7 @@ public class FileHelper {
   public FileHelper() {
   }
 
-  public boolean make_directory(String directory_path) {
+  public boolean makeDirectory(String directory_path) {
     Path path = Paths.get(directory_path);
     File file = new File(directory_path);
 

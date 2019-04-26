@@ -344,7 +344,7 @@ export default {
 
     this.isMyProfile = (store.getters.getUser.id == this.id);
     this.isAdminUser = (store.getters.getIsUserAdmin);
-    console.log(this.isAdminUser);
+
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });

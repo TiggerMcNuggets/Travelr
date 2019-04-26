@@ -48,7 +48,7 @@ public class PhotoController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id) {
         FileHelper fh = new FileHelper();
-        fh.make_directory("resources/images");
+        fh.makeDirectory("resources/images");
 
         User user = request.attrs().get(Attrs.USER);
 
@@ -74,7 +74,7 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.make_directory("public/images");
+            fh.makeDirectory("public/images");
             file.copyTo(Paths.get("public/images/" + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
@@ -151,7 +151,7 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.make_directory("public/profile_images");
+            fh.makeDirectory("public/profile_images");
             file.copyTo(Paths.get("public/profile_images/" + fileName), true);
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {

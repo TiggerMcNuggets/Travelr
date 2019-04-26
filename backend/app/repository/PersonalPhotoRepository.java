@@ -114,8 +114,6 @@ public class PersonalPhotoRepository {
             try {
                 User user = userFinder.findById(id);
                 String filename = user.userProfilePhoto;
-                System.out.println("user profile photo");
-                System.out.println(filename);
                 return filename;
             } catch (Error e) {
                 return null;
