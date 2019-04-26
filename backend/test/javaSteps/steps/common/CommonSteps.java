@@ -64,6 +64,9 @@ public class CommonSteps  {
     @Given("The destination id is {int}")
     public void theDestinationIdIs(int id) {state.setDestinationId(id);}
 
+    @Given("I am logged in as a non-admin user")
+    public void iAmLoggedInAsANonAdminUser() { state.setToken("abc");}
+
     /**
      * Asserts that the actual response is equal to the expected response
      * @param responseCode the three digit expected response code

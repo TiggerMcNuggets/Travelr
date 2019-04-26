@@ -100,7 +100,7 @@ public class Authorization {
     public static CompletionStage<Result> isUserAuthorised(Boolean isAdmin, Long userIdByToken, Long userIdById) {
         if (isAdmin) return null;
         if (userIdByToken == userIdById) return null;
-        return CompletableFuture.completedFuture(Results.unauthorized("Not admin and id from token does not match user id parameter"));
+        return CompletableFuture.completedFuture(Results.forbidden("Not admin and id from token does not match user id parameter"));
     }
 
     /**

@@ -148,7 +148,7 @@ public class EditTripsSteps {
                     .method("PUT")
                     .header("X-Authorization", state.getToken())
                     .bodyJson(tripData)
-                    .uri("http://localhost:9000/api/trips/" + tripId);
+                    .uri("http://localhost:9000/api/trips/" + tripId + '/' + state.getTravellerId());
 
             // Send request
             state.setResult(route(state.getApplication(), getTrip));

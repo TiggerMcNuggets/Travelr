@@ -51,6 +51,9 @@ GET         /api/trips                          controllers.TripController.getUs
 POST        /api/trips                          controllers.TripController.createTrip(request: Request)
 GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
+#includes admin
+PUT         /api/trips/:id/:userId              controllers.TripController.updateUserTripGivenUser(request: Request, id: Long, userId: Long)
+
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /*file                                  controllers.FrontendController.assetOrDefault(file)
