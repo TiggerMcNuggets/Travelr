@@ -80,7 +80,7 @@ export default {
                 return store.dispatch("login", loginInfo);
             })
             .then(() => {
-                this.$router.push("/profile");
+                this.$router.push("/");
             })
             .catch((err) => {
                 this.emailAlert = true;

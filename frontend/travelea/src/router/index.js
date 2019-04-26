@@ -44,14 +44,14 @@ const unauthGuard = (to, from, next) => {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            return next("/profile");
+            return next("/user/"+store.getters.getUser.id);
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    return next("/profile");
+    return next("/user/"+store.getters.getUser.id);
 }
 
 Vue.use(Router);
