@@ -12,7 +12,6 @@ import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import Login from "../components/login/Login"
-import PersonalPhotos from "../components/profile/PersonalPhotos"
 import ProfileDashboard from "../components/profile/ProfileDashboard"
 import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
@@ -63,7 +62,7 @@ let router = new Router({
             name: 'home',
             component: Home,
             beforeEnter: unauthGuard
-        },
+        },     
         {
             path: '/user/:id',
             name: 'userProfile',
@@ -107,12 +106,6 @@ let router = new Router({
             name: 'login',
             component: Login,
             beforeEnter: unauthGuard
-        },
-        {
-            path: '/personalphotos/:id',
-            name: 'personal-photos',
-            component: PersonalPhotos,
-            beforeEnter: authGuard
         },
         {
             path: '/signup',

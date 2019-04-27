@@ -19,7 +19,6 @@
         </aside>
         <main class="profile-main">
           <router-view></router-view>
-          
         </main>
       </v-layout>
     </div>
@@ -82,7 +81,6 @@ export default {
   data() {
     return {
       traveller: {},
-
       dateOfBirth: "",
       nationalities: [],
       passports: [],
