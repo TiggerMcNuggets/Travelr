@@ -51,13 +51,57 @@ public class TripController extends Controller {
         return tripRepository.getTrips(user.id).thenApplyAsync(users -> ok(Ebean.json().toJson(users)));
     }
 
+    //CREATE TRIP METHOD FOR WHEN ADMIN IS NOT TAKEN INTO ACCOUNT
+//    /**
+//     * Creates a trip for the user
+//     * @param request the http request
+//     * @return 201 with json object of new trip id in it if all ok
+//     */
+//    @Authorization.RequireAuth
+//    public CompletionStage<Result> createTrip(Http.Request request) {
+//        Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
+//        User user = request.attrs().get(Attrs.USER);
+//
+//        // Bad Request check
+//        if (createTripForm.hasErrors()) {
+//            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+//        }
+//
+//        CreateTripReq req = createTripForm.get();
+//
+//        // Less than two destinations check
+//        if (req.hasLessThanTwoDestinations()) {
+//            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+//        }
+//
+//        // Two same destinations in a row check
+//        if (req.hasSameConsecutiveDestinations()) {
+//            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+//        }
+//
+//        return tripRepository.createTrip(req, user).thenApplyAsync(tripId -> {
+//
+//            CreateTripRes response = new CreateTripRes(tripId);
+//            ObjectMapper mapper = new ObjectMapper();
+//            JsonNode jsonResponse = mapper.valueToTree(response);
+//
+//            return created(jsonResponse);
+//        });
+//    }
+
     /**
-     * Creates a trip for the user
+     * Creates a trip for a user
      * @param request the http request
+     * @param userId the user's ID that new trip will be associated with
      * @return 201 with json object of new trip id in it if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> createTrip(Http.Request request) {
+    public CompletionStage<Result> createTrip(Http.Request request, Long userId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
         Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
         User user = request.attrs().get(Attrs.USER);
 

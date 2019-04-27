@@ -110,7 +110,7 @@ public class CreateTripsSteps {
                     .method("POST")
                     .header("X-Authorization", state.getToken())
                     .bodyJson(tripData)
-                    .uri("http://localhost:9000/api/trips");
+                    .uri("http://localhost:9000/api/" + state.getTravellerId() + "/trips");
 
             // Send request
             state.setResult(route(state.getApplication(), createTrip));
