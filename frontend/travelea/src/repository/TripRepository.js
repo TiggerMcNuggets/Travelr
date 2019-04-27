@@ -10,7 +10,7 @@ export default {
     },
 
     getUserTrips(user_id) {
-        return Repository.get('/travellers/'+user_id+'/trips')
+        return Repository.get('/users/'+user_id+'/trips')
     },
 
     getTrip(id) {

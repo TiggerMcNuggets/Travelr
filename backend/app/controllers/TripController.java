@@ -127,7 +127,7 @@ public class TripController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> getTrips(Http.Request request, Long id) {
-        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, id);
+        CompletionStage<Result> middlewareRes = Authorization.doesUserByIdExist(id);
         if (middlewareRes != null) return middlewareRes;
 
         return tripRepository.getTrips(id).thenApplyAsync(trips -> {
