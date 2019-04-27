@@ -58,11 +58,20 @@ Feature: EditTrip
     When I edit a trip
     Then I will receive a 401 response
 
-    #this one still needs to be fixed and need to add a test for when they are an admin user
   Scenario: Non-Admin user edits trip made by another user
     Given I am logged in as a non-admin user
     And I provide the trip id "1"
     And The traveller id is 1
-    And A trip with id "1" exists
+    And provide complete trip information
     When I edit a trip
     Then I will receive a 403 response
+
+  Scenario: Admin user edits trip made by another user
+    Given I am logged in as an admin user
+    And I provide the trip id "2"
+    And The traveller id is 2
+    And provide complete trip information
+    When I edit a trip
+    Then I will receive a 200 response
+
+
