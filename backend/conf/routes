@@ -20,7 +20,7 @@ GET         /api/travellers_filter              controllers.UserController.getFi
 GET         /api/travellers                     controllers.UserController.getUsers(request: Request)
 POST        /api/travellers                     controllers.UserController.createUser(request: Request)
 GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
-GET         /api/travellers/:id/trips           controllers.UserController.getTrips(request: Request, id: Long)
+GET         /api/travellers/:id/trips           controllers.TripController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /api/travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
@@ -49,6 +49,9 @@ GET         /api/destinations/:id               controllers.DestinationControlle
 GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
 
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
+
+GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
+
 
 # Trips
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
