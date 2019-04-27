@@ -9,14 +9,12 @@
             class="profile-image"
             :src="getImgUrl"
         >
+      <div v-if="isMyProfile" @click="goToEdit(user_id)">
+        <v-btn class="profile-edit-button" fab small dark color="indigo">
       </div>
-      <!-- </v-avatar> -->
-      <router-link v-if="isMyProfile" to="/profile/edit">
-        <v-btn  class="profile-edit-button" fab small dark color="indigo">
           <v-icon dark>edit</v-icon>
         </v-btn>
-      </router-link>
-
+      </div>
    
         <v-btn  v-else-if="isAdminUser" class="profile-edit-button"  @click="goToUserEdit" fab small dark color="indigo">
           <v-icon dark>edit</v-icon>
@@ -179,24 +177,14 @@ export default {
 
   data() {
     return {
-      isAdminUser: false,
-      isMyProfile: false,
-      id: this.$route.params.id 
+      profile: {}
     };
   },
-
-  
   created: function() {
     this.traveller = store.getters.getUser;
-    this.isAdminUser = store.getters.getIsUserAdmin;
-    this.isMyProfile = store.getters.getUser.id === this.$route.params.id || this.$route.params.id == null;
   },
   methods: {
         // Gets the local image file path    
-    goToUserEdit() {
-        const endpoint = "/user/" + this.$route.params.id + "/edit";
-        this.$router.push(endpoint)
-    }
   },
   computed: {
       getImgUrl() {

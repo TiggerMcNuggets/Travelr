@@ -26,6 +26,7 @@ PUT         /api/travellers/:id                 controllers.UserController.updat
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
 
 
+
 # Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
 GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
@@ -38,12 +39,15 @@ PUT         /api/travellers/:id/setphoto        controllers.PhotoController.choo
 
 # Destinations
 GET         /api/destinations                   controllers.DestinationController.getUserDestinations(request: Request)
+GET         /api/users/:id/destinations         controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
 POST        /api/destinations                   controllers.DestinationController.createDestination(request: Request)
 
 # accepting id
 POST        /api/travellers/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
 
 GET         /api/destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
+GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
+
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
 # Trips
