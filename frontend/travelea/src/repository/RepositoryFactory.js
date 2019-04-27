@@ -2,7 +2,7 @@ import AuthRepository from "./AuthRepository"
 import ProfileRepository from "./ProfileRepository"
 import DestinationRepository from "./DestinationRepository"
 import TripRepository from "./TripRepository"
-import PersonalPhotoRepository from "./PersonalPhotosRepository"
+// import PersonalPhotoRepository from "./PersonalPhotosRepository"
 import UserRepository from "./UserRepository";
 import NationalityRepository from "./NationalityRepository";
 import TravellerTypesRepository from "./TravellerTypesRepository";
@@ -13,7 +13,7 @@ const repositories = {
     profile: ProfileRepository,
     destination: DestinationRepository,
     trip: TripRepository,
-    personalPhoto: PersonalPhotoRepository,
+    // personalPhoto: PersonalPhotoRepository,
     user: UserRepository,
     nationality: NationalityRepository,
     travellerType: TravellerTypesRepository

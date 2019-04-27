@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer temporary clipped app v-model="drawer">
+    <v-navigation-drawer app temporary clipped v-model="drawer">
       <v-list>
         <v-list-tile v-for="item in menuOptions" :key="item.name" :to="item.link">
           <v-list-tile-action>
