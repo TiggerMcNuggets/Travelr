@@ -110,7 +110,7 @@ export default {
       formData.append("picture", this.file);
 
       uploadProfilePic(this.id, formData).then(() => {
-        window.location = "/profile/edit";
+        window.location = "/user/" + this.$route.params.id +  "/edit";
       });
     },
     getTraveller() {
