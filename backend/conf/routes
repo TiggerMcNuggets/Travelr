@@ -54,7 +54,7 @@ PUT         /api/destinations/:id               controllers.DestinationControlle
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
 #route for when admin is not taken into account
 #POST        /api/trips                          controllers.TripController.createTrip(request: Request)
-POST        /api/:user_id/trips                 controllers.TripController.createTrip(request: Request, user_id: Long)
+POST        /api/users/:user_id/trips           controllers.TripController.createTrip(request: Request, user_id: Long)
 
 
 GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
