@@ -56,7 +56,7 @@ POST        /api/trips                          controllers.TripController.creat
 GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
 #includes admin
-PUT         /api/trips/:id/:userId              controllers.TripController.updateUserTripGivenUser(request: Request, id: Long, userId: Long)
+PUT         /api/users/:user_id/trips/:trip_id  controllers.TripController.updateUserTripGivenUser(request: Request, trip_id: Long, user_id: Long)
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE

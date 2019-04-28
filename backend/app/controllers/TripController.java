@@ -178,7 +178,6 @@ public class TripController extends Controller {
 
         // middleware stack
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
-        System.out.println("responce from middlewares is : "+ middlewareRes);
         if (middlewareRes != null) return middlewareRes;
 
         Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
