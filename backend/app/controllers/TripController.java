@@ -89,37 +89,6 @@ public class TripController extends Controller {
         });
     }
 
-//    /**
-//     * Gets a single trip that belongs to a user and matches the given id
-//     * @param request the http request
-//     * @param id the trip id
-//     * @return 200 with trip if all ok
-//     */
-//    @Authorization.RequireAuth
-//    public CompletionStage<Result> getUserTrip(Http.Request request, Long id) {
-//        User user = request.attrs().get(Attrs.USER);
-//        return tripRepository.getTrip(id).thenApplyAsync(trip -> {
-//            // Not Found Check
-//            if (trip == null) {
-//                return notFound("Trip not found");
-//            }
-//
-//            // Forbidden Check
-//            if (trip.user.id != user.id) {
-//                return forbidden("Forbidden: Access Denied");
-//            }
-//            //Hacky work around to get the arrival and departure dates returning
-//            for (TripDestination dest: trip.destinations) {
-//                dest.getArrivalDate();
-//            }
-//
-//            GetTripRes response = new GetTripRes(trip);
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode jsonResponse = mapper.valueToTree(response);
-//
-//            return ok(jsonResponse);
-//        });
-//    }
 
     /**
      * Gets a single trip that belongs to a user and matches the given id
