@@ -2,7 +2,7 @@
 
 <template>
   <v-container style="margin-left: 0px;">
-    <div v-if="!showCreateTrip && this.isMyProfile">
+    <div v-if="!showCreateTrip && (isMyProfile || isAdminUser)">
       <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
       </v-btn>
@@ -106,6 +106,7 @@ export default {
       searchValue: "",
       trips: [],
       isMyProfile: false,
+      isAdminUser: false,
       user_id: this.$route.params.id
     };
   },
@@ -163,6 +164,7 @@ export default {
   },
   created: function() {
     this.checkIfProfileOwner();
+    this.isAdminUser = store.getters.getIsUserAdmin;
     if (this.isMyProfile) {
       this.getTrips();
     } else {
