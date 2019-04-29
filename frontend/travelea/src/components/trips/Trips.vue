@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     getTrips: function() {
-        tripRepository.getTrips()
+        tripRepository.getUserTrips(this.user_id)
         .then((res) => {
             this.trips = res.data;
         })
@@ -144,7 +144,9 @@ export default {
     },
 
     openTrip: function(id) {
-        this.$router.push("/trips/view/"+id);//window.location.href = '/#/trips/view/'+id;
+        if (store.getters.getIsUserAdmin || this.isMyProfile) {
+            this.$router.push("/trips/view/" + id);
+        }
     },
 
     toggleShowCreateTrip: function() {
