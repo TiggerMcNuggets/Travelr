@@ -23,22 +23,12 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class PersonalPhotoRepository {
 
-    private final EbeanServer ebeanServer;
     private final DatabaseExecutionContext executionContext;
 
-    // @rowanl, https://github.com/playframework/playframework/issues/7017
-    private final EbeanDynamicEvolutions ebeanDynamicEvolutions;
-
-    private PhotoFinder photoFinder = new PhotoFinder();
-    private UserFinder userFinder = new UserFinder();
-
     @Inject
-    public PersonalPhotoRepository(EbeanConfig ebeanConfig, EbeanDynamicEvolutions ebeanDynamicEvolutions, DatabaseExecutionContext executionContext) {
-        this.ebeanDynamicEvolutions = ebeanDynamicEvolutions;
-        this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
+    public PersonalPhotoRepository(DatabaseExecutionContext executionContext) {
         this.executionContext = executionContext;
     }
-
 
     /**
      * Adds a new personal photo for a user.
@@ -62,7 +52,7 @@ public class PersonalPhotoRepository {
      */
     public CompletionStage<List<PersonalPhoto>> list(Long id, Boolean privatePhotos) {
         return supplyAsync(() -> {
-            ExpressionList<PersonalPhoto> query = ebeanServer.find(PersonalPhoto.class).where().eq("traveller_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
+            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("traveller_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
             return query.findList();
         }, executionContext);
     }
@@ -75,7 +65,7 @@ public class PersonalPhotoRepository {
      */
     public CompletableFuture<Long> update(UpdatePhotoReq request, Long photoId) {
         return supplyAsync(() -> {
-            PersonalPhoto photo = photoFinder.findByPhotoId(photoId);
+            PersonalPhoto photo = PersonalPhoto.find.findByPhotoId(photoId);
             photo.is_public = request.is_public;
             photo.save();
 
@@ -89,7 +79,7 @@ public class PersonalPhotoRepository {
      * @return completable future of the photo
      */
     public CompletableFuture<PersonalPhoto> getOne(Long id) {
-        return supplyAsync(() -> photoFinder.findByPhotoId(id), executionContext);
+        return supplyAsync(() -> PersonalPhoto.find.findByPhotoId(id), executionContext);
     }
 
     /**
@@ -101,7 +91,7 @@ public class PersonalPhotoRepository {
     public CompletableFuture<Object> setUserProfilePic(Long id, String fileName) {
         return supplyAsync(() -> {
             try {
-                User user = userFinder.findById(id);
+                User user = User.find.findById(id);
                 user.setUserProfilePhoto(fileName);
                 user.save();
                 return user.userProfilePhoto;
@@ -119,7 +109,7 @@ public class PersonalPhotoRepository {
     public CompletionStage<Object> getUserProfilePic(long id) {
         return supplyAsync(() -> {
             try {
-                User user = userFinder.findById(id);
+                User user = User.find.findById(id);
                 String filename = user.userProfilePhoto;
                 return filename;
             } catch (Error e) {
