@@ -23,10 +23,9 @@ public class UserFinder extends Finder<Long, User> {
     }
 
     public Optional<User> findByAuthToken(String token) {
-        if(token == null) {
+        if (token == null) {
             return null;
         }
-
         return query().where().eq("token", token).findOneOrEmpty();
     }
 

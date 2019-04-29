@@ -9,11 +9,15 @@ export default {
         return Repository.get('/trips')
     },
 
+    getUserTrips(user_id) {
+        return Repository.get('/travellers/'+user_id+'/trips')
+    },
+
     getTrip(id) {
         return Repository.get(`/trips/${id}`)
     },
 
     updateTrip(id, tripBody) {
         return Repository.put(`/trips/${id}`, tripBody)
-    }    
+    }
 }

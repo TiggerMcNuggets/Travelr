@@ -2,37 +2,36 @@
   <v-layout row class="dashboard">
     <v-flex d-flex xs4 order-xs5>
       <v-layout column>
-        <router-link to="/profile/photos">
+        <div @click="goToUserPhotos(user_id)">
          <div >
           <v-card d-flex class="photos-tile tile">
             <v-img
               src="https://images.pexels.com/photos/747964/pexels-photo-747964.jpeg?cs=srgb&dl=background-calm-clouds-747964.jpg&fm=jpg"
               class="tile-image"
             ></v-img>
-            <h2 class="headline font-weight-light tile-heading">My Photos</h2>
+            <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Photos</h2>
+            <h2 v-else class="headline font-weight-light tile-heading">User Photos</h2>
           </v-card>
            </div>
-        </router-link>
-        <router-link to="/destinations">
-         <div >
+        </div>
+        <div v-if="isMyProfile" @click="goToUserDesinations(user_id)">
+         <div>
           <v-card d-flex class="destinations-tile tile">
-                 
             <v-img
               class="tile-image"
               src="https://www.rd.com/wp-content/uploads/2017/11/this-is-the-one-destination-people-want-to-visit-before-they-die-hint-its-not-in-europe_458190886_maria-savenko-1024x683.jpg"
             ></v-img>
-            <h2 class="headline font-weight-light tile-heading">My Destinations</h2>
-            
+            <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Destinations</h2>
+            <h2 v-else class="headline font-weight-light tile-heading">User Destinations</h2>
           </v-card>
           </div>
-         
-        </router-link>
+        </div>
       </v-layout>
     </v-flex>
     <v-flex d-flex x8 order-xs5>
       <v-layout column>
         <v-flex d-flex>
-          <router-link to="/trips">
+          <div @click="goToUserTrips(user_id)">
             <v-card d-flex class="trips-tile tile">
         
               <v-img
@@ -40,9 +39,10 @@
                 class="tile-image"
               ></v-img>
               
-              <h2 class="headline font-weight-light tile-heading">My Trips</h2>
+              <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Trips</h2>
+              <h2 v-else class="headline font-weight-light tile-heading">User Trips</h2>
             </v-card>
-          </router-link>
+          </div>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -90,7 +90,9 @@
 
 
 <script>
+import UserRepository from "../../repository/UserRepository";
 import Trips from "../trips/Trips";
+import { store } from "../../store/index";
 // import PersonalPhotos from "./PersonalPhotos2";
 
 export default {
@@ -102,8 +104,39 @@ export default {
 
       dateOfBirth: "",
       nationalities: [],
-      passports: []
+      passports: [],
+      isMyProfile: false,
+      user_id: this.$route.params.id
     };
+  },
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
+  methods: {
+    init() {
+      this.checkIfProfileOwner();
+    },
+    goToUserDesinations(id) {
+        var endpoint = '/user/' + id + '/destinations'
+        this.$router.push(endpoint)
+    },
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == id);
+    },
+    goToUserTrips(id) {
+        var endpoint = '/user/' + id + '/trips'
+        this.$router.push(endpoint)
+    },
+    goToUserPhotos(id) {
+        var endpoint = '/user/' + id + '/photos'
+        this.$router.push(endpoint)
+    }
+  },
+  created: function() {
+    this.init();
   },
 
   components: {

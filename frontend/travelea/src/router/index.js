@@ -12,7 +12,6 @@ import Signup from "../components/signup/Signup.vue"
 import Destination from "../components/destination/Destination"
 import DestinationEdit from "../components/destination/DestinationEdit"
 import Login from "../components/login/Login"
-import PersonalPhotos from "../components/profile/PersonalPhotos"
 import ProfileDashboard from "../components/profile/ProfileDashboard"
 import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
@@ -44,14 +43,14 @@ const unauthGuard = (to, from, next) => {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            return next("/profile");
+            return next("/user/"+store.getters.getUser.id);
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    return next("/profile");
+    return next("/user/"+store.getters.getUser.id);
 }
 
 Vue.use(Router);
@@ -63,51 +62,7 @@ let router = new Router({
             name: 'home',
             component: Home,
             beforeEnter: unauthGuard
-        },
-        {
-            path: '/profile',
-            name: 'profile',
-            component: Profile,
-            beforeEnter: authGuard,
-            children: [
-                {
-                    path: '/profile',
-                    name: 'profileDashboard',
-                    component: ProfileDashboard                    
-                },
-                {
-                    path: '/profile/photos',
-                    name: 'profilePhotos',
-                    component: ProfilePhotos                    
-                },
-        
-                {
-                    path: '/profile/trips',
-                    name: 'profileTrips',
-                    component: ProfileTrips                    
-                },
-                {
-                    path: '/profile/edit',
-                    name: 'editProfile',
-                    component: EditProfile,
-                },
-                {
-                    path: '/destinations',
-                    name: 'destination',
-                    component: Destination
-                },
-                {
-                    path: '/destinations/edit/:id',
-                    name: 'edit-destination',
-                    component: DestinationEdit,
-                },
-                {
-                    path: '/trips',
-                    name: 'trips',
-                    component: ProfileTrips,
-                }
-            ]
-        },
+        },     
         {
             path: '/user/:id',
             name: 'userProfile',
@@ -115,9 +70,34 @@ let router = new Router({
             beforeEnter: authGuard,
             children: [
                 {
-                    path: '/',
-                    name: 'profilePhotos',
+                    path: '/user/:id',
+                    name: 'travellerProfileDashboard',
+                    component: ProfileDashboard                      
+                },
+                {
+                    path: '/user/:id/edit',
+                    name: 'editProfile',
+                    component: EditProfile,
+                },
+                {
+                    path: '/user/:id/trips',
+                    name: 'travellerTrips',
+                    component: ProfileTrips                    
+                },
+                {
+                    path: '/user/:id/photos',
+                    name: 'travellerProfilePhotos',
                     component: ProfilePhotos                    
+                },
+                {
+                    path: '/user/:id/destinations',
+                    name: 'travellerDestination',
+                    component: Destination                    
+                },
+                {
+                    path: '/user/:id/destinations/edit/:dest_id',
+                    name: 'edit-destination',
+                    component: DestinationEdit,
                 }
             ]
         },
@@ -126,12 +106,6 @@ let router = new Router({
             name: 'login',
             component: Login,
             beforeEnter: unauthGuard
-        },
-        {
-            path: '/personalphotos/:id',
-            name: 'personal-photos',
-            component: PersonalPhotos,
-            beforeEnter: authGuard
         },
         {
             path: '/signup',

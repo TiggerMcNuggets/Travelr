@@ -19,7 +19,6 @@
         </aside>
         <main class="profile-main">
           <router-view></router-view>
-          
         </main>
       </v-layout>
     </div>
@@ -70,8 +69,6 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
-// import Trips from "../trips/Trips";
-// import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
 import UserRepository from "../../repository/UserRepository";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
@@ -84,7 +81,6 @@ export default {
   data() {
     return {
       traveller: {},
-
       dateOfBirth: "",
       nationalities: [],
       passports: [],
@@ -95,27 +91,31 @@ export default {
   components: {
     ProfileNav,
   },
-
-  created: function() {
-    console.log("here")
-
-    let id = this.$route.params.id;
-    
-    if(!id) { 
-      id = store.getters.getUser.id
+  watch: {
+    '$route.params.id': function() {
+      this.init();
     }
-    UserRepository.getUser(id)
-      .then(response => {
-        this.traveller = response.data
-        this.setTravellerToFields(); 
-        this.isMyProfile = (store.getters.getUser.id == id)
-      })    
-      .catch(err => {
-        console.log(err);
-      })
-
+  },
+  created: function() {
+    this.init();
   },
   methods: {
+    init() {
+      let id = this.$route.params.id;
+      
+      if(!id) { 
+        id = store.getters.getUser.id
+      }
+      UserRepository.getUser(id)
+        .then(response => {
+          this.traveller = response.data
+          this.setTravellerToFields(); 
+          this.isMyProfile = (store.getters.getUser.id == id)
+        })    
+        .catch(err => {
+          console.log(err);
+        })
+    },
     getTraveller() {
       this.traveller = store.getters.getUser;
       this.setTravellerToFields();
