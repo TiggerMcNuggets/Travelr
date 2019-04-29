@@ -103,7 +103,8 @@ public class TripController extends Controller {
         if (middlewareRes != null) return middlewareRes;
 
         Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
-        User user = request.attrs().get(Attrs.USER);
+        //user that we want to create trip for
+        User user = User.find.findById(userId); //never null as checked by middleware userIdRequiredMiddlewareStack above
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
@@ -225,7 +226,6 @@ public class TripController extends Controller {
         if (middlewareRes != null) return middlewareRes;
 
         Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
-        User user = request.attrs().get(Attrs.USER);
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
