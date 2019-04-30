@@ -1,11 +1,13 @@
-
 recent-artifacts:
   stage: deploy
   script:
     - cd ./backend
     - sbt dist
-    - echo $PWD
-    - ls -la
+    - cd target/universal
+    - unzip *.zip
+    - cd team300-travelea-1.0.0-SNAPSHOT/bin
+    - bash team300-travelea -Dplay.http.secret.key=QCYtAnfkaZiwrNwnxIlR6CTfG3gf90Latabg5241ABR5W1uDFNIk1 -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=8443
+
   artifacts:
     paths:
       - backend/target/universal/*.zip
