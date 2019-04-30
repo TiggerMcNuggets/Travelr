@@ -59,7 +59,7 @@ const standardAccessGuard = (to, from, next) => {
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => { // valid token
-            if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
+            if (to.params.id == store.getters.getUser.id || store.getters.getIsUserAdmin) {
                 // User matches url parameter or is an admin, go next page
                 return next();
             } else {
@@ -72,7 +72,8 @@ const standardAccessGuard = (to, from, next) => {
             return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
-        if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
+        console.log(store.getters.getUser);
+        if (to.params.id == store.getters.getUser.id || store.getters.getIsUserAdmin) {
             // User matches url parameter or is an admin, go next page
             return next();
         } else {
@@ -96,7 +97,6 @@ let router = new Router({
         },     
         {
             path: '/user/:id',
-            name: 'userProfile',
             component: Profile,
             beforeEnter: authGuard,
             children: [
@@ -109,6 +109,7 @@ let router = new Router({
                     path: 'edit',
                     name: 'editProfile',
                     component: EditProfile,
+                    beforeEnter: standardAccessGuard,
                 },
                 {
                     path: 'trips',
@@ -130,6 +131,7 @@ let router = new Router({
                     path: 'destinations/edit/:dest_id',
                     name: 'edit-destination',
                     component: DestinationEdit,
+                    beforeEnter: standardAccessGuard
                 }
             ]
         },
