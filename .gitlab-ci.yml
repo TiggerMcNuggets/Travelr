@@ -16,6 +16,8 @@ recent-artifacts:
   script:
     - cd ./backend
     - sbt dist
+    - echo $PWD
+    - ls -la
   artifacts:
     paths:
       - backend/target/universal/*.zip
@@ -28,6 +30,8 @@ release-artifacts:
  script:
     - cd ./backend
     - sbt dist
+    - echo $PWD
+    - ls -la
  artifacts:
     paths:
     - backend/target/universal/*.zip
@@ -39,6 +43,7 @@ update-sonar:
     script:
         - cd ./backend
         - sbt dist
+        - echo $PWD
         - ls -la
         - cd ../
         - echo $PWD
