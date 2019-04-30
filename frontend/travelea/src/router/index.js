@@ -19,11 +19,7 @@ import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
 
-//const AUTH_DEFAULT_ROUTE = `/user/${store.getters.getUser.id}`;
-const UNAUTH_DEFAULT_ROUTE = `/login`;
-
 const authGuard = (to, from, next) => {
-    console.log("authguard");
     if (!store.getters.getToken) return next("/login");
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
@@ -33,30 +29,30 @@ const authGuard = (to, from, next) => {
         })
         .catch(() => {
             // invalid token, send to login
-            return next(UNAUTH_DEFAULT_ROUTE);
+            return next("/login");
         })
+    } else {
+        // TODO ADD META ADMIN CHECK HERE
+        console.log(store.getters.getToken && store.getters.getUser);
+        return next();
     }
-    return next();
-};
 
+};
 const unauthGuard = (to, from, next) => {
     if (!store.getters.getToken) return next();
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            console.log("here4");
-            return next(`/user/${store.getters.getUser.id}`);
+            return next("/user/"+store.getters.getUser.id);
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    console.log("here3");
-    return next(`/user/${store.getters.getUser.id}`);
-}
-
+    return next("/user/"+store.getters.getUser.id);
+};
 const standardAccessGuard = (to, from, next) => {
     console.log("standard");
     if (!store.getters.getToken) return next("/login");
@@ -76,9 +72,10 @@ const standardAccessGuard = (to, from, next) => {
         })
         .catch(() => {
             // invalid token, send to login
-            return next(UNAUTH_DEFAULT_ROUTE);
+            return next("/login");
         })
     } else {
+        console.log("this one?");
         if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
             // User matches url parameter or is an admin, go next page
             return next();
@@ -90,6 +87,7 @@ const standardAccessGuard = (to, from, next) => {
     }
     return next()
 }
+
 
 Vue.use(Router);
 let router = new Router({
@@ -105,12 +103,12 @@ let router = new Router({
             path: '/user/:id',
             name: 'userProfile',
             component: Profile,
-            //beforeEnter: authGuard,
+            beforeEnter: authGuard,
             children: [
                 {
                     path: '',
                     name: 'travellerProfileDashboard',
-                    component: ProfileDashboard,              
+                    component: ProfileDashboard,             
                 },
                 {
                     path: 'edit',
@@ -131,7 +129,7 @@ let router = new Router({
                     path: 'destinations',
                     name: 'travellerDestination',
                     component: Destination,
-                    beforeEnter: standardAccessGuard           
+                    beforeEnter: standardAccessGuard        
                 },
                 {
                     path: 'destinations/edit/:dest_id',
