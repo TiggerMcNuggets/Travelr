@@ -35,12 +35,10 @@ const authGuard = (to, from, next) => {
             return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
-        // TODO ADD META ADMIN CHECK HERE
-        console.log(store.getters.getToken && store.getters.getUser);
         return next();
     }
-
 };
+
 const unauthGuard = (to, from, next) => {
     if (!store.getters.getToken) return next();
     if (store.getters.getToken && !store.getters.getUser) {
@@ -56,20 +54,17 @@ const unauthGuard = (to, from, next) => {
     }
     return next(`/user/${store.getters.getUser.id}`);
 };
+
 const standardAccessGuard = (to, from, next) => {
-    console.log("standard");
     if (!store.getters.getToken) return next(DEFAULT_ROUTE_UNAUTH());
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => { // valid token
-            console.log(1);
             if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
-                console.log(2);
                 // User matches url parameter or is an admin, go next page
                 return next();
             } else {
                 // User is forbidden to access route, route back to current page
-                console.log("here2");
                 return next(DEFAULT_ROUTE_AUTH());
             }
         })
@@ -78,18 +73,16 @@ const standardAccessGuard = (to, from, next) => {
             return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
-        console.log("this one?");
         if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
             // User matches url parameter or is an admin, go next page
             return next();
         } else {
             // User is forbidden to access route, route back to current page
-            console.log("here1");
             return next(DEFAULT_ROUTE_AUTH());
         }
     }
     return next()
-}
+};
 
 
 Vue.use(Router);
