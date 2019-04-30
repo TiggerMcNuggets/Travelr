@@ -1,15 +1,3 @@
-tag_checker:
-  stage: build
-  script:
-    - python tag_checker.py $CI_COMMIT_TAG
-  only:
-    - tags
-
-junit:
-  stage: test
-  script:
-    - cd ./backend
-    - sbt test
 
 recent-artifacts:
   stage: deploy
