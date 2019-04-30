@@ -19,49 +19,76 @@ import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
 
+//const AUTH_DEFAULT_ROUTE = `/user/${store.getters.getUser.id}`;
+const UNAUTH_DEFAULT_ROUTE = `/login`;
+
 const authGuard = (to, from, next) => {
+    console.log("authguard");
     if (!store.getters.getToken) return next("/login");
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
-            // duplicated for now
-             if (`/user/${to.params.id}/destinations` === to.fullPath) {
-                if (to.params.id !== store.getters.getUser.id && !store.getIsUserAdmin) {
-                    return next(from.fullPath);
-                }
-            }
             // valid token, go next page
             return next();
         })
         .catch(() => {
             // invalid token, send to login
-            return next("/login");
+            return next(UNAUTH_DEFAULT_ROUTE);
         })
-    } else {
-        // duplicated for now
-        if (`/user/${to.params.id}/destinations` === to.fullPath) {
-            if (to.params.id !== store.getters.getUser.id && !store.getIsUserAdmin) {
-                return next(from.fullPath);
-            }
-        }
-        return next();
     }
-
+    return next();
 };
+
 const unauthGuard = (to, from, next) => {
     if (!store.getters.getToken) return next();
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            return next("/user/"+store.getters.getUser.id);
+            console.log("here4");
+            return next(`/user/${store.getters.getUser.id}`);
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    return next("/user/"+store.getters.getUser.id);
+    console.log("here3");
+    return next(`/user/${store.getters.getUser.id}`);
+}
+
+const standardAccessGuard = (to, from, next) => {
+    console.log("standard");
+    if (!store.getters.getToken) return next("/login");
+    if (store.getters.getToken && !store.getters.getUser) {
+        store.dispatch("fetchMe")
+        .then(() => { // valid token
+            console.log(1);
+            if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
+                console.log(2);
+                // User matches url parameter or is an admin, go next page
+                return next();
+            } else {
+                // User is forbidden to access route, route back to current page
+                console.log("here2");
+                return next(`/user/${store.getters.getUser.id}`);
+            }
+        })
+        .catch(() => {
+            // invalid token, send to login
+            return next(UNAUTH_DEFAULT_ROUTE);
+        })
+    } else {
+        if (to.params.id == store.getters.getUser.id || store.getIsUserAdmin) {
+            // User matches url parameter or is an admin, go next page
+            return next();
+        } else {
+            // User is forbidden to access route, route back to current page
+            console.log("here1");
+            return next(`/user/${store.getters.getUser.id}`);
+        }
+    }
+    return next()
 }
 
 Vue.use(Router);
@@ -78,35 +105,36 @@ let router = new Router({
             path: '/user/:id',
             name: 'userProfile',
             component: Profile,
-            beforeEnter: authGuard,
+            //beforeEnter: authGuard,
             children: [
                 {
-                    path: '/user/:id',
+                    path: '',
                     name: 'travellerProfileDashboard',
-                    component: ProfileDashboard                      
+                    component: ProfileDashboard,              
                 },
                 {
-                    path: '/user/:id/edit',
+                    path: 'edit',
                     name: 'editProfile',
                     component: EditProfile,
                 },
                 {
-                    path: '/user/:id/trips',
+                    path: 'trips',
                     name: 'travellerTrips',
-                    component: ProfileTrips                    
+                    component: ProfileTrips,                   
                 },
                 {
-                    path: '/user/:id/photos',
+                    path: 'photos',
                     name: 'travellerProfilePhotos',
-                    component: ProfilePhotos                    
+                    component: ProfilePhotos,             
                 },
                 {
-                    path: '/user/:id/destinations',
+                    path: 'destinations',
                     name: 'travellerDestination',
-                    component: Destination                    
+                    component: Destination,
+                    beforeEnter: standardAccessGuard           
                 },
                 {
-                    path: '/user/:id/destinations/edit/:dest_id',
+                    path: 'destinations/edit/:dest_id',
                     name: 'edit-destination',
                     component: DestinationEdit,
                 }
