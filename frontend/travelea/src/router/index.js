@@ -72,7 +72,6 @@ const standardAccessGuard = (to, from, next) => {
             return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
-        console.log(store.getters.getUser);
         if (to.params.id == store.getters.getUser.id || store.getters.getIsUserAdmin) {
             // User matches url parameter or is an admin, go next page
             return next();
