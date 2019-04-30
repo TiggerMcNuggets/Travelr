@@ -19,8 +19,11 @@ import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
 
+const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
+const DEFAULT_ROUTE_UNAUTH = () => "/login";
+
 const authGuard = (to, from, next) => {
-    if (!store.getters.getToken) return next("/login");
+    if (!store.getters.getToken) return next(DEFAULT_ROUTE_UNAUTH());
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
@@ -29,7 +32,7 @@ const authGuard = (to, from, next) => {
         })
         .catch(() => {
             // invalid token, send to login
-            return next("/login");
+            return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
         // TODO ADD META ADMIN CHECK HERE
@@ -44,18 +47,18 @@ const unauthGuard = (to, from, next) => {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            return next("/user/"+store.getters.getUser.id);
+            return next(DEFAULT_ROUTE_AUTH());
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    return next("/user/"+store.getters.getUser.id);
+    return next(`/user/${store.getters.getUser.id}`);
 };
 const standardAccessGuard = (to, from, next) => {
     console.log("standard");
-    if (!store.getters.getToken) return next("/login");
+    if (!store.getters.getToken) return next(DEFAULT_ROUTE_UNAUTH());
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => { // valid token
@@ -67,12 +70,12 @@ const standardAccessGuard = (to, from, next) => {
             } else {
                 // User is forbidden to access route, route back to current page
                 console.log("here2");
-                return next(`/user/${store.getters.getUser.id}`);
+                return next(DEFAULT_ROUTE_AUTH());
             }
         })
         .catch(() => {
             // invalid token, send to login
-            return next("/login");
+            return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
         console.log("this one?");
@@ -82,7 +85,7 @@ const standardAccessGuard = (to, from, next) => {
         } else {
             // User is forbidden to access route, route back to current page
             console.log("here1");
-            return next(`/user/${store.getters.getUser.id}`);
+            return next(DEFAULT_ROUTE_AUTH());
         }
     }
     return next()
