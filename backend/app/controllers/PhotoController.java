@@ -1,6 +1,5 @@
 package controllers;
 
-//import controllers.actions.Attrs;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Photo.ChooseProfilePicReq;
@@ -89,14 +88,14 @@ public class PhotoController extends Controller {
         }
     }
 
-    /**
-      * Gets a raw image from the file system and sends this as response data.
-      * @param filename The file name of the image to get.
-     * @return The raw image file which corresponds to the filename given.
-     */
-    @Authorization.RequireAuth
+        /**
+          * Gets a raw image from the file system and sends this as response data.
+          * @param filename The file name of the image to get.
+         * @return The raw image file which corresponds to the filename given.
+         */
+
     public Result getImageFromDatabase(String filename) {
-        File file = new File("resources/images/" + filename);
+        File file = new File("public/images/" + filename);
         try {
             return ok(file);
         } catch (Exception e) {
@@ -195,7 +194,7 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> getProfilePic(long id) {
         return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync((fileName) -> {
             try {
-                File file = new File("resources/images/" + fileName);
+                File file = new File("public/profile_images/" + fileName);
                 return ok(file);
             } catch (Exception e) {
                 System.out.println(e);

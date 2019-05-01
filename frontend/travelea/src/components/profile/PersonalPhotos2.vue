@@ -298,7 +298,7 @@ export default {
 
     // Gets the image from the server
     getImgUrl(item) {
-      return "http://localhost:9000/assets/images/" + item.photo_filename;
+      return "http://localhost:9000/api/travellers/photo/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -309,7 +309,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = "http://localhost:9000/assets/images/" + selectedImage.photo_filename;
+      myImage.src = "http://localhost:9000/profile-photo/images/" + this.$route.params.id ;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
 
     },
