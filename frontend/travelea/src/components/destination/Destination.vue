@@ -21,7 +21,7 @@
         :key="item.value"
       >
         <div class="top-destination-content">
-          <h2>{{ item.name }}</h2>
+          <h2 @click="viewDestination(item.id)">{{ item.name }}</h2>
           <span>
             <!-- item.id -->
             <div v-if="isMyProfile" @click="editDestination(item.id)">
@@ -149,6 +149,9 @@ export default {
     },
     editDestination(id) {
       this.$router.push("/user/"+this.user_id+"/destinations/edit/"+id);
+    },
+    viewDestination(id) {
+      this.$router.push("/user/"+this.user_id+"/destinations/"+id);
     },
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
