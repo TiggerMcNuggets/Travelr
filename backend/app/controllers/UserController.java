@@ -169,7 +169,11 @@ public class UserController extends Controller {
      * @return 200 with string if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> updateUser(Http.Request request, Long id) {
+    public CompletionStage<Result> updateUserGivenUser(Http.Request request, Long userId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
 
         // Turns the post data into a form object
         Form<UpdateUserReq> userRequestForm = formFactory.form(UpdateUserReq.class).bindFromRequest(request);
@@ -179,21 +183,15 @@ public class UserController extends Controller {
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 
-        // Forbidden Check
-        User user = request.attrs().get(Attrs.USER);
-        if (user.id != id) {
-            return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-        }
-
         // Create an object from the request
         UpdateUserReq req = userRequestForm.get();
 
-        return userRepository.getUser(id).thenComposeAsync(newUser -> {
+        return userRepository.getUser(userId).thenComposeAsync(newUser -> {
             // Not Found Check
             if (newUser == null) {
                 return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
-            return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
+            return userRepository.updateUser(req, userId).thenApplyAsync(uid -> ok("Traveller Updated"));
         });
     }
 
