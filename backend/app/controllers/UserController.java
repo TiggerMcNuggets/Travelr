@@ -165,7 +165,7 @@ public class UserController extends Controller {
     /**
      * Update a user that matches header and id
      * @param request the http request
-     * @param id the user id
+     * @param userId the user id
      * @return 200 with string if all ok
      */
     @Authorization.RequireAuth
