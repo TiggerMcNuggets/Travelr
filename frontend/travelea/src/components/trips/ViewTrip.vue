@@ -72,7 +72,7 @@ export default {
 
       // invoked by child component creat-trip once the trip has been modified, passed as prop
       updateViewTripPage: function() {
-          tripRepo.getUserSingleTrip(this.$route.params.trip_id, this.$route.params.id).then((result) => {
+          tripRepo.getUserSingleTrip(this.$route.params.id, this.$route.params.trip_id).then((result) => {
               let trip = result.data;
               let ordered_dests = trip.destinations.sort(function(a, b){
                   return a.ordinal - b.ordinal;
