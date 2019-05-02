@@ -5,6 +5,10 @@ export default {
         return Repository.post('/trips', tripBody);
     },
 
+    createTripForUser(tripBody, user_id) {
+        return Repository.post('/users/'+user_id+'/trips', tripBody);
+    },
+
     getTrips() {
         return Repository.get('/trips')
     },

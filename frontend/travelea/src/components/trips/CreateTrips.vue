@@ -177,6 +177,9 @@ export default {
       tripToDisplay: null,
       draggableEnabled: true,
       dialogName: "Create a new trip",
+      isMyProfile: false,
+      isAdminUser: false,
+      id: this.$route.params.id,
       trip: {
         title: "",
         destinations: [
@@ -223,6 +226,11 @@ export default {
         .catch(e => {
           console.log(e);
         });
+    },
+
+    checkIfProfileOwner() {
+      this.id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == this.id);
     },
 
     /**
@@ -279,6 +287,16 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
+        if (this.isAdminUser) {
+        tripRepository
+          .createTripForUser(trip, this.id)
+          .then( () => {
+            this.regetTrips();
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        } else {
         tripRepository
           .createTrip(trip)
           .then( () => {
@@ -287,6 +305,7 @@ export default {
           .catch(e => {
             console.log(e);
           });
+        }
       }
     },
 
@@ -352,6 +371,11 @@ export default {
                 }
             });
     }
+  },
+
+  created: function() {
+    this.checkIfProfileOwner();
+    this.isAdminUser = store.getters.getIsUserAdmin;
   }
 };
 </script>

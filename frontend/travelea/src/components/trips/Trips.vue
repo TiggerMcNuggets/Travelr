@@ -154,7 +154,11 @@ export default {
 
     regetTrips: function() {
       this.toggleShowCreateTrip();
-      this.getTrips();
+      if (this.isMyProfile) {
+        this.getTrips();
+      } else {
+        this.getUserTrips();
+      }
     },
 
     checkIfProfileOwner() {
