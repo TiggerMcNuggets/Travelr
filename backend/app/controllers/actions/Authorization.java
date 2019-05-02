@@ -2,8 +2,8 @@ package controllers.actions;
 
 
 import controllers.SecurityController;
+import models.Trip;
 import models.User;
-import play.libs.typedmap.TypedKey;
 import play.mvc.*;
 
 import java.lang.annotation.ElementType;
@@ -101,6 +101,32 @@ public class Authorization {
         if (isAdmin) return null;
         if (userIdByToken == userIdById) return null;
         return CompletableFuture.completedFuture(Results.forbidden("Not admin and id from token does not match user id parameter"));
+    }
+
+    /**
+     * @param tripId the trip id
+     * @return 404: no trip found, null: no errors
+     */
+    public static CompletionStage<Result> doesTripExist(Long tripId) {
+        Trip trip = Trip.find.findOne(tripId);
+        if (trip != null) return null;
+        return CompletableFuture.completedFuture(Results.notFound("No trip with given id found"));
+    }
+
+
+    /**
+     *
+     * @param req http request
+     * @param userId the id of the user we are trying to get the trip from
+     * @param tripOwnerId the trip owner id
+     * @return 403: users are not admin and not same user, null: No errors
+     */
+    public static CompletionStage<Result> isUserAuthorisedToViewTrip(Http.Request req, Long userId, Long tripOwnerId) {
+        Boolean isAdmin = req.attrs().get(Attrs.IS_USER_ADMIN);
+        if (!isAdmin && tripOwnerId != userId) {
+            return CompletableFuture.completedFuture(Results.forbidden("Not admin nor trip owner does not match user id parameter"));
+        }
+        return null;
     }
 
     /**

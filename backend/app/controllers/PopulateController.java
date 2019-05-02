@@ -45,6 +45,8 @@ public class PopulateController extends Controller {
         user2.setToken("abc");
         User user3 = new User("Test", "123", "123@test.com", 1);
         User user4 = new User("123", "123", "123333@test.com", 1);
+        user4.setPassword("nonadmin");
+        user4.setToken("nonadmin");
         User user5 = new User("Master", "Splinter", "bigMouse@masterAdmin.net", 1);
         user5.setPassword("master");
         user5.setToken("111");
