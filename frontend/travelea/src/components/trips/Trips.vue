@@ -3,7 +3,7 @@
 <template>
   <v-container style="margin-left: 0px;">
     <div v-if="this.isMyProfile || this.isAdmin">
-      <div v-if="!showCreateTrip && this.isMyProfile">
+      <div v-if="!showCreateTrip && (this.isMyProfile || this.isAdmin)">
         <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
           <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
         </v-btn>

@@ -50,7 +50,7 @@ export default {
   data() {
     return {
         tripId:  this.$route.params.trip_id,
-        userId:  this.$route.params.user_id,
+        userId:  this.$route.params.id,
         modifiedTrip: false,
         is_inset: true,
         trip: {},
@@ -102,14 +102,6 @@ export default {
           trip.destinations = ordered_dests;
           this.trip = trip;
       });
-      /*tripRepo.getTrip(this.$route.params.id).then((result) => {
-          let trip = result.data;
-          let ordered_dests = trip.destinations.sort(function(a, b){
-              return a.ordinal - b.ordinal;
-          });
-          trip.destinations = ordered_dests;
-          this.trip = trip;
-      });*/
   }
 };
 </script>

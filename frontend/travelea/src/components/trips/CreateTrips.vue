@@ -174,7 +174,6 @@ export default {
   },
   data() {
     return {
-        userId: this.$route.params.user_id,
         tripToDisplay: null,
         draggableEnabled: true,
         dialogName: "Create a new trip",
@@ -198,8 +197,9 @@ export default {
           ]
         },
         userDestinations: [],
-        ...rules
+        ...rules,
       id: this.$route.params.id,
+      tripID: this.$route.params.trip_id,
       isAdminUser: false,
       isMyProfile: false,
     };
@@ -325,7 +325,7 @@ export default {
         if (this.$refs.form.validate()) {
             const trip = this.tripAssembler();
             tripRepository
-                .updateTrip(parseInt(this.passedTrip),trip)
+                .updateTrip(this.id, parseInt(this.passedTrip),trip)
                 .then( () => {
                     this.updateViewTripPage()
                 })
@@ -366,7 +366,7 @@ export default {
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};
-        tripRepository.getTrip(this.userId, this.passedTrip)
+        tripRepository.getTrip(this.id, this.passedTrip)
             .then((result) => {
                 const tripById = result.data;
                 tripToEdit.title = tripById.name;
