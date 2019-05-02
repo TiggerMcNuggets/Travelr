@@ -108,7 +108,7 @@ export default {
       }
       UserRepository.getUser(id)
         .then(response => {
-          this.traveller = response.data
+          this.traveller = response.data;
           this.setTravellerToFields(); 
           this.isMyProfile = (store.getters.getUser.id == id)
         })    
