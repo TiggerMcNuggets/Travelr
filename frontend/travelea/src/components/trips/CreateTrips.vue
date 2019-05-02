@@ -218,6 +218,7 @@ export default {
      * Gets the list of valid destinations available to a user
      */
     getDestinations: function() {
+      if (this.isMyProfile) {
       destinationRepository
         .getDestinations()
         .then(res => {
@@ -226,6 +227,16 @@ export default {
         .catch(e => {
           console.log(e);
         });
+      } else {
+      destinationRepository
+        .getUserDestinations(this.id)
+        .then(res => {
+          this.userDestinations = res.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+      }
     },
 
     checkIfProfileOwner() {
