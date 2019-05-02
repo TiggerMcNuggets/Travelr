@@ -135,7 +135,7 @@ let router = new Router({
             }
         },
         {
-            path: '/trips/view/:id',
+            path: '/user/:user_id/trips/:trip_id',
             name: 'view-trip',
             component: ViewTrip
         }
