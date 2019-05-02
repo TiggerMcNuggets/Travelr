@@ -17,6 +17,7 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
+import Map from "../components/map/Map";
 
 const authGuard = (to, from, next) => {
     if (!store.getters.getToken) return next("/login");
@@ -51,7 +52,7 @@ const unauthGuard = (to, from, next) => {
         })
     }
     return next("/user/"+store.getters.getUser.id);
-}
+};
 
 Vue.use(Router);
 let router = new Router({
@@ -62,7 +63,13 @@ let router = new Router({
             name: 'home',
             component: Home,
             beforeEnter: unauthGuard
-        },     
+        },
+        {
+            path:'/maps',
+            name: 'map',
+            component: Map,
+            beforeEnter: unauthGuard
+        },
         {
             path: '/user/:id',
             name: 'userProfile',
