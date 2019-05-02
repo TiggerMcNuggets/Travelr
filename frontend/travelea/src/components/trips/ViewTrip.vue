@@ -11,7 +11,7 @@
         <create-trip style="background-color: white;"
                      v-if="true"
                      :regetTrips="() => console.log('no need')"
-                     :passedTrip="this.$route.params.id"
+                     :passedTrip="this.$route.params.trip_id"
                      :updateViewTripPage="this.updateViewTripPage"
         />
     </v-dialog>
@@ -72,7 +72,7 @@ export default {
 
       // invoked by child component creat-trip once the trip has been modified, passed as prop
       updateViewTripPage: function() {
-          tripRepo.getTrip(this.$route.params.id).then((result) => {
+          tripRepo.getUserSingleTrip(this.$route.params.trip_id, this.$route.params.id).then((result) => {
               let trip = result.data;
               let ordered_dests = trip.destinations.sort(function(a, b){
                   return a.ordinal - b.ordinal;
@@ -92,7 +92,7 @@ export default {
     },
 
   created: function() {
-      tripRepo.getTrip(this.$route.params.id).then((result) => {
+      tripRepo.getUserSingleTrip(this.$route.params.id, this.$route.params.trip_id).then((result) => {
           let trip = result.data;
           let ordered_dests = trip.destinations.sort(function(a, b){
               return a.ordinal - b.ordinal;
@@ -100,6 +100,14 @@ export default {
           trip.destinations = ordered_dests;
           this.trip = trip;
       });
+      /*tripRepo.getTrip(this.$route.params.id).then((result) => {
+          let trip = result.data;
+          let ordered_dests = trip.destinations.sort(function(a, b){
+              return a.ordinal - b.ordinal;
+          });
+          trip.destinations = ordered_dests;
+          this.trip = trip;
+      });*/
   }
 };
 </script>

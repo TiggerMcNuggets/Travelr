@@ -12,6 +12,7 @@ import controllers.dto.Trip.GetTripRes;
 import controllers.dto.Trip.TripDestinationRes;
 import io.ebean.Ebean;
 
+import models.Trip;
 import models.TripDestination;
 import models.User;
 import play.data.Form;
@@ -89,6 +90,7 @@ public class TripController extends Controller {
         });
     }
 
+
     /**
      * Creates a trip for a user
      * @param request the http request
@@ -163,6 +165,41 @@ public class TripController extends Controller {
 
             return ok(jsonResponse);
         });
+    }
+
+
+
+    /**
+     * Gets a single trip that belongs to a user and matches the given id
+     * @param request the http request
+     * @param userId the user id
+     * @param tripId the trip id
+     * @return 200: ok, 403: user not an admin or logged in user, 404: user or trip not found
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTripWhenUserGiven(Http.Request request, Long userId, Long tripId) {
+
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+        // Not Found Check
+        CompletionStage<Result> tripExists = Authorization.doesTripExist(tripId);
+        if (tripExists != null) return tripExists;
+        // User allowed to see trip
+        Trip trip = Trip.find.findOne(tripId);
+        CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, userId, trip.user.id);
+        if (authorisedToView != null) return authorisedToView;
+
+        //Hacky work around to get the arrival and departure dates returning
+        for (TripDestination dest: trip.destinations) {
+            dest.getArrivalDate();
+        }
+        GetTripRes response = new GetTripRes(trip);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonResponse = mapper.valueToTree(response);
+
+        return CompletableFuture.completedFuture(ok(jsonResponse));
+
     }
 
     /**

@@ -145,7 +145,9 @@ export default {
     },
 
     openTrip: function(id) {
-        this.$router.push("/trips/view/"+id);//window.location.href = '/#/trips/view/'+id;
+        if (this.isMyProfile || this.isAdminUser) {
+          this.$router.push("/user/"+this.user_id+"/trips/"+id);//window.location.href = '/#/trips/view/'+id;
+        }
     },
 
     toggleShowCreateTrip: function() {

@@ -9,6 +9,10 @@ export default {
         return Repository.post('/users/'+user_id+'/trips', tripBody);
     },
 
+    getUserSingleTrip(user_id, trip_id) {
+        return Repository.get('users/'+user_id+'/trips/'+trip_id)
+    },
+
     getTrips() {
         return Repository.get('/trips')
     },

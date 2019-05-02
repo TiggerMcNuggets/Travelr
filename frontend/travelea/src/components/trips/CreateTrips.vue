@@ -365,7 +365,7 @@ export default {
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};
-        tripRepository.getTrip(this.passedTrip)
+        tripRepository.getUserSingleTrip(this.id, this.passedTrip)
             .then((result) => {
                 const tripById = result.data;
                 tripToEdit.title = tripById.name;
