@@ -174,30 +174,31 @@ export default {
   },
   data() {
     return {
-      tripToDisplay: null,
-      draggableEnabled: true,
-      dialogName: "Create a new trip",
-      trip: {
-        title: "",
-        destinations: [
-          {
-            title: null,
-            arrivalDate: null,
-            departureDate: null,
-            arrivalDateMenu: false,
-            departureDateMenu: false
-          },
-          {
-            title: null,
-            arrivalDate: null,
-            departureDate: null,
-            arrivalDateMenu: false,
-            departureDateMenu: false
-          }
-        ]
-      },
-      userDestinations: [],
-      ...rules
+        userId: this.$route.params.user_id,
+        tripToDisplay: null,
+        draggableEnabled: true,
+        dialogName: "Create a new trip",
+        trip: {
+          title: "",
+          destinations: [
+            {
+              title: null,
+              arrivalDate: null,
+              departureDate: null,
+              arrivalDateMenu: false,
+              departureDateMenu: false
+            },
+            {
+              title: null,
+              arrivalDate: null,
+              departureDate: null,
+              arrivalDateMenu: false,
+              departureDateMenu: false
+            }
+          ]
+        },
+        userDestinations: [],
+        ...rules
     };
   },
   computed: {
@@ -335,7 +336,7 @@ export default {
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};
-        tripRepository.getTrip(this.passedTrip)
+        tripRepository.getTrip(this.userId, this.passedTrip)
             .then((result) => {
                 const tripById = result.data;
                 tripToEdit.title = tripById.name;

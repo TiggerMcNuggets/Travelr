@@ -2,26 +2,28 @@
 
 <template>
   <v-container style="margin-left: 0px;">
-    <div v-if="!showCreateTrip && this.isMyProfile">
-      <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
-        <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
-      </v-btn>
-      <create-trip
-        v-if="showCreateTrip"
-        v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
-      />
-    </div>
-    <div v-if="showCreateTrip">
-      <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
-        <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
-      </v-btn>
+    <div v-if="this.isMyProfile || this.isAdmin">
+      <div v-if="!showCreateTrip && this.isMyProfile">
+        <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
+          <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
+        </v-btn>
         <create-trip
-        v-if="showCreateTrip"
-        :toggleShowCreateTrip="toggleShowCreateTrip"
-        :regetTrips="regetTrips"
-        :passedTrip="null"
-        :updateViewTripPage="() => console.log()"
+          v-if="showCreateTrip"
+          v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
         />
+      </div>
+      <div v-if="showCreateTrip">
+        <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
+          <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
+        </v-btn>
+          <create-trip
+          v-if="showCreateTrip"
+          :toggleShowCreateTrip="toggleShowCreateTrip"
+          :regetTrips="regetTrips"
+          :passedTrip="null"
+          :updateViewTripPage="() => console.log()"
+          />
+      </div>
     </div>
 
     <ul>
@@ -105,6 +107,7 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       trips: [],
+        isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
       user_id: this.$route.params.id
     };

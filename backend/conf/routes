@@ -53,10 +53,12 @@ PUT         /api/destinations/:id               controllers.DestinationControlle
 GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
 
 
+GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
+
 # Trips
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
 POST        /api/trips                          controllers.TripController.createTrip(request: Request)
-GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
+#GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
 #includes admin
 PUT         /api/users/:user_id/trips/:trip_id  controllers.TripController.updateUserTripGivenUser(request: Request, trip_id: Long, user_id: Long)
