@@ -193,4 +193,52 @@ public class TripController extends Controller {
             return tripRepository.updateTrip(req, trip).thenApplyAsync(tripId -> ok("Trip updated"));
         });
     }
+
+
+    /**
+     * Updates a trip that belongs to a user with the given id
+     * @param request the http request
+     * @param userId the userID
+     * @param id the trip id
+     * @return 200 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserTripGivenUser(Http.Request request, Long id, Long userId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        Form<CreateTripReq> createTripForm = formFactory.form(CreateTripReq.class).bindFromRequest(request);
+        User user = request.attrs().get(Attrs.USER);
+
+        // Bad Request check
+        if (createTripForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateTripReq req = createTripForm.get();
+
+        // Less than two destinations check
+        if (req.hasLessThanTwoDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+        }
+
+        // Two same destinations in a row check
+        if (req.hasSameConsecutiveDestinations()) {
+            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+        }
+
+        return tripRepository.getTrip(id).thenComposeAsync(trip -> {
+            // Not Found Check
+            if (trip == null) {
+                return CompletableFuture.completedFuture(notFound("Trip not found"));
+            }
+
+
+            trip.name = req.name;
+            trip.destinations.clear();
+            return tripRepository.updateTrip(req, trip).thenApplyAsync(tripId -> ok("Trip updated"));
+        });
+    }
 }
