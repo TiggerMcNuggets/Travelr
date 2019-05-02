@@ -1,7 +1,5 @@
-# --- Created by Ebean DDL
-# To stop Ebean DDL generation, remove this comment and start using Evolutions
 
-# --- !Ups
+-- !Ups
 
 create table destination (
   id                            bigint auto_increment not null,
@@ -55,13 +53,13 @@ create table trip_destination (
 
 create table user (
   id                            bigint auto_increment not null,
-  first_name                    varchar(255) not null,
-  middle_name                   varchar(255),
-  last_name                     varchar(255) not null,
+  first_name                    varchar(100) not null,
+  middle_name                   varchar(100),
+  last_name                     varchar(100) not null,
   token                         varchar(255),
   date_of_birth                 integer not null,
   gender                        varchar(255) not null,
-  email                         varchar(256) not null,
+  email                         varchar(100) not null,
   password                      varbinary(64),
   user_profile_photo            varchar(255),
   timestamp                     integer not null,
@@ -112,7 +110,7 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
-# --- !Downs
+-- !Downs
 
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;

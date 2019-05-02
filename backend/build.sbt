@@ -19,6 +19,7 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 libraryDependencies += "io.ebean.test" % "ebean-test-config" % "11.36.1" % "test"
 
 libraryDependencies += evolutions
+libraryDependencies ++= Seq(evolutions, jdbc)
 
 libraryDependencies += "org.awaitility" % "awaitility" % "2.0.0" % Test
 libraryDependencies += "org.assertj" % "assertj-core" % "3.6.2" % Test
