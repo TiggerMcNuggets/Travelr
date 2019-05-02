@@ -14,18 +14,18 @@ export default {
     },
 
     getTrips() {
-        return Repository.get('/trips')
+        return Repository.get('/trips');
     },
 
     getUserTrips(user_id) {
-        return Repository.get('/travellers/'+user_id+'/trips')
+        return Repository.get('/travellers/'+user_id+'/trips');
     },
 
-    getTrip(id) {
-        return Repository.get(`/trips/${id}`)
+    getTrip(userId, tripId) {
+        return Repository.get(`/users/${userId}/trips/${tripId}`);
     },
 
     updateTrip(id, tripBody) {
-        return Repository.put(`/trips/${id}`, tripBody)
+        return Repository.put(`/trips/${id}`, tripBody);
     }
 }
