@@ -94,12 +94,11 @@
     export default {
         data() {
             return {
-                destinations = [];
+                destinations: [],
                 selectedDestinations: []
             };
         },
         props: {
-            destinations: Array,
             updateDestinationsMarkers: Function
         },
         // child components
@@ -108,7 +107,7 @@
         methods: {
         },
         created: function() {
-            destinations = await destinationRepository.getDestinationList()
+            // destinations = await destinationRepository.getDestinationList()
 
         }
     };
