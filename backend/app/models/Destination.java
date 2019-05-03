@@ -16,6 +16,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Destination extends BaseModel {
 
+    // finder linked as a public static field
+    public static final DestinationFinder find = new DestinationFinder();
+
     public String getName() {
         return name;
     }

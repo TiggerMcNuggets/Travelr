@@ -81,13 +81,14 @@ public class DestinationPhotoController extends Controller {
     }
 
     /**
-     * Uploads a personal photo to the server file system.
+     * Uploads a destination photo to the server file system.
      * @param request The request containing the image data to upload.
      * @param id The id of the traveller/user uploading the image.
+     * @param dest_id The id of the destination uploading the image of.
      * @return A result whether the image upload was successful or not.
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id) {
+    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long dest_id) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
@@ -98,7 +99,7 @@ public class DestinationPhotoController extends Controller {
             FileHelper fh = new FileHelper();
             fh.makeDirectory("public/images");
             file.copyTo(Paths.get("public/images/" + fileName), true);
-            return destinationPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
+            return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
                 } else {

@@ -5,10 +5,7 @@ import controllers.dto.Photo.UpdatePhotoReq;
 import finders.UserFinder;
 import finders.PhotoFinder;
 import io.ebean.*;
-import models.DestinationPhoto;
-import models.Nationality;
-import models.PersonalPhoto;
-import models.User;
+import models.*;
 import play.db.ebean.EbeanConfig;
 import play.db.ebean.EbeanDynamicEvolutions;
 
@@ -47,11 +44,12 @@ public class DestinationPhotoRepository {
      * Adds a new destination photo for a user.
      * @param id user id
      */
-    public CompletionStage<Long> add(Long id, String imageFileName) {
+    public CompletionStage<Long> add(Long id, Long dest_id, String imageFileName) {
         return supplyAsync(() -> {
             User traveller = User.find.findById(id);
+            Destination destination = Destination.find.findById(dest_id);
             if (traveller == null) return null; // bad user
-            DestinationPhoto photo = new DestinationPhoto(traveller, imageFileName);
+            DestinationPhoto photo = new DestinationPhoto(traveller, imageFileName, destination);
             photo.save();
             return photo.id;
         }, executionContext);

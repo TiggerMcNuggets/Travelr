@@ -21,6 +21,9 @@ public class DestinationPhoto extends BaseModel {
     @ManyToOne
     public User traveller;
 
+    @ManyToOne
+    public Destination destination;
+
     /**
      * The photo filename.
      */
@@ -40,9 +43,10 @@ public class DestinationPhoto extends BaseModel {
      *
      * @param photo_filename The local file path where the image is stored.
      */
-    public DestinationPhoto(User traveller, String photo_filename) {
+    public DestinationPhoto(User traveller, String photo_filename, Destination destination) {
         this.traveller = traveller;
         this.photo_filename = photo_filename;
+        this.destination = destination;
     }
 
     /**
