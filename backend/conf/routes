@@ -50,6 +50,8 @@ GET         /api/users/:user_id/destinations/:dest_id         controllers.Destin
 
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
+GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
+
 # Trips
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
 #route for when admin is not taken into account
