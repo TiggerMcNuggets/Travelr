@@ -2,8 +2,8 @@ import Repository from "./Repository";
 
 
 export default {
-    getDestinations() {
-        return Repository.get('/destinations');
+    getDestinations(id) {
+        return Repository.get(`/destinations/${id}`);
     },
 
     getDestination(id) {

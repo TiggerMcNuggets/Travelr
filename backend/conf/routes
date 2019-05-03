@@ -55,7 +55,7 @@ POST        /api/trips                          controllers.TripController.creat
 POST        /api/users/:user_id/trips           controllers.TripController.createTripWithUser(request: Request, user_id: Long)
 
 
-GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
+GET         /api/trips/:id                      controllers.UserController.getTrips(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
 
 # Trips (NEW)
