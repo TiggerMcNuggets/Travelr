@@ -1,5 +1,7 @@
 package models;
 
+import finders.PhotoFinder;
+import io.ebean.Finder;
 import play.data.validation.Constraints;
 
 import javax.persistence.Column;
@@ -12,6 +14,8 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class PersonalPhoto extends BaseModel {
+
+    public static final PhotoFinder find = new PhotoFinder();
 
     @ManyToOne
     public User traveller;

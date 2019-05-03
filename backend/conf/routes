@@ -22,41 +22,45 @@ POST        /api/travellers                     controllers.UserController.creat
 GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
 GET         /api/travellers/:id/trips           controllers.UserController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
-PUT         /api/travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
+PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
 
-
-
-# Photos
+# Personal Photos and Profile Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
 GET         /api/travellers/photo/:filename     controllers.PhotoController.getImageFromDatabase(filename: String)
-GET         /api/travellers/profile-photo/:id   controllers.PhotoController.getProfilePic(id: Long)
 
 POST        /api/travellers/photo/:photo_id     controllers.PhotoController.updateUserPhoto(request: Request, photo_id: Long)
+GET         /api/travellers/profile-photo/:id   controllers.PhotoController.getProfilePic(id: Long)
 POST        /api/travellers/:id/photo           controllers.PhotoController.uploadPersonalPhoto(request: Request, id: Long)
 PUT         /api/travellers/:id/uploadphoto     controllers.PhotoController.uploadProfilePhoto(request: Request, id: Long)
 PUT         /api/travellers/:id/setphoto        controllers.PhotoController.chooseProfilePhoto(request: Request, id: Long)
 
 # Destinations
 GET         /api/destinations                   controllers.DestinationController.getUserDestinations(request: Request)
-GET         /api/users/:id/destinations         controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
 POST        /api/destinations                   controllers.DestinationController.createDestination(request: Request)
-
-# accepting id
-POST        /api/travellers/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
-
 GET         /api/destinations/:id               controllers.DestinationController.getUserDestination(request: Request, id: Long)
-GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
-
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
-# Trips
+
+# Destinations (NEW)
+GET         /api/users/:id/destinations         controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
+POST        /api/travellers/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
+GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
+
+
+# Trips (Old)
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
+#route for when admin is not taken into account
 POST        /api/trips                          controllers.TripController.createTrip(request: Request)
+POST        /api/users/:user_id/trips           controllers.TripController.createTripWithUser(request: Request, user_id: Long)
+
+
 GET         /api/trips/:id                      controllers.TripController.getUserTrip(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
-#includes admin
+
+# Trips (NEW)
 PUT         /api/users/:user_id/trips/:trip_id  controllers.TripController.updateUserTripGivenUser(request: Request, trip_id: Long, user_id: Long)
+GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
