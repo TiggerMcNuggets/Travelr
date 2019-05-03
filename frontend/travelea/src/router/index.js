@@ -17,6 +17,7 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
+import SingleDestination from "../components/destination/SingleDestination.vue";
 import Map from "../components/map/Map";
 
 const authGuard = (to, from, next) => {
@@ -98,14 +99,19 @@ let router = new Router({
                 },
                 {
                     path: '/user/:id/destinations',
-                    name: 'travellerDestination',
+                    name: 'travellerDestinations',
                     component: Destination                    
                 },
                 {
                     path: '/user/:id/destinations/edit/:dest_id',
                     name: 'edit-destination',
                     component: DestinationEdit,
-                }
+                },
+                {
+                    path: '/user/:id/destinations/:dest_id',
+                    name: 'travellerDestination',
+                    component: SingleDestination                    
+                },
             ]
         },
         {
