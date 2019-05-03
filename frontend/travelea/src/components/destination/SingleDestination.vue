@@ -114,14 +114,7 @@
 
 
 <style>
-.dot {
-  height: 7px;
-  width: 7px;
-  margin: 0px 10px;
-  background-color: darkslategrey;
-  border-radius: 50%;
-  display: inline-block;
-}
+
 
 .pink-color {
   width: 0;
@@ -219,6 +212,15 @@
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 30px;
+}
+
+.dot {
+  height: 7px;
+  width: 7px;
+  margin: 0px 10px;
+  background-color: darkslategrey;
+  border-radius: 50%;
+  display: inline-block;
 }
 
 ul {

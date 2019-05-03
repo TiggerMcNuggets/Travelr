@@ -1,5 +1,5 @@
 <template>
-    <v-card class="map-container" >
+    <div class="map-container" >
         <GmapMap class="main-map" :zoom="2" :center="{lat: 0, lng: 0}"
                  ref="map">
             <GmapMarker v-for="(marker, index) in markers"
@@ -19,13 +19,13 @@
                 </div>
             </GmapInfoWindow>
         </GmapMap>
-    </v-card>
+    </div>
 </template>
 
 <style>
     .map-container {
-        width: 900px;
-        height: 600px;
+        width: 100%;
+        height: 800px;
 
     }
     .main-map {
@@ -50,10 +50,15 @@
         },
         watch: {
         },
+        components: {
+        },
         methods: {
             openInfoWindowTemplate(item) {
                 this.infoWindow.position = item.latLng;
                 this.infoWindow.open = true;
+            },
+            log: function(evt) {
+                window.console.log(evt);
             }
         }
     }
