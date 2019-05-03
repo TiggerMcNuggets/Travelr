@@ -22,7 +22,7 @@ POST        /api/travellers                     controllers.UserController.creat
 GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
 GET         /api/travellers/:id/trips           controllers.UserController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
-PUT         /api/travellers/:id                 controllers.UserController.updateUser(request: Request, id: Long)
+PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
 
 
