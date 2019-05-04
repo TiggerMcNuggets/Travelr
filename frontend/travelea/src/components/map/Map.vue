@@ -10,6 +10,7 @@
                         :position="{lat: marker.latitude, lng: marker.longitude}"
                         :clickable="true"
                         @click="openInfoWindowTemplate(destinationsMarkers[index])"
+                        :icon="chooseIconForMarker(marker, index)"
             />
             <GmapInfoWindow
                     :options="{maxWidth: 300}"
@@ -45,7 +46,8 @@
 </style>
 
 <script>
-
+    const pinkMarker = require('../../assets/pink-google-maps-marker.svg');
+    const blueMarker = require('../../assets/blue-google-maps-marker.svg');
     export default {
         data () {
             return {
@@ -82,7 +84,14 @@
             },
             navigateToDestination: function(destId) {
                 this.$router.push(`/user/${this.userId}/destinations/${destId}`);
-            }
+            },
+            chooseIconForMarker(marker, index) {
+              if ((index % 2) === 0) {
+                  return pinkMarker;
+              } else {
+                  return blueMarker;
+              }
+            },
         },
         created() {
             console.log("markers", this.destinationsMarkers);
