@@ -35,7 +35,7 @@
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
-        <v-alert :value="uploadError" color="error">You are trying to upload a duplicate image or an error occured while uploading.</v-alert>
+        <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -261,7 +261,8 @@ export default {
       id: null,
       isMyProfile: false,
       isAdminUser: false,
-      uploadError: false
+      uploadError: false,
+      errorText: "You are trying to upload a duplicate image or an error occured while uploading."
     };
   },
 
@@ -301,7 +302,8 @@ export default {
           this.files = this.groupImages(result.data);
         });
       }).catch(error => {
-          this.uploadError = true
+          this.uploadError = true;
+          this.errorText = error.response.data;
         });
 
       this.$refs.file.value = "";
