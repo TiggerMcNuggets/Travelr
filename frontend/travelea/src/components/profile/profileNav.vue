@@ -156,6 +156,7 @@ li {
 
 <script>
 import { store } from "../../store/index";
+import DefaultPic from "../../assets/defaultPic.png"
 
 export default {
   store,
@@ -210,11 +211,12 @@ export default {
 
   },
   computed: {
+    
     getImgUrl() {
-      if (!this.profilePic) {
-        return "http://localhost:9000/assets/profile_images/defaultPic.png";
+      if (!this.profilePic || this.profilePic == 'defaultPic.png') {
+        return DefaultPic;
       } else {
-        return "http://localhost:9000/assets/profile_images/" + this.profilePic;
+        return "http://localhost:9000/api/travellers/profile-photo/" + this.id;
       }
     }
   }
