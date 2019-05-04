@@ -221,7 +221,7 @@ export default {
     getDestinations: function() {
       if (this.isMyProfile) {
       destinationRepository
-        .getDestinations()
+        .getDestinations(this.id)
         .then(res => {
           this.userDestinations = res.data;
         })
@@ -230,7 +230,7 @@ export default {
         });
       } else {
       destinationRepository
-        .getUserDestinations(this.id)
+        .getDestinations(this.id)
         .then(res => {
           this.userDestinations = res.data;
         })
@@ -362,7 +362,7 @@ export default {
      * Makes component usable for both create and edit component
      */
     mounted() {
-      this.getDestinations();
+      this.getDestinations(this.id);
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};

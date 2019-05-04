@@ -1,0 +1,1095 @@
+{
+	"info": {
+		"_postman_id": "645f88c8-5315-4006-8062-762dbde99c0e",
+		"name": "TravelEA API v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Nationality",
+			"item": [
+				{
+					"name": "get all possible nationalities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "USER_TOKEN",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/travellers/:id/nationalities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"travellers",
+								":id",
+								"nationalities"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Traveller types",
+			"item": [
+				{
+					"name": "get traveller types",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/traveller-types",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"traveller-types"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Traveller",
+			"item": [
+				{
+					"name": "get me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"name": "Content-Type",
+								"value": "{{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get full details for a traveller",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/travellers/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get filtered travellers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"name": "Content-Type",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/travellers?=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"travellers"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all travellers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"name": "Content-Type",
+								"value": "{{auth_token}}",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "{{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get traveller trips",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/travellers/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create a traveller",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"string\",\r\n    \"middleName\": \"string\",\r\n    \"lastName\": \"string\",\r\n    \"dateOfBirth\": 1,\r\n    \"gender\": \"string\",\r\n    \"email\": \"string@string.com\",\r\n    \"password\": \"string\",\r\n    \"nationalities\": [\r\n        {\r\n            \"id\": 5,\r\n            \"hasPassport\": false\r\n        }\r\n    ],\r\n    \"travellerTypes\": [1]\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers"
+							]
+						},
+						"description": "Requirements:\n0+ passports,\n1+ nationality,\n1+ type,\n1 fname,\n1 mname,\n1 lname,\n1 dob in yyyy-MM-dd format,\n1 email that is not already existing,\n1 password"
+					},
+					"response": []
+				},
+				{
+					"name": "update traveller",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"string1\",\n    \"middleName\": \"string\",\n    \"lastName\": \"string\",\n    \"dateOfBirth\": 0,\n    \"gender\": \"female\",\n    \"nationalities\": [\n        {\n            \"id\": 2,\n            \"hasPassport\": true\n        },\n                {\n            \"id\": 1,\n            \"hasPassport\": true\n        }\n    ],\n    \"travellerTypes\": [2]\n}\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete traveller",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Destination",
+			"item": [
+				{
+					"name": "get single destination for user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/destinations/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"destinations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all destinations for user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/destinations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"destinations"
+							]
+						},
+						"description": "Unique by name enforced on database"
+					},
+					"response": []
+				},
+				{
+					"name": "add destination for user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Kentucky\",\n    \"latitude\": 123,\n    \"longitude\": -77,\n    \"type\": \"great\",\n    \"district\": \"USA\",\n    \"country\": \"USA\"\n}\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/:user_id/destinations",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								":user_id",
+								"destinations"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update destination",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "295070b5-9b20-4872-8012-586ff1dc3680",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"dodo\",\n    \"latitude\": 100,\n    \"longitude\": 100,\n    \"type\": \"waHunnid\",\n    \"district\": \"waHunnid\",\n    \"country\": \"Taupo\"\n}\n"
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/destinations/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"destinations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Trip",
+			"item": [
+				{
+					"name": "view user trips",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/:user_id/trips/:trip_id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"trips",
+								":trip_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "1"
+								},
+								{
+									"key": "trip_id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update trip",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Red > Krugs > Bot\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/trips/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"trips",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add trip (OLD)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Auckland\",\r\n    \"destinations\": [\r\n        {\"id\": 1,\r\n            \"ordinal\": 1,\r\n            \"arrivalDate\": 0,\r\n            \"departureDate\": 12\r\n        },\r\n        {\"id\": 2,\r\n            \"ordinal\": 2,\r\n            \"arrivalDate\": 23,\r\n            \"departureDate\": 34\r\n        }]\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/trips",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"trips"
+							]
+						},
+						"description": "Trip creation, requires a traveller to exist"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Personal Photos",
+			"item": [
+				{
+					"name": "get travellers personal photos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/:id/photo",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload travellers personal photo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "picture",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/:id/photo",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get personal photo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/photo/Spider.jpg?",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								"photo",
+								"Spider.jpg"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile Photos",
+			"item": [
+				{
+					"name": "get travelers profile photo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Authorization",
+								"value": "{{auth-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/profile-photo/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								"profile-photo",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update traveler profile photo from existing image",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/:id/photo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload traveler profile photo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/travellers/:id/photo",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"travellers",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set profile photo?",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9000/travellers/photo/avatar.jpg?X-Authorization={{auth_token}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"travellers",
+								"photo",
+								"avatar.jpg"
+							],
+							"query": [
+								{
+									"key": "X-Authorization",
+									"value": "{{auth_token}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login as admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4ab7cf5f-e0f3-4b1f-9e9a-d63fd928f3e7",
+						"exec": [
+							"pm.test(\"Set auth_token after login\", function() {",
+							"    const authToken = pm.response.json().token;",
+							"    if (typeof authToken !== \"undefined\") {",
+							"        pm.globals.set(\"auth_token\", authToken);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"adam@test.com\",\n\t\"password\":\"123\"\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login as normal user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4ab7cf5f-e0f3-4b1f-9e9a-d63fd928f3e7",
+						"exec": [
+							"pm.test(\"Set auth_token after login\", function() {",
+							"    const authToken = pm.response.json().token;",
+							"    if (typeof authToken !== \"undefined\") {",
+							"        pm.globals.set(\"auth_token\", authToken);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"adam@test.com\",\n\t\"password\":\"123\"\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/login",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "f00f4db3-7728-4361-ab97-a76446678787",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "populate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/populate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"populate"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "0398aa9f-bb1e-4e76-8e74-bc7a2a8209a3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1c65314c-abd7-4708-9026-346edc659093",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "813ee05b-7769-4041-bd8d-321ee67bd26d",
+			"key": "BASE_URL",
+			"value": "localhost:9000/api",
+			"type": "string"
+		},
+		{
+			"id": "6af4f5e6-fa71-46ca-8503-88119331a81f",
+			"key": "ADMIN_TOKEN",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"id": "54a57fde-3af0-4713-9625-d73edad71cf9",
+			"key": "USER_TOKEN",
+			"value": "abc",
+			"type": "string"
+		},
+		{
+			"id": "88011f78-ccc6-4367-be3b-7c2ffff77c30",
+			"value": "",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
