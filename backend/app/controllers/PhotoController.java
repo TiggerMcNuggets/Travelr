@@ -22,7 +22,6 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -30,6 +29,8 @@ import java.util.concurrent.CompletionStage;
 public class PhotoController extends Controller {
 
     private final PersonalPhotoRepository personalPhotoRepository;
+
+    private final FileHelper fh = new FileHelper();
 
     private String personalPhotosFilepath;
 
@@ -46,6 +47,7 @@ public class PhotoController extends Controller {
         this.personalPhotoRepository = personalPhotoRepository;
     }
 
+
     /**
      * Allows the user to fetch rows from the personal photo repository, given a user id
      * @param request the http request
@@ -56,13 +58,12 @@ public class PhotoController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id) {
-        FileHelper fh = new FileHelper();
  
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
         return personalPhotoRepository.list(id, user.id == id || isAdmin).thenApplyAsync((photos) -> {
-            PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
+            PathProperties pathProperties = PathProperties.parse("id, photo_filename, is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
     }
@@ -78,15 +79,10 @@ public class PhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
-            String fileName = picture.getFilename();
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
+            String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
-            FileHelper fh = new FileHelper();
-//            fh.makeDirectory(System.getProperty("user.home") + "/TravelEA_Resources/images");
             fh.makeDirectory(this.personalPhotosFilepath);
             file.copyTo(Paths.get(this.personalPhotosFilepath + fileName), true);
-//            file.copyTo(Paths.get(System.getProperty("user.home")+ "/TravelEA_Resources/images/" + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
@@ -106,8 +102,7 @@ public class PhotoController extends Controller {
          */
 
     public Result getImageFromDatabase(String filename) {
-//        File file = new File(System.getProperty("user.home") + "/TravelEA_Resources/images/" + filename);
-//        System.out.println(file);
+
         File file = new File(this.personalPhotosFilepath + filename);
         try {
             return ok(file);
@@ -115,8 +110,6 @@ public class PhotoController extends Controller {
             return badRequest("Missing file");
         }
     }
-
-
 
 
     /**
@@ -156,13 +149,8 @@ public class PhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
-            String fileName = picture.getFilename();
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
+            String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
-            FileHelper fh = new FileHelper();
-//            fh.makeDirectory(System.getProperty("user.home") + "/testFolder/profile_images");
-//            file.copyTo(Paths.get(System.getProperty("user.home") + "/testFolder/profile_images/" + fileName), true);
             fh.makeDirectory(this.profilePhotosFilepath);
             file.copyTo(Paths.get(this.profilePhotosFilepath + fileName), true);
 
@@ -193,10 +181,9 @@ public class PhotoController extends Controller {
 
         try {
         if (fileName != null) {
-            FileHelper fh = new FileHelper();
             fh.makeDirectory(this.profilePhotosFilepath);
-            Path sourceDirectory = Paths.get(this.personalPhotosFilepath + req.photo_filename);
-            Path targetDirectory = Paths.get((this.profilePhotosFilepath + req.photo_filename));
+            Path sourceDirectory = Paths.get(this.personalPhotosFilepath + fileName);
+            Path targetDirectory = Paths.get((this.profilePhotosFilepath + fileName));
             java.nio.file.Files.copy(sourceDirectory, targetDirectory);
         }
         } catch (IOException e) {
@@ -221,9 +208,7 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> getProfilePic(long id) {
         return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync((fileName) -> {
             try {
-//                File file = new File(System.getProperty("user.home") + "testFolder/profile_images/" + fileName);
                 File file = new File(this.profilePhotosFilepath + fileName);
-
                 return ok(file);
             } catch (Exception e) {
                 System.out.println(e);

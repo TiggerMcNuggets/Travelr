@@ -114,7 +114,7 @@ public class PersonalPhotoRepository {
      * @param id user id
      * @return file name of profile pic, otherwise null
      */
-    public CompletionStage<Object> getUserProfilePic(long id) {
+    public CompletionStage<String> getUserProfilePic(long id) {
         return supplyAsync(() -> {
             try {
                 User user = User.find.findById(id);
