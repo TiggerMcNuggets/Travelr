@@ -236,8 +236,6 @@ export default {
   components: {
       MapDashboard,
       DestinationCreate: DestinationCreate,
-      // Map: Map,
-      // MapMenu,
   },
   watch: {
     '$route.params.id': function() {

@@ -50,7 +50,6 @@
             };
         },
         props: {
-          destinations: Array
         },
         computed: {
         },
@@ -73,7 +72,6 @@
         },
         created() {
             this.destinationsMarkers = this.destinations;
-            console.log("Ciao", this.destinationsMarkers);
         }
     };
 </script>
