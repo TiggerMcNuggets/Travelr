@@ -3,7 +3,7 @@ import Repository from "./Repository";
 
 export default {
     getDestinations(id) {
-        return Repository.get(`/destinations/${id}`);
+        return Repository.get(`users/${id}/destinations`);
     },
 
     getDestination(id) {
