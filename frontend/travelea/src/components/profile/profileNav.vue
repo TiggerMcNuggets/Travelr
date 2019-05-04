@@ -157,6 +157,7 @@ li {
 <script>
 import { store } from "../../store/index";
 import DefaultPic from "../../assets/defaultPic.png"
+import base_url from "../../repository/BaseUrl"
 
 export default {
   store,
@@ -216,7 +217,7 @@ export default {
       if (!this.profilePic || this.profilePic == 'defaultPic.png') {
         return DefaultPic;
       } else {
-        return "http://localhost:9000/api/travellers/profile-photo/" + this.id;
+        return base_url + "/api/travellers/profile-photo/" + this.id;
       }
     }
   }

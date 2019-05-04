@@ -234,12 +234,15 @@ hr {
 
 <script>
 import { store } from "../../store/index";
+import base_url from "../../repository/BaseUrl"
 import {
   storeImage,
   getImages,
   setProfilePic,
   updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
+
+
 
 export default {
   store,
@@ -298,7 +301,7 @@ export default {
 
     // Gets the image from the server
     getImgUrl(item) {
-      return "http://localhost:9000/api/travellers/photo/" + item.photo_filename;
+      return base_url + "/api/travellers/photo/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -309,7 +312,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = "http://localhost:9000/profile-photo/images/" + this.$route.params.id ;
+      myImage.src = base_url + "/api/travellers/photo/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
 
     },
@@ -334,8 +337,7 @@ export default {
   },
 
   created: function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    // store.commit("setPersonalImages", this.$route.params.id);
+
     this.id = this.$route.params.id;
     
     if(!this.id) { 
