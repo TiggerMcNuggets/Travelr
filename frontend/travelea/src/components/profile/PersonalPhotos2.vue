@@ -35,6 +35,7 @@
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
+        <v-alert :value="uploadError" color="error">You are trying to upload a duplicate image or an error occured while uploading.</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -92,6 +93,7 @@
 
 
 <style>
+
 
 .pink-color {
   width: 0;
@@ -258,7 +260,8 @@ export default {
       showUploadSection: false,
       id: null,
       isMyProfile: false,
-      isAdminUser: false
+      isAdminUser: false,
+      uploadError: false
     };
   },
 
@@ -288,15 +291,20 @@ export default {
 
     // Submits the image file and uploads it to the server
     submitFile() {
+      this.uploadError = false;
       let formData = new FormData();
       formData.append("picture", this.file);
 
       storeImage(this.id, formData).then(() => {
-        getImages(this.id).then(result => {
+        getImages(this.id)
+        .then((result) => {
           this.files = this.groupImages(result.data);
-         
         });
-      });
+      }).catch(error => {
+          this.uploadError = true
+        });
+
+      this.$refs.file.value = "";
     },
 
     // Gets the image from the server
