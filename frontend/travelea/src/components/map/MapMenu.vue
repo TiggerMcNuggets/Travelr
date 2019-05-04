@@ -1,19 +1,31 @@
-
-<template>
-    <div class="side-menu-height map-side-menu-container">
-        <div class="blue-background side-menu-button-size">
+<template >
+    <div
+            class="side-menu-height map-side-menu-container"
+            :class="{ 'side-menu-width': isShowingMenu, 'no-width': !isShowingMenu}">
+        <div v-ripple v-on:click="onMenuClick" class="blue-background side-menu-button-size">
             <v-icon color="white">drag_handle</v-icon>
         </div>
-        <div class="side-menu-height side-menu-width">
+        <div
+                v-if="isShowingMenu"
+                style="max-height: 100%"
+                class="side-menu-height scroll-y"
+        >
+            <div style="margin-top: 15px">
+                <h3>Destinations</h3>
+                <v-btn v-on:click="selectAll" color="#3f51b5"><h6 style="color: white">Select All</h6></v-btn>
+            </div>
+            <v-divider class="photo-header-divider"></v-divider>
             <div
-                    class="destination-list-element"
-                    v-for="(item) in this.selectedDestinations"
+                    v-for="(item) in destinations"
                     :value="item.value"
                     :key="item.value"
+
             >
                 <v-checkbox
-                        v-model="item.selected"
-                        :label="item.name" :value="item.name"></v-checkbox>
+                        v-model="selectedDestinations"
+                        :label="item.name"
+                        :value="item"
+                        @change="onCheckBoxChange"></v-checkbox>
                 <v-divider class="photo-header-divider"></v-divider>
 
             </div>
@@ -26,6 +38,10 @@
 
     h2 {
         align-self: flex-end;
+    }
+
+    alligned-h3-text {
+        align-self: center;
     }
 
     hr {
@@ -69,6 +85,9 @@
         background-color: #3f51b5;
         width: 15px;
     }
+    .blue-background:hover {
+        cursor: pointer;
+    }
 
     .side-menu-button-size {
         height: 100%;
@@ -85,30 +104,47 @@
         flex-direction: row;
     }
 
+    .no-width {
+        width: 0% !important;
+    }
+
 </style>
 
 
 <script>
-    import {RepositoryFactory} from "../../repository/RepositoryFactory";
-    let destinationRepository = RepositoryFactory.get("destination");
     export default {
         data() {
             return {
-                destinations: [],
-                selectedDestinations: []
+                offsetTop: 0,
+                userId: this.$route.params.id,
+                selectedDestinations: [],
+                isShowingMenu: false
             };
         },
         props: {
+            destinations: Array,
             updateDestinationsMarkers: Function
         },
         // child components
         components: {
         },
         methods: {
+            onCheckBoxChange() {
+                this.updateDestinationsMarkers(this.selectedDestinations);
+            },
+            onMenuClick() {
+                this.isShowingMenu = !this.isShowingMenu;
+            },
+            onScroll (e) {
+                this.offsetTop = e.target.scrollTop
+            },
+            selectAll() {
+                console.log("ciao");
+                this.selectedDestinations = this.destinations;
+                this.updateDestinationsMarkers(this.selectedDestinations);
+            }
         },
-        created: function() {
-            // destinations = await destinationRepository.getDestinationList()
-
-        }
+        watch: {
+        },
     };
 </script>

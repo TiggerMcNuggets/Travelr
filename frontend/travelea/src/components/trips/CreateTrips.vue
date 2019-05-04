@@ -174,7 +174,7 @@ export default {
   },
   data() {
     return {
-        userId: this.$route.params.user_id,
+        userId: (this.$route.params.user_id) ? this.$route.params.user_id : this.$route.params.id,
         tripToDisplay: null,
         draggableEnabled: true,
         dialogName: "Create a new trip",
@@ -332,6 +332,7 @@ export default {
      * Makes component usable for both create and edit component
      */
     mounted() {
+        console.log(this.$route);
       this.getDestinations(this.userId);
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";

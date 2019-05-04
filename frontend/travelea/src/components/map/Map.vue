@@ -1,21 +1,31 @@
 <template>
     <div class="map-container" >
-        <GmapMap class="main-map" :zoom="2" :center="{lat: 0, lng: 0}"
-                 ref="map">
-            <GmapMarker v-for="(marker, index) in markers"
+        <GmapMap class="main-map"
+                 :zoom="2"
+                 :center="{lat: 0, lng: 0}"
+                 ref="map"
+        >
+            <GmapMarker v-for="(marker, index) in destinationsMarkers"
                         :key="index"
-                        :position="marker.latLng"
+                        :position="{lat: marker.latitude, lng: marker.longitude}"
                         :clickable="true"
-                        @click="openInfoWindowTemplate(markers[index])"
+                        @click="openInfoWindowTemplate(destinationsMarkers[index])"
             />
             <GmapInfoWindow
                     :options="{maxWidth: 300}"
                     :position="infoWindow.position"
                     :opened="infoWindow.open"
-                    @closeclick="infoWindow.open=false">
-                <div>
-                    <h1>Sometjing</h1>
-                    <v-btn>Submit</v-btn>
+                    @closeclick="closeInfoWindow()">
+                <div v-if="selectedDest !== null">
+                    <div>
+                        <h2>Country: {{this.selectedDest.country}}</h2>
+                        <h2>District: {{this.selectedDest.district}}</h2>
+                        <h2>Name: {{this.selectedDest.name}}</h2>
+                        <h2>Type: {{this.selectedDest.type}}</h2>
+                        <v-btn color="orange darken-2" dark v-on:click="navigateToDestination(selectedDest.id)">
+                            Visit<v-icon dark right>arrow_forward</v-icon>
+                        </v-btn>
+                    </div>
                 </div>
             </GmapInfoWindow>
         </GmapMap>
@@ -39,14 +49,18 @@
     export default {
         data () {
             return {
+                userId: (this.$route.params.user_id) ? this.$route.params.user_id : this.$route.params.id,
                 infoWindow: {
                     position: {lat: 0, lng: 0},
                     open: false,
-                    template: 'Ciaooojdkajsfjkdsbfkjsdbf'
                 },
-                markers: [{latLng: {lat: 0, lng: 0}, }, {latLng: {lat: 30, lng: 100}}],
+                selectedDest: null,
+                // markers: [{latLng: {lat: 0, lng: 0}, }, {latLng: {lat: 30, lng: 100}}],
                 place: null,
             }
+        },
+        props: {
+            destinationsMarkers: Array
         },
         watch: {
         },
@@ -54,12 +68,24 @@
         },
         methods: {
             openInfoWindowTemplate(item) {
-                this.infoWindow.position = item.latLng;
+                this.infoWindow.position = {lat:item.latitude, lng: item.longitude};
                 this.infoWindow.open = true;
+                console.log(this.selectedDest);
+                this.selectedDest = item;
+            },
+            closeInfoWindow() {
+                this.infoWindow.open = false;
+                this.selectedDest = null;
             },
             log: function(evt) {
                 window.console.log(evt);
+            },
+            navigateToDestination: function(destId) {
+                this.$router.push(`/user/${this.userId}/destinations/${destId}`);
             }
+        },
+        created() {
+            console.log("markers", this.destinationsMarkers);
         }
     }
 </script>

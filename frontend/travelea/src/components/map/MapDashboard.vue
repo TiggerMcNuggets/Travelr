@@ -2,8 +2,11 @@
 
 <template>
     <div class="destination-map">
-        <Map></Map>
+        <Map
+            :destinationsMarkers="this.destinationsMarkers"
+        ></Map>
         <MapMenu
+                :destinations="this.destinations"
                 :updateDestinationsMarkers="this.updateDestinationsMarkers"
         />
     </div>
@@ -50,6 +53,7 @@
             };
         },
         props: {
+            destinations: Array
         },
         computed: {
         },
@@ -64,14 +68,11 @@
             } 
         },
         methods: {
-            updateDestinationsMarkers(toDelete, newValue) {
-                if (toDelete) {
-                    this.destinationsMarkers.push(newValue);
-                }
+            updateDestinationsMarkers(listDest) {
+                this.destinationsMarkers = listDest;
             }
         },
         created() {
-            this.destinationsMarkers = this.destinations;
         }
     };
 </script>
