@@ -11,7 +11,7 @@
         <create-trip style="background-color: white;"
                      v-if="true"
                      :regetTrips="() => console.log('no need')"
-                     :passedTrip="this.$route.params.id"
+                     :passedTrip="tripId"
                      :updateViewTripPage="this.updateViewTripPage"
         />
     </v-dialog>
@@ -49,9 +49,11 @@ export default {
   // local variables
   data() {
     return {
-      modifiedTrip: false,
-      is_inset: true,
-      trip: {},
+        tripId:  this.$route.params.trip_id,
+        userId:  this.$route.params.user_id,
+        modifiedTrip: false,
+        is_inset: true,
+        trip: {},
         shouldDisplayDialog: false
     };
   },
@@ -72,7 +74,7 @@ export default {
 
       // invoked by child component creat-trip once the trip has been modified, passed as prop
       updateViewTripPage: function() {
-          tripRepo.getTrip(this.$route.params.id).then((result) => {
+          tripRepo.getTrip(this.userId, this.tripId).then((result) => {
               let trip = result.data;
               let ordered_dests = trip.destinations.sort(function(a, b){
                   return a.ordinal - b.ordinal;
@@ -92,7 +94,7 @@ export default {
     },
 
   created: function() {
-      tripRepo.getTrip(this.$route.params.id).then((result) => {
+      tripRepo.getTrip(this.userId, this.tripId).then((result) => {
           let trip = result.data;
           let ordered_dests = trip.destinations.sort(function(a, b){
               return a.ordinal - b.ordinal;
