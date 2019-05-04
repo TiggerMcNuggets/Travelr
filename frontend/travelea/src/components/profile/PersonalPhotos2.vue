@@ -45,8 +45,8 @@
               <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
               <v-icon v-else class="lock-icon" left>lock</v-icon>
                 
-                <div v-if="item.is_public" class="triangle pink-color" > </div>
-                <div v-else class="triangle" > </div>
+                <div v-if="item.is_public" class="triangle" > </div>
+                <div v-else class="triangle pink-color" > </div>
                 
               <v-img
                 @click.stop="dialog = true"
@@ -78,7 +78,7 @@
             <v-spacer></v-spacer>
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @clocklick="setProfilePhoto()">Set Profile Photo</v-btn>
+            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
           </v-card-actions>
           <v-card-actions>
           <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
@@ -279,7 +279,7 @@ export default {
     //sets the user's profile photo as the selected
     setProfilePhoto() {
       setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
-        window.location = "/profile/photos";
+        window.location = "/user/" + this.id + "/photos";
       });
     },
 
