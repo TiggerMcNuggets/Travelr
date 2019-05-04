@@ -17,8 +17,12 @@ import play.mvc.Result;
 import repository.PersonalPhotoRepository;
 import utils.FileHelper;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 import javax.inject.Inject;
 import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -186,6 +190,19 @@ public class PhotoController extends Controller {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
         ChooseProfilePicReq req = chooseProfilePicForm.get();
         String fileName = req.photo_filename;
+
+        try {
+        if (fileName != null) {
+            FileHelper fh = new FileHelper();
+            fh.makeDirectory(this.profilePhotosFilepath);
+            Path sourceDirectory = Paths.get(this.personalPhotosFilepath + req.photo_filename);
+            Path targetDirectory = Paths.get((this.profilePhotosFilepath + req.photo_filename));
+            java.nio.file.Files.copy(sourceDirectory, targetDirectory);
+        }
+        } catch (IOException e) {
+            System.out.println("Profile image already exists in directory");
+        }
+
         return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
             if (photoName != null) {
                 return ok("Your profile image was successfully set to " + photoName);
