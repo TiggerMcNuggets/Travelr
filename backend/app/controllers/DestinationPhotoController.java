@@ -110,4 +110,35 @@ public class DestinationPhotoController extends Controller {
             return  CompletableFuture.completedFuture(badRequest("Missing file"));
         }
     }
+
+    /**
+     * Updates a photo that belongs to a user's destination
+     * @param request the http request
+     * @param id the id of the photo
+     * @return 200 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateDestinationPhoto(Http.Request request, Long id) {
+        Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
+
+        if (updatePhotoForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        UpdatePhotoReq req = updatePhotoForm.get();
+
+        return destinationPhotoRepository.getOne(id).thenComposeAsync(photo -> {
+            // Not Found Check
+            if (photo == null) {
+                return CompletableFuture.completedFuture(notFound("Photo not found"));
+            }
+            // Forbidden Check
+//            if (photo.traveller.id != user.id) {
+//                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
+//            }
+            return destinationPhotoRepository.update(req, id).thenApplyAsync(destId -> ok("Photo updated"));
+
+        });
+    }
+
 }

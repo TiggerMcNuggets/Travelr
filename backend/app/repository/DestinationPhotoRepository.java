@@ -54,4 +54,29 @@ public class DestinationPhotoRepository {
             return photo.id;
         }, executionContext);
     }
+
+    /**
+     * Gets one photo that belongs to a user
+     * @param id the photo id
+     * @return completable future of the photo
+     */
+    public CompletableFuture<DestinationPhoto> getOne(Long id) {
+        return supplyAsync(() -> DestinationPhoto.find.findByPhotoId(id), executionContext);
+    }
+
+    /**
+     * Updates a destination photo
+     * @param request the request DTO
+     * @param photoId the photo id
+     * @return completable future of the new photo
+     */
+    public CompletableFuture<Long> update(UpdatePhotoReq request, Long photoId) {
+        return supplyAsync(() -> {
+            DestinationPhoto photo = DestinationPhoto.find.findByPhotoId(photoId);
+            photo.is_public = request.is_public;
+            photo.save();
+
+            return photo.id;
+        });
+    }
 }
