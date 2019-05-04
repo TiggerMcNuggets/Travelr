@@ -1,5 +1,6 @@
 package controllers;
 
+import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Photo.ChooseProfilePicReq;
@@ -26,13 +27,18 @@ public class PhotoController extends Controller {
 
     private final PersonalPhotoRepository personalPhotoRepository;
 
+    private String personalPhotosFilepath;
+
+    private String profilePhotosFilepath;
+
     @Inject
     FormFactory formFactory;
 
     @Inject
-    public PhotoController(
-            PersonalPhotoRepository personalPhotoRepository
-    ) {
+    public PhotoController(Config config, PersonalPhotoRepository personalPhotoRepository) {
+        String rootPath = System.getProperty("user.home");
+        personalPhotosFilepath = rootPath + config.getString("personalPhotosFilePath");
+        profilePhotosFilepath = rootPath + config.getString("profilePhotosFilePath");
         this.personalPhotoRepository = personalPhotoRepository;
     }
 
@@ -47,8 +53,7 @@ public class PhotoController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id) {
         FileHelper fh = new FileHelper();
-        fh.makeDirectory("resources/images");
-
+ 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
@@ -74,8 +79,10 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.makeDirectory("public/images");
-            file.copyTo(Paths.get("public/images/" + fileName), true);
+//            fh.makeDirectory(System.getProperty("user.home") + "/TravelEA_Resources/images");
+            fh.makeDirectory(this.personalPhotosFilepath);
+            file.copyTo(Paths.get(this.personalPhotosFilepath + fileName), true);
+//            file.copyTo(Paths.get(System.getProperty("user.home")+ "/TravelEA_Resources/images/" + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
@@ -95,13 +102,17 @@ public class PhotoController extends Controller {
          */
 
     public Result getImageFromDatabase(String filename) {
-        File file = new File("public/images/" + filename);
+//        File file = new File(System.getProperty("user.home") + "/TravelEA_Resources/images/" + filename);
+//        System.out.println(file);
+        File file = new File(this.personalPhotosFilepath + filename);
         try {
             return ok(file);
         } catch (Exception e) {
             return badRequest("Missing file");
         }
     }
+
+
 
 
     /**
@@ -125,10 +136,6 @@ public class PhotoController extends Controller {
             if (photo == null) {
                 return CompletableFuture.completedFuture(notFound("Photo not found"));
             }
-            // Forbidden Check
-//            if (photo.traveller.id != user.id) {
-//                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-//            }
             return personalPhotoRepository.update(req, id).thenApplyAsync(destId -> ok("Photo updated"));
 
         });
@@ -150,8 +157,11 @@ public class PhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.makeDirectory("public/profile_images");
-            file.copyTo(Paths.get("public/profile_images/" + fileName), true);
+//            fh.makeDirectory(System.getProperty("user.home") + "/testFolder/profile_images");
+//            file.copyTo(Paths.get(System.getProperty("user.home") + "/testFolder/profile_images/" + fileName), true);
+            fh.makeDirectory(this.profilePhotosFilepath);
+            file.copyTo(Paths.get(this.profilePhotosFilepath + fileName), true);
+
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
@@ -194,7 +204,9 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> getProfilePic(long id) {
         return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync((fileName) -> {
             try {
-                File file = new File("public/profile_images/" + fileName);
+//                File file = new File(System.getProperty("user.home") + "testFolder/profile_images/" + fileName);
+                File file = new File(this.profilePhotosFilepath + fileName);
+
                 return ok(file);
             } catch (Exception e) {
                 System.out.println(e);
