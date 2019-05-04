@@ -37,8 +37,16 @@ public class PersonalPhotoRepository {
     public CompletionStage<Long> add(Long id, String imageFileName) {
         return supplyAsync(() -> {
             User traveller = User.find.findById(id);
-            System.out.println(traveller);
             if (traveller == null) return null; // bad user
+            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("traveller_id", id);
+            List<PersonalPhoto> photoList = query.findList();
+
+            for (PersonalPhoto personalPhoto: photoList) {
+                if (personalPhoto.getPhoto_filename().equals(imageFileName)) {
+                    System.out.println("Duplicate Photo");
+                    return null;
+                }
+            }
             PersonalPhoto photo = new PersonalPhoto(traveller, imageFileName);
             photo.save();
             return photo.id;
