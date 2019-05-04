@@ -1,0 +1,13 @@
+-- -- Admin users and other
+--
+-- -- !Ups
+--
+--
+-- INSERT INTO user (id, first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES
+-- (1, 'Global', '', 'Admin', 1, '', 'admin@travlr.com', 'C7AD44CBAD762A5DA0A452F9E854FDC1E0E7A52A38015F23F3EAB1D80B931DD472634DFAC71CD34EBC35D16AB7FB8A90C81F975113D6C7538DC69DD8DE9077EC',
+-- 1, 1)
+--
+--
+-- -- !Downs
+--
+-- DELETE FROM user WHERE id = 1;
