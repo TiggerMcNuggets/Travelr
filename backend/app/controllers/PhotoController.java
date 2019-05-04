@@ -79,6 +79,9 @@ public class PhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
             String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
             fh.makeDirectory(this.personalPhotosFilepath);
@@ -123,7 +126,7 @@ public class PhotoController extends Controller {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
 
         if (updatePhotoForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest("Error uploading photo"));
         }
 
         UpdatePhotoReq req = updatePhotoForm.get();
@@ -149,6 +152,9 @@ public class PhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
             String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
             fh.makeDirectory(this.profilePhotosFilepath);

@@ -32,10 +32,16 @@ public class FileHelper {
     return ext;
   }
 
+  public Boolean isValidFile(String name) {
+    String extension = getFileExtension(name);
+    return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg");
+  }
+
 
   public String getHashedImage(String name) {
     return name.hashCode() + "." + getFileExtension(name);
   }
+
 
 
 }
