@@ -9,7 +9,6 @@ import controllers.actions.Authorization;
 import controllers.dto.Trip.CreateTripReq;
 import controllers.dto.Trip.CreateTripRes;
 import controllers.dto.Trip.GetTripRes;
-import controllers.dto.Trip.TripDestinationRes;
 import io.ebean.Ebean;
 
 import models.Trip;
@@ -200,6 +199,35 @@ public class TripController extends Controller {
 
         return CompletableFuture.completedFuture(ok(jsonResponse));
 
+    }
+
+    /**
+     * Gets a users trips by given id
+     * @param id the user id
+     * @return 200 if item exists
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getTrips(Http.Request request, Long id) {
+        CompletionStage<Result> middlewareRes = Authorization.doesUserByIdExist(id);
+        if (middlewareRes != null) return middlewareRes;
+
+        return tripRepository.getTrips(id).thenApplyAsync(trips -> {
+            ArrayList<GetTripRes> correctTrips = new ArrayList<>();
+            for (Trip trip : trips) {
+                GetTripRes tripRes = new GetTripRes(trip);
+                List<TripDestination> correctDests = new ArrayList<TripDestination>();
+                //Setting the blank name to the correct destination name
+                for (TripDestination dest : trip.destinations) {
+                    dest.name = dest.destination.getName();
+                    correctDests.add(dest);
+                }
+                tripRes.setDestinations(correctDests);
+                correctTrips.add(tripRes);
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(correctTrips);
+            return ok(jsonResponse);
+        });
     }
 
     /**
