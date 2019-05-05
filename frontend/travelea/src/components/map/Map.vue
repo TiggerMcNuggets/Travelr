@@ -94,8 +94,8 @@
             navigateToDestination: function(destId) {
                 this.$router.push(`/user/${this.userId}/destinations/${destId}`);
             },
-            chooseIconForMarker(marker, index) {
-              if ((index % 2) === 0) {
+            chooseIconForMarker(marker) {
+              if (marker.isPublic) {
                   return pinkMarker;
               } else {
                   return blueMarker;
