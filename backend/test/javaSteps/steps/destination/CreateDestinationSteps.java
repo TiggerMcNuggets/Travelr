@@ -27,24 +27,24 @@ public class CreateDestinationSteps {
         destinationData = Json.parse("{ \"name\": \"string\", \"latitude\": 1, \"longitude\": 1, \"type\": \"string\", \"district\": \"string\", \"country\": \"string\"}");
     }
 
-    @When("I create a destination")
-    public void iCreateADestination() {
-        try {
-            // Create request object
-            Http.RequestBuilder createDestination = Helpers.fakeRequest()
-                    .method("POST")
-                    .header("X-Authorization", state.getToken())
-                    .bodyJson(destinationData)
-                    .uri("http://localhost:9000/api/destinations");
-
-            // Send request
-            state.setResult(route(state.getApplication(), createDestination));
-
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
-        }
-    }
+//    @When("I create a destination")
+//    public void iCreateADestination() {
+//        try {
+//            // Create request object
+//            Http.RequestBuilder createDestination = Helpers.fakeRequest()
+//                    .method("POST")
+//                    .header("X-Authorization", state.getToken())
+//                    .bodyJson(destinationData)
+//                    .uri("http://localhost:9000/api/users/" +this.state.getTravellerId() +"/destinations");
+//
+//            // Send request
+//            state.setResult(route(state.getApplication(), createDestination));
+//
+//        } catch (Exception e) {
+//            System.out.println(e);
+//            Assert.assertTrue(false);
+//        }
+//    }
 
     @When("I create a destination for user with id {int}")
     public void i_create_a_destination_for_user_with_id(int int1) {
@@ -55,7 +55,7 @@ public class CreateDestinationSteps {
                     .method("POST")
                     .header("X-Authorization", state.getToken())
                     .bodyJson(destinationData)
-                    .uri("http://localhost:9000/api/travellers/"+ int1 +"/destinations");
+                    .uri("http://localhost:9000/api/users/"+ int1 +"/destinations");
 
             // Send request
             state.setResult(route(state.getApplication(), createDestinationForUser));
