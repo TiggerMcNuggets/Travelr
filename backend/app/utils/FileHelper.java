@@ -22,4 +22,26 @@ public class FileHelper {
     }
   }
 
+
+  public String getFileExtension(String f) {
+    String ext = "";
+    int i = f.lastIndexOf('.');
+    if (i > 0 &&  i < f.length() - 1) {
+      ext = f.substring(i + 1).toLowerCase();
+    }
+    return ext;
+  }
+
+  public Boolean isValidFile(String name) {
+    String extension = getFileExtension(name);
+    return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg");
+  }
+
+
+  public String getHashedImage(String name) {
+    return name.hashCode() + "." + getFileExtension(name);
+  }
+
+
+
 }

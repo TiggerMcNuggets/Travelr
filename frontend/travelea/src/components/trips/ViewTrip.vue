@@ -50,7 +50,7 @@ export default {
   data() {
     return {
         tripId:  this.$route.params.trip_id,
-        userId:  this.$route.params.user_id,
+        userId:  this.$route.params.id,
         modifiedTrip: false,
         is_inset: true,
         trip: {},
