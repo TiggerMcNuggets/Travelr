@@ -18,6 +18,8 @@ recent-artifacts:
     - sbt dist
     
     # Kill existing process (if any)
+    - echo $PWD
+    
     - kill $(cat target/universal/team300-travelea-1.0.0-SNAPSHOT/RUNNING_PID)
     
     # Deploy to server http://csse-s302g3.canterbury.ac.nz:8443/
@@ -45,6 +47,8 @@ release-artifacts:
     - sbt dist
     
     # Kill existing process (if any)
+    - echo $PWD
+
     - kill $(cat target/universal/team300-travelea-1.0.0-SNAPSHOT/RUNNING_PID)
     
     # Deploy to server http://csse-s302g3.canterbury.ac.nz:8443/
