@@ -65,7 +65,7 @@ export default {
     },
     updateUser({ commit, state }, editData) {
       return new Promise(function(resolve, reject) {
-        ProfileRepository.editProfile(editData, state.user.id)
+        ProfileRepository.editProfile(editData, editData.id)
           .then(resp => {
             commit("setUser", editData);
             resolve();
