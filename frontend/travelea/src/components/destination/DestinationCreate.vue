@@ -109,13 +109,14 @@ export default {
   data() {
     return {
       destination: {},
+      userId: this.$route.params.id,
       ...rules
     };
   },
   methods: {
     createDestination: function() {
       if (this.$refs.form.validate()) {
-        destinationRepository.createDestination(this.destination)
+        destinationRepository.createDestination(this.userId, this.destination)
         .then(() => {
           this.$refs.form.reset();
           this.createDestinationCallback();
