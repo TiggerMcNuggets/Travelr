@@ -35,6 +35,7 @@
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
+        <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -45,8 +46,8 @@
               <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
               <v-icon v-else class="lock-icon" left>lock</v-icon>
                 
-                <div v-if="item.is_public" class="triangle pink-color" > </div>
-                <div v-else class="triangle" > </div>
+                <div v-if="item.is_public" class="triangle" > </div>
+                <div v-else class="triangle pink-color" > </div>
                 
               <v-img
                 @click.stop="dialog = true"
@@ -78,7 +79,7 @@
             <v-spacer></v-spacer>
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @clocklick="setProfilePhoto()">Set Profile Photo</v-btn>
+            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
           </v-card-actions>
           <v-card-actions>
           <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
@@ -92,6 +93,7 @@
 
 
 <style>
+
 
 .pink-color {
   width: 0;
@@ -234,12 +236,15 @@ hr {
 
 <script>
 import { store } from "../../store/index";
+import base_url from "../../repository/BaseUrl"
 import {
   storeImage,
   getImages,
   setProfilePic,
   updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
+
+
 
 export default {
   store,
@@ -255,7 +260,9 @@ export default {
       showUploadSection: false,
       id: null,
       isMyProfile: false,
-      isAdminUser: false
+      isAdminUser: false,
+      uploadError: false,
+      errorText: "You are trying to upload a duplicate image or an error occured while uploading."
     };
   },
 
@@ -279,26 +286,32 @@ export default {
     //sets the user's profile photo as the selected
     setProfilePhoto() {
       setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
-        window.location = "/profile/photos";
+        window.location = "/user/" + this.id + "/photos";
       });
     },
 
     // Submits the image file and uploads it to the server
     submitFile() {
+      this.uploadError = false;
       let formData = new FormData();
       formData.append("picture", this.file);
 
       storeImage(this.id, formData).then(() => {
-        getImages(this.id).then(result => {
+        getImages(this.id)
+        .then((result) => {
           this.files = this.groupImages(result.data);
-         
         });
-      });
+      }).catch(error => {
+          this.uploadError = true;
+          this.errorText = error.response.data;
+        });
+
+      this.$refs.file.value = "";
     },
 
     // Gets the image from the server
     getImgUrl(item) {
-      return "http://localhost:9000/assets/images/" + item.photo_filename;
+      return base_url + "/api/travellers/photo/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -309,7 +322,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = "http://localhost:9000/assets/images/" + selectedImage.photo_filename;
+      myImage.src = base_url + "/api/travellers/photo/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
 
     },
@@ -334,8 +347,7 @@ export default {
   },
 
   created: function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    // store.commit("setPersonalImages", this.$route.params.id);
+
     this.id = this.$route.params.id;
     
     if(!this.id) { 
