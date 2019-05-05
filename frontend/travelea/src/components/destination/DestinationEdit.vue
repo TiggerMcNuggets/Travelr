@@ -146,7 +146,7 @@ export default {
   methods: {
     updateDestination: function() {
       if (this.$refs.form.validate()) {
-        destinationRepository.updateDestination(this.$route.params.id, this.destination).then(() => {
+        destinationRepository.updateDestination(this.$route.params.dest_id, this.destination).then(() => {
           this.$refs.form.reset();
           this.routeBackToPrevPage();
         });
@@ -158,7 +158,7 @@ export default {
   },
 
   created: function() {
-    destinationRepository.getDestination(this.$route.params.id).then(result => {
+    destinationRepository.getDestination(this.$route.params.dest_id).then(result => {
       this.destination = result.data;
     });
   }

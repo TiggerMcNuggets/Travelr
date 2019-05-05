@@ -65,7 +65,7 @@ public class Destination extends BaseModel {
         this.district = request.district;
         this.country = request.country;
         this.user = user;
-        this.isPublic = false;
+        this.isPublic = request.isPublic;
     }
 
     // USED IN TEST DATA

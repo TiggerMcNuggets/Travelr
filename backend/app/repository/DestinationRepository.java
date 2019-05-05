@@ -34,7 +34,7 @@ public class DestinationRepository {
      * @param userId the user id
      * @return completable future of list of destinations
      */
-    public CompletableFuture<List<Destination>> getAvaliableDestinations(Long userId) {
+    public CompletableFuture<List<Destination>> getAvailableDestinations(Long userId) {
         return supplyAsync(() -> Destination.find.getAvaliableDestinations(userId), context);
     }
 
@@ -58,7 +58,7 @@ public class DestinationRepository {
             Destination destination = new Destination(request, User.find.byId(userId));
             destination.insert();
             return destination.id;
-        });
+        }, context);
     }
 
     /**
@@ -79,7 +79,7 @@ public class DestinationRepository {
             destination.save();
 
             return destination.id;
-        });
+        }, context);
     }
 
     public CompletableFuture<Long> makeDestinationPublic(Long destinationId) {
@@ -98,9 +98,12 @@ public class DestinationRepository {
 
                 destination.update();
 
-                return destinationId;
+            } else {
+                // TODO MERGE OTHER DESTINATIONS HERE
             }
-        })
+
+            return destinationId;
+        }, context);
     }
 
 

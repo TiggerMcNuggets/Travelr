@@ -2,17 +2,24 @@
 
 <template>
   <v-card class="profile-sidebar">
-    <div>
-      <v-avatar size="100px" class="profile-photo">
-        <img
-            :src="getImgUrl"
-        >
-      </v-avatar>
-      <router-link to="/profile/edit">
-        <v-btn class="profile-edit-button" fab small dark color="indigo">
-          <v-icon dark>edit</v-icon>
-        </v-btn>
-      </router-link>
+    <div class="profile-top">
+      <!-- <v-avatar size="100%" class="profile-photo"> -->
+      <div class="profile-container">
+        <img class="profile-image" :src="getImgUrl">
+      </div>
+
+      <v-btn
+        v-if="isMyProfile || isAdminUser"
+        @click="goToEdit(user_id)"
+        class="profile-edit-button"
+        fab
+        small
+        dark
+        color="indigo"
+      >
+        <v-icon dark>edit</v-icon>
+      </v-btn>
+
     </div>
 
     <div>
@@ -64,40 +71,40 @@
 }
 
 a {
-    text-decoration:none;
+  text-decoration: none;
 }
 
 .profile-edit-button {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-edit-button:hover {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-edit-button:active {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-edit-button:focus {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
+}
+
+.profile-top {
+  display: flex;
+  justify-content: center;
 }
 
 li {
   list-style: none;
-}
-
-.duel-section {
-  display: flex;
-  justify-content: space-between;
 }
 
 .traveller-name {
@@ -129,6 +136,18 @@ li {
   margin: 17px 0px;
   clear: both;
 }
+
+.profile-image {
+  height: 120px !important;
+}
+
+.profile-container {
+  height: 120px !important;
+  width: 120px !important;
+  overflow: hidden !important;
+  border-radius: 120px !important;
+}
+
 .profile-nav {
   border: 1px solid black;
 }
@@ -136,10 +155,9 @@ li {
 
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let profileRepository = RepositoryFactory.get("profile");
-
 import { store } from "../../store/index";
+import DefaultPic from "../../assets/defaultPic.png"
+import base_url from "../../repository/BaseUrl"
 
 export default {
   store,
@@ -159,27 +177,49 @@ export default {
 
   data() {
     return {
-      profile: {}
+      profile: {},
+      isAdminUser: false,
+      isMyProfile: false,
+      id: this.$route.params.id
     };
   },
-  created: function() {
-    this.traveller = store.getters.getUser;
-  },
-  methods: {
-        // Gets the local image file path    
-  },
-  computed: {
-      getImgUrl(place = "somewhere else") {
-      console.log(this.profilePic);
-      if(!this.profilePic) {
-        return require("../../../../../backend/resources/images/defaultPic.png")
-      } else {
-        return require("../../../../../backend/resources/images/" +
-                this.profilePic);
-      }
-      
+
+   watch: {
+    '$route.params.id': function() {
+      this.init();
     }
   },
 
+
+  created: function() {
+    this.traveller = store.getters.getUser;
+    this.checkIfProfileOwner();
+    this.isAdminUser = store.getters.getIsUserAdmin;
+  },
+  methods: {
+      init() {
+      this.traveller = store.getters.getUser;
+      this.checkIfProfileOwner();
+      this.isAdminUser = store.getters.getIsUserAdmin;
+    },
+    checkIfProfileOwner() {
+      this.id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == this.id);
+    },
+    goToEdit(id) {
+      this.$router.push("/user/"+this.id+"/edit")
+    }
+
+  },
+  computed: {
+    
+    getImgUrl() {
+      if (!this.profilePic || this.profilePic == 'defaultPic.png') {
+        return DefaultPic;
+      } else {
+        return base_url + "/api/travellers/profile-photo/" + this.id;
+      }
+    }
+  }
 };
 </script>

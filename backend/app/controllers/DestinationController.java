@@ -6,7 +6,9 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Destination.CreateDestReq;
 import controllers.dto.Destination.CreateDestRes;
+import controllers.dto.Destination.GetDestinationsRes;
 import io.ebean.Ebean;
+import models.Destination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -16,6 +18,7 @@ import play.mvc.Result;
 import repository.DestinationRepository;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -40,20 +43,57 @@ public class DestinationController extends Controller {
     public CompletionStage<Result> getUserDestinations(Http.Request request) {
         User user = request.attrs().get(Attrs.USER);
         return destinationRepository
-                .getUserDestinations(user.id)
+                .getAvailableDestinations(user.id)
                 .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
     }
 
     /**
-     * Gets a list of avaliable destinations that a user can view
+     * Gets a list of all destinations that belong to the specified user
+     * @param request the http request
+     * @param userId the id of the specified user
+     * @return 200 with list of destinations if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> getAvaliableDestinations(Http.Request request) {
-        User user = request.attrs().get(Attrs.USER);
-        return destinationRepository
-                .getAvaliableDestinations(user.id)
-                .thenApplyAsync(destinations -> ok())
+    public CompletionStage<Result> getUserDestinationsGivenUser(Http.Request request, Long userId) {
 
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        return destinationRepository
+                .getAvailableDestinations(userId)
+                .thenApplyAsync(destinations -> {
+                    ArrayList<GetDestinationsRes> list = new ArrayList<>();
+
+                    for(Destination destination : destinations) {
+                        list.add(new GetDestinationsRes(destination));
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResponse = mapper.valueToTree(list);
+                    return ok(jsonResponse);
+                });
+    }
+
+    /**
+     * Gets specific destination that belongs to the specified user
+     * @param request the http request
+     * @param userId the id of the specified user
+     * @return 200 with list of destinations if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserDestinationGivenUser(Http.Request request, Long userId, Long destId) {
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        return destinationRepository.getOneDestination(destId).thenApplyAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return notFound("Destination not found");
+            }
+
+            return ok(Ebean.json().toJson(destination));
+        });
     }
 
     /**
@@ -74,6 +114,36 @@ public class DestinationController extends Controller {
         CreateDestReq req = createDestinationForm.get();
 
         return destinationRepository.add(req,user.id).thenApplyAsync(id -> {
+            CreateDestRes response = new CreateDestRes(id);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return created(jsonResponse);
+        });
+    }
+// NEW, ADDED FOR ADMIN REFACTORING
+    /**
+     * Creates destination for a user
+     * @param request the http request
+     * @param userId the user id to create a trip for
+     * @return 201 with json object of new id if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> createDestinationGivenUser(Http.Request request, Long userId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        Form<CreateDestReq> createDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
+
+
+        if (createDestinationForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+        }
+
+        CreateDestReq req = createDestinationForm.get();
+
+        return destinationRepository.add(req,userId).thenApplyAsync(id -> {
             CreateDestRes response = new CreateDestRes(id);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);

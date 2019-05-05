@@ -7,11 +7,11 @@
     <v-btn fab small dark color="indigo" @click="$router.go(-1)">
         <v-icon dark>keyboard_arrow_left</v-icon>
     </v-btn>
-    <div >
+    <div v-if="isMyProfile">
       <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
         <v-icon dark left>keyboard_arrow_right</v-icon>Add new destination
       </v-btn>      
-    </div>    
+    </div>
     <ul>
       <h2>Public destinations</h2>
       <li
@@ -24,9 +24,9 @@
           <h2>{{ item.name }}</h2>
           <span>
             <!-- item.id -->
-            <router-link :to="{name: 'edit-destination', params: {id: item.id}}">
+            <div v-if="isMyProfile" @click="editDestination(item.id)">
               <a>Edit</a>
-            </router-link>
+            </div>
             <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
           </span>
         </div>
@@ -118,6 +118,7 @@ ul {
 import { store } from "../../store/index";
 import {RepositoryFactory} from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
+import UserRepository from "../../repository/UserRepository";
 import DestinationCreate from "./DestinationCreate"
 
 export default {
@@ -127,14 +128,28 @@ export default {
     return {
       dialog: false,
       showEditDestination: false,
-      destinations: []
+      destinations: [],
+      isMyProfile: false,
+      user_id: null
     };
   }, 
    // child components
   components: {
     DestinationCreate: DestinationCreate
   },
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
   methods: {
+    init() {
+      this.checkIfProfileOwner();
+      this.getDestinationList();
+    },
+    editDestination(id) {
+      this.$router.push("/user/"+this.user_id+"/destinations/edit/"+id);
+    },
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
     },
@@ -146,17 +161,22 @@ export default {
       this.dialog = false;
     },
     getDestinationList: function () {
-      destinationRepository.getDestinations()
+      destinationRepository.getDestinations(this.user_id)
       .then(response => {
           this.destinations = response.data
       })
       .catch(err => {
           console.log(err)
     })
+    },
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      this.user_id = id;
+      this.isMyProfile = (store.getters.getUser.id);
     }
   },
   created: function() {
-    this.getDestinationList();
+    this.init();
   }  
 };
 </script>

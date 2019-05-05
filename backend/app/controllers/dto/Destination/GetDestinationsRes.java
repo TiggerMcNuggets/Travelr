@@ -1,6 +1,7 @@
 package controllers.dto.Destination;
 
 import io.ebean.annotation.JsonIgnore;
+import models.Destination;
 import models.User;
 import play.data.validation.Constraints;
 
@@ -24,6 +25,14 @@ public class GetDestinationsRes {
 
     public boolean isPublic;
 
+    public GetDestinationsRes(Destination destination) {
+        this.name = destination.name;
+        this.latitude = destination.latitude;
+        this.longitude = destination.longitude;
+        this.type = destination.type;
+        this.district = destination.district;
+        this.country = destination.country;
+        this.isPublic = destination.isPublic;
+    }
 
-    public
 }

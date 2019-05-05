@@ -17,7 +17,7 @@
         />
 
         <div class="upload-section">
-        <h3> Upload User Profile Photo</h3>
+          <h3>Upload User Profile Photo</h3>
           <label>
             <input
               class="choose-file-button"
@@ -69,6 +69,7 @@
 </style>
 
 <script>
+import userRepo from "../../repository/UserRepository";
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
@@ -79,9 +80,7 @@ import {
 } from "../../repository/PersonalPhotosRepository";
 
 import { store } from "../../store/index";
-import {
-  storeImage
- } from "../../repository/PersonalPhotosRepository";
+import { storeImage } from "../../repository/PersonalPhotosRepository";
 
 export default {
   name: "EditProfile",
@@ -92,7 +91,6 @@ export default {
       isValid: false,
 
       traveller: {},
-
 
       dateOfBirth: "",
       nationalities: [],
@@ -113,11 +111,13 @@ export default {
       formData.append("picture", this.file);
 
       uploadProfilePic(this.id, formData).then(() => {
-        window.location = "/profile/edit";
+        window.location = "/user/" + this.$route.params.id + "/edit";
       });
     },
     getTraveller() {
-      this.traveller = store.getters.getUser;
+      userRepo.getUser(this.id).then(result => {
+        this.traveller = result.data;
+      });
       this.setTravellerToFields();
     },
 
@@ -150,24 +150,27 @@ export default {
     handleEdit() {
       if (this.$refs.form.validate()) {
         this.setFieldsToTraveller();
-        store.dispatch("updateUser", this.traveller)
-        .then(() => {
-          return store.dispatch("fetchMe");
-        })
-        .then(() => {
-          this.$router.push("/profile");
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+        store
+          .dispatch("updateUser", this.traveller)
+          .then(() => {
+            return store.dispatch("fetchMe");
+          })
+          .then(() => {
+            this.$router.push("/profile");
+          })
+          .catch(e => {
+            console.log(e);
+          });
       }
     }
   },
 
   created: function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    // store.commit("setPersonalImages", this.$route.params.id);
-    this.id = store.getters.getUser.id;
+    this.id = this.$route.params.id;
+
+    if (!this.id) {
+      this.id = store.getters.getUser.id;
+    }
   }
 };
 </script>

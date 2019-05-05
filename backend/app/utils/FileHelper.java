@@ -1,7 +1,6 @@
 package utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,19 +10,38 @@ public class FileHelper {
   public FileHelper() {
   }
 
-  public boolean make_directory(String directory_path) {
-
+  public boolean makeDirectory(String directory_path) {
     Path path = Paths.get(directory_path);
     File file = new File(directory_path);
 
     if (!Files.exists(path)) {
         file.mkdirs();
-        System.out.println("Directory created");
         return true;
     } else {
-      System.out.println("Directory already exists");
       return true;
     }
   }
+
+
+  public String getFileExtension(String f) {
+    String ext = "";
+    int i = f.lastIndexOf('.');
+    if (i > 0 &&  i < f.length() - 1) {
+      ext = f.substring(i + 1).toLowerCase();
+    }
+    return ext;
+  }
+
+  public Boolean isValidFile(String name) {
+    String extension = getFileExtension(name);
+    return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg");
+  }
+
+
+  public String getHashedImage(String name) {
+    return name.hashCode() + "." + getFileExtension(name);
+  }
+
+
 
 }

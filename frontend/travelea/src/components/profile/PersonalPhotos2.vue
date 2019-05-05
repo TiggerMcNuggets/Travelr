@@ -16,7 +16,7 @@
           dark
           color="indigo"
           @click="toggleShowUploadPhoto"
-          v-if="isMyProfile"
+          v-if="isMyProfile || isAdminUser"
         >
           <v-icon dark>add</v-icon>
         </v-btn>
@@ -35,6 +35,7 @@
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
+        <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -42,23 +43,31 @@
         <li v-for="row in files" :value="row.value" :key="row.value">
           <div class="personal-photo-row">
             <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
+              <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
+              <v-icon v-else class="lock-icon" left>lock</v-icon>
+                
+                <div v-if="item.is_public" class="triangle" > </div>
+                <div v-else class="triangle pink-color" > </div>
+                
               <v-img
                 @click.stop="dialog = true"
                 v-on:click="setDialogueContent(item)"
                 class="personal-photo-element"
                 :src="getImgUrl(item)"
+         
               ></v-img>
             </div>
           </div>
         </li>
       </ul>
+    
 
       <v-dialog v-model="dialog" :width="clickedImageWidth">
         <v-card>
           <v-img :src="clickedImageURL"></v-img>
 
           <v-card-title primary-title>
-            <div>
+            <div>  
               <h5 class="headline mb-0">Image Name</h5>
               <div>Description/Other meta info</div>
             </div>
@@ -74,15 +83,54 @@
           </v-card-actions>
           <v-card-actions>
           <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-          </v-card-actions>
+          </v-card-actions>  
         </v-card>
       </v-dialog>
+    
     </div>
   </div>
-</template>
+</template>relative
 
 
 <style>
+
+
+.pink-color {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 100px 100px 0 0;
+  border-color: hotpink transparent transparent transparent !important;
+  opacity: 0.3;
+  position: absolute;
+  z-index: 10;
+
+}
+
+
+.lock-icon {
+  color: white !important;
+  opacity: 1;
+  position: absolute;   
+  z-index: 12;
+  font-size: 2.3em;
+  margin-top: 0.3em;
+  margin-left: 0.3em;
+  align-self: flex-start !important;
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 100px 100px 0 0;
+  border-color: #007bff transparent transparent transparent;
+  opacity: 0.3;
+  position: absolute;
+  z-index: 10;
+
+}
+
 .choose-file-button {
   background-color: #f5f5f5;
   color: rgba(0, 0, 0, 0.87);
@@ -125,10 +173,11 @@
   width: 24%;
   height: 270px;
   border: 1px solid lightgrey;
-
   background-position: center;
   padding: 7px;
   overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .image-container:hover .personal-photo-element {
@@ -187,12 +236,15 @@ hr {
 
 <script>
 import { store } from "../../store/index";
+import base_url from "../../repository/BaseUrl"
 import {
   storeImage,
   getImages,
   setProfilePic,
   updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
+
+
 
 export default {
   store,
@@ -207,15 +259,12 @@ export default {
       publicPhotoSwitch: false,
       showUploadSection: false,
       id: null,
-      isMyProfile: false
+      isMyProfile: false,
+      isAdminUser: false,
+      uploadError: false,
+      errorText: "You are trying to upload a duplicate image or an error occured while uploading."
     };
   },
-
-  // computed: {
-  //     personalPhotos() {
-  //     return store.state.personalPhotos.personalPhotos;
-  //   }
-  // },
 
   methods: {
     // Sets the file property the the file being uploaded.
@@ -237,27 +286,32 @@ export default {
     //sets the user's profile photo as the selected
     setProfilePhoto() {
       setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
-        window.location = "/profile/photos";
+        window.location = "/user/" + this.id + "/photos";
       });
     },
 
     // Submits the image file and uploads it to the server
     submitFile() {
+      this.uploadError = false;
       let formData = new FormData();
       formData.append("picture", this.file);
 
       storeImage(this.id, formData).then(() => {
-        getImages(this.id).then(result => {
+        getImages(this.id)
+        .then((result) => {
           this.files = this.groupImages(result.data);
         });
-      });
+      }).catch(error => {
+          this.uploadError = true;
+          this.errorText = error.response.data;
+        });
+
+      this.$refs.file.value = "";
     },
 
-    // Gets the local image file path
+    // Gets the image from the server
     getImgUrl(item) {
-
-      return require("../../../../../backend/resources/images/" +
-        item.photo_filename);
+      return base_url + "/api/travellers/photo/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -268,7 +322,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = require("../../../../../backend/resources/images/"  + selectedImage.photo_filename);
+      myImage.src = base_url + "/api/travellers/photo/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
 
     },
@@ -293,16 +347,16 @@ export default {
   },
 
   created: function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    // store.commit("setPersonalImages", this.$route.params.id);
+
     this.id = this.$route.params.id;
     
     if(!this.id) { 
       this.id = store.getters.getUser.id
     }
 
-    this.isMyProfile = (store.getters.getUser.id == this.id)
-    console.log("HERE" + this.id)
+    this.isMyProfile = (store.getters.getUser.id == this.id);
+    this.isAdminUser = (store.getters.getIsUserAdmin);
+
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });

@@ -35,7 +35,7 @@ public class EditTripsSteps {
             Http.RequestBuilder getTrip = Helpers.fakeRequest()
                     .method("GET")
                     .header("X-Authorization", state.getToken())
-                    .uri("http://localhost:9000/api/trips/" + string);
+                    .uri("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + string);
 
             // Send request
             state.setResult(route(state.getApplication(), getTrip));
@@ -148,7 +148,7 @@ public class EditTripsSteps {
                     .method("PUT")
                     .header("X-Authorization", state.getToken())
                     .bodyJson(tripData)
-                    .uri("http://localhost:9000/api/trips/" + tripId);
+                    .uri("http://localhost:9000/api/users/" + state.getTravellerId() + "/trips/" + tripId);
 
             // Send request
             state.setResult(route(state.getApplication(), getTrip));

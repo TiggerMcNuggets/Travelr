@@ -63,10 +63,10 @@ export default {
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
-          { name: "Profile", icon: "lock_open", link: "/profile" },
+          { name: "Profile", icon: "lock_open", link: "/user/"+store.getters.getUser.id },
           { name: "Users", icon: "lock_open", link: "/users" },
-          { name: "My Destinations", icon: "lock_open", link: "/destinations" },
-          { name: "My Trips", icon: "lock_open", link: "/trips" },         
+          { name: "My Destinations", icon: "lock_open", link: "/user/"+store.getters.getUser.id+"/destinations" },
+          { name: "My Trips", icon: "lock_open", link: "/user/"+store.getters.getUser.id+"/trips" },         
         ];
       }
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
