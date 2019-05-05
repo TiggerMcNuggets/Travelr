@@ -174,30 +174,34 @@ export default {
   },
   data() {
     return {
-      tripToDisplay: null,
-      draggableEnabled: true,
-      dialogName: "Create a new trip",
-      trip: {
-        title: "",
-        destinations: [
-          {
-            title: null,
-            arrivalDate: null,
-            departureDate: null,
-            arrivalDateMenu: false,
-            departureDateMenu: false
-          },
-          {
-            title: null,
-            arrivalDate: null,
-            departureDate: null,
-            arrivalDateMenu: false,
-            departureDateMenu: false
-          }
-        ]
-      },
-      userDestinations: [],
-      ...rules
+        tripToDisplay: null,
+        draggableEnabled: true,
+        dialogName: "Create a new trip",
+        trip: {
+          title: "",
+          destinations: [
+            {
+              title: null,
+              arrivalDate: null,
+              departureDate: null,
+              arrivalDateMenu: false,
+              departureDateMenu: false
+            },
+            {
+              title: null,
+              arrivalDate: null,
+              departureDate: null,
+              arrivalDateMenu: false,
+              departureDateMenu: false
+            }
+          ]
+        },
+        userDestinations: [],
+        ...rules,
+      id: this.$route.params.id,
+      tripID: this.$route.params.trip_id,
+      isAdminUser: false,
+      isMyProfile: false,
     };
   },
   computed: {
@@ -215,14 +219,30 @@ export default {
      * Gets the list of valid destinations available to a user
      */
     getDestinations: function() {
+      if (this.isMyProfile) {
       destinationRepository
-        .getDestinations()
+        .getDestinations(this.id)
         .then(res => {
           this.userDestinations = res.data;
         })
         .catch(e => {
           console.log(e);
         });
+      } else {
+      destinationRepository
+        .getDestinations(this.id)
+        .then(res => {
+          this.userDestinations = res.data;
+        })
+        .catch(e => {
+          console.log(e);
+        });
+      }
+    },
+
+    checkIfProfileOwner() {
+      this.id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == this.id);
     },
 
     /**
@@ -279,6 +299,16 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
+        if (this.isAdminUser) {
+        tripRepository
+          .createTripForUser(trip, this.id)
+          .then( () => {
+            this.regetTrips();
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        } else {
         tripRepository
           .createTrip(trip)
           .then( () => {
@@ -287,6 +317,7 @@ export default {
           .catch(e => {
             console.log(e);
           });
+        }
       }
     },
 
@@ -294,7 +325,7 @@ export default {
         if (this.$refs.form.validate()) {
             const trip = this.tripAssembler();
             tripRepository
-                .updateTrip(parseInt(this.passedTrip),trip)
+                .updateTrip(this.id, parseInt(this.passedTrip),trip)
                 .then( () => {
                     this.updateViewTripPage()
                 })
@@ -331,11 +362,11 @@ export default {
      * Makes component usable for both create and edit component
      */
     mounted() {
-      this.getDestinations();
+      this.getDestinations(this.id);
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};
-        tripRepository.getTrip(this.passedTrip)
+        tripRepository.getTrip(this.id, this.passedTrip)
             .then((result) => {
                 const tripById = result.data;
                 tripToEdit.title = tripById.name;
@@ -352,6 +383,11 @@ export default {
                 }
             });
     }
+  },
+
+  created: function() {
+    this.checkIfProfileOwner();
+    this.isAdminUser = store.getters.getIsUserAdmin;
   }
 };
 </script>

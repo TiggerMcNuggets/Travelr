@@ -165,11 +165,15 @@ public class UserController extends Controller {
     /**
      * Update a user that matches header and id
      * @param request the http request
-     * @param id the user id
+     * @param userId the user id
      * @return 200 with string if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> updateUser(Http.Request request, Long id) {
+    public CompletionStage<Result> updateUserGivenUser(Http.Request request, Long userId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
 
         // Turns the post data into a form object
         Form<UpdateUserReq> userRequestForm = formFactory.form(UpdateUserReq.class).bindFromRequest(request);
@@ -179,57 +183,18 @@ public class UserController extends Controller {
             return CompletableFuture.completedFuture(badRequest("Bad Request"));
         }
 
-        // Forbidden Check
-        User user = request.attrs().get(Attrs.USER);
-        if (user.id != id) {
-            return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-        }
-
         // Create an object from the request
         UpdateUserReq req = userRequestForm.get();
 
-        return userRepository.getUser(id).thenComposeAsync(newUser -> {
+        return userRepository.getUser(userId).thenComposeAsync(newUser -> {
             // Not Found Check
             if (newUser == null) {
                 return CompletableFuture.completedFuture(notFound("Traveller not found"));
             }
-            return userRepository.updateUser(req, id).thenApplyAsync(uid -> ok("Traveller Updated"));
+            return userRepository.updateUser(req, userId).thenApplyAsync(uid -> ok("Traveller Updated"));
         });
     }
 
-    /**
-     * Gets a users trips by given id
-     * @param id the user id
-     * @return 200 if item exists
-     */
-    @Authorization.RequireAuth
-    public CompletionStage<Result> getTrips(Http.Request request, Long id) {
-        User requestUser = request.attrs().get(Attrs.USER);
-        return userRepository.getUser(id).thenComposeAsync(user -> {
-            // Not Found Check
-            if (user == null) {
-                return CompletableFuture.completedFuture(notFound("Traveller not found"));
-            }
-
-            return tripRepository.getTrips(user.id).thenApplyAsync(trips -> {
-                ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
-                for (Trip trip : trips) {
-                    GetTripRes tripRes = new GetTripRes(trip);
-                    List<TripDestination> correctDests = new ArrayList<TripDestination>();
-                    //Setting the blank name to the correct destination name
-                    for (TripDestination dest : trip.destinations) {
-                        dest.name = dest.destination.getName();
-                        correctDests.add(dest);
-                    }
-                    tripRes.setDestinations(correctDests);
-                    correctTrips.add(tripRes);
-                }
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode jsonResponse = mapper.valueToTree(correctTrips);
-                return ok(jsonResponse);
-            });
-        });
-    }
 
     /**
      * Deletes a user by given id

@@ -5,10 +5,24 @@ Feature: EditTravellers
     Given I populate the database
     Then I will receive a 200 response
 
-  Scenario: Edit traveller successfully
+  Scenario: Edit my own profile as admin user
     Given I provide the token "123"
     And I provide a complete editTraveller json
     And The traveller id is 1
+    When I edit the traveller
+    Then I will receive a 200 response
+
+  Scenario: Edit another user's profile as admin user
+    Given I provide the token "123"
+    And I provide a complete editTraveller json
+    And The traveller id is 2
+    When I edit the traveller
+    Then I will receive a 200 response
+
+  Scenario: Edit my own profile as normal user
+    Given I provide the token "abc"
+    And I provide a complete editTraveller json
+    And The traveller id is 2
     When I edit the traveller
     Then I will receive a 200 response
 
@@ -26,9 +40,9 @@ Feature: EditTravellers
     When I edit the traveller
     Then I will receive a 401 response
 
-  Scenario: Editing another traveller
-    Given I provide the token "123"
+  Scenario: Editing another traveller as a normal user
+    Given I provide the token "abc"
     And I provide a complete editTraveller json
-    And The traveller id is 4
+    And The traveller id is 1
     When I edit the traveller
     Then I will receive a 403 response

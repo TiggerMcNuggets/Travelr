@@ -116,6 +116,11 @@ let router = new Router({
                     component: ProfileTrips,                   
                 },
                 {
+                    path: '/user/:id/trips/:trip_id',
+                    name: 'view-trip',
+                    component: ViewTrip                    
+                },
+                {
                     path: 'photos',
                     name: 'travellerProfilePhotos',
                     component: ProfilePhotos,             
@@ -166,11 +171,6 @@ let router = new Router({
             meta: {
                 requiresAdmin: true
             }
-        },
-        {
-            path: '/trips/view/:id',
-            name: 'view-trip',
-            component: ViewTrip
         }
     ]
 });
