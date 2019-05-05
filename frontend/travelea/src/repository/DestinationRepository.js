@@ -16,7 +16,11 @@ export default {
 
     updateDestination(id, payload) {
         return Repository.put(`/destinations/${id}`, payload)
-    }    
+    },
+
+    // deleteDestination(userId, destinationId) {
+    //     return Repository.delete(`/users/${userId}/destinations/${destinationId}`);
+    // }
 }
 
 

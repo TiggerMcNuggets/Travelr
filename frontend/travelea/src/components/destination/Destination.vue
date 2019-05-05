@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
 <v-card>
   <v-container style="margin-left: 0px; margin-top: -20px;">
     
@@ -20,48 +20,33 @@
         :value="item.value"
         :key="item.value"
       >
-        <div class="top-destination-content">
-          <h2>{{ item.name }}</h2>
-          <span>
-            <!-- item.id -->
-            <div v-if="isMyProfile" @click="editDestination(item.id)">
-              <a>Edit</a>
+        <v-card class="top-destination-content destination-container">
+          <div class="row-container">
+            <div class="private-public-side-bar">
             </div>
+            <div>
+              <h2>
+                {{item.name}} | {{item.country}} | {{item.district}}
+              </h2>
+              <div class="row-container">
+                <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
+              </div>
+              <div class="row-container">
+                <h3>Type: {{item.type}}</h3>
+              </div>
+            </div>
+          </div>
+          <div v-if="isMyProfile">
+            <v-btn icon @click="deleteDestination(item.id)">
+              <v-icon color="red lighten-1">delete</v-icon>
+            </v-btn>
+            <v-btn icon @click="editDestination(item.id)">
+              <v-icon color="orange lighten-1">edit</v-icon>
+            </v-btn>
+          </div>
+
             <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
-          </span>
-        </div>
-        <ul class="horizontal-details">
-          <li>
-            <p>
-              <strong>COUNTRY:</strong>
-              {{ item.country }}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>TYPE:</strong>
-              {{ item.type }}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>DISTRICT:</strong>
-              {{ item.district }}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>LATITUDE:</strong>
-              {{ item.latitude }}
-            </p>
-          </li>
-          <li>
-            <p>
-              <strong>LONGITUDE:</strong>
-              {{ item.longitude }}
-            </p>
-          </li>
-        </ul>
+        </v-card>
       </li>
     </ul>
     
@@ -77,21 +62,25 @@
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
-.horizontal-details {
-  padding-top: 15px;
-  background-color: #05386b;
+.private-public-side-bar {
+  width: 10px;
+  margin-right: 20px;
+}
+.blue-background {
+  background-color: #0d47a1;
+}
+.pink-background {
+  
 }
 
-.horizontal-details li {
-  display: inline-block;
-  padding-right: 20px;
-  color: white;
+.destination-container {
+  padding: 20px;
 }
 
-.top-destination-content {
-  background-color: #edf5e1;
+.row-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  margin-top: 10px;
 }
 
 .top-destination-content span {
@@ -118,7 +107,6 @@ ul {
 import { store } from "../../store/index";
 import {RepositoryFactory} from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
-import UserRepository from "../../repository/UserRepository";
 import DestinationCreate from "./DestinationCreate"
 
 export default {
@@ -153,8 +141,8 @@ export default {
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
     },
-    deleteDestination: function() {      
-        // SPRINT 2 TODO
+    deleteDestination: function() {
+        // TODO: ion progress
     },
     updateDestinationList: function()  {
       this.getDestinationList();
