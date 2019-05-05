@@ -35,19 +35,6 @@ public class DestinationController extends Controller {
     }
 
     /**
-     * Gets list of all destinations that belong to a user
-     * @param request the http request
-     * @return 200 with list of destinations if all ok
-     */
-    @Authorization.RequireAuth
-    public CompletionStage<Result> getUserDestinations(Http.Request request) {
-        User user = request.attrs().get(Attrs.USER);
-        return destinationRepository
-                .getAvailableDestinations(user.id)
-                .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
-    }
-
-    /**
      * Gets a list of all destinations that belong to the specified user
      * @param request the http request
      * @param userId the id of the specified user

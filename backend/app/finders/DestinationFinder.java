@@ -26,7 +26,16 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
     public List<Destination> getAvaliableDestinations(Long userId) {
 
-        return query().where().and(Expr.or(Expr.eq("isPublic", true), Expr.eq("user.id", userId)),Expr.eq("isDeleted", false)).findList();
+        return query()
+                .where()
+                .and()
+                .or()
+                .eq("isPublic", true)
+                .eq("user.id", userId)
+                .endOr()
+                .eq("isDeleted", false)
+                .endAnd()
+                .findList();
     }
 
     /**
@@ -42,11 +51,30 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
 
         // Get destinations where country, district and name are the same
-        destinations.addAll(query().where().and(Expr.eq("name", destination.name), Expr.and(Expr.eq("district", destination.district), Expr.eq("country", destination.country))).findList());
 
+        destinations.addAll(
+                    query()
+                    .where()
+                    .and()
+                    .eq("name", destination.name)
+                    .eq("district", destination.district)
+                    .eq("country", destination.country)
+                    .endAnd()
+                    .findList()
+        );
 
         // Get destinations where latitude and longitude are the same
-        destinations.addAll(query().where().and(Expr.eq("longitude", destination.longitude), Expr.eq("latitude", destination.latitude)).findList());
+
+        destinations.addAll(
+                query()
+                .where()
+                .and()
+                .eq("longitude", destination.longitude)
+                .eq("latitude", destination.latitude)
+                .endAnd()
+                .findList()
+        );
+
 
 
         return destinations;
