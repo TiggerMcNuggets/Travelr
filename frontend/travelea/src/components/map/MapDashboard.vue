@@ -62,11 +62,6 @@
             Map: Map,
             MapMenu,
         },
-        watch: {
-            'this.destinationsMarkers': function () {
-                console.log(this.destinationsMarkers);
-            } 
-        },
         methods: {
             updateDestinationsMarkers(listDest) {
                 this.destinationsMarkers = listDest;

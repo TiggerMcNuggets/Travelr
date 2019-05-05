@@ -139,7 +139,6 @@
                 this.offsetTop = e.target.scrollTop
             },
             selectAll() {
-                console.log("ciao");
                 this.selectedDestinations = this.destinations;
                 this.updateDestinationsMarkers(this.selectedDestinations);
             }

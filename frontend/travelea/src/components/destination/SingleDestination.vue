@@ -411,8 +411,6 @@ export default {
       .getDestination(this.dest_id)
       .then(response => {
         this.destination = response.data;
-        console.log("destination data");
-        console.log(this.destination);
       })
       .catch(err => {
         console.log(err);

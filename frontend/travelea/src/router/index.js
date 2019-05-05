@@ -34,7 +34,6 @@ const authGuard = (to, from, next) => {
         })
     } else {
         // TODO ADD META ADMIN CHECK HERE
-        console.log(store.getters.getToken && store.getters.getUser);
         return next();
     }
 

@@ -1,5 +1,15 @@
 <template>
     <div class="map-container" >
+        <!--<h1>Autocomplete Example (#164)</h1>-->
+        <!--<label>-->
+            <!--AutoComplete-->
+            <!--<GmapAutocomplete-->
+                    <!--placeholder="This is a placeholder text"-->
+                    <!--@place_changed="setPlace">-->
+            <!--</GmapAutocomplete>-->
+            <!--<button @click="usePlace">Add</button>-->
+        <!--</label>-->
+        <!--<br/>-->
         <GmapMap class="main-map"
                  :zoom="2"
                  :center="{lat: 0, lng: 0}"
@@ -72,7 +82,6 @@
             openInfoWindowTemplate(item) {
                 this.infoWindow.position = {lat:item.latitude, lng: item.longitude};
                 this.infoWindow.open = true;
-                console.log(this.selectedDest);
                 this.selectedDest = item;
             },
             closeInfoWindow() {
@@ -92,9 +101,22 @@
                   return blueMarker;
               }
             },
+            // setPlace(place) {
+            //     this.place = place
+            // },
+            // usePlace() {
+            //     if (this.place) {
+            //         this.markers.push({
+            //             position: {
+            //                 lat: this.place.geometry.location.lat(),
+            //                 lng: this.place.geometry.location.lng(),
+            //             }
+            //         });
+            //         this.place = null;
+            //     }
+            // }
         },
         created() {
-            console.log("markers", this.destinationsMarkers);
         }
     }
 </script>
