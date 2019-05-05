@@ -91,38 +91,31 @@ export default {
   components: {
     ProfileNav,
   },
-
+  watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
   created: function() {
     this.init();
   },
-
-  watch: {
-    '$route.params.id': function (id) {
-      this.init()
-    }
-  },
-
-
   methods: {
-
     init() {
       let id = this.$route.params.id;
-    
-    if(!id) { 
-      id = store.getters.getUser.id
-    }
-
-    UserRepository.getUser(id)
-      .then(response => {
-        this.traveller = response.data
-        this.setTravellerToFields(); 
-        this.isMyProfile = (store.getters.getUser.id == id)
-      })    
-      .catch(err => {
-        console.log(err);
-      })
+      
+      if(!id) { 
+        id = store.getters.getUser.id
+      }
+      UserRepository.getUser(id)
+        .then(response => {
+          this.traveller = response.data;
+          this.setTravellerToFields(); 
+          this.isMyProfile = (store.getters.getUser.id == id)
+        })    
+        .catch(err => {
+          console.log(err);
+        })
     },
-
     getTraveller() {
       this.traveller = store.getters.getUser;
       this.setTravellerToFields();

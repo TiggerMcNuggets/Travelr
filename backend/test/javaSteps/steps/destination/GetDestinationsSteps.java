@@ -23,7 +23,7 @@ public class GetDestinationsSteps {
             Http.RequestBuilder getDestinations = Helpers.fakeRequest()
                     .method("GET")
                     .header("X-Authorization", state.getToken())
-                    .uri("https://localhost:9000/api/destinations");
+                    .uri("https://localhost:9000/api/users/" + state.getTravellerId() + "/destinations");
 
             // Send request
             state.setResult(route(state.getApplication(), getDestinations));
@@ -33,4 +33,7 @@ public class GetDestinationsSteps {
             Assert.assertTrue(false);
         }
     }
+
+
+
 }

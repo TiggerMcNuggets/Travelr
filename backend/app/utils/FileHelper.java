@@ -10,7 +10,7 @@ public class FileHelper {
   public FileHelper() {
   }
 
-  public boolean make_directory(String directory_path) {
+  public boolean makeDirectory(String directory_path) {
     Path path = Paths.get(directory_path);
     File file = new File(directory_path);
 
@@ -21,5 +21,27 @@ public class FileHelper {
       return true;
     }
   }
+
+
+  public String getFileExtension(String f) {
+    String ext = "";
+    int i = f.lastIndexOf('.');
+    if (i > 0 &&  i < f.length() - 1) {
+      ext = f.substring(i + 1).toLowerCase();
+    }
+    return ext;
+  }
+
+  public Boolean isValidFile(String name) {
+    String extension = getFileExtension(name);
+    return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg");
+  }
+
+
+  public String getHashedImage(String name) {
+    return name.hashCode() + "." + getFileExtension(name);
+  }
+
+
 
 }

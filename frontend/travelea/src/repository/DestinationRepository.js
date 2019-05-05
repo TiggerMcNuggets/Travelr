@@ -2,16 +2,16 @@ import Repository from "./Repository";
 
 
 export default {
-    getDestinations() {
-        return Repository.get('/destinations');
+    getDestinations(id) {
+        return Repository.get(`/users/${id}/destinations`);
     },
 
     getDestination(id) {
         return Repository.get(`/destinations/${id}`)
     },
 
-    createDestination(payload) {
-        return Repository.post('/destinations', payload);
+    createDestination(userId, payload) {
+        return Repository.post(`/users/${userId}/destinations`, payload);
     },
 
     updateDestination(id, payload) {

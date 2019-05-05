@@ -9,6 +9,8 @@ import models.Nationality;
 import models.PersonalPhoto;
 import models.User;
 import play.db.ebean.EbeanConfig;
+import play.db.ebean.EbeanDynamicEvolutions;
+
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,17 +23,12 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class PersonalPhotoRepository {
 
-    private final EbeanServer ebeanServer;
     private final DatabaseExecutionContext executionContext;
-    private PhotoFinder photoFinder = new PhotoFinder();
-    private UserFinder userFinder = new UserFinder();
 
     @Inject
-    public PersonalPhotoRepository(EbeanConfig ebeanConfig, DatabaseExecutionContext executionContext) {
-        this.ebeanServer = Ebean.getServer(ebeanConfig.defaultServer());
+    public PersonalPhotoRepository(DatabaseExecutionContext executionContext) {
         this.executionContext = executionContext;
     }
-
 
     /**
      * Adds a new personal photo for a user.
@@ -40,8 +37,16 @@ public class PersonalPhotoRepository {
     public CompletionStage<Long> add(Long id, String imageFileName) {
         return supplyAsync(() -> {
             User traveller = User.find.findById(id);
-            System.out.println(traveller);
             if (traveller == null) return null; // bad user
+            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("traveller_id", id);
+            List<PersonalPhoto> photoList = query.findList();
+
+            for (PersonalPhoto personalPhoto: photoList) {
+                if (personalPhoto.getPhoto_filename().equals(imageFileName)) {
+                    System.out.println("Duplicate Photo");
+                    return null;
+                }
+            }
             PersonalPhoto photo = new PersonalPhoto(traveller, imageFileName);
             photo.save();
             return photo.id;
@@ -55,7 +60,7 @@ public class PersonalPhotoRepository {
      */
     public CompletionStage<List<PersonalPhoto>> list(Long id, Boolean privatePhotos) {
         return supplyAsync(() -> {
-            ExpressionList<PersonalPhoto> query = ebeanServer.find(PersonalPhoto.class).where().eq("traveller_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
+            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("traveller_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
             return query.findList();
         }, executionContext);
     }
@@ -68,7 +73,7 @@ public class PersonalPhotoRepository {
      */
     public CompletableFuture<Long> update(UpdatePhotoReq request, Long photoId) {
         return supplyAsync(() -> {
-            PersonalPhoto photo = photoFinder.findByPhotoId(photoId);
+            PersonalPhoto photo = PersonalPhoto.find.findByPhotoId(photoId);
             photo.is_public = request.is_public;
             photo.save();
 
@@ -82,7 +87,7 @@ public class PersonalPhotoRepository {
      * @return completable future of the photo
      */
     public CompletableFuture<PersonalPhoto> getOne(Long id) {
-        return supplyAsync(() -> photoFinder.findByPhotoId(id), executionContext);
+        return supplyAsync(() -> PersonalPhoto.find.findByPhotoId(id), executionContext);
     }
 
     /**
@@ -94,7 +99,7 @@ public class PersonalPhotoRepository {
     public CompletableFuture<Object> setUserProfilePic(Long id, String fileName) {
         return supplyAsync(() -> {
             try {
-                User user = userFinder.findById(id);
+                User user = User.find.findById(id);
                 user.setUserProfilePhoto(fileName);
                 user.save();
                 return user.userProfilePhoto;
@@ -109,13 +114,11 @@ public class PersonalPhotoRepository {
      * @param id user id
      * @return file name of profile pic, otherwise null
      */
-    public CompletionStage<Object> getUserProfilePic(long id) {
+    public CompletionStage<String> getUserProfilePic(long id) {
         return supplyAsync(() -> {
             try {
-                User user = userFinder.findById(id);
+                User user = User.find.findById(id);
                 String filename = user.userProfilePhoto;
-                System.out.println("user profile photo");
-                System.out.println(filename);
                 return filename;
             } catch (Error e) {
                 return null;

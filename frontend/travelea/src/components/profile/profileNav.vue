@@ -5,23 +5,21 @@
     <div class="profile-top">
       <!-- <v-avatar size="100%" class="profile-photo"> -->
       <div class="profile-container">
-        <img
-            class="profile-image"
-            :src="getImgUrl"
-        >
+        <img class="profile-image" :src="getImgUrl">
       </div>
-      <!-- </v-avatar> -->
-      <router-link v-if="isMyProfile" to="/profile/edit">
-        <v-btn  class="profile-edit-button" fab small dark color="indigo">
-          <v-icon dark>edit</v-icon>
-        </v-btn>
-      </router-link>
 
-   
-        <v-btn  v-else-if="isAdminUser" class="profile-edit-button"  @click="goToUserEdit" fab small dark color="indigo">
-          <v-icon dark>edit</v-icon>
-        </v-btn>
-    
+      <v-btn
+        v-if="isMyProfile || isAdminUser"
+        @click="goToEdit(user_id)"
+        class="profile-edit-button"
+        fab
+        small
+        dark
+        color="indigo"
+      >
+        <v-icon dark>edit</v-icon>
+      </v-btn>
+
     </div>
 
     <div>
@@ -73,31 +71,31 @@
 }
 
 a {
-    text-decoration:none;
+  text-decoration: none;
 }
 
 .profile-edit-button {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-edit-button:hover {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-edit-button:active {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-edit-button:focus {
-    position: absolute;
-    right: 25%;
-    top: 100px;
+  position: absolute;
+  right: 25%;
+  top: 100px;
 }
 
 .profile-top {
@@ -126,7 +124,7 @@ li {
 .field-title {
   line-height: 0px;
   color: grey;
-} 
+}
 
 .profile-sidebar {
   text-align: center;
@@ -157,15 +155,15 @@ li {
 
 
 <script>
-
-
 import { store } from "../../store/index";
+import DefaultPic from "../../assets/defaultPic.png"
+import base_url from "../../repository/BaseUrl"
 
 export default {
   store,
 
   props: [
-    "fname",  
+    "fname",
     "mname",
     "lname",
     "dob",
@@ -179,37 +177,49 @@ export default {
 
   data() {
     return {
+      profile: {},
       isAdminUser: false,
       isMyProfile: false,
-      id: this.$route.params.id 
+      id: this.$route.params.id
     };
   },
 
-  
+   watch: {
+    '$route.params.id': function() {
+      this.init();
+    }
+  },
+
+
   created: function() {
     this.traveller = store.getters.getUser;
+    this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;
-    this.isMyProfile = store.getters.getUser.id === this.$route.params.id || this.$route.params.id == null;
   },
   methods: {
-        // Gets the local image file path    
-    goToUserEdit() {
-        const endpoint = "/user/" + this.$route.params.id + "/edit";
-        this.$router.push(endpoint)
+      init() {
+      this.traveller = store.getters.getUser;
+      this.checkIfProfileOwner();
+      this.isAdminUser = store.getters.getIsUserAdmin;
+    },
+    checkIfProfileOwner() {
+      this.id = this.$route.params.id;
+      this.isMyProfile = (store.getters.getUser.id == this.id);
+    },
+    goToEdit(id) {
+      this.$router.push("/user/"+this.id+"/edit")
     }
+
   },
   computed: {
-      getImgUrl() {
-      if(!this.profilePic) {
-        return "http://localhost:9000/assets/profile_images/defaultPic.png";
+    
+    getImgUrl() {
+      if (!this.profilePic || this.profilePic == 'defaultPic.png') {
+        return DefaultPic;
       } else {
-        return "http://localhost:9000/assets/profile_images/" + this.profilePic;
+        return base_url + "/api/travellers/profile-photo/" + this.id;
       }
-      
     }
-
-   
-  },
-
+  }
 };
 </script>

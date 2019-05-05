@@ -69,6 +69,7 @@
 </style>
 
 <script>
+import userRepo from "../../repository/UserRepository";
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
@@ -110,11 +111,13 @@ export default {
       formData.append("picture", this.file);
 
       uploadProfilePic(this.id, formData).then(() => {
-        window.location = "/profile/edit";
+        window.location = "/user/" + this.$route.params.id + "/edit";
       });
     },
     getTraveller() {
-      this.traveller = store.getters.getUser;
+      userRepo.getUser(this.id).then(result => {
+        this.traveller = result.data;
+      });
       this.setTravellerToFields();
     },
 

@@ -1,6 +1,6 @@
 package controllers;
 
-//import controllers.actions.Attrs;
+import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Photo.ChooseProfilePicReq;
@@ -17,6 +17,9 @@ import play.mvc.Result;
 import repository.PersonalPhotoRepository;
 import utils.FileHelper;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
 import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
@@ -27,15 +30,23 @@ public class PhotoController extends Controller {
 
     private final PersonalPhotoRepository personalPhotoRepository;
 
+    private final FileHelper fh = new FileHelper();
+
+    private String personalPhotosFilepath;
+
+    private String profilePhotosFilepath;
+
     @Inject
     FormFactory formFactory;
 
     @Inject
-    public PhotoController(
-            PersonalPhotoRepository personalPhotoRepository
-    ) {
+    public PhotoController(Config config, PersonalPhotoRepository personalPhotoRepository) {
+        String rootPath = System.getProperty("user.home");
+        personalPhotosFilepath = rootPath + config.getString("personalPhotosFilePath");
+        profilePhotosFilepath = rootPath + config.getString("profilePhotosFilePath");
         this.personalPhotoRepository = personalPhotoRepository;
     }
+
 
     /**
      * Allows the user to fetch rows from the personal photo repository, given a user id
@@ -47,13 +58,12 @@ public class PhotoController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id) {
-        FileHelper fh = new FileHelper();
-        fh.make_directory("resources/images");
-
+ 
         User user = request.attrs().get(Attrs.USER);
+        Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        return personalPhotoRepository.list(id, user.id == id || user.accountType > 0).thenApplyAsync((photos) -> {
-            PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
+        return personalPhotoRepository.list(id, user.id == id || isAdmin).thenApplyAsync((photos) -> {
+            PathProperties pathProperties = PathProperties.parse("id, photo_filename, is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
     }
@@ -69,13 +79,13 @@ public class PhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
-            String fileName = picture.getFilename();
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
+            String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
-            FileHelper fh = new FileHelper();
-            fh.make_directory("public/images");
-            file.copyTo(Paths.get("public/images/" + fileName), true);
+            fh.makeDirectory(this.personalPhotosFilepath);
+            file.copyTo(Paths.get(this.personalPhotosFilepath + fileName), true);
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
@@ -88,14 +98,15 @@ public class PhotoController extends Controller {
         }
     }
 
-    /**
-      * Gets a raw image from the file system and sends this as response data.
-      * @param filename The file name of the image to get.
-     * @return The raw image file which corresponds to the filename given.
-     */
-    @Authorization.RequireAuth
+        /**
+          * Gets a raw image from the file system and sends this as response data.
+          * @param filename The file name of the image to get.
+         * @return The raw image file which corresponds to the filename given.
+         */
+
     public Result getImageFromDatabase(String filename) {
-        File file = new File("resources/images/" + filename);
+
+        File file = new File(this.personalPhotosFilepath + filename);
         try {
             return ok(file);
         } catch (Exception e) {
@@ -115,7 +126,7 @@ public class PhotoController extends Controller {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
 
         if (updatePhotoForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest("Error uploading photo"));
         }
 
         UpdatePhotoReq req = updatePhotoForm.get();
@@ -125,10 +136,6 @@ public class PhotoController extends Controller {
             if (photo == null) {
                 return CompletableFuture.completedFuture(notFound("Photo not found"));
             }
-            // Forbidden Check
-//            if (photo.traveller.id != user.id) {
-//                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-//            }
             return personalPhotoRepository.update(req, id).thenApplyAsync(destId -> ok("Photo updated"));
 
         });
@@ -145,13 +152,14 @@ public class PhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
-            String fileName = picture.getFilename();
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
+            String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
-            FileHelper fh = new FileHelper();
-            fh.make_directory("public/profile_images");
-            file.copyTo(Paths.get("public/profile_images/" + fileName), true);
+            fh.makeDirectory(this.profilePhotosFilepath);
+            file.copyTo(Paths.get(this.profilePhotosFilepath + fileName), true);
+
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
@@ -176,6 +184,18 @@ public class PhotoController extends Controller {
         Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
         ChooseProfilePicReq req = chooseProfilePicForm.get();
         String fileName = req.photo_filename;
+
+        try {
+        if (fileName != null) {
+            fh.makeDirectory(this.profilePhotosFilepath);
+            Path sourceDirectory = Paths.get(this.personalPhotosFilepath + fileName);
+            Path targetDirectory = Paths.get((this.profilePhotosFilepath + fileName));
+            java.nio.file.Files.copy(sourceDirectory, targetDirectory);
+        }
+        } catch (IOException e) {
+            System.out.println("Profile image already exists in directory");
+        }
+
         return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
             if (photoName != null) {
                 return ok("Your profile image was successfully set to " + photoName);
@@ -194,7 +214,7 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> getProfilePic(long id) {
         return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync((fileName) -> {
             try {
-                File file = new File("resources/images/" + fileName);
+                File file = new File(this.profilePhotosFilepath + fileName);
                 return ok(file);
             } catch (Exception e) {
                 System.out.println(e);

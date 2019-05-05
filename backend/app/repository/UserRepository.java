@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 
@@ -118,11 +119,11 @@ public class UserRepository {
         return supplyAsync(() -> {
             User user = User.find.byId(id);
 
-            user.firstName = request.firstName;
-            user.middleName = request.middleName;
-            user.lastName = request.lastName;
-            user.dateOfBirth = request.dateOfBirth;
-            user.gender = request.gender;
+            user.setFirstName(request.firstName);
+            user.setMiddleName(request.middleName);
+            user.setLastName(request.lastName);
+            user.setDateOfBirth(request.dateOfBirth);
+            user.setGender(request.gender);
             user.nationalities.clear();
             user.travellerTypes.clear();
 
@@ -146,6 +147,7 @@ public class UserRepository {
 
             user.save();
             return user.id;
+
         }, context);
     }
 
