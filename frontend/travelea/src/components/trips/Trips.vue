@@ -2,26 +2,28 @@
 
 <template>
   <v-container style="margin-left: 0px;">
-    <div v-if="!showCreateTrip && this.isMyProfile">
-      <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
-        <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
-      </v-btn>
-      <create-trip
-        v-if="showCreateTrip"
-        v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
-      />
-    </div>
-    <div v-if="showCreateTrip">
-      <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
-        <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
-      </v-btn>
+    <div v-if="this.isMyProfile || this.isAdmin">
+      <div v-if="!showCreateTrip && (this.isMyProfile || this.isAdmin)">
+        <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
+          <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
+        </v-btn>
         <create-trip
-        v-if="showCreateTrip"
-        :toggleShowCreateTrip="toggleShowCreateTrip"
-        :regetTrips="regetTrips"
-        :passedTrip="null"
-        :updateViewTripPage="() => console.log()"
+          v-if="showCreateTrip"
+          v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
         />
+      </div>
+      <div v-if="showCreateTrip">
+        <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
+          <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
+        </v-btn>
+          <create-trip
+          v-if="showCreateTrip"
+          :toggleShowCreateTrip="toggleShowCreateTrip"
+          :regetTrips="regetTrips"
+          :passedTrip="null"
+          :updateViewTripPage="() => console.log()"
+          />
+      </div>
     </div>
 
     <ul>
@@ -105,7 +107,9 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       trips: [],
+        isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
+      isAdminUser: false,
       user_id: this.$route.params.id
     };
   },
@@ -125,7 +129,7 @@ export default {
   },
   methods: {
     getTrips: function() {
-        tripRepository.getTrips()
+        tripRepository.getUserTrips(this.user_id)
         .then((res) => {
             this.trips = res.data;
         })
@@ -144,7 +148,11 @@ export default {
     },
 
     openTrip: function(id) {
-        this.$router.push("/trips/view/"+id);//window.location.href = '/#/trips/view/'+id;
+      let route = `/user/${this.user_id}/trips/`;
+      if (this.isMyProfile || store.getters.getIsUserAdmin) {
+        route = `/user/${this.user_id}/trips/${id}`
+      }
+      this.$router.push(route);
     },
 
     toggleShowCreateTrip: function() {
@@ -153,7 +161,11 @@ export default {
 
     regetTrips: function() {
       this.toggleShowCreateTrip();
-      this.getTrips();
+      if (this.isMyProfile) {
+        this.getTrips();
+      } else {
+        this.getUserTrips();
+      }
     },
 
     checkIfProfileOwner() {
@@ -163,6 +175,7 @@ export default {
   },
   created: function() {
     this.checkIfProfileOwner();
+    this.isAdminUser = store.getters.getIsUserAdmin;
     if (this.isMyProfile) {
       this.getTrips();
     } else {

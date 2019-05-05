@@ -59,7 +59,6 @@ main {
 
 
 <script>
-import ProfileNav from "./profileNav";
 import Trips from "../trips/Trips";
 
 export default {
@@ -70,7 +69,6 @@ export default {
     };
   },
   components: {
-    ProfileNav,
     Trips,
   },
   methods: {
