@@ -15,8 +15,6 @@ public class DestinationRepository {
 
     private DatabaseExecutionContext context;
 
-    private DestinationFinder destinationFinder = new DestinationFinder();
-
     @Inject
     public DestinationRepository(DatabaseExecutionContext context) {
         this.context = context;
@@ -28,7 +26,16 @@ public class DestinationRepository {
      * @return completable future of list of destinations
      */
     public CompletableFuture<List<Destination>> getUserDestinations(Long userId) {
-        return supplyAsync(() -> destinationFinder.getUserDestinations(userId), context);
+        return supplyAsync(() -> Destination.find.getUserDestinations(userId), context);
+    }
+
+    /**
+     * Gets list of destinations that is avaliable for a user
+     * @param userId the user id
+     * @return completable future of list of destinations
+     */
+    public CompletableFuture<List<Destination>> getAvailableDestinations(Long userId) {
+        return supplyAsync(() -> Destination.find.getAvaliableDestinations(userId), context);
     }
 
     /**
@@ -37,7 +44,7 @@ public class DestinationRepository {
      * @return completable future of the destination
      */
     public CompletableFuture<Destination> getOneDestination(Long id) {
-        return supplyAsync(() -> destinationFinder.findById(id), context);
+        return supplyAsync(() -> Destination.find.findById(id), context);
     }
 
     /**
@@ -51,7 +58,7 @@ public class DestinationRepository {
             Destination destination = new Destination(request, User.find.byId(userId));
             destination.insert();
             return destination.id;
-        });
+        }, context);
     }
 
     /**
@@ -62,7 +69,7 @@ public class DestinationRepository {
      */
     public CompletableFuture<Long> update(CreateDestReq request, Long destinationId) {
         return supplyAsync(() -> {
-            Destination destination = destinationFinder.byId(destinationId);
+            Destination destination = Destination.find.byId(destinationId);
             destination.name = request.name;
             destination.latitude = request.latitude;
             destination.longitude = request.longitude;
@@ -72,6 +79,34 @@ public class DestinationRepository {
             destination.save();
 
             return destination.id;
-        });
+        }, context);
     }
+
+    public CompletableFuture<Long> makeDestinationPublic(Long destinationId) {
+        return supplyAsync(() -> {
+
+            Destination destination = Destination.find.byId(destinationId);
+
+            User adminUser = User.find.findById(1L);
+
+
+            List<Destination> sameDestinations = Destination.find.getSameDestinations(destinationId);
+
+            // No similar destinations, no merge has happened
+            if(sameDestinations.size() == 0) {
+                destination.isPublic = true;
+
+                destination.update();
+
+            } else {
+                // TODO MERGE OTHER DESTINATIONS HERE
+            }
+
+            return destinationId;
+        }, context);
+    }
+
+
+
+    
 }

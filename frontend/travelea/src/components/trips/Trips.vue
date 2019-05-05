@@ -3,7 +3,7 @@
 <template>
   <v-container style="margin-left: 0px;">
     <div v-if="this.isMyProfile || this.isAdmin">
-      <div v-if="!showCreateTrip && this.isMyProfile">
+      <div v-if="!showCreateTrip && (this.isMyProfile || this.isAdmin)">
         <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
           <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
         </v-btn>
@@ -109,6 +109,7 @@ export default {
       trips: [],
         isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
+      isAdminUser: false,
       user_id: this.$route.params.id
     };
   },
@@ -128,7 +129,7 @@ export default {
   },
   methods: {
     getTrips: function() {
-        tripRepository.getTrips()
+        tripRepository.getUserTrips(this.user_id)
         .then((res) => {
             this.trips = res.data;
         })
@@ -147,11 +148,11 @@ export default {
     },
 
     openTrip: function(id) {
-        let route = `/user/${this.user_id}/trips/`;
-        if (this.isMyProfile || store.getters.getIsUserAdmin) {
-            route = `/user/${this.user_id}/trips/${id}`
-        }
-        this.$router.push(route);//window.location.href = '/#/trips/view/'+id;
+      let route = `/user/${this.user_id}/trips/`;
+      if (this.isMyProfile || store.getters.getIsUserAdmin) {
+        route = `/user/${this.user_id}/trips/${id}`
+      }
+      this.$router.push(route);
     },
 
     toggleShowCreateTrip: function() {
@@ -160,7 +161,11 @@ export default {
 
     regetTrips: function() {
       this.toggleShowCreateTrip();
-      this.getTrips();
+      if (this.isMyProfile) {
+        this.getTrips();
+      } else {
+        this.getUserTrips();
+      }
     },
 
     checkIfProfileOwner() {
@@ -170,6 +175,7 @@ export default {
   },
   created: function() {
     this.checkIfProfileOwner();
+    this.isAdminUser = store.getters.getIsUserAdmin;
     if (this.isMyProfile) {
       this.getTrips();
     } else {

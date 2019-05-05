@@ -161,7 +161,7 @@ export default {
       this.dialog = false;
     },
     getDestinationList: function () {
-      destinationRepository.getDestinations()
+      destinationRepository.getDestinations(this.user_id)
       .then(response => {
           this.destinations = response.data
       })
