@@ -10,8 +10,8 @@ export default {
         return Repository.get(`/destinations/${id}`)
     },
 
-    createDestination(payload) {
-        return Repository.post('/destinations', payload);
+    createDestination(userId, payload) {
+        return Repository.post(`/users/${userId}/destinations`, payload);
     },
 
     updateDestination(id, payload) {

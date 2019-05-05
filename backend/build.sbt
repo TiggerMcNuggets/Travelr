@@ -18,6 +18,11 @@ libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 libraryDependencies += "io.ebean.test" % "ebean-test-config" % "11.36.1" % "test"
 
+
+// Rip
+//libraryDependencies += "org.modelmapper" % "modelmapper" % "0.7.5"
+
+
 libraryDependencies += evolutions
 
 libraryDependencies += "org.awaitility" % "awaitility" % "2.0.0" % Test
