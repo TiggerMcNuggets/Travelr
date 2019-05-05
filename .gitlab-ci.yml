@@ -19,11 +19,9 @@ recent-artifacts:
     
     # Kill existing process (if any)
     - echo $PWD
-    
-    - kill $(cat target/universal/team300-travelea-1.0.0-SNAPSHOT/RUNNING_PID)
+    - kill $(cat target/universal/team300-travelea-1.0.0-SNAPSHOT/RUNNING_PID) || cd target/universal
     
     # Deploy to server http://csse-s302g3.canterbury.ac.nz:8443/
-    - cd target/universal
     - unzip team300-travelea-1.0.0-SNAPSHOT.zip
     - rm team300-travelea-1.0.0-SNAPSHOT.zip
     - cd team300-travelea-1.0.0-SNAPSHOT/bin
@@ -48,11 +46,9 @@ release-artifacts:
     
     # Kill existing process (if any)
     - echo $PWD
-
-    - kill $(cat target/universal/team300-travelea-1.0.0-SNAPSHOT/RUNNING_PID)
+    - kill $(cat target/universal/team300-travelea-1.0.0-SNAPSHOT/RUNNING_PID) || cd target/universal
     
     # Deploy to server http://csse-s302g3.canterbury.ac.nz:8443/
-    - cd target/universal
     - unzip team300-travelea-1.0.0-SNAPSHOT.zip
     - rm team300-travelea-1.0.0-SNAPSHOT.zip
     - cd team300-travelea-1.0.0-SNAPSHOT/bin
