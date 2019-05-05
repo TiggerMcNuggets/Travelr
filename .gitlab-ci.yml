@@ -49,7 +49,7 @@ serve:
     - unzip team300-travelea-1.0.0-SNAPSHOT.zip
     - rm team300-travelea-1.0.0-SNAPSHOT.zip
     - cd team300-travelea-1.0.0-SNAPSHOT/bin
-    - nohup ./team300-travelea -Dplay.http.secret.key=QCYtAnfkaZiwrNwnxIlR6CTfG3gf90Latabg5241ABR5W1uDFNIk1 -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=8443 -Dpidfile.path=/var/run/play.pid &
+    - nohup ./team300-travelea -Dplay.http.secret.key=QCYtAnfkaZiwrNwnxIlR6CTfG3gf90Latabg5241ABR5W1uDFNIk1 -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=8443 -Dpidfile.path=/home/gitlab-runner/builds/abc247a3/0/seng302-2019/team-300/play.pid &
     - disown -h %1
     
     # Populate database
