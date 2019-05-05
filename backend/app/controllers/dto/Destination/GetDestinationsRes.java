@@ -25,6 +25,8 @@ public class GetDestinationsRes {
 
     public boolean isPublic;
 
+    public Long id;
+
     public GetDestinationsRes(Destination destination) {
         this.name = destination.name;
         this.latitude = destination.latitude;
@@ -33,6 +35,7 @@ public class GetDestinationsRes {
         this.district = destination.district;
         this.country = destination.country;
         this.isPublic = destination.isPublic;
+        this.id = destination.id;
     }
 
 }
