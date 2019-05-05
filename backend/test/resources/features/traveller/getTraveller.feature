@@ -11,7 +11,7 @@ Feature: GetTraveller
     When I get traveller information
     Then I will receive a 200 response
     And I will receive the id 1
-    And I will receive the email "adam@test.com"
+    And I will receive the email "admin@test.com"
 
   Scenario: Get traveller information with my valid ID as not an admin
     Given I provide the token "abc"

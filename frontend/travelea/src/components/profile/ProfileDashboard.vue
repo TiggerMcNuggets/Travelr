@@ -14,7 +14,7 @@
           </v-card>
            </div>
         </div>
-        <div v-if="isMyProfile" @click="goToUserDesinations(user_id)">
+        <div v-if="isMyProfile || $store.getters.getIsUserAdmin" @click="goToUserDesinations(user_id)">
          <div>
           <v-card d-flex class="destinations-tile tile">
             <v-img
@@ -28,6 +28,7 @@
         </div>
       </v-layout>
     </v-flex>
+
     <v-flex d-flex x8 order-xs5>
       <v-layout column>
         <v-flex d-flex>
@@ -121,7 +122,7 @@ export default {
     },
     checkIfProfileOwner() {
       let id = this.$route.params.id;
-      this.isMyProfile = store.getters.getUser.id === id;
+      this.isMyProfile = store.getters.getUser.id == id;
     },
     goToUserTrips(id) {
         const endpoint = '/user/' + id + '/trips';

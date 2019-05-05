@@ -148,9 +148,11 @@ export default {
     },
 
     openTrip: function(id) {
-        if (store.getters.getIsUserAdmin || this.isMyProfile) {
-            this.$router.push("/trips/view/" + id);
-        }
+      let route = `/user/${this.user_id}/trips/`;
+      if (this.isMyProfile || store.getters.getIsUserAdmin) {
+        route = `/user/${this.user_id}/trips/${id}`
+      }
+      this.$router.push(route);
     },
 
     toggleShowCreateTrip: function() {

@@ -19,6 +19,6 @@ Feature: CreateTraveller
 
   Scenario: I provide a complete traveller json
     Given I provide a complete traveller json
-    And I provide the email "adam@test.com"
+    And I provide the email "admin@test.com"
     When I signup
     Then I will receive a 400 response

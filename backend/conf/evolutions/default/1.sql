@@ -12,6 +12,8 @@ create table destination (
   district                      varchar(255) not null,
   country                       varchar(255) not null,
   user_id                       bigint not null,
+  is_public                     boolean default false not null,
+  is_deleted                    boolean default 0 not null,
   constraint pk_destination primary key (id)
 );
 
