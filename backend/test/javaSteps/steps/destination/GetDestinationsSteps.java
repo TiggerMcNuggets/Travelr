@@ -24,7 +24,6 @@ public class GetDestinationsSteps {
                     .method("GET")
                     .header("X-Authorization", state.getToken())
                     .uri("https://localhost:9000/api/users/" + state.getTravellerId() + "/destinations");
-            System.out.println(state.getTravellerId());
 
             // Send request
             state.setResult(route(state.getApplication(), getDestinations));

@@ -20,7 +20,7 @@ GET         /api/travellers_filter              controllers.UserController.getFi
 GET         /api/travellers                     controllers.UserController.getUsers(request: Request)
 POST        /api/travellers                     controllers.UserController.createUser(request: Request)
 GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
-GET         /api/travellers/:id/trips           controllers.UserController.getTrips(request: Request, id: Long)
+GET         /api/travellers/:id/trips           controllers.TripController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
 DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
@@ -44,13 +44,19 @@ PUT         /api/destinations/:id               controllers.DestinationControlle
 
 
 # Trips (Old)
+GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
+
+
+GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
+
+# Trips
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
 #route for when admin is not taken into account
 POST        /api/trips                          controllers.TripController.createTrip(request: Request)
 POST        /api/users/:user_id/trips           controllers.TripController.createTripWithUser(request: Request, user_id: Long)
 
 
-GET         /api/trips/:id                      controllers.UserController.getTrips(request: Request, id: Long)
+GET         /api/trips/:id                      controllers.TripController.getTrips(request: Request, id: Long)
 PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
 
 # Trips (NEW)

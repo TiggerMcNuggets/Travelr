@@ -195,39 +195,6 @@ public class UserController extends Controller {
         });
     }
 
-    /**
-     * Gets a users trips by given id
-     * @param id the user id
-     * @return 200 if item exists
-     */
-    @Authorization.RequireAuth
-    public CompletionStage<Result> getTrips(Http.Request request, Long id) {
-        User requestUser = request.attrs().get(Attrs.USER);
-        return userRepository.getUser(id).thenComposeAsync(user -> {
-            // Not Found Check
-            if (user == null) {
-                return CompletableFuture.completedFuture(notFound("Traveller not found"));
-            }
-
-            return tripRepository.getTrips(user.id).thenApplyAsync(trips -> {
-                ArrayList<GetTripRes> correctTrips = new ArrayList<GetTripRes>();
-                for (Trip trip : trips) {
-                    GetTripRes tripRes = new GetTripRes(trip);
-                    List<TripDestination> correctDests = new ArrayList<TripDestination>();
-                    //Setting the blank name to the correct destination name
-                    for (TripDestination dest : trip.destinations) {
-                        dest.name = dest.destination.getName();
-                        correctDests.add(dest);
-                    }
-                    tripRes.setDestinations(correctDests);
-                    correctTrips.add(tripRes);
-                }
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode jsonResponse = mapper.valueToTree(correctTrips);
-                return ok(jsonResponse);
-            });
-        });
-    }
 
     /**
      * Deletes a user by given id
