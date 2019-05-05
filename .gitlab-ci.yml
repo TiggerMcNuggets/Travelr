@@ -42,7 +42,7 @@ serve:
     
     # Kill existing process (if any)
     - echo $PWD
-    - $(kill $(cat /var/run/play.pid)) && sleep 3) || true
+    - $(kill $(cat /var/run/play.pid) && sleep 3) || true
     
     # Deploy to server http://csse-s302g3.canterbury.ac.nz:8443/
     - cd target/universal
