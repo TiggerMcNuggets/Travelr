@@ -2,6 +2,8 @@ package controllers.dto.Destination;
 
 import play.data.validation.Constraints;
 
+import javax.validation.Constraint;
+
 public class CreateDestReq {
     @Constraints.Required
     public String name;
@@ -15,6 +17,8 @@ public class CreateDestReq {
     public String district;
     @Constraints.Required
     public String country;
+    @Constraints.Required
+    public boolean isPublic;
 
     public String getName() {
         return name;
@@ -62,5 +66,13 @@ public class CreateDestReq {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }
