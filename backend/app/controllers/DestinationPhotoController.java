@@ -96,9 +96,10 @@ public class DestinationPhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
             String fileName = fh.getHashedImage(picture.getFilename());
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
             fh.makeDirectory(this.destinationPhotoFilepath);
@@ -141,6 +142,8 @@ public class DestinationPhotoController extends Controller {
         return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
             if (photo_id != null) {
                 return ok("File added with Photo ID " + photo_id);
+            } else if (photo_id.equals(null)) {
+                return badRequest("Duplicate Photo.");
             } else {
                 return badRequest("Error adding reference to the database.");
             }

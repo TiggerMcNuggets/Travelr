@@ -89,6 +89,8 @@ public class PhotoController extends Controller {
             return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
+                } else if (photo_id == null) {
+                    return badRequest("Duplicate Photo.");
                 } else {
                     return badRequest("Error adding reference to the database.");
                 }
