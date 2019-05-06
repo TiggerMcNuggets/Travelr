@@ -86,9 +86,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
         Destination destination = findById(destinationId);
 
-        User user = User.find.findById(1L);
-
-        destination.user = user;
+        destination.user = null;
 
         destination.update();
 
