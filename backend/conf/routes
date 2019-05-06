@@ -35,6 +35,11 @@ POST        /api/travellers/:id/photo           controllers.PhotoController.uplo
 PUT         /api/travellers/:id/uploadphoto     controllers.PhotoController.uploadProfilePhoto(request: Request, id: Long)
 PUT         /api/travellers/:id/setphoto        controllers.PhotoController.chooseProfilePhoto(request: Request, id: Long)
 
+# Destination Photos
+GET         /api/users/:user_id/destinations/:dest_id/photo    controllers.DestinationPhotoController.list(request: Request, user_id: Long, dest_id: Long)
+GET         /api/destinations/photo/:filename   controllers.DestinationPhotoController.getImageFromDatabase(filename: String)
+POST        /api/users/:user_id/destinations/:dest_id/photo    controllers.DestinationPhotoController.uploadDestinationPhoto(request: Request, user_id: Long, dest_id: Long)
+
 
 # Destinations (NEW)
 GET         /api/users/:id/destinations         controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
