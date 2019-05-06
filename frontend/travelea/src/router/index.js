@@ -137,7 +137,6 @@ let router = new Router({
                     path: 'destinations/:dest_id',
                     name: 'single-destination',
                     component: SingleDestination,
-                    beforeEnter: standardAccessGuard
                 },
                 {
                     path: 'destinations/edit/:dest_id',
