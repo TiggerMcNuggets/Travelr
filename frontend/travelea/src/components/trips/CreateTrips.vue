@@ -174,6 +174,7 @@ export default {
   },
   data() {
     return {
+        userId: (this.$route.params.user_id) ? this.$route.params.user_id : this.$route.params.id,
         tripToDisplay: null,
         draggableEnabled: true,
         dialogName: "Create a new trip",
