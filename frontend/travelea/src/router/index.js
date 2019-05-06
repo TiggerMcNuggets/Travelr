@@ -17,9 +17,14 @@ import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
+import Map from "../components/map/Map";
+import SingleDestination from "../components/destination/SingleDestination";
+
+const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
+const DEFAULT_ROUTE_UNAUTH = () => "/login";
 
 const authGuard = (to, from, next) => {
-    if (!store.getters.getToken) return next("/login");
+    if (!store.getters.getToken) return next(DEFAULT_ROUTE_UNAUTH());
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
@@ -28,30 +33,58 @@ const authGuard = (to, from, next) => {
         })
         .catch(() => {
             // invalid token, send to login
-            return next("/login");
+            return next(DEFAULT_ROUTE_UNAUTH());
         })
     } else {
-        // TODO ADD META ADMIN CHECK HERE
-        console.log(store.getters.getToken && store.getters.getUser);
         return next();
     }
-
 };
+
 const unauthGuard = (to, from, next) => {
     if (!store.getters.getToken) return next();
     if (store.getters.getToken && !store.getters.getUser) {
         store.dispatch("fetchMe")
         .then(() => {
             // valid token, send to home
-            return next("/user/"+store.getters.getUser.id);
+            return next(DEFAULT_ROUTE_AUTH());
         })
         .catch(() => {
             // invalid token, go next page
             return next();
         })
     }
-    return next("/user/"+store.getters.getUser.id);
-}
+    return next(`/user/${store.getters.getUser.id}`);
+};
+
+const standardAccessGuard = (to, from, next) => {
+    if (!store.getters.getToken) return next(DEFAULT_ROUTE_UNAUTH());
+    if (store.getters.getToken && !store.getters.getUser) {
+        store.dispatch("fetchMe")
+        .then(() => { // valid token
+            if (to.params.id == store.getters.getUser.id || store.getters.getIsUserAdmin) {
+                // User matches url parameter or is an admin, go next page
+                return next();
+            } else {
+                // User is forbidden to access route, route back to current page
+                return next(DEFAULT_ROUTE_AUTH());
+            }
+        })
+        .catch(() => {
+            // invalid token, send to login
+            return next(DEFAULT_ROUTE_UNAUTH());
+        })
+    } else {
+        if (to.params.id == store.getters.getUser.id || store.getters.getIsUserAdmin) {
+            // User matches url parameter or is an admin, go next page
+            return next();
+        } else {
+            // User is forbidden to access route, route back to current page
+            return next(DEFAULT_ROUTE_AUTH());
+        }
+    }
+    return next()
+};
+
 
 Vue.use(Router);
 let router = new Router({
@@ -62,42 +95,54 @@ let router = new Router({
             name: 'home',
             component: Home,
             beforeEnter: unauthGuard
-        },     
+        },
         {
             path: '/user/:id',
-            name: 'userProfile',
             component: Profile,
             beforeEnter: authGuard,
             children: [
                 {
-                    path: '/user/:id',
+                    path: '',
                     name: 'travellerProfileDashboard',
-                    component: ProfileDashboard                      
+                    component: ProfileDashboard,             
                 },
                 {
-                    path: '/user/:id/edit',
+                    path: 'edit',
                     name: 'editProfile',
                     component: EditProfile,
+                    beforeEnter: standardAccessGuard,
                 },
                 {
-                    path: '/user/:id/trips',
+                    path: 'trips',
                     name: 'travellerTrips',
-                    component: ProfileTrips                    
+                    component: ProfileTrips,                   
                 },
                 {
-                    path: '/user/:id/photos',
+                    path: '/user/:id/trips/:trip_id',
+                    name: 'view-trip',
+                    component: ViewTrip                    
+                },
+                {
+                    path: 'photos',
                     name: 'travellerProfilePhotos',
-                    component: ProfilePhotos                    
+                    component: ProfilePhotos,             
                 },
                 {
-                    path: '/user/:id/destinations',
+                    path: 'destinations',
                     name: 'travellerDestination',
-                    component: Destination                    
+                    component: Destination,
+                    beforeEnter: standardAccessGuard        
                 },
                 {
-                    path: '/user/:id/destinations/edit/:dest_id',
+                    path: 'destinations/:dest_id',
+                    name: 'single-destination',
+                    component: SingleDestination,
+                },
+                {
+                    path: 'destinations/edit/:dest_id',
                     name: 'edit-destination',
                     component: DestinationEdit,
+                    beforeEnter: standardAccessGuard
                 }
             ]
         },
@@ -133,11 +178,6 @@ let router = new Router({
             meta: {
                 requiresAdmin: true
             }
-        },
-        {
-            path: '/trips/view/:id',
-            name: 'view-trip',
-            component: ViewTrip
         }
     ]
 });

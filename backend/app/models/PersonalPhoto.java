@@ -2,6 +2,7 @@ package models;
 
 import finders.PhotoFinder;
 import io.ebean.Finder;
+import org.checkerframework.common.aliasing.qual.Unique;
 import play.data.validation.Constraints;
 
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ public class PersonalPhoto extends BaseModel {
      */
     @NotNull
     @Constraints.Required
+    @Unique
     public String photo_filename;
 
     /**

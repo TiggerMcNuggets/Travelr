@@ -28,14 +28,22 @@
             >
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+          <v-btn v-on:click="uploadExisting()">Upload Existing</v-btn>
         </div>
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
+
+
+         <v-dialog v-model="dialog">
+            <PhotoSelect v-bind="{closeDialogue}"/>
+        </v-dialog>
+        
       </v-card>
     </v-flex>
   </v-form>
 </template>
 
 <style>
+
 .upload-section {
   padding: 30px 10px;
 }
@@ -69,7 +77,9 @@
 </style>
 
 <script>
+import userRepo from "../../repository/UserRepository";
 import TravellerForm from "../common/travellerForm/TravellerForm";
+import PhotoSelect from "../photos/PhotoSelect";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
 import {
@@ -83,14 +93,14 @@ import { storeImage } from "../../repository/PersonalPhotosRepository";
 
 export default {
   name: "EditProfile",
-  components: { TravellerForm },
+  components: { TravellerForm, PhotoSelect },
+
   store,
   data() {
     return {
       isValid: false,
-
       traveller: {},
-
+      dialog: false,
       dateOfBirth: "",
       nationalities: [],
       travellerTypes: [],
@@ -105,16 +115,21 @@ export default {
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
+    uploadExisting() {
+      this.dialog = true;
+    },
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
 
       uploadProfilePic(this.id, formData).then(() => {
-        window.location = "/user/" + this.$route.params.id +  "/edit";
+        window.location = "/user/" + this.$route.params.id + "/edit";
       });
     },
     getTraveller() {
-      this.traveller = store.getters.getUser;
+      userRepo.getUser(this.id).then(result => {
+        this.traveller = result.data;
+      });
       this.setTravellerToFields();
     },
 
@@ -142,6 +157,10 @@ export default {
         this.dateOfBirth
       );
       this.traveller.travellerTypes = this.travellerTypes;
+    },
+
+    closeDialogue() {
+      this.dialog = false;
     },
 
     handleEdit() {

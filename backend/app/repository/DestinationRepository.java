@@ -4,9 +4,12 @@ import controllers.DestinationController;
 import controllers.dto.Destination.CreateDestReq;
 import finders.DestinationFinder;
 import models.Destination;
+import models.Trip;
+import models.TripDestination;
 import models.User;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -14,8 +17,6 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class DestinationRepository {
 
     private DatabaseExecutionContext context;
-
-    private DestinationFinder destinationFinder = new DestinationFinder();
 
     @Inject
     public DestinationRepository(DatabaseExecutionContext context) {
@@ -28,7 +29,16 @@ public class DestinationRepository {
      * @return completable future of list of destinations
      */
     public CompletableFuture<List<Destination>> getUserDestinations(Long userId) {
-        return supplyAsync(() -> destinationFinder.getUserDestinations(userId), context);
+        return supplyAsync(() -> Destination.find.getUserDestinations(userId), context);
+    }
+
+    /**
+     * Gets list of destinations that is avaliable for a user
+     * @param userId the user id
+     * @return completable future of list of destinations
+     */
+    public CompletableFuture<List<Destination>> getAvailableDestinations(Long userId) {
+        return supplyAsync(() -> Destination.find.getAvaliableDestinations(userId), context);
     }
 
     /**
@@ -37,7 +47,7 @@ public class DestinationRepository {
      * @return completable future of the destination
      */
     public CompletableFuture<Destination> getOneDestination(Long id) {
-        return supplyAsync(() -> destinationFinder.findById(id), context);
+        return supplyAsync(() -> Destination.find.findById(id), context);
     }
 
     /**
@@ -51,7 +61,7 @@ public class DestinationRepository {
             Destination destination = new Destination(request, User.find.byId(userId));
             destination.insert();
             return destination.id;
-        });
+        }, context);
     }
 
     /**
@@ -62,7 +72,7 @@ public class DestinationRepository {
      */
     public CompletableFuture<Long> update(CreateDestReq request, Long destinationId) {
         return supplyAsync(() -> {
-            Destination destination = destinationFinder.byId(destinationId);
+            Destination destination = Destination.find.byId(destinationId);
             destination.name = request.name;
             destination.latitude = request.latitude;
             destination.longitude = request.longitude;
@@ -72,6 +82,51 @@ public class DestinationRepository {
             destination.save();
 
             return destination.id;
-        });
+        }, context);
+    }
+
+    /**
+     * Makes a destination public and merges previous destinations if same
+     * @param destinationId the new destination
+     * @return completable future of the destination id
+     */
+    public CompletableFuture<Long> makeDestinationPublic(Long destinationId) {
+        return supplyAsync(() -> {
+
+            Destination destination = Destination.find.byId(destinationId);
+
+            if (destination == null) {
+                return null;
+            }
+
+            List<Destination> sameDestinations = Destination.find.getSameDestinations(destinationId);
+
+            // If same destinations: merge
+            if(sameDestinations.size() > 0) {
+                mergeDestinations(destination, sameDestinations);
+            }
+
+            destination.isPublic = true;
+            destination.update();
+
+            return destinationId;
+        }, context);
+    }
+
+    /**
+     * Merges destinations by converting all same destinations in trips to the new destination
+     * @param sameDestinations The list of same destinations
+     */
+    private void mergeDestinations(Destination destination, List<Destination> sameDestinations) {
+        List<TripDestination> tripDestinations = new ArrayList<TripDestination>();
+
+        for (Destination sameDestination : sameDestinations) {
+            tripDestinations.addAll(TripDestination.find.getAllByDestinationId(sameDestination.getId()));
+        }
+
+        for (TripDestination tripDestination : tripDestinations) {
+            tripDestination.setDestination(destination);
+            tripDestination.save();
+        }
     }
 }

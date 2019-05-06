@@ -6,7 +6,9 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Destination.CreateDestReq;
 import controllers.dto.Destination.CreateDestRes;
+import controllers.dto.Destination.GetDestinationsRes;
 import io.ebean.Ebean;
+import models.Destination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -16,6 +18,7 @@ import play.mvc.Result;
 import repository.DestinationRepository;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -32,19 +35,6 @@ public class DestinationController extends Controller {
     }
 
     /**
-     * Gets list of all destinations that belong to a user
-     * @param request the http request
-     * @return 200 with list of destinations if all ok
-     */
-    @Authorization.RequireAuth
-    public CompletionStage<Result> getUserDestinations(Http.Request request) {
-        User user = request.attrs().get(Attrs.USER);
-        return destinationRepository
-                .getUserDestinations(user.id)
-                .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
-    }
-
-    /**
      * Gets a list of all destinations that belong to the specified user
      * @param request the http request
      * @param userId the id of the specified user
@@ -56,10 +46,19 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
-        User user = request.attrs().get(Attrs.USER);
         return destinationRepository
-                .getUserDestinations(userId)
-                .thenApplyAsync(destinations -> ok(Ebean.json().toJson(destinations)));
+                .getAvailableDestinations(userId)
+                .thenApplyAsync(destinations -> {
+                    ArrayList<GetDestinationsRes> list = new ArrayList<>();
+
+                    for(Destination destination : destinations) {
+                        list.add(new GetDestinationsRes(destination));
+                    }
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResponse = mapper.valueToTree(list);
+                    return ok(jsonResponse);
+                });
     }
 
     /**
@@ -69,12 +68,12 @@ public class DestinationController extends Controller {
      * @return 200 with list of destinations if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> getUserDestinationGivenUser(Http.Request request, Long userId, Long dest_id) {
+    public CompletionStage<Result> getUserDestinationGivenUser(Http.Request request, Long userId, Long destId) {
 
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
-        return destinationRepository.getOneDestination(dest_id).thenApplyAsync(destination -> {
+        return destinationRepository.getOneDestination(destId).thenApplyAsync(destination -> {
             // Not Found Check
             if (destination == null) {
                 return notFound("Destination not found");
@@ -138,7 +137,7 @@ public class DestinationController extends Controller {
             return created(jsonResponse);
         });
     }
-//
+
     /**
      * Gets a single destination that belongs to a user and matches the given id
      * @param request the http request
@@ -194,4 +193,19 @@ public class DestinationController extends Controller {
 
     }
 
+    /**
+     * Makes a destination public if the authenticated user is an admin
+     * @param id The id of the destination that is going to be made public
+     * @return 201 with string if all ok
+     */
+    @Authorization.RequireAdminAuth
+    public CompletionStage<Result> makeDestinationPublic(Long id) {
+
+        return destinationRepository.makeDestinationPublic(id).thenApplyAsync(destinationId -> {
+            if (destinationId == null) {
+                return notFound();
+            }
+            return created("Destination is now public");
+        });
+    }
 }

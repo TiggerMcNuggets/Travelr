@@ -35,6 +35,13 @@ public class TripRepository {
     private void insertDestinations(Trip trip, List<TripDestinationReq> destinations) {
         for (TripDestinationReq destinationReq : destinations) {
             Destination destination = destinationFinder.findById(destinationReq.id);
+
+            // TRANSFER DESTINATION TO ADMIN IF PUBLIC
+
+            if(destination.isPublic && destination.user != null) {
+                Destination.find.transferToAdmin(destination.id);
+            }
+
             TripDestination tripDestination = new TripDestination(destinationReq.arrivalDate, destinationReq.departureDate, destinationReq.ordinal, trip, destination);
             tripDestination.insert();
         }

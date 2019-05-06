@@ -6,7 +6,7 @@ Feature: Login
     Then I will receive a 200 response
 
   Scenario: Log in successfully
-    Given I provide the email "adam@test.com" and the password "123"
+    Given I provide the email "admin@test.com" and the password "123"
     When I login
     Then I will receive a 200 response
     And I will receive the id 1
