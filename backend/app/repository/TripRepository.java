@@ -38,7 +38,7 @@ public class TripRepository {
 
             // TRANSFER DESTINATION TO ADMIN IF PUBLIC
 
-            if(destination.isPublic && destination.user.id != 1) {
+            if(destination.isPublic && destination.user != null) {
                 Destination.find.transferToAdmin(destination.id);
             }
 

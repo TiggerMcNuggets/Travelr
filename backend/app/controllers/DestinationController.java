@@ -193,4 +193,19 @@ public class DestinationController extends Controller {
 
     }
 
+    /**
+     * Makes a destination public if the authenticated user is an admin
+     * @param id The id of the destination that is going to be made public
+     * @return 201 with string if all ok
+     */
+    @Authorization.RequireAdminAuth
+    public CompletionStage<Result> makeDestinationPublic(Long id) {
+
+        return destinationRepository.makeDestinationPublic(id).thenApplyAsync(destinationId -> {
+            if (destinationId == null) {
+                return notFound();
+            }
+            return created("Destination is now public");
+        });
+    }
 }

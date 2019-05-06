@@ -44,7 +44,6 @@ public class Destination extends BaseModel {
     @Constraints.Required
     public String country;
 
-    @NotNull
     @ManyToOne
     @JsonIgnore
     public User user;

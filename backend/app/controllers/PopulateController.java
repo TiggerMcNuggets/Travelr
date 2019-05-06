@@ -57,15 +57,28 @@ public class PopulateController extends Controller {
         user4.insert();
         user5.insert();
 
-        new Destination("River", 1.0, 1.0, "123", "123", "123", user1).insert();
-        new Destination("Mountain", 1.0, 1.0, "123", "123", "123", user1).insert();
-        new Destination("City", 1.0, 1.0, "123", "123", "123", user1).insert();
-        new Destination("Beach", 1.0, 1.0, "123", "123", "123", user2).insert();
-        new Destination("Ski", 1.0, 1.0, "123", "123", "123", user3).insert();
+        Destination dest1 = new Destination("River", 1.0, 1.0, "123", "123", "123", user1);
+        Destination dest2 = new Destination("Mountain", 2.0, 2.0, "123", "123", "123", user1);
+        Destination dest3 = new Destination("City", 1.0, 1.0, "123", "123", "123", user1);
+        Destination dest4 = new Destination("Beach", 2.0, 2.0, "123", "123", "123", user2);
+        Destination dest5 = new Destination("Ski", 1.0, 1.0, "123", "123", "123", user3);
 
-        new Trip("Backpacking 2018", user1).insert();
-        new Trip("New Trip", user2).insert();
+        dest1.insert();
+        dest2.insert();
+        dest3.insert();
+        dest4.insert();
+        dest5.insert();
 
+        Trip trip1 = new Trip("Backpacking 2018", user1);
+        Trip trip2 = new Trip("New Trip", user2);
+
+        trip1.insert();
+        trip2.insert();
+
+        new TripDestination(1, 2, 0, trip1, dest1).insert();
+        new TripDestination(3, 4, 1, trip1, dest2).insert();
+        new TripDestination(1, 2, 0, trip2, dest3).insert();
+        new TripDestination(3, 4, 1, trip2, dest4).insert();
 
         return ok("Populated");
     }
