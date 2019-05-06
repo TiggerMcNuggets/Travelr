@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
 <v-card>
   <v-container style="margin-left: 0px; margin-top: -20px;">
     
@@ -13,7 +13,7 @@
       </v-btn>      
     </div>
     <ul>
-      <h2>Public destinations</h2>
+      <h2>Destinations</h2>
       <li
         class="destination-list-element"
         v-for="item in destinations"
@@ -23,7 +23,7 @@
           <div class="row-container">
             <div class="private-public-side-bar" v-bind:class="{ 'pink-background': item.isPublic, 'blue-background': !item.isPublic }">
             </div>
-            <div>
+            <div class="hoverable" v-on:click="viewDestination(item.id)">
               <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
               <div class="row-container">
                 <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
@@ -39,6 +39,12 @@
             </v-btn>
             <v-btn icon @click="editDestination(item.id)">
               <v-icon color="orange lighten-1">edit</v-icon>
+            </v-btn>
+            <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
+              <v-icon color="blue lighten-1">lock</v-icon>
+            </v-btn>
+            <v-btn v-if="item.isPublic" icon @click="() => console.log('clicked on open lock')">
+              <v-icon color="hotpink lighten-1">lock_open</v-icon>
             </v-btn>
           </div>
 
@@ -72,6 +78,10 @@
 
 .destination-container {
   padding: 20px;
+}
+
+.hoverable:hover {
+  cursor: pointer;
 }
 
 .row-container {
@@ -111,11 +121,12 @@ export default {
   // local variables
   data() {
     return {
-      dialog: false,
-      showEditDestination: false,
-      destinations: [],
-      isMyProfile: false,
-      user_id: null
+        showTooltip: false,
+        dialog: false,
+        showEditDestination: false,
+        destinations: [],
+        isMyProfile: false,
+        user_id: null
     };
   }, 
    // child components
@@ -156,6 +167,16 @@ export default {
       .catch(err => {
           console.log(err)
     })
+    },
+    makePublic: function (destId) {
+        destinationRepository.makePublic(destId)
+            .then((res) => {
+                console.log(res);
+                this.init();
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     },
     checkIfProfileOwner() {
       let id = this.$route.params.id;

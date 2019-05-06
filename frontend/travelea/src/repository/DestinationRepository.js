@@ -18,6 +18,10 @@ export default {
         return Repository.put(`/destinations/${id}`, payload)
     },
 
+    makePublic(destId) {
+        return Repository.post(`/destinations/${destId}/make_public`);
+    }
+
     // deleteDestination(userId, destinationId) {
     //     return Repository.delete(`/users/${userId}/destinations/${destinationId}`);
     // }
