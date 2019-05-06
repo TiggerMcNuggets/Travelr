@@ -6,8 +6,8 @@ export default {
         return Repository.get(`/users/${id}/destinations`);
     },
 
-    getDestination(id) {
-        return Repository.get(`/destinations/${id}`)
+    getDestination(user_id, dest_id) {
+        return Repository.get(`/users/${user_id}/destinations/${dest_id}`)
     },
 
     createDestination(userId, payload) {
