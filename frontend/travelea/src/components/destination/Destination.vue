@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
+<template>
 <v-card>
   <v-container style="margin-left: 0px; margin-top: -20px;">
     
@@ -18,16 +18,13 @@
         class="destination-list-element"
         v-for="item in destinations"
         :value="item.value"
-        :key="item.value"
-      >
+        :key="item.value">
         <v-card class="top-destination-content destination-container">
           <div class="row-container">
-            <div class="private-public-side-bar">
+            <div class="private-public-side-bar" v-bind:class="{ 'pink-background': item.isPublic, 'blue-background': !item.isPublic }">
             </div>
             <div>
-              <h2>
-                {{item.name}} | {{item.country}} | {{item.district}}
-              </h2>
+              <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
               <div class="row-container">
                 <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
               </div>
