@@ -1,5 +1,6 @@
 package controllers;
 
+import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.dto.Photo.ChooseProfilePicReq;
@@ -31,16 +32,21 @@ public class DestinationPhotoController extends Controller {
 
     private final DestinationPhotoRepository destinationPhotoRepository;
 
+    private final FileHelper fh = new FileHelper();
+
+    private String destinationPhotoFilepath;
+
     @Inject
     FormFactory formFactory;
 
     @Inject
-    public DestinationPhotoController(
+    public DestinationPhotoController( Config config,
             DestinationPhotoRepository destinationPhotoRepository
     ) {
+        String rootPath = System.getProperty("user.home");
+        destinationPhotoFilepath = rootPath + config.getString("destinationPhotosFilePath");
         this.destinationPhotoRepository = destinationPhotoRepository;
     }
-
 
     /**
      * Allows the user to fetch rows from the destination photo repository, given a destination id
@@ -52,8 +58,6 @@ public class DestinationPhotoController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id, Long dest_id) {
-        FileHelper fh = new FileHelper();
-        fh.makeDirectory("resources/images");
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
@@ -72,7 +76,7 @@ public class DestinationPhotoController extends Controller {
      */
     @Authorization.RequireAuth
     public Result getImageFromDatabase(String filename) {
-        File file = new File("resources/images/" + filename);
+        File file = new File(this.destinationPhotoFilepath + filename);
         try {
             return ok(file);
         } catch (Exception e) {
@@ -92,13 +96,13 @@ public class DestinationPhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
-            String fileName = picture.getFilename();
+            String fileName = fh.getHashedImage(picture.getFilename());
             long fileSize = picture.getFileSize();
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.makeDirectory("public/images");
-            file.copyTo(Paths.get("public/images/" + fileName), true);
+            fh.makeDirectory(this.destinationPhotoFilepath);
+            file.copyTo(Paths.get(this.destinationPhotoFilepath + fileName), true);
             return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
