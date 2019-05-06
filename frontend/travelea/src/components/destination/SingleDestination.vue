@@ -1,219 +1,134 @@
 /* eslint-disable */
 
 <template>
-  <div class="outer-container">
-    <div class="inner-container">
-      <div class="section">
-        <div class="dest-name">
-          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-            <v-icon dark>keyboard_arrow_left</v-icon>
-          </v-btn>
-          <div>
-            <h2 class="headline">{{destination.name}}</h2>
-            <div class="dest-sub-info">
-              <p>{{destination.type}}</p>
-              <span class="dot"></span>
-              <p>{{destination.district}}</p>
-              <span class="dot"></span>
-              <p>{{destination.country}}</p>
+  <v-card>
+    <div class="outer-container">
+      <div class="inner-container">
+        <div class="section">
+          <div class="dest-name">
+            <v-btn
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              @click="$router.go(-1)"
+            >
+              <v-icon dark>keyboard_arrow_left</v-icon>
+            </v-btn>
+            <div>
+              <h2 class="headline">{{destination.name}}</h2>
+              <div class="dest-sub-info">
+                <p>{{destination.type}}</p>
+                <span class="dot"></span>
+                <p>{{destination.district}}</p>
+                <span class="dot"></span>
+                <p>{{destination.country}}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div>
-          <v-btn class="upload-toggle-button" fab small dark color="indigo">
-            <v-icon dark>lock</v-icon>
-          </v-btn>
-          <v-btn
-            class="upload-toggle-button"
-            fab
-            small
-            dark
-            color="indigo"
-            v-if="isMyProfile || isAdminUser"
-          >
-            <v-icon dark>edit</v-icon>
-          </v-btn>
-          <v-btn
-            class="upload-toggle-button"
-            fab
-            small
-            dark
-            color="indigo"
-            v-if="isMyProfile || isAdminUser"
-            @click="toggleShowUploadPhoto"
-          >
-            <v-icon dark>add</v-icon>
-          </v-btn>
-        </div>
-      </div>
-      <v-divider class="photo-header-divider"></v-divider>
-      <div v-if="showUploadSection">
-        <div class="upload-section section">
-          <label>
-            <input
-              class="choose-file-button"
-              type="file"
-              id="file"
-              ref="file"
-              v-on:change="handleFileUpload()"
+          <div>
+            <v-btn class="upload-toggle-button" fab small dark color="indigo">
+              <v-icon dark>lock</v-icon>
+            </v-btn>
+            <v-btn
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              v-if="isMyProfile || isAdminUser"
             >
-          </label>
-          <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+              <v-icon dark>edit</v-icon>
+            </v-btn>
+            <v-btn
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              v-if="isMyProfile || isAdminUser"
+              @click="toggleShowUploadPhoto"
+            >
+              <v-icon dark>add</v-icon>
+            </v-btn>
+          </div>
         </div>
         <v-divider class="photo-header-divider"></v-divider>
-      </div>
-
-      <ul>
-        <li v-for="row in files" :value="row.value" :key="row.value">
-          <div class="personal-photo-row">
-            <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
-              <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
-              <v-icon v-else class="lock-icon" left>lock</v-icon>
-
-              <div v-if="item.is_public" class="triangle pink-color"></div>
-              <div v-else class="triangle"></div>
-
-              <v-img
-                @click.stop="dialog = true"
-                v-on:click="setDialogueContent(item)"
-                class="personal-photo-element"
-                :src="getImgUrl(item)"
-              ></v-img>
-            </div>
+        <div v-if="showUploadSection">
+          <div class="upload-section section">
+            <label>
+              <input
+                class="choose-file-button"
+                type="file"
+                id="file"
+                ref="file"
+                v-on:change="handleFileUpload()"
+              >
+            </label>
+            <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
           </div>
-        </li>
-      </ul>
+          <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
+          <v-divider class="photo-header-divider"></v-divider>
+        </div>
 
-      <v-dialog v-model="dialog" :width="clickedImageWidth">
-        <v-card>
-          <v-img :src="clickedImageURL"></v-img>
+        <ul>
+          <li v-for="row in files" :value="row.value" :key="row.value">
+            <div class="personal-photo-row">
+              <div
+                v-for="item in row"
+                :value="item.value"
+                :key="item.value"
+                class="image-container"
+              >
+                <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
+                <v-icon v-else class="lock-icon" left>lock</v-icon>
 
-          <v-card-title primary-title>
-            <div>
-              <h5 class="headline mb-0">Image Name</h5>
-              <div>Description/Other meta info</div>
+                <div v-if="item.is_public" class="triangle pink-color"></div>
+                <div v-else class="triangle"></div>
+
+                <v-img
+                  @click.stop="dialog = true"
+                  v-on:click="setDialogueContent(item)"
+                  class="personal-photo-element"
+                  :src="getImgUrl(item)"
+                ></v-img>
+              </div>
             </div>
-          </v-card-title>
+          </li>
+        </ul>
 
-          <v-divider></v-divider>
+        <v-dialog v-model="dialog" :width="clickedImageWidth">
+          <v-card>
+            <v-img :src="clickedImageURL"></v-img>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-            <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @clocklick="setProfilePhoto()">Set Profile Photo</v-btn>
-          </v-card-actions>
-          <v-card-actions>
-            <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+            <v-card-title primary-title>
+              <div>
+                <h5 class="headline mb-0">Image Name</h5>
+                <div>Description/Other meta info</div>
+              </div>
+            </v-card-title>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+              <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
+            </v-card-actions>
+            <v-card-actions>
+              <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </div>
     </div>
-  </div>
-</template>relative
+  </v-card>
+</template>
 
 
 <style>
-
-
-.pink-color {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 100px 100px 0 0;
-  border-color: hotpink transparent transparent transparent !important;
-  opacity: 0.3;
-  position: absolute;
-  z-index: 10;
-}
-
-.lock-icon {
-  color: white !important;
-  opacity: 1;
-  position: absolute;
-  z-index: 12;
-  font-size: 2.3em;
-  margin-top: 0.3em;
-  margin-left: 0.3em;
-  align-self: flex-start !important;
-}
-
-.triangle {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 100px 100px 0 0;
-  border-color: #007bff transparent transparent transparent;
-  opacity: 0.3;
-  position: absolute;
-  z-index: 10;
-}
-
-.choose-file-button {
-  background-color: #f5f5f5;
-  color: rgba(0, 0, 0, 0.87);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-
-  align-items: center;
-  border-radius: 2px;
-  display: inline-flex;
-  height: 36px;
-  flex: 0 0 auto;
-  font-size: 14px;
-  font-weight: 500;
-  justify-content: center;
-  margin: 6px 8px;
-  min-width: 88px;
-  outline: 0;
-  text-transform: uppercase;
-  text-decoration: none;
-  position: relative;
-  vertical-align: middle;
-}
-
-.upload-section {
-  padding: 20px 0px;
-}
-
-.upload-toggle-button {
-  position: relative;
-  top: 10px;
-  align-self: flex-end;
-}
-
-.photo-header-divider {
-  margin-top: 16px;
-}
-
-.image-container {
-  width: 24%;
-  height: 270px;
-  border: 1px solid lightgrey;
-  background-position: center;
-  padding: 7px;
-  overflow: hidden;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.image-container:hover .personal-photo-element {
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-.personal-photo-element {
-  height: 100%;
-  overflow: hidden;
-}
-
-.personal-photo-row {
-  display: flex;
-  justify-content: space-evenly;
-  margin-bottom: 30px;
-}
-
+@import "../../assets/css/style.css";
 .dot {
   height: 7px;
   width: 7px;
@@ -221,24 +136,6 @@
   background-color: darkslategrey;
   border-radius: 50%;
   display: inline-block;
-}
-
-ul {
-  padding-left: 0px;
-}
-
-h2 {
-  align-self: flex-end;
-}
-
-hr {
-  margin-bottom: 25px;
-}
-
-.section {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 
 .dest-name {
@@ -264,30 +161,12 @@ hr {
 .dest-name button {
   margin-right: 20px;
 }
-
-.outer-container {
-  text-align: center;
-  padding-bottom: 15px;
-}
-
-.inner-container {
-  margin: 0px 20px;
-}
-
-.buttons-div {
-  margin-top: 2em;
-}
-
-.update-button {
-  margin-top: 1em;
-  width: 49%;
-}
 </style>
 
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import base_url from "../../repository/BaseUrl"
+import base_url from "../../repository/BaseUrl";
 let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
 import {
@@ -313,7 +192,10 @@ export default {
       isMyProfile: false,
       isAdminUser: false,
       destination: {},
-      dest_id: null
+      dest_id: null,
+      uploadError: false,
+      errorText:
+        "You are trying to upload a duplicate image or an error occured while uploading."
     };
   },
 
@@ -334,31 +216,27 @@ export default {
       updateDestinationPhoto(this.clickedImage);
     },
 
-    //sets the user's profile photo as the selected
-    setProfilePhoto() {
-      setProfilePic(this.id, {
-        photo_filename: this.clickedImage.photo_filename
-      }).then(() => {
-        window.location = "/profile/photos";
-      });
-    },
-
     // Submits the image file and uploads it to the server
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
 
-        storeDestinationImage(this.id, this.dest_id, formData).then(() => {
-        getImages(this.id).then(result => {
-          this.files = this.groupImages(result.data);
+      storeDestinationImage(this.id, this.dest_id, formData)
+        .then(() => {
+          getImages(this.id, this.dest_id).then(result => {
+            this.files = this.groupImages(result.data);
+          });
+        })
+        .catch(error => {
+          this.uploadError = true;
+          this.errorText = error.response.data;
         });
-      });
+      this.$refs.file.value = "";
     },
 
     // Gets the image from the server
     getImgUrl(item) {
       return base_url + "/api/destinations/photo/" + item.photo_filename;
-        // async photo = await getSingleImage(this.id, this.dest_id);
     },
 
     // Gets the local image file path
@@ -368,7 +246,8 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = base_url + "/api/destinations/photo/"  + selectedImage.photo_filename;
+      myImage.src =
+        base_url + "/api/destinations/photo/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
     },
 
@@ -405,7 +284,7 @@ export default {
     this.isAdminUser = store.getters.getIsUserAdmin;
 
     getImages(this.id, this.dest_id).then(result => {
-        console.log(result.data);
+      console.log(result.data);
       this.files = this.groupImages(result.data);
     });
 

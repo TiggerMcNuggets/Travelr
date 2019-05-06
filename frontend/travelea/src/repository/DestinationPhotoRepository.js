@@ -6,7 +6,7 @@ export const storeDestinationImage = async (user_id, dest_id, data) => {
     return Repository.post(`/users/${user_id}/destinations/${dest_id}/photo`, data);
 }
 
-// Gets the image file names from the serer associated with  a traveller using fetch.
+// Gets the image file names from the server associated with a destination using fetch.
 export const getImages = async (user_id, dest_id) => {
     return Repository.get(`/users/${user_id}/destinations/${dest_id}/photo`);
 }
