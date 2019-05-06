@@ -210,9 +210,7 @@ ul {
 import { store } from "../../store/index";
 import {RepositoryFactory} from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
-import DestinationCreate from "./DestinationCreate"
-// import Map from "../map/Map";
-// import MapMenu from "./MapMenu";
+import DestinationCreate from "./DestinationCreate";
 import MapDashboard from "../map/MapDashboard";
 
 

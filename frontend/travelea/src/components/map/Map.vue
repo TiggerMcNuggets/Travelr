@@ -1,5 +1,6 @@
 <template>
     <div class="map-container" >
+        // this will be useful next sprint, the code works but the API key does not support this at the moment
         <!--<h1>Autocomplete Example (#164)</h1>-->
         <!--<label>-->
             <!--AutoComplete-->
@@ -67,7 +68,6 @@
                     open: false,
                 },
                 selectedDest: null,
-                // markers: [{latLng: {lat: 0, lng: 0}, }, {latLng: {lat: 30, lng: 100}}],
                 place: null,
             }
         },
@@ -101,6 +101,9 @@
                   return blueMarker;
               }
             },
+
+            // this code will be needed for next sprint
+
             // setPlace(place) {
             //     this.place = place
             // },
@@ -115,6 +118,8 @@
             //         this.place = null;
             //     }
             // }
+
+            //
         },
         created() {
         }

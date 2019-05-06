@@ -97,12 +97,6 @@ let router = new Router({
             beforeEnter: unauthGuard
         },
         {
-            path:'/maps',
-            name: 'map',
-            component: Map,
-            beforeEnter: unauthGuard
-        },
-        {
             path: '/user/:id',
             component: Profile,
             beforeEnter: authGuard,
