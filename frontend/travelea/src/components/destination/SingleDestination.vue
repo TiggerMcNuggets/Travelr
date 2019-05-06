@@ -406,10 +406,9 @@ export default {
     });
 
     destinationRepository
-      .getDestination(this.dest_id)
+      .getDestination(this.id, this.dest_id)
       .then(response => {
         this.destination = response.data;
-        console.log("destination data");
         console.log(this.destination);
       })
       .catch(err => {

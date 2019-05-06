@@ -133,7 +133,7 @@ let router = new Router({
                     beforeEnter: standardAccessGuard        
                 },
                 {
-                    path: '/user/:id/destinations/:dest_id',
+                    path: 'destinations/:dest_id',
                     name: 'travellerDestination',
                     component: SingleDestination
                 },

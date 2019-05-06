@@ -324,7 +324,6 @@ export default {
       const myImage = new Image();
       myImage.src = base_url + "/api/travellers/photo/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
-
     },
 
     // Groups the images into rows
