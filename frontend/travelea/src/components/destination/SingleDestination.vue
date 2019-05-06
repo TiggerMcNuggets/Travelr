@@ -4,22 +4,47 @@
   <div class="outer-container">
     <div class="inner-container">
       <div class="section">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
-        <h2 class="headline">PHOTOS</h2>
-
-        <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          @click="toggleShowUploadPhoto"
-          v-if="isMyProfile || isAdminUser"
-        >
-          <v-icon dark>add</v-icon>
-        </v-btn>
+        <div class="dest-name">
+          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+            <v-icon dark>keyboard_arrow_left</v-icon>
+          </v-btn>
+          <div>
+            <h2 class="headline">{{destination.name}}</h2>
+            <div class="dest-sub-info">
+              <p>{{destination.type}}</p>
+              <span class="dot"></span>
+              <p>{{destination.district}}</p>
+              <span class="dot"></span>
+              <p>{{destination.country}}</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <v-btn class="upload-toggle-button" fab small dark color="indigo">
+            <v-icon dark>lock</v-icon>
+          </v-btn>
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+            v-if="isMyProfile || isAdminUser"
+          >
+            <v-icon dark>edit</v-icon>
+          </v-btn>
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+            v-if="isMyProfile || isAdminUser"
+            @click="toggleShowUploadPhoto"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+        </div>
       </div>
       <v-divider class="photo-header-divider"></v-divider>
       <div v-if="showUploadSection">
@@ -35,7 +60,6 @@
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
-        <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -45,29 +69,27 @@
             <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
               <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
               <v-icon v-else class="lock-icon" left>lock</v-icon>
-                
-                <div v-if="item.is_public" class="triangle" > </div>
-                <div v-else class="triangle pink-color" > </div>
-                
+
+              <div v-if="item.is_public" class="triangle pink-color"></div>
+              <div v-else class="triangle"></div>
+
               <v-img
                 @click.stop="dialog = true"
                 v-on:click="setDialogueContent(item)"
                 class="personal-photo-element"
                 :src="getImgUrl(item)"
-         
               ></v-img>
             </div>
           </div>
         </li>
       </ul>
-    
 
       <v-dialog v-model="dialog" :width="clickedImageWidth">
         <v-card>
           <v-img :src="clickedImageURL"></v-img>
 
           <v-card-title primary-title>
-            <div>  
+            <div>
               <h5 class="headline mb-0">Image Name</h5>
               <div>Description/Other meta info</div>
             </div>
@@ -79,21 +101,27 @@
             <v-spacer></v-spacer>
             <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
             <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
+            <v-btn color="primary" flat @clocklick="setProfilePhoto()">Set Profile Photo</v-btn>
           </v-card-actions>
           <v-card-actions>
-          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-          </v-card-actions>  
+            <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+          </v-card-actions>
         </v-card>
       </v-dialog>
-    
     </div>
   </div>
 </template>relative
 
 
 <style>
-
+.dot {
+  height: 7px;
+  width: 7px;
+  margin: 0px 10px;
+  background-color: darkslategrey;
+  border-radius: 50%;
+  display: inline-block;
+}
 
 .pink-color {
   width: 0;
@@ -104,14 +132,12 @@
   opacity: 0.3;
   position: absolute;
   z-index: 10;
-
 }
-
 
 .lock-icon {
   color: white !important;
   opacity: 1;
-  position: absolute;   
+  position: absolute;
   z-index: 12;
   font-size: 2.3em;
   margin-top: 0.3em;
@@ -128,7 +154,6 @@
   opacity: 0.3;
   position: absolute;
   z-index: 10;
-
 }
 
 .choose-file-button {
@@ -214,6 +239,30 @@ hr {
   width: 100%;
 }
 
+.dest-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dest-name div {
+  text-align: start;
+}
+
+.dest-sub-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.dest-sub-info p {
+  margin-bottom: 0px;
+  color: grey;
+}
+
+.dest-name button {
+  margin-right: 20px;
+}
+
 .outer-container {
   text-align: center;
   padding-bottom: 15px;
@@ -235,16 +284,15 @@ hr {
 
 
 <script>
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
-import base_url from "../../repository/BaseUrl"
 import {
   storeImage,
   getImages,
   setProfilePic,
   updatePersonalPhoto
 } from "../../repository/PersonalPhotosRepository";
-
-
 
 export default {
   store,
@@ -261,8 +309,8 @@ export default {
       id: null,
       isMyProfile: false,
       isAdminUser: false,
-      uploadError: false,
-      errorText: "You are trying to upload a duplicate image or an error occured while uploading."
+      destination: {},
+      dest_id: null
     };
   },
 
@@ -285,44 +333,39 @@ export default {
 
     //sets the user's profile photo as the selected
     setProfilePhoto() {
-      setProfilePic(this.id, {"photo_filename": this.clickedImage.photo_filename}).then(() => {
-        window.location = "/user/" + this.id + "/photos";
+      setProfilePic(this.id, {
+        photo_filename: this.clickedImage.photo_filename
+      }).then(() => {
+        window.location = "/profile/photos";
       });
     },
 
     // Submits the image file and uploads it to the server
     submitFile() {
-      this.uploadError = false;
       let formData = new FormData();
       formData.append("picture", this.file);
 
       storeImage(this.id, formData).then(() => {
-        getImages(this.id)
-        .then((result) => {
+        getImages(this.id).then(result => {
           this.files = this.groupImages(result.data);
         });
-      }).catch(error => {
-          this.uploadError = true;
-          this.errorText = error.response.data;
-        });
-
-      this.$refs.file.value = "";
+      });
     },
 
     // Gets the image from the server
     getImgUrl(item) {
-      return base_url + "/api/travellers/photo/" + item.photo_filename;
+      return "http://localhost:9000/assets/images/" + item.photo_filename;
     },
 
     // Gets the local image file path
     setDialogueContent(selectedImage = "") {
-
       this.dialog = true;
       this.clickedImage = selectedImage;
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src = base_url + "/api/travellers/photo/" + selectedImage.photo_filename;
+      myImage.src =
+        "http://localhost:9000/assets/images/" + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
     },
 
@@ -346,19 +389,31 @@ export default {
   },
 
   created: function() {
-
+    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
+    // store.commit("setPersonalImages", this.$route.params.id);
     this.id = this.$route.params.id;
-    
-    if(!this.id) { 
-      this.id = store.getters.getUser.id
+    this.dest_id = this.$route.params.dest_id;
+
+    if (!this.id) {
+      this.id = store.getters.getUser.id;
     }
 
-    this.isMyProfile = (store.getters.getUser.id == this.id);
-    this.isAdminUser = (store.getters.getIsUserAdmin);
+    this.isMyProfile = store.getters.getUser.id == this.id;
+    this.isAdminUser = store.getters.getIsUserAdmin;
 
     getImages(this.id).then(result => {
       this.files = this.groupImages(result.data);
     });
+
+    destinationRepository
+      .getDestination(this.id, this.dest_id)
+      .then(response => {
+        this.destination = response.data;
+        console.log(this.destination);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 };
 </script>

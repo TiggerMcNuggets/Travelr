@@ -135,6 +135,9 @@ export default {
     editDestination(id) {
       this.$router.push("/user/"+this.user_id+"/destinations/edit/"+id);
     },
+    viewDestination(id) {
+      this.$router.push("/user/"+this.user_id+"/destinations/"+id);
+    },
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
     },
