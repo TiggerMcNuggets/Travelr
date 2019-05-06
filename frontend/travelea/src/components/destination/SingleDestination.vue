@@ -66,7 +66,10 @@
                 v-on:change="handleFileUpload()"
               >
             </label>
-            <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+            <div>
+              <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+              <v-btn v-on:click="uploadExisting()">Choose Existing</v-btn>
+            </div>
           </div>
           <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
           <v-divider class="photo-header-divider"></v-divider>
@@ -121,6 +124,10 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-dialog v-model="chooseExistingDialog" width="800">
+          <PhotoSelect v-bind="{closeDialogue, setDestinationImages}"/>
+        </v-dialog>
       </div>
     </div>
   </v-card>
@@ -167,17 +174,21 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
+import PhotoSelect from "../photos/PhotoSelect";
 let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
 import {
   storeDestinationImage,
   getImages,
   setProfilePic,
-  updateDestinationPhoto
+  updateDestinationPhoto,
+  addExistingPhoto
 } from "../../repository/DestinationPhotoRepository";
 
 export default {
   store,
+
+  components: { PhotoSelect },
   // local variables
   data() {
     return {
@@ -194,12 +205,38 @@ export default {
       destination: {},
       dest_id: null,
       uploadError: false,
+      chooseExistingDialog: false,
       errorText:
-        "You are trying to upload a duplicate image or an error occured while uploading."
+        "You are trying to upload a duplicate image or an error occured while uploading.",
+      
     };
   },
 
   methods: {
+    //sets the user's profile photo as the selected
+    setDestinationImages(selectedImages) {
+        console.log(this.dest_id)
+        for(let i = 0; i < selectedImages.length; i++) {
+          console.log(selectedImages[i].photo_filename);
+          addExistingPhoto(this.id, this.dest_id, {
+            photo_filename: selectedImages[i].photo_filename
+          }).then(() => {
+          getImages(this.id, this.dest_id).then(result => {
+            this.files = this.groupImages(result.data);
+          });
+        });
+        }
+      this.closeDialogue();
+    },
+
+      uploadExisting() {
+      this.chooseExistingDialog = true;
+    },
+
+     closeDialogue() {
+      this.chooseExistingDialog = false;
+    },
+
     // Sets the file property the the file being uploaded.
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
@@ -271,8 +308,6 @@ export default {
   },
 
   created: function() {
-    // committing to the store like this allows you to trigger the setDestinations mutation you can find in the destinations module for the store
-    // store.commit("setPersonalImages", this.$route.params.id);
     this.id = this.$route.params.id;
     this.dest_id = this.$route.params.dest_id;
 

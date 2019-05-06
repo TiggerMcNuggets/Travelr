@@ -21,8 +21,9 @@ export const getSingleImage = async (dest_id, filename) => {
 }
 
 // Sets the user profile picture to a new uploaded photo
-export const uploadProfilePic = async (id, payload) => {
-    return Repository.put(`/travellers/${id}/uploadphoto`, payload);
+export const addExistingPhoto = async (user_id, dest_id, payload) => {
+    console.log(`/users/${user_id}/destinations/${dest_id}/photo`);
+    return Repository.put(`/users/${user_id}/destinations/${dest_id}/photo`, payload);
 }
 
 // Sets the user profile picture to a selected photo
