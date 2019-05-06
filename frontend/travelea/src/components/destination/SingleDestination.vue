@@ -285,6 +285,7 @@ hr {
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import base_url from "../../repository/BaseUrl"
 let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
 import {
@@ -354,7 +355,7 @@ export default {
 
     // Gets the image from the server
     getImgUrl(item) {
-      return "http://localhost:9000/assets/images/" + item.photo_filename;
+      return base_url + "/api/destinations/photo/" + item.photo_filename;
     },
 
     // Gets the local image file path
@@ -364,8 +365,7 @@ export default {
       this.publicPhotoSwitch = selectedImage.is_public;
       this.clickedImageURL = this.getImgUrl(selectedImage);
       const myImage = new Image();
-      myImage.src =
-        "http://localhost:9000/assets/images/" + selectedImage.photo_filename;
+      myImage.src = base_url + "/api/destinations/photo/"  + selectedImage.photo_filename;
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
     },
 
