@@ -53,7 +53,7 @@ public class DestinationPhotoController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> list(Http.Request request, Long id, Long dest_id) {
         FileHelper fh = new FileHelper();
-        fh.makeDirectory("resources/images");
+        fh.makeDirectory("resources/destinationImages");
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
@@ -70,9 +70,8 @@ public class DestinationPhotoController extends Controller {
      * @param filename The file name of the image to get.
      * @return The raw image file which corresponds to the filename given.
      */
-    @Authorization.RequireAuth
     public Result getImageFromDatabase(String filename) {
-        File file = new File("resources/images/" + filename);
+        File file = new File("resources/destinationImages/" + filename);
         try {
             return ok(file);
         } catch (Exception e) {
@@ -97,8 +96,8 @@ public class DestinationPhotoController extends Controller {
             String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.makeDirectory("public/images");
-            file.copyTo(Paths.get("public/images/" + fileName), true);
+            fh.makeDirectory("resources/destinationImages");
+            file.copyTo(Paths.get("resources/destinationImages/" + fileName), true);
             return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);

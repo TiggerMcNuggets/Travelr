@@ -289,11 +289,11 @@ import base_url from "../../repository/BaseUrl"
 let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
 import {
-  storeImage,
+  storeDestinationImage,
   getImages,
   setProfilePic,
-  updatePersonalPhoto
-} from "../../repository/PersonalPhotosRepository";
+  updateDestinationPhoto
+} from "../../repository/DestinationPhotoRepository";
 
 export default {
   store,
@@ -329,7 +329,7 @@ export default {
     // Updates whether the photo is public or private depending on the swich state.
     updatePhotoVisability() {
       this.clickedImage.is_public = this.publicPhotoSwitch;
-      updatePersonalPhoto(this.clickedImage);
+      updateDestinationPhoto(this.clickedImage);
     },
 
     //sets the user's profile photo as the selected
@@ -346,7 +346,7 @@ export default {
       let formData = new FormData();
       formData.append("picture", this.file);
 
-      storeImage(this.id, formData).then(() => {
+        storeDestinationImage(this.id, this.dest_id, formData).then(() => {
         getImages(this.id).then(result => {
           this.files = this.groupImages(result.data);
         });
@@ -356,6 +356,7 @@ export default {
     // Gets the image from the server
     getImgUrl(item) {
       return base_url + "/api/destinations/photo/" + item.photo_filename;
+        // async photo = await getSingleImage(this.id, this.dest_id);
     },
 
     // Gets the local image file path
@@ -401,7 +402,8 @@ export default {
     this.isMyProfile = store.getters.getUser.id == this.id;
     this.isAdminUser = store.getters.getIsUserAdmin;
 
-    getImages(this.id).then(result => {
+    getImages(this.id, this.dest_id).then(result => {
+        console.log(result.data);
       this.files = this.groupImages(result.data);
     });
 
@@ -409,7 +411,6 @@ export default {
       .getDestination(this.id, this.dest_id)
       .then(response => {
         this.destination = response.data;
-        console.log(this.destination);
       })
       .catch(err => {
         console.log(err);
