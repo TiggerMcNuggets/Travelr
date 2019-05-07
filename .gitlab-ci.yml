@@ -19,7 +19,7 @@ recent-artifacts:
     - sbt dist
     - cd ./target/universal
     - sudo rm -rf /home/gitlab-runner/dev/*
-    - sudp cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
+    - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
     - sudo unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
 
   artifacts:
