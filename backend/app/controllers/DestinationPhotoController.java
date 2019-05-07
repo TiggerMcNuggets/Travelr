@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
