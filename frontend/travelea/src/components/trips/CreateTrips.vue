@@ -1,11 +1,12 @@
 /* eslint-disable */
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="width-for-container">
+  <div class="create-trip-container">
+
     <v-form ref="form" lazy-validation>
-      <v-container grid-list-xl>
-        <h4>{{this.dialogName}}</h4>
-        <v-layout>
+      <div class="add-trip-form">
+        <h3>Add New Trip</h3>
+        <v-layout class="trip-name">
           <v-flex xs12 md12 class="row-input-margin">
             <v-text-field v-model="trip.title" :rules="nameRules" :counter="60" label="Trip Name"></v-text-field>
           </v-flex>
@@ -19,84 +20,70 @@
             @start="dragging = true"
             @end="dragging = false"
           >
-            <li
-              v-for="(destination, index) in trip.destinations"
-              :v-bind="index"
-              :key="index"
-              class="list-group-item"
-            >
-              <v-card class="destination-form-padding">
-                <v-layout>
-                  <v-flex xs12 md4>
-                    <v-combobox
-                      :rules="noSameDestinationNameConsecutiveRule"
-                      :items="userDestinations.map(dest => dest.name)"
-                      v-model="destination.title"
-                      label="Select an existing destination"
-                    ></v-combobox>
-                    <v-btn
-                      flat
-                      small
-                      color="error"
-                      v-if="index > 1"
-                      v-on:click="deleteDestination(index)"
-                    >Remove</v-btn>
-                  </v-flex>
+          <li v-for="(destination, index) in trip.destinations" :v-bind="index" :key="index" class="list-group-item">
+            <v-card class="destination-form-padding">
+              <v-layout>
+                <v-flex xs12 md4 class='create-trip-item'>
+                  <v-combobox
+                    :rules="noSameDestinationNameConsecutiveRule"
+                    :items="userDestinations.map(dest => dest.name)"
+                    v-model="destination.title"
+                    label="Select an existing destination"
+                  ></v-combobox>
+                  <v-btn
+                    flat
+                    small
+                    color="error"
+                    v-if="index > 1"
+                    v-on:click="deleteDestination(index)"
+                  >Remove</v-btn>
+                </v-flex>
 
-                  <v-flex xs12 md4>
-                    <v-card class="times-padding">
-                      <!-- Arrival date -->
-                      <v-menu
-                        v-model="destination.arrivalDateMenu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="destination.arrivalDate"
-                            :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
-                            label="Arrival date"
-                            prepend-icon="event"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
+                <v-flex xs12 md4 class='create-trip-item'>
+                  <v-card class="times-padding">
+                    <!-- Arrival date -->
+                    <v-menu
+                      v-model="destination.arrivalDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
                           v-model="destination.arrivalDate"
-                          @input="destination.arrivalDateMenu = false"
-                        ></v-date-picker>
-                      </v-menu>
-                    </v-card>
-                  </v-flex>
-                  <v-flex xs12 md4>
-                    <v-card class="times-padding">
-                      <!-- Departure date -->
-                      <v-menu
-                        v-model="destination.departureDateMenu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        lazy
-                        transition="scale-transition"
-                        offset-y
-                        full-width
-                        min-width="290px"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            v-model="destination.departureDate"
-                            :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
-                            label="Departure date"
-                            prepend-icon="event"
-                            readonly
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker
+                          :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
+                          label="Arrival date"
+                          prepend-icon="event"
+                          readonly
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="destination.arrivalDate"
+                        @input="destination.arrivalDateMenu = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-card>
+                </v-flex>
+                <v-flex xs12 md4 class='create-trip-item'>
+                  <v-card class="times-padding">
+                    <!-- Departure date -->
+                    <v-menu
+                      v-model="destination.departureDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
                           v-model="destination.departureDate"
                           @input="destination.departureDateMenu = false"
                         ></v-date-picker>
@@ -121,12 +108,12 @@
             </li>
           </draggable>
         </ul>
-        <div>
+        <div class="create-trip-options">
           <v-btn color="red" v-on:click="resetValues">RESET</v-btn>
           <v-btn v-on:click="onConfirm">CONFIRM</v-btn>
           <v-btn v-on:click="addDestinationToTrip">ADD DESTINATION</v-btn>
         </div>
-      </v-container>
+      </div>
     </v-form>
   </div>
 </template>
@@ -134,9 +121,28 @@
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
-.width-for-container {
-  width: 60%;
+.create-trip-container {
+  text-align: left;
 }
+
+.add-trip-form {
+  padding: 30px;
+  padding-top: 10px;
+}
+
+.add-trip-form .trip-name  {
+  padding: 20px;
+}
+
+.add-trip-form .create-trip-item {
+  padding: 15px;
+}
+
+.create-trip-options {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .destination-form-padding {
   padding: 2em;
 }
@@ -150,6 +156,7 @@
 }
 .list-group-item {
   cursor: move;
+  margin-bottom: 20px;
 }
 .list-group-item:hover i {
   cursor: pointer !important;
