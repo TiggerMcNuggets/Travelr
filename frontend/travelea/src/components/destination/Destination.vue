@@ -253,7 +253,7 @@ computed: {
       this.checkIfProfileOwner();
       this.getDestinationList();
     },
-    editDestination(id) {dialog
+    editDestination(id) {
       this.$router.push("/user/" + this.user_id + "/destinations/edit/" + id);
     },
     viewDestination(id) {

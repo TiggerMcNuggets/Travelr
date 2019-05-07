@@ -31,6 +31,7 @@
               dark
               color="indigo"
               v-if="isMyProfile || isAdminUser"
+              @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
             </v-btn>
@@ -222,6 +223,10 @@ export default {
   },
 
   methods: {
+     editDestination() {
+      this.$router.push("/user/" + this.id + "/destinations/edit/" + this.dest_id);
+    },
+
     //sets the user's profile photo as the selected
     setDestinationImages(selectedImages) {
         for(let i = 0; i < selectedImages.length; i++) {
