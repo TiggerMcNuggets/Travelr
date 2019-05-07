@@ -138,7 +138,7 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       trips: [],
-        isAdmin: store.getters.getIsUserAdmin,
+      isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
       isAdminUser: false,
       user_id: this.$route.params.id,
