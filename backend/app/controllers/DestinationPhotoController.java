@@ -132,13 +132,13 @@ public class DestinationPhotoController extends Controller {
                 java.nio.file.Files.copy(sourceDirectory, targetDirectory);
             }
         } catch (IOException e) {
-            System.out.println("Destination image already exists in directory");
+            System.err.println("Destination image already exists in directory");
         }
 
         return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
             if (photo_id != null) {
                 return ok("File added with Photo ID " + photo_id);
-            } else if (photo_id.equals(null)) {
+            } else if (photo_id == null) {
                 return badRequest("Duplicate Photo.");
             } else {
                 return badRequest("Error adding reference to the database.");
