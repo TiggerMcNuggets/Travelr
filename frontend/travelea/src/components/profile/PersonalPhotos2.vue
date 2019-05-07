@@ -3,23 +3,26 @@
 <template>
   <div class="outer-container">
     <div class="inner-container">
-      <div class="section">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
-        <h2 class="headline">PHOTOS</h2>
-
-        <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          @click="toggleShowUploadPhoto"
-          v-if="isMyProfile || isAdminUser"
-        >
-          <v-icon dark>add</v-icon>
-        </v-btn>
+       <div class="section">
+        <div class="dest-name">
+          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+            <v-icon dark>keyboard_arrow_left</v-icon>
+          </v-btn>
+          <h2 class="headline">Personal Photos</h2>
+        </div>
+        <div>
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+             @click="toggleShowUploadPhoto"
+            v-if="isMyProfile || isAdminUser"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+        </div>
       </div>
       <v-divider class="photo-header-divider"></v-divider>
       <div v-if="showUploadSection">
@@ -36,6 +39,7 @@
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
         <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
+        <v-alert :value="successfulUpload" color="error">Upload Successful</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -120,6 +124,7 @@ export default {
       isMyProfile: false,
       isAdminUser: false,
       uploadError: false,
+      uploadSuccessful: false,
       errorText:
         "You are trying to upload a duplicate image or an error occured while uploading."
     };
