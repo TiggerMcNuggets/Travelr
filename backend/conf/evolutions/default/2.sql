@@ -234,6 +234,8 @@ INSERT INTO traveller_type (name) values ('Groupies');
 INSERT INTO traveller_type (name) values ('Frequent Weekender');
 INSERT INTO traveller_type (name) values ('Gap Year');
 
+
+
 -- !Downs
 
 DELETE FROM nationality;

@@ -1,7 +1,8 @@
-import com.google.inject.AbstractModule;
-import config.ApplicationStart;
+package tasks;
 
-public class Module extends AbstractModule {
+import com.google.inject.AbstractModule;
+
+public class TasksModule extends AbstractModule {
     protected void configure() {
         bind(ApplicationStart.class).asEagerSingleton();
     }
