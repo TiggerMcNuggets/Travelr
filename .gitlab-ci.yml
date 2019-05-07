@@ -16,8 +16,6 @@ recent-artifacts:
   script:
     - cd ./backend
     - sbt dist
-    - cd ./target/universal
-    - cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
   artifacts:
     paths:
       - backend/target/universal/*.zip
