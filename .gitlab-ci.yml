@@ -5,11 +5,11 @@ tag_checker:
   only:
     - tags
 
-# junit:
-#   stage: test
-#   script:
-#     - cd ./backend
-#     - sbt test
+junit:
+  stage: test
+  script:
+    - cd ./backend
+    - sbt test
 
 
 # recent artifacts on all non-tagged commits on any branch
