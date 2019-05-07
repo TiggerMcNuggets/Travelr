@@ -10,7 +10,7 @@
 
       <v-btn
         v-if="isMyProfile || isAdminUser"
-        @click="goToEdit(user_id)"
+        @click="goToEdit(id)"
         class="profile-edit-button"
         fab
         small
@@ -206,7 +206,7 @@ export default {
       this.id = this.$route.params.id;
       this.isMyProfile = (store.getters.getUser.id == this.id);
     },
-    goToEdit(id) {
+    goToEdit() {
       this.$router.push("/user/"+this.id+"/edit")
     }
 
