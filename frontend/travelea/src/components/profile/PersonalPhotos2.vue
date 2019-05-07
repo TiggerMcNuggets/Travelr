@@ -220,7 +220,7 @@ export default {
         row.push(imageList[i]);
       }
 
-      if (row) newImageList.unshift(row);
+      newImageList.unshift(row);
       newImageList.reverse();
       return newImageList;
     }

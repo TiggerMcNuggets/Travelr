@@ -37,7 +37,12 @@
       </div>
 
       <v-divider class="photo-header-divider"></v-divider>
-      <v-text-field v-if="searchActive" v-model="searchValue" label="Destination name" prepend-icon="search"></v-text-field>
+      <v-text-field
+        v-if="searchActive"
+        v-model="searchValue"
+        label="Trip name"
+        prepend-icon="search"
+      ></v-text-field>
 
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Browse</v-tab>
@@ -82,14 +87,14 @@
                   </v-btn>
                   <v-btn
                     v-if="item.isPublic"
+                    color="#FF69B4"
+                    flat
                     icon
                     @click="() => console.log('clicked on open lock')"
                   >
                     <v-icon color="hotpink lighten-1">lock_open</v-icon>
                   </v-btn>
                 </div>
-
-                <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
               </v-card>
             </li>
           </ul>
@@ -226,7 +231,6 @@ export default {
       searchActive: false
     };
   },
-  computed: {},
   // child components
   components: {
     MapDashboard,
@@ -238,14 +242,19 @@ export default {
     }
   },
 
-computed: {
-
+  computed: {
     destinationsFiltered() {
-      const filteredList = this.destinations.filter(destination => destination.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1);
+      const filteredList = this.destinations.filter(
+        destination =>
+          destination.name
+            .toLowerCase()
+            .search(this.searchValue.toLowerCase()) !== -1
+      );
       //Currently sorting trips by id, in future we will sort trips by creation time
-      return filteredList.sort(function(a, b){ return a.id - b.id; });
+      return filteredList.sort(function(a, b) {
+        return a.id - b.id;
+      });
     }
-
   },
 
   methods: {
@@ -265,8 +274,10 @@ computed: {
     toggleShowSearch: function() {
       this.searchActive = !this.searchActive;
     },
-    deleteDestination: function() {
-      // TODO: ion progress
+    deleteDestination: function(destId) {
+      destinationRepository.deleteDestination(this.user_id, destId).then(() => {
+          this.init();
+      });
     },
     updateDestinationList: function() {
       this.getDestinationList();

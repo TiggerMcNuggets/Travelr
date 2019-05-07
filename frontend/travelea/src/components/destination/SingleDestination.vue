@@ -189,7 +189,6 @@ import { store } from "../../store/index";
 import {
   storeDestinationImage,
   getImages,
-  setProfilePic,
   updateDestinationPhoto,
   addExistingPhoto
 } from "../../repository/DestinationPhotoRepository";
@@ -316,7 +315,7 @@ export default {
         row.push(imageList[i]);
       }
 
-      if (row) newImageList.unshift(row);
+      newImageList.unshift(row);
       newImageList.reverse();
       return newImageList;
     }

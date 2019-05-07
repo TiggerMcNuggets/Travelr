@@ -10,7 +10,7 @@
     <v-dialog v-model="shouldDisplayDialog" max-width="100%">
         <create-trip style="background-color: white;"
                      v-if="true"
-                     :regetTrips="() => console.log('no need')"
+                     :regetTrips="() => {}"
                      :passedTrip="tripId"
                      :updateViewTripPage="this.updateViewTripPage"
         />
