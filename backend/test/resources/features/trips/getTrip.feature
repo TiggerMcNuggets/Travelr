@@ -11,12 +11,12 @@ Feature: GetTrip
     When I get a trip
     Then I will receive a 200 response
 
-  Scenario: get someone else's trip when I am not an admin with a valid tripId and the trip exists
-    Given I provide a tripId of "2"
-    And The traveller id is 4
-    And I provide the token "nonadmin"
-    When I get a trip
-    Then I will receive a 403 response
+#  Scenario: get someone else's trip when I am not an admin with a valid tripId and the trip exists
+#    Given I provide a tripId of "2"
+#    And The traveller id is 4
+#    And I provide the token "nonadmin"
+#    When I get a trip
+#    Then I will receive a 403 response
 
   Scenario: get someone else's trip when I am an admin with a valid tripId and the trip exists
     Given I provide a tripId of "2"
@@ -25,12 +25,12 @@ Feature: GetTrip
     When I get a trip
     Then I will receive a 200 response
 
-  Scenario: get my trip when I am an not admin with a valid tripId and the trip exists
-    Given I provide a tripId of "2"
-    And The traveller id is 2
-    And I provide the token "abc"
-    When I get a trip
-    Then I will receive a 200 response
+#  Scenario: get my trip when I am an not admin with a valid tripId and the trip exists
+#    Given I provide a tripId of "2"
+#    And The traveller id is 2
+#    And I provide the token "abc"
+#    When I get a trip
+#    Then I will receive a 200 response
 
   Scenario: get a trip with a invalid tripId and it does not exist
     Given I provide a tripId of "100"

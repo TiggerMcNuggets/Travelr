@@ -36,23 +36,22 @@ PUT         /api/travellers/:id/uploadphoto     controllers.PhotoController.uplo
 PUT         /api/travellers/:id/setphoto        controllers.PhotoController.chooseProfilePhoto(request: Request, id: Long)
 
 # Destination Photos
-GET         /api/users/:user_id/destinations/:dest_id/photo    controllers.DestinationPhotoController.list(request: Request, user_id: Long, dest_id: Long)
-GET         /api/destinations/photo/:filename   controllers.DestinationPhotoController.getImageFromDatabase(filename: String)
-POST        /api/users/:user_id/destinations/:dest_id/photo    controllers.DestinationPhotoController.uploadDestinationPhoto(request: Request, user_id: Long, dest_id: Long)
-PUT        /api/destinations/photo/:photo_id     controllers.DestinationPhotoController.updateDestinationPhoto(request: Request, photo_id: Long)
+GET         /api/users/:user_id/destinations/:dest_id/photo     controllers.DestinationPhotoController.list(request: Request, user_id: Long, dest_id: Long)
+GET         /api/destinations/photo/:filename                   controllers.DestinationPhotoController.getImageFromDatabase(filename: String)
+POST        /api/users/:user_id/destinations/:dest_id/photo     controllers.DestinationPhotoController.uploadDestinationPhoto(request: Request, user_id: Long, dest_id: Long)
+PUT        /api/destinations/photo/:photo_id                    controllers.DestinationPhotoController.updateDestinationPhoto(request: Request, photo_id: Long)
 PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.DestinationPhotoController.addExistingPhotoToDestinationPhotos(request: Request, user_id: Long, dest_id: Long)
 
 # Destinations (Old)
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
 # Destinations (NEW)
-GET         /api/users/:id/destinations         controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
-POST        /api/users/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
-GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
+GET         /api/users/:id/destinations                     controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
+POST        /api/users/:id/destinations                     controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
+GET         /api/users/:user_id/destinations/:dest_id       controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
 PUT         /api/users/:userId/destinations/:destId               controllers.DestinationController.updateUserDestinationGivenUser(request: Request, userId: Long, destId: Long)
-PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
-POST        /api/destinations/:id/make_public   controllers.DestinationController.makeDestinationPublic(id: Long)
-
+POST        /api/destinations/:id/make_public               controllers.DestinationController.makeDestinationPublic(id: Long)
+DELETE      /api/users/:user_id/destinations/:dest_id       controllers.DestinationController.shallowDeleteDestination(request: Request, user_id: Long, dest_id: Long)
 
 # Trips (Old)
 GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
@@ -76,6 +75,6 @@ GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUs
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
-GET     /assets/images/*file               controllers.Assets.at(path="/public/images", file)
-GET     /assets/profile_images/*file       controllers.Assets.at(path="/public/profile_images", file)
-GET     /*file                      controllers.FrontendController.assetOrDefault(file)
+GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
+GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)
+GET     /*file                                  controllers.FrontendController.assetOrDefault(file)
