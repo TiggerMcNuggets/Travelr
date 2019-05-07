@@ -72,6 +72,7 @@ export default {
             if (this.isAdmin) {
                 columns.push({text: 'Delete', align: 'left', sortable: false})
             }
+            //comment
             return columns;
         },
     },
