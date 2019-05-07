@@ -75,14 +75,23 @@
                     </div>
                   </div>
                 </div>
-                <div v-if="isMyProfile || isAdminUser">
-                  <v-btn icon @click="deleteDestination(item.id)">
+                <div>
+                  <v-btn
+                          v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                          icon
+                          @click="deleteDestination(item.id)">
                     <v-icon color="red lighten-1">delete</v-icon>
                   </v-btn>
-                  <v-btn icon @click="editDestination(item.id)">
+                  <v-btn
+                          v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                          icon
+                          @click="editDestination(item.id)">
                     <v-icon color="orange lighten-1">edit</v-icon>
                   </v-btn>
-                  <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
+                  <v-btn
+                          v-if="!item.isPublic"
+                          icon
+                          @click="makePublic(item.id)">
                     <v-icon color="blue lighten-1">lock</v-icon>
                   </v-btn>
                   <v-btn
@@ -318,3 +327,4 @@ export default {
   }
 };
 </script>
+
