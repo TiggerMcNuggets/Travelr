@@ -164,6 +164,39 @@ public class DestinationController extends Controller {
     /**
      * Updates a destination that belongs to a user
      * @param request the http request
+     * @param userId the id of the destination
+     * @param destId the id of the destination
+     * @return 200 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserDestinationGivenUser(Http.Request request, Long userId, Long destId) {
+        Form<CreateDestReq> updateDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        User user = request.attrs().get(Attrs.USER);
+
+        if(updateDestinationForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
+        }
+
+        CreateDestReq req = updateDestinationForm.get();
+
+        return destinationRepository.getOneDestination(destId).thenComposeAsync(destination -> {
+            // Not Found Check
+            if (destination == null) {
+                return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+            }
+            return destinationRepository.update(req, destId).thenApplyAsync(destinationId -> ok("Destination updated"));
+
+        });
+
+    }
+
+    /**
+     * Updates a destination that belongs to a user
+     * @param request the http request
      * @param id the id of the destination
      * @return 200 with string if all ok
      */
