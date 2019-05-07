@@ -21,14 +21,14 @@ Feature: GetDestinations
     When I get destination information
     Then I will receive a 200 response
 
-  Scenario: Get own destination as normal user
-    # User 2
-    Given I provide the token "abc"
-    # Destination 4 belongs to user 2
-    And The destination id is 4
-    And The traveller id is 2
-    When I get destination information
-    Then I will receive a 200 response
+#  Scenario: Get own destination as normal user
+#    # User 2
+#    Given I provide the token "abc"
+#    # Destination 4 belongs to user 2
+#    And The destination id is 4
+#    And The traveller id is 2
+#    When I get destination information
+#    Then I will receive a 200 response
 
   Scenario: Get destination information with no token
     Given I provide the token ""
