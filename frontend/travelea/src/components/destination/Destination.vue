@@ -54,8 +54,8 @@
               <v-card class="top-destination-content destination-container">
                 <div class="row-container">
                   <div
-                    class="private-public-side-bar"
-                    v-bind:class="{ 'pink-background': item.isPublic, 'blue-background': !item.isPublic }"
+                    class="private-public-side-bar side-border"
+                    v-bind:class="{ 'pink-background2': item.isPublic, 'blue-background': !item.isPublic }"
                   ></div>
                   <div
                     class="hoverable destination-container"
@@ -158,12 +158,14 @@ hr {
 
 .horizontal-details {
   padding-top: 15px;
-  background-color: #05386b;
 }
-.blue-background {
-  background-color: #0d47a1;
+
+.pink-background2 {
+  background-color: hotpink;
 }
-.pink-background {
+
+.side-border {
+  width: 15px;
 }
 
 .destination-container {
