@@ -1,19 +1,7 @@
-<template>    
-    <v-card>
-    <v-btn
-        class="upload-toggle-button"
-        fab
-        small
-        dark
-        color="indigo"
-        @click="$router.go(-1)"
-    >
-    
-        <v-icon dark>keyboard_arrow_left</v-icon>
-    </v-btn>
-        
+<template>
+  <v-card>
     <trips></trips>
-    </v-card>
+  </v-card>
 </template>
 
 <style>
@@ -65,13 +53,11 @@ export default {
   name: "Profile",
 
   data() {
-    return {
-    };
+    return {};
   },
   components: {
-    Trips,
+    Trips
   },
-  methods: {
-  }
+  methods: {}
 };
 </script>
