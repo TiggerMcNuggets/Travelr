@@ -1,4 +1,4 @@
-package controllers.dto.Trip;
+package controllers.dto.trip;
 
 import models.TripDestination;
 

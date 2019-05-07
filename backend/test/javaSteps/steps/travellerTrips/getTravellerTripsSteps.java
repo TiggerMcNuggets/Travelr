@@ -33,7 +33,7 @@ public class getTravellerTripsSteps {
             state.setResult(route(state.getApplication(), getTravellerTrips));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             Assert.assertTrue(false);
         }
     }

@@ -1,17 +1,9 @@
 package models;
 
-import com.sun.istack.Nullable;
-import controllers.dto.Trip.TripDestinationReq;
 import finders.TripDestinationFinder;
-import models.Destination;
-import models.Trip;
-import play.data.format.Formats;
 import play.data.validation.Constraints;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import java.util.Date;
 
 @Entity
 public class TripDestination extends BaseModel {

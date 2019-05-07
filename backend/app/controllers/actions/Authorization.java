@@ -2,6 +2,7 @@ package controllers.actions;
 
 
 import controllers.SecurityController;
+import controllers.constants.APIResponses;
 import models.Trip;
 import models.User;
 import play.mvc.*;
@@ -21,7 +22,7 @@ public class Authorization {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     public @interface RequireAuth {
-        //boolean value() default true;
+        // boolean value() default true;
     }
 
     public static class RequireAuthAction extends Action<RequireAuth> {
@@ -30,7 +31,7 @@ public class Authorization {
             try {
                 authToken = req.header(SecurityController.AUTH_TOKEN_HEADER).get();
             } catch (Exception e) {
-                return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+                return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
             }
             if(authToken != null) {
                 Optional<User> user = models.User.find.findByAuthToken(authToken);
@@ -39,7 +40,7 @@ public class Authorization {
                 }
             }
 
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+            return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
         }
     }
 
@@ -61,7 +62,7 @@ public class Authorization {
             try {
                 authToken = req.header(SecurityController.AUTH_TOKEN_HEADER).get();
             } catch (Exception e) {
-                return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+                return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
             }
             if(authToken != null) {
                 Optional<User> user = models.User.find.findByAuthToken(authToken);
@@ -75,7 +76,7 @@ public class Authorization {
                 }
             }
 
-            return CompletableFuture.completedFuture(unauthorized("Not Logged In: Access Denied"));
+            return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
         }
     }
 
