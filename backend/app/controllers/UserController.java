@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import controllers.dto.Trip.GetTripRes;
 import controllers.dto.Trip.TripDestinationRes;
 import controllers.dto.User.*;
@@ -94,7 +95,7 @@ public class UserController extends Controller {
         // Bad Request Check
         if (userRequestForm.hasErrors()) {
             System.out.println(userRequestForm.errors());
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateUserReq req = userRequestForm.get();
@@ -180,7 +181,7 @@ public class UserController extends Controller {
 
         // Bad Request Check
         if (userRequestForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         // Create an object from the request

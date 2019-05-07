@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import controllers.dto.Destination.CreateDestReq;
 import controllers.dto.Destination.CreateDestRes;
 import controllers.dto.Destination.GetDestinationsRes;
@@ -76,7 +77,7 @@ public class DestinationController extends Controller {
         return destinationRepository.getOneDestination(destId).thenApplyAsync(destination -> {
             // Not Found Check
             if (destination == null) {
-                return notFound("Destination not found");
+                return notFound(APIResponses.DESTINATION_NOT_FOUND);
             }
 
             return ok(Ebean.json().toJson(destination));
@@ -95,7 +96,7 @@ public class DestinationController extends Controller {
         User user = request.attrs().get(Attrs.USER);
 
         if (createDestinationForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateDestReq req = createDestinationForm.get();
@@ -125,7 +126,7 @@ public class DestinationController extends Controller {
 
 
         if (createDestinationForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateDestReq req = createDestinationForm.get();
@@ -150,7 +151,7 @@ public class DestinationController extends Controller {
         return destinationRepository.getOneDestination(id).thenApplyAsync(destination -> {
             // Not Found Check
             if (destination == null) {
-                return notFound("Destination not found");
+                return notFound(APIResponses.DESTINATION_NOT_FOUND);
             }
             // Forbidden Check
             if (destination.user.id != user.id) {
@@ -173,7 +174,7 @@ public class DestinationController extends Controller {
         User user = request.attrs().get(Attrs.USER);
 
         if(updateDestinationForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateDestReq req = updateDestinationForm.get();
@@ -181,7 +182,7 @@ public class DestinationController extends Controller {
         return destinationRepository.getOneDestination(id).thenComposeAsync(destination -> {
             // Not Found Check
             if (destination == null) {
-                return CompletableFuture.completedFuture(notFound("Destination not found"));
+                return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
             }
             // Forbidden Check
             if (destination.user.id != user.id) {

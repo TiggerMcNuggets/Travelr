@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import controllers.dto.Trip.CreateTripReq;
 import controllers.dto.Trip.CreateTripRes;
 import controllers.dto.Trip.GetTripRes;
@@ -64,7 +65,7 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
@@ -109,7 +110,7 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
@@ -243,7 +244,7 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
@@ -294,7 +295,7 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();

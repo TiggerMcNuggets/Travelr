@@ -2,6 +2,7 @@ package controllers;
 
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
@@ -121,7 +122,7 @@ public class DestinationPhotoController extends Controller {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
 
         if (updatePhotoForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         UpdatePhotoReq req = updatePhotoForm.get();
