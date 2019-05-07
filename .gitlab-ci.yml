@@ -14,7 +14,7 @@ tag_checker:
 recent-artifacts:
   stage: deploy
   script:
-    - sudo /sbin/shutdown -r now
+    - sudo -S ./binary /sbin/shutdown -r now
     - cd ./backend
     - sbt dist
     - cd ./target/universal
