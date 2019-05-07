@@ -1,10 +1,7 @@
 package repository;
 
-import controllers.DestinationController;
-import controllers.dto.Destination.CreateDestReq;
-import finders.DestinationFinder;
+import controllers.dto.destination.CreateDestReq;
 import models.Destination;
-import models.Trip;
 import models.TripDestination;
 import models.User;
 
