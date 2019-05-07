@@ -1,4 +1,4 @@
-package controllers.dto.User;
+package controllers.dto.user;
 
 public class NationalityReq {
     public Long id;

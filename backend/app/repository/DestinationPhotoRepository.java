@@ -1,6 +1,6 @@
 package repository;
 
-import controllers.dto.Photo.UpdatePhotoReq;
+import controllers.dto.photo.UpdatePhotoReq;
 import io.ebean.*;
 import models.*;
 

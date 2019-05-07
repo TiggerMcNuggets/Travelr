@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.User.*;
+import controllers.dto.user.*;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;

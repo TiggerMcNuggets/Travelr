@@ -1,6 +1,5 @@
-package controllers.dto.User;
+package controllers.dto.user;
 
-import models.Nationality;
 import models.TravellerType;
 import models.User;
 import models.UserNationality;
@@ -33,7 +32,7 @@ public class GetUserRes {
     }
 
     public void setNationalities(List<UserNationality> nationalities) {
-        this.nationalities = new ArrayList<NationalityRes>();
+        this.nationalities = new ArrayList<>();
         for (UserNationality nationality : nationalities) {
             this.nationalities.add(new NationalityRes(nationality));
         }

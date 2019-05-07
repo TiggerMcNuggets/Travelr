@@ -7,9 +7,9 @@ import com.google.inject.Inject;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.Trip.CreateTripReq;
-import controllers.dto.Trip.CreateTripRes;
-import controllers.dto.Trip.GetTripRes;
+import controllers.dto.trip.CreateTripReq;
+import controllers.dto.trip.CreateTripRes;
+import controllers.dto.trip.GetTripRes;
 import io.ebean.Ebean;
 
 import models.Trip;

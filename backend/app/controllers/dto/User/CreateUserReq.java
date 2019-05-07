@@ -1,4 +1,4 @@
-package controllers.dto.User;
+package controllers.dto.user;
 
 import play.data.validation.Constraints;
 import java.util.List;

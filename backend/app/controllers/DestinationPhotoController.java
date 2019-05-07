@@ -3,7 +3,7 @@ package controllers;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.Photo.UpdatePhotoReq;
+import controllers.dto.photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.User;
