@@ -21,7 +21,10 @@
             
           </div>
           <div>
-            <v-btn class="upload-toggle-button" fab small dark color="indigo">
+            <v-btn v-if="destination.isPublic" class="upload-toggle-button" fab small dark color="indigo">
+              <v-icon dark>lock_open</v-icon>
+            </v-btn>
+            <v-btn v-else class="upload-toggle-button" fab small dark color="indigo">
               <v-icon dark>lock</v-icon>
             </v-btn>
             <v-btn
@@ -31,6 +34,7 @@
               dark
               color="indigo"
               v-if="isMyProfile || isAdminUser"
+              @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
             </v-btn>
@@ -221,6 +225,10 @@ export default {
   },
 
   methods: {
+     editDestination() {
+      this.$router.push("/user/" + this.id + "/destinations/edit/" + this.dest_id);
+    },
+
     //sets the user's profile photo as the selected
     setDestinationImages(selectedImages) {
         for(let i = 0; i < selectedImages.length; i++) {

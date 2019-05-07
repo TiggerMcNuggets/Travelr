@@ -60,7 +60,7 @@
                 <div class="row-container">
                   <div
                     class="private-public-side-bar side-border"
-                    v-bind:class="{ 'pink-background2': item.isPublic, 'blue-background': !item.isPublic }"
+                    v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
                   ></div>
                   <div
                     class="hoverable destination-container"
@@ -174,7 +174,7 @@ hr {
   padding-top: 15px;
 }
 
-.pink-background2 {
+.pink-background {
   background-color: hotpink;
 }
 

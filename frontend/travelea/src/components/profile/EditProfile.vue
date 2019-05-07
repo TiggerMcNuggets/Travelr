@@ -27,15 +27,9 @@
               v-on:change="handleFileUpload()"
             >
           </label>
-          <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
-          <v-btn v-on:click="uploadExisting()">Upload Existing</v-btn>
+          <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
-
-
-         <v-dialog v-model="dialog">
-            <PhotoSelect v-bind="{closeDialogue}"/>
-        </v-dialog>
         
       </v-card>
     </v-flex>
@@ -108,9 +102,6 @@ export default {
     // Sets the file property to the new file uploaded
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
-    },
-    uploadExisting() {
-      this.dialog = true;
     },
     submitFile() {
       let formData = new FormData();

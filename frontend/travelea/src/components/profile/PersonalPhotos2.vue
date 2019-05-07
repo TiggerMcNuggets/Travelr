@@ -83,15 +83,16 @@
                <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
           
                 
-            
-              <v-btn class='photo-popup-button' color="primary" @click="updatePhotoVisability()">Apply changes</v-btn>
-              <v-btn class='photo-popup-button' color="primary"  @click="setProfilePhoto()">Set Profile Photo</v-btn>
-              <v-btn class='photo-popup-button' color="red" @click="dialog = false">Close</v-btn>
+       
+              <v-btn  @click="updatePhotoVisability">Apply changes</v-btn>
+              <v-btn   @click="setProfilePhoto">Set Profile Photo</v-btn>
+              
              
             </div>
+                 
           </v-card-actions>
           <v-card-actions>
-           
+           <v-btn color="red" @click="dialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
