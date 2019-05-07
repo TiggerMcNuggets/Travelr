@@ -147,7 +147,7 @@ export default {
   methods: {
     updateDestination: function() {
       if (this.$refs.form.validate()) {
-        destinationRepository.updateDestination(this.$route.params.dest_id, this.destination).then(() => {
+        destinationRepository.updateDestination(this.$route.params.id, this.$route.params.dest_id, this.destination).then(() => {
           this.$refs.form.reset();
           this.routeBackToPrevPage();
         });
