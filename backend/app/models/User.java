@@ -26,12 +26,15 @@ public class User extends BaseModel {
 
     @NotNull
     @Constraints.Required
+    @Column(length = 150)
     public String firstName;
 
+    @Column(length = 64)
     public String middleName;
 
     @NotNull
     @Constraints.Required
+    @Column(length = 150)
     public String lastName;
 
     @JsonIgnore
@@ -45,14 +48,14 @@ public class User extends BaseModel {
     @Constraints.Required
     public String gender;
 
-    @Column(length = 256, unique = true, nullable = false)
+    @Column(length = 150, unique = true, nullable = false)
     @Constraints.MaxLength(256)
     @Constraints.Required
     @Constraints.Email
     public String email;
 
     @JsonIgnore
-    @Column(length = 64)
+    @Column(length = 128)
     private byte[] password;
     public String userProfilePhoto;
 
