@@ -47,7 +47,7 @@ PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.Dest
 GET         /api/users/:id/destinations         controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
 POST        /api/users/:id/destinations    controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
 GET         /api/users/:user_id/destinations/:dest_id         controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
-PUT         /api/users/:userId/destinations/:destId               controllers.DestinationController.updateUserDestination(request: Request, userId: Long, destId: Long)
+PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 POST        /api/destinations/:id/make_public   controllers.DestinationController.makeDestinationPublic(id: Long)
 
 
