@@ -70,12 +70,12 @@ public class DestinationRepository {
     public CompletableFuture<Long> update(CreateDestReq request, Long destinationId) {
         return supplyAsync(() -> {
             Destination destination = Destination.find.byId(destinationId);
-            destination.name = request.name;
-            destination.latitude = request.latitude;
-            destination.longitude = request.longitude;
-            destination.type = request.type;
-            destination.country = request.country;
-            destination.district = request.district;
+            destination.setName(request.name);
+            destination.setLatitude(request.latitude);
+            destination.setLongitude(request.longitude);
+            destination.setType(request.type);
+            destination.setCountry(request.country);
+            destination.setDistrict(request.district);
             destination.save();
 
             return destination.id;

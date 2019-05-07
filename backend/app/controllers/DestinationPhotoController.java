@@ -1,5 +1,6 @@
 package controllers;
 
+import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
@@ -26,16 +27,21 @@ public class DestinationPhotoController extends Controller {
 
     private final DestinationPhotoRepository destinationPhotoRepository;
 
+    private final FileHelper fh = new FileHelper();
+
+    private String destinationPhotoFilepath;
+
     @Inject
     FormFactory formFactory;
 
     @Inject
-    public DestinationPhotoController(
+    public DestinationPhotoController( Config config,
             DestinationPhotoRepository destinationPhotoRepository
     ) {
+        String rootPath = System.getProperty("user.home");
+        destinationPhotoFilepath = rootPath + config.getString("destinationPhotosFilePath");
         this.destinationPhotoRepository = destinationPhotoRepository;
     }
-
 
     /**
      * Allows the user to fetch rows from the destination photo repository, given a destination id
@@ -46,14 +52,12 @@ public class DestinationPhotoController extends Controller {
      *         401 response if access is denied
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> list(Http.Request request, Long id, Long destId) {
-        FileHelper fh = new FileHelper();
-        fh.makeDirectory("resources/destinationImages");
+    public CompletionStage<Result> list(Http.Request request, Long id, Long dest_id) {
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
         //what we do here with the id (compares for user id)
-        return destinationPhotoRepository.list(id, user.id == id || isAdmin, destId).thenApplyAsync(photos -> {
+        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync(photos -> {
             //is this line ok? "public"
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
@@ -66,7 +70,7 @@ public class DestinationPhotoController extends Controller {
      * @return The raw image file which corresponds to the filename given.
      */
     public Result getImageFromDatabase(String filename) {
-        File file = new File("resources/destinationImages/" + filename);
+        File file = new File(this.destinationPhotoFilepath + filename);
         try {
             return ok(file);
         } catch (Exception e) {
@@ -86,14 +90,16 @@ public class DestinationPhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
-            String fileName = picture.getFilename();
+            String fileName = fh.getHashedImage(picture.getFilename());
+            long fileSize = picture.getFileSize();
+            String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
-            fh.makeDirectory("resources/destinationImages");
-            file.copyTo(Paths.get("resources/destinationImages/" + fileName), true);
-            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync(photoId -> {
-                if (photoId != null) {
-                    return ok("File uploaded with Photo ID " + photoId);
+            fh.makeDirectory(this.destinationPhotoFilepath);
+            file.copyTo(Paths.get(this.destinationPhotoFilepath + fileName), true);
+            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync((photo_id) -> {
+                if (photo_id != null) {
+                    return ok("File uploaded with Photo ID " + photo_id);
                 } else {
                     return badRequest("Error adding reference to the database.");
                 }

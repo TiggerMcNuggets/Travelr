@@ -41,6 +41,7 @@ export default {
       });
     },
 
+    // eslint-disable-next-line
     signup({ commit }, signupData) {
       return new Promise((resolve, reject) => {
         AuthRepository.signup(signupData)
@@ -52,6 +53,7 @@ export default {
           });
       });
     },
+    // eslint-disable-next-line
     async signupOtherUser({ commit }, signupData) {
       return await new Promise((resolve, reject) => {
         AuthRepository.signup(signupData)
@@ -63,10 +65,12 @@ export default {
           });
       });
     },
+
+    // eslint-disable-next-line
     updateUser({ commit, state }, editData) {
       return new Promise(function(resolve, reject) {
         ProfileRepository.editProfile(editData, editData.id)
-          .then(resp => {
+          .then(() => {
             commit("setUser", editData);
             resolve();
           })
@@ -75,6 +79,7 @@ export default {
           });
       });
     },
+    // eslint-disable-next-line
     fetchMe({ commit, state }) {
       return new Promise((resolve, reject) => {
         UserRepository.getMe()
