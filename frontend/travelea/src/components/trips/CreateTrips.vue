@@ -13,12 +13,12 @@
         </v-layout>
         <ul>
           <draggable
-                  :list="trip.destinations"
-                  :disabled="!draggableEnabled"
-                  class="list-group"
-                  ghost-class="ghost"
-                  @start="dragging = true"
-                  @end="dragging = false"
+            :list="trip.destinations"
+            :disabled="!draggableEnabled"
+            class="list-group"
+            ghost-class="ghost"
+            @start="dragging = true"
+            @end="dragging = false"
           >
           <li v-for="(destination, index) in trip.destinations" :v-bind="index" :key="index" class="list-group-item">
             <v-card class="destination-form-padding">
@@ -85,31 +85,27 @@
                       <template v-slot:activator="{ on }">
                         <v-text-field
                           v-model="destination.departureDate"
-                          :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
-                          label="Departure date"
-                          prepend-icon="event"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="destination.departureDate"
-                        @input="destination.departureDateMenu = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-card>
-                </v-flex>
-                <v-tooltip right>
-                  <template v-slot:activator="{ on }">
-                    <v-btn flat icon color="red lighten-2" v-on:click="resetDestinationDate(index)">
-                      <v-icon color="red" dark v-on="on">remove_circle</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Reset dates</span>
-                </v-tooltip>
-              </v-layout>
-            </v-card>
-          </li>
+                          @input="destination.departureDateMenu = false"
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-card>
+                  </v-flex>
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        flat
+                        icon
+                        color="red lighten-2"
+                        v-on:click="resetDestinationDate(index)"
+                      >
+                        <v-icon color="red" dark v-on="on">remove_circle</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Reset dates</span>
+                  </v-tooltip>
+                </v-layout>
+              </v-card>
+            </li>
           </draggable>
         </ul>
         <div class="create-trip-options">
@@ -172,7 +168,7 @@
 import { store } from "../../store/index";
 import moment from "moment";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import draggable from 'vuedraggable';
+import draggable from "vuedraggable";
 import {
   rules,
   noSameDestinationNameConsecutiveRule,
@@ -185,7 +181,7 @@ let destinationRepository = RepositoryFactory.get("destination");
 export default {
   store,
   components: {
-      draggable: draggable
+    draggable: draggable
   },
   props: {
     toggleShowCreateTrip: Function,
@@ -195,35 +191,37 @@ export default {
   },
   data() {
     return {
-        userId: (this.$route.params.user_id) ? this.$route.params.user_id : this.$route.params.id,
-        tripToDisplay: null,
-        draggableEnabled: true,
-        dialogName: "Create a new trip",
-        trip: {
-          title: "",
-          destinations: [
-            {
-              title: null,
-              arrivalDate: null,
-              departureDate: null,
-              arrivalDateMenu: false,
-              departureDateMenu: false
-            },
-            {
-              title: null,
-              arrivalDate: null,
-              departureDate: null,
-              arrivalDateMenu: false,
-              departureDateMenu: false
-            }
-          ]
-        },
-        userDestinations: [],
-        ...rules,
+      userId: this.$route.params.user_id
+        ? this.$route.params.user_id
+        : this.$route.params.id,
+      tripToDisplay: null,
+      draggableEnabled: true,
+      dialogName: "Create a new trip",
+      trip: {
+        title: "",
+        destinations: [
+          {
+            title: null,
+            arrivalDate: null,
+            departureDate: null,
+            arrivalDateMenu: false,
+            departureDateMenu: false
+          },
+          {
+            title: null,
+            arrivalDate: null,
+            departureDate: null,
+            arrivalDateMenu: false,
+            departureDateMenu: false
+          }
+        ]
+      },
+      userDestinations: [],
+      ...rules,
       id: this.$route.params.id,
       tripID: this.$route.params.trip_id,
       isAdminUser: false,
-      isMyProfile: false,
+      isMyProfile: false
     };
   },
   computed: {
@@ -234,14 +232,13 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.destinations
       );
-    },
+    }
   },
   methods: {
     /**
      * Gets the list of valid destinations available to a user
      */
     getDestinations: function() {
-      if (this.isMyProfile) {
       destinationRepository
         .getDestinations(this.id)
         .then(res => {
@@ -250,21 +247,11 @@ export default {
         .catch(e => {
           console.log(e);
         });
-      } else {
-      destinationRepository
-        .getDestinations(this.id)
-        .then(res => {
-          this.userDestinations = res.data;
-        })
-        .catch(e => {
-          console.log(e);
-        });
-      }
     },
 
     checkIfProfileOwner() {
       this.id = this.$route.params.id;
-      this.isMyProfile = (store.getters.getUser.id == this.id);
+      this.isMyProfile = store.getters.getUser.id == this.id;
     },
 
     /**
@@ -311,10 +298,10 @@ export default {
     },
 
     onConfirm: function() {
-      if(this.passedTrip === null){
+      if (this.passedTrip === null) {
         this.createTrip();
       } else {
-          this.updateTrip();
+        this.updateTrip();
       }
     },
 
@@ -322,39 +309,39 @@ export default {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
         if (this.isAdminUser) {
-        tripRepository
-          .createTripForUser(trip, this.id)
-          .then( () => {
-            this.regetTrips();
-          })
-          .catch(e => {
-            console.log(e);
-          });
+          tripRepository
+            .createTripForUser(trip, this.id)
+            .then(() => {
+              this.regetTrips();
+            })
+            .catch(e => {
+              console.log(e);
+            });
         } else {
-        tripRepository
-          .createTrip(trip)
-          .then( () => {
-            this.regetTrips();
-          })
-          .catch(e => {
-            console.log(e);
-          });
+          tripRepository
+            .createTrip(trip)
+            .then(() => {
+              this.regetTrips();
+            })
+            .catch(e => {
+              console.log(e);
+            });
         }
       }
     },
 
     updateTrip: function() {
-        if (this.$refs.form.validate()) {
-            const trip = this.tripAssembler();
-            tripRepository
-                .updateTrip(this.id, parseInt(this.passedTrip),trip)
-                .then( () => {
-                    this.updateViewTripPage()
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-        }
+      if (this.$refs.form.validate()) {
+        const trip = this.tripAssembler();
+        tripRepository
+          .updateTrip(this.id, parseInt(this.passedTrip), trip)
+          .then(() => {
+            this.updateViewTripPage();
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
     },
 
     /**
@@ -364,47 +351,52 @@ export default {
     tripAssembler: function() {
       let trip = { name: this.trip.title, destinations: [] };
       this.trip.destinations.forEach((destination, index) => {
-          const destById = this.userDestinations.find(
-              dest => destination.title === dest.name
-          );
-          trip.destinations.push({
-              id: destById.id,
-              ordinal: index,
-              arrivalDate: moment(destination.arrivalDate).unix(),
-              departureDate: moment(destination.departureDate).unix()
-          });
-    });
-    return trip;
+        const destById = this.userDestinations.find(
+          dest => destination.title === dest.name
+        );
+        trip.destinations.push({
+          id: destById.id,
+          ordinal: index,
+          arrivalDate: moment(destination.arrivalDate).unix(),
+          departureDate: moment(destination.departureDate).unix()
+        });
+      });
+      return trip;
     }
   },
-    /**
-     * When the component finished mounting, the destinations for the combobox are retrieved and then
-     * in case the parent component passed a valid trip id, the trip is retrieved and the
-     * existing trip params populate the form.
-     * Makes component usable for both create and edit component
-     */
-    mounted() {
-        console.log(this.$route);
-      this.getDestinations(this.userId);
-      if (this.passedTrip !== null) {
-        this.dialogName = "Edit current trip";
-        let tripToEdit = {title: '', destinations: []};
-        tripRepository.getTrip(this.id, this.passedTrip)
-            .then((result) => {
-                const tripById = result.data;
-                tripToEdit.title = tripById.name;
-                for (let i = 0; i < tripById.destinations.length; i++){
-                  const destToAdd = {};
-                  const currentDest = tripById.destinations[i];
-                  destToAdd.title = currentDest.name;
-                  destToAdd.arrivalDate = currentDest.arrivalDate === null ? null : moment.unix(currentDest.arrivalDate).format('YYYY-MM-DD');
-                  destToAdd.departureDate = currentDest.departureDate === null ? null : moment.unix(currentDest.departureDate).format('YYYY-MM-DD');
-                  destToAdd.arrivalDateMenu = false;
-                  destToAdd.departureDateMenu = false;
-                  tripToEdit.destinations.push(destToAdd);
-                  this.trip = tripToEdit;
-                }
-            });
+  /**
+   * When the component finished mounting, the destinations for the combobox are retrieved and then
+   * in case the parent component passed a valid trip id, the trip is retrieved and the
+   * existing trip params populate the form.
+   * Makes component usable for both create and edit component
+   */
+  mounted() {
+    console.log(this.$route);
+    this.getDestinations(this.userId);
+    if (this.passedTrip !== null) {
+      this.dialogName = "Edit current trip";
+      let tripToEdit = { title: "", destinations: [] };
+      tripRepository.getTrip(this.id, this.passedTrip).then(result => {
+        const tripById = result.data;
+        tripToEdit.title = tripById.name;
+        for (let i = 0; i < tripById.destinations.length; i++) {
+          const destToAdd = {};
+          const currentDest = tripById.destinations[i];
+          destToAdd.title = currentDest.name;
+          destToAdd.arrivalDate =
+            currentDest.arrivalDate === null
+              ? null
+              : moment.unix(currentDest.arrivalDate).format("YYYY-MM-DD");
+          destToAdd.departureDate =
+            currentDest.departureDate === null
+              ? null
+              : moment.unix(currentDest.departureDate).format("YYYY-MM-DD");
+          destToAdd.arrivalDateMenu = false;
+          destToAdd.departureDateMenu = false;
+          tripToEdit.destinations.push(destToAdd);
+          this.trip = tripToEdit;
+        }
+      });
     }
   },
 
