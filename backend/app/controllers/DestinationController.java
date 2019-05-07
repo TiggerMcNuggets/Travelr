@@ -195,6 +195,26 @@ public class DestinationController extends Controller {
     }
 
     /**
+     * Shallow deletes a destination
+     * This allows users to keep seeing the destination on the trips but not on their current destinations page
+     * @param req the http request
+     * @param userId the id of the user
+     * @param destId the id of the destination
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> shallowDeleteDestination(Http.Request req, Long userId, Long destId) {
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+
+        if (middlewareRes != null) return middlewareRes;
+        Destination destination = Destination.find.findById(destId);
+
+        if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+        destinationRepository.shallowDeleteDestination(destId);
+        return CompletableFuture.completedFuture(ok());
+
+    }
+
+    /**
      * Makes a destination public if the authenticated user is an admin
      * @param id The id of the destination that is going to be made public
      * @return 201 with string if all ok

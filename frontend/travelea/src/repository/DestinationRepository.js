@@ -20,11 +20,11 @@ export default {
 
     makePublic(destId) {
         return Repository.post(`/destinations/${destId}/make_public`);
-    }
+    },
 
-    // deleteDestination(userId, destinationId) {
-    //     return Repository.delete(`/users/${userId}/destinations/${destinationId}`);
-    // }
+    deleteDestination(userId, destinationId) {
+        return Repository.delete(`/users/${userId}/destinations/${destinationId}`);
+    }
 }
 
 
