@@ -183,21 +183,16 @@ export default {
       id: this.$route.params.id
     };
   },
-
-   watch: {
+  watch: {
     '$route.params.id': function() {
       this.init();
     }
   },
-
-
   created: function() {
-    this.traveller = store.getters.getUser;
-    this.checkIfProfileOwner();
-    this.isAdminUser = store.getters.getIsUserAdmin;
+      this.init();
   },
   methods: {
-      init() {
+    init() {
       this.traveller = store.getters.getUser;
       this.checkIfProfileOwner();
       this.isAdminUser = store.getters.getIsUserAdmin;
