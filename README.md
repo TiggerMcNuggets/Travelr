@@ -1,5 +1,7 @@
 # Readme
-    
+
+### NOTE: please refer to the wiki for the user guide
+
 ### Project Structure
 -   app/  					Application source code    
 -   doc/  					User and design documentation    
