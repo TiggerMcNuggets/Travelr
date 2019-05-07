@@ -10,7 +10,7 @@
           <v-flex xs12 md6 class="row-input-margin">
             <v-text-field
               v-model="destination.name"
-              :counter="20"
+              :counter="60"
               label="Destination Name"
               required
               :rules="nameRules"
@@ -20,7 +20,7 @@
           <v-flex xs12 md6>
             <v-text-field
               v-model="destination.type"
-              :counter="20"
+              :counter="60"
               :rules="nameRules"
               label="Destination Type"
               required
@@ -32,7 +32,7 @@
           <v-flex xs12 md6>
             <v-text-field
               v-model="destination.district"
-              :counter="20"
+              :counter="60"
               :rules="nameRules"
               label="Destination District"
               required
@@ -42,7 +42,7 @@
           <v-flex xs12 md6>
             <v-text-field
               v-model="destination.country"
-              :counter="10"
+              :counter="60"
               label="Country"
               required
               :rules="nameRules"

@@ -7,7 +7,7 @@
         <h4>{{this.dialogName}}</h4>
         <v-layout>
           <v-flex xs12 md12 class="row-input-margin">
-            <v-text-field v-model="trip.title" :rules="nameRules" :counter="20" label="Trip Name"></v-text-field>
+            <v-text-field v-model="trip.title" :rules="nameRules" :counter="60" label="Trip Name"></v-text-field>
           </v-flex>
         </v-layout>
         <ul>
