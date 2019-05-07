@@ -32,7 +32,6 @@
 </style>
 
 <script>
-import moment from "moment";
 import rules from "../formRules.js";
 export default {
   name: "Datepicker",
