@@ -18,9 +18,9 @@ recent-artifacts:
     - cd ./backend
     - sbt dist
     - cd ./target/universal
-    - rm -rf /home/gitlab-runner/dev/*
-    - cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
-    - unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
+    - sudo rm -rf /home/gitlab-runner/dev/*
+    - sudp cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
+    - sudo unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
 
   artifacts:
     paths:
