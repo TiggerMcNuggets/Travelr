@@ -70,7 +70,7 @@
                     </div>
                   </div>
                 </div>
-                <div v-if="isMyProfile">
+                <div v-if="isMyProfile || isAdminUser">
                   <v-btn icon @click="deleteDestination(item.id)">
                     <v-icon color="red lighten-1">delete</v-icon>
                   </v-btn>
