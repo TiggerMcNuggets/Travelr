@@ -21,7 +21,7 @@
     <template v-for="destination in trip.destinations">
             <v-list-tile :key="destination.ordinal">
               <v-list-tile-avatar>
-                <img src="https://cdn.vuetifyjs.com/images/lists/1.jpg"><!-- where we will add the link to our primary image -->
+                <img ><!-- where we will add the link to our primary image -->
               </v-list-tile-avatar>
               <v-list-tile-content>
                 <v-list-tile-title v-html="destination.name"></v-list-tile-title>
@@ -42,6 +42,7 @@
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
+import dateTime from "../common/dateTime/dateTime.js";
 
 
 export default {
@@ -80,6 +81,10 @@ export default {
                   return a.ordinal - b.ordinal;
               });
               trip.destinations = ordered_dests;
+              for (let i = 0; i < trip.destinations.length; i++) {
+                trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+                trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+              }
               this.trip = trip;
               this.toggleShouldDisplayButton();
               this.toggleModifiedTrip();
@@ -100,6 +105,10 @@ export default {
               return a.ordinal - b.ordinal;
           });
           trip.destinations = ordered_dests;
+          for (let i = 0; i < trip.destinations.length; i++) {
+            trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+            trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+          }
           this.trip = trip;
       });
   }
