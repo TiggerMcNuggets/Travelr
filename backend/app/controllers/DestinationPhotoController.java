@@ -4,6 +4,7 @@ import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
@@ -19,6 +20,8 @@ import utils.FileHelper;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -29,7 +32,7 @@ public class DestinationPhotoController extends Controller {
 
     private final FileHelper fh = new FileHelper();
 
-    private String destinationPhotoFilepath;
+    private String destinationPhotoFilepath, personalPhotosFilepath;
 
     @Inject
     FormFactory formFactory;
@@ -40,6 +43,7 @@ public class DestinationPhotoController extends Controller {
     ) {
         String rootPath = System.getProperty("user.home");
         destinationPhotoFilepath = rootPath + config.getString("destinationPhotosFilePath");
+        personalPhotosFilepath = rootPath + config.getString("personalPhotosFilePath");
         this.destinationPhotoRepository = destinationPhotoRepository;
     }
 
@@ -56,9 +60,7 @@ public class DestinationPhotoController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
-        //what we do here with the id (compares for user id)
-        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync(photos -> {
-            //is this line ok? "public"
+        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync((photos) -> {
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
@@ -90,9 +92,10 @@ public class DestinationPhotoController extends Controller {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
             String fileName = fh.getHashedImage(picture.getFilename());
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
             fh.makeDirectory(this.destinationPhotoFilepath);
@@ -107,6 +110,40 @@ public class DestinationPhotoController extends Controller {
         } else {
             return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
         }
+    }
+
+    /**
+     * sets existing photo to user profile pic
+     * @param request http request containing the filename of the photo
+     * @param id id of user to change profile pic
+     * @return 200 http response if successful, else 400 for bad request
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> addExistingPhotoToDestinationPhotos(Http.Request request, Long id, Long dest_id) {
+        Form<ChooseProfilePicReq> chooseProfilePicForm = formFactory.form(ChooseProfilePicReq.class).bindFromRequest(request);
+        ChooseProfilePicReq req = chooseProfilePicForm.get();
+        String fileName = req.photo_filename;
+
+        try {
+            if (fileName != null) {
+                fh.makeDirectory(this.destinationPhotoFilepath);
+                Path sourceDirectory = Paths.get(this.personalPhotosFilepath + fileName);
+                Path targetDirectory = Paths.get((this.destinationPhotoFilepath + fileName));
+                java.nio.file.Files.copy(sourceDirectory, targetDirectory);
+            }
+        } catch (IOException e) {
+            System.err.println("Destination image already exists in directory");
+        }
+
+        return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
+            if (photo_id != null) {
+                return ok("File added with Photo ID " + photo_id);
+            } else if (photo_id == null) {
+                return badRequest("Duplicate Photo.");
+            } else {
+                return badRequest("Error adding reference to the database.");
+            }
+        });
     }
 
     /**

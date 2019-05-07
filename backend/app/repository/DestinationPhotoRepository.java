@@ -41,6 +41,16 @@ public class DestinationPhotoRepository {
             User traveller = User.find.findById(id);
             Destination destination = Destination.find.findById(dest_id);
             if (traveller == null) return null; // bad user
+            ExpressionList<DestinationPhoto> query = DestinationPhoto.find.query().where().eq("destination_id", dest_id).and().eq("traveller_id", id);
+            List<DestinationPhoto> photoList = query.findList();
+
+            for (DestinationPhoto destinationPhoto: photoList) {
+                if (destinationPhoto.getPhoto_filename().equals(imageFileName)) {
+                    System.out.println("Duplicate Photo");
+                    return null;
+                }
+            }
+
             DestinationPhoto photo = new DestinationPhoto(traveller, imageFileName, destination);
             photo.save();
             return photo.id;
