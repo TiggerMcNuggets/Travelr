@@ -22,11 +22,22 @@
           >
             <v-icon dark>add</v-icon>
           </v-btn>
+
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+            @click="toggleShowSearch"
+          >
+            <v-icon dark>search</v-icon>
+          </v-btn>
         </div>
       </div>
 
       <v-divider class="photo-header-divider"></v-divider>
-      <v-text-field v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
+      <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Browse</v-tab>
@@ -209,7 +220,8 @@ export default {
       active: null,
       showTooltip: false,
       filteredList: [],
-      searchValue: ""
+      searchValue: "",
+      searchActive: false
     };
   },
   computed: {},
@@ -239,7 +251,7 @@ computed: {
       this.checkIfProfileOwner();
       this.getDestinationList();
     },
-    editDestination(id) {
+    editDestination(id) {dialog
       this.$router.push("/user/" + this.user_id + "/destinations/edit/" + id);
     },
     viewDestination(id) {
@@ -247,6 +259,9 @@ computed: {
     },
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
+    },
+    toggleShowSearch: function() {
+      this.searchActive = !this.searchActive;
     },
     deleteDestination: function() {
       // TODO: ion progress
