@@ -77,6 +77,7 @@
             </div>
           </div>
           <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
+          <v-alert :value="uploadSuccessful" color="success">Upload Successful</v-alert>
           <v-divider class="photo-header-divider"></v-divider>
         </div>
 
@@ -213,6 +214,7 @@ export default {
       dest_id: null,
       uploadError: false,
       chooseExistingDialog: false,
+      uploadSuccessful: false,
       errorText:
         "You are trying to upload a duplicate image or an error occured while uploading.",
       
@@ -222,9 +224,7 @@ export default {
   methods: {
     //sets the user's profile photo as the selected
     setDestinationImages(selectedImages) {
-        console.log(this.dest_id)
         for(let i = 0; i < selectedImages.length; i++) {
-          console.log(selectedImages[i].photo_filename);
           addExistingPhoto(this.id, this.dest_id, {
             photo_filename: selectedImages[i].photo_filename
           }).then(() => {
@@ -262,12 +262,15 @@ export default {
 
     // Submits the image file and uploads it to the server
     submitFile() {
+      this.uploadError = false;
+      this.uploadExisting = false;
       let formData = new FormData();
       formData.append("picture", this.file);
 
       storeDestinationImage(this.id, this.dest_id, formData)
         .then(() => {
           getImages(this.id, this.dest_id).then(result => {
+            this.uploadExisting = true;
             this.files = this.groupImages(result.data);
           });
         })

@@ -39,7 +39,7 @@
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>
         <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
-        <v-alert :value="successfulUpload" color="error">Upload Successful</v-alert>
+        <v-alert :value="uploadSuccessful" color="success">Upload Successful</v-alert>
         <v-divider class="photo-header-divider"></v-divider>
       </div>
 
@@ -78,13 +78,20 @@
           <v-divider></v-divider>
 
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-            <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            <v-btn color="primary" flat @click="setProfilePhoto()">Set Profile Photo</v-btn>
+            <!-- <v-spacer></v-spacer> -->
+             <div v-if="isAdminUser || isMyProfile" class='photo-popup-options'>
+               <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+          
+                
+            
+              <v-btn class='photo-popup-button' color="primary" @click="updatePhotoVisability()">Apply changes</v-btn>
+              <v-btn class='photo-popup-button' color="primary"  @click="setProfilePhoto()">Set Profile Photo</v-btn>
+              <v-btn class='photo-popup-button' color="red" @click="dialog = false">Close</v-btn>
+             
+            </div>
           </v-card-actions>
           <v-card-actions>
-            <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+           
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -95,6 +102,10 @@
 
 <style>
 @import "../../assets/css/style.css";
+
+.photo-popup-button {
+  margin-top: 20px;
+}
 </style>
 
 
@@ -159,6 +170,7 @@ export default {
     // Submits the image file and uploads it to the server
     submitFile() {
       this.uploadError = false;
+      this.uploadSuccessful = false;
       let formData = new FormData();
       formData.append("picture", this.file);
 
@@ -166,6 +178,7 @@ export default {
         .then(() => {
           getImages(this.id).then(result => {
             this.files = this.groupImages(result.data);
+            this.uploadSuccessful = true;
           });
         })
         .catch(error => {
