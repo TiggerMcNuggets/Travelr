@@ -83,13 +83,10 @@ import PhotoSelect from "../photos/PhotoSelect";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
 import {
-  getProfilePic,
   uploadProfilePic,
-  setProfilePic
 } from "../../repository/PersonalPhotosRepository";
 
 import { store } from "../../store/index";
-import { storeImage } from "../../repository/PersonalPhotosRepository";
 
 export default {
   name: "EditProfile",

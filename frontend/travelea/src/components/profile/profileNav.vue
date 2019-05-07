@@ -206,7 +206,7 @@ export default {
       this.id = this.$route.params.id;
       this.isMyProfile = (store.getters.getUser.id == this.id);
     },
-    goToEdit(id) {
+    goToEdit() {
       this.$router.push("/user/"+this.id+"/edit")
     }
 

@@ -363,7 +363,8 @@ export default {
      * Makes component usable for both create and edit component
      */
     mounted() {
-      this.getDestinations(this.id);
+        console.log(this.$route);
+      this.getDestinations(this.userId);
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};

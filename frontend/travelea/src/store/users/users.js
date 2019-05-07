@@ -99,7 +99,7 @@ export default {
                 types.sort();
                 commit('setTravellerTypes', types);
             } catch (e) {
-                return;
+                console.log(e);
             }
         },
         async getAllNationalities({ commit }) {
@@ -113,12 +113,14 @@ export default {
                 nationalities.sort();
                 commit('setNationalities', nationalities);
             } catch (e) {
-                return;
+                console.log(e);
             }
         },
+
+        // eslint-disable-next-line
         async deleteUser({commit}, userId) {
             try {
-                const response = await UserRepository.deleteUser(userId);
+                await UserRepository.deleteUser(userId);
             } catch (e) {
                 console.log(e);
             }
