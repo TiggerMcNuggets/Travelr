@@ -3,6 +3,7 @@ package controllers;
 import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
@@ -94,7 +95,7 @@ public class PhotoController extends Controller {
                 }
             });
         } else {
-            return  CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
         }
     }
 
@@ -110,7 +111,7 @@ public class PhotoController extends Controller {
         try {
             return ok(file);
         } catch (Exception e) {
-            return badRequest("Missing file");
+            return badRequest(APIResponses.MISSING_FILE);
         }
     }
 
@@ -160,7 +161,7 @@ public class PhotoController extends Controller {
             fh.makeDirectory(this.profilePhotosFilepath);
             file.copyTo(Paths.get(this.profilePhotosFilepath + fileName), true);
 
-            return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
+            return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync(photoName -> {
                 if (photoName != null) {
                     return ok("Your profile image was successfully set to " + photoName);
                 } else {
@@ -168,7 +169,7 @@ public class PhotoController extends Controller {
                 }
             });
         } else {
-            return  CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
         }
     }
 
@@ -193,10 +194,10 @@ public class PhotoController extends Controller {
             java.nio.file.Files.copy(sourceDirectory, targetDirectory);
         }
         } catch (IOException e) {
-            System.out.println("Profile image already exists in directory");
+            System.err.println("Profile image already exists in directory");
         }
 
-        return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync((photoName) -> {
+        return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync(photoName -> {
             if (photoName != null) {
                 return ok("Your profile image was successfully set to " + photoName);
             } else {
@@ -217,7 +218,7 @@ public class PhotoController extends Controller {
                 File file = new File(this.profilePhotosFilepath + fileName);
                 return ok(file);
             } catch (Exception e) {
-                System.out.println(e);
+                System.err.println(e);
                 return notFound("File not found");
             }
         });

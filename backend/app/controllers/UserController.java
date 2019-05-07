@@ -6,28 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.Trip.GetTripRes;
-import controllers.dto.Trip.TripDestinationRes;
 import controllers.dto.User.*;
-import models.Destination;
-import models.Trip;
-import models.TripDestination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
-import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
 import repository.TripRepository;
-import utils.FileHelper;
 
 import javax.inject.Inject;
 
-import java.nio.file.Paths;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
@@ -72,8 +62,8 @@ public class UserController extends Controller {
      * @return 200 with list of users if all ok
      */
 //    @Authorization.RequireAuth
-    public CompletionStage<Result> getFilteredUsers(Http.Request request, String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> traveller_types, String orderBy) {
-        return userRepository.getFilteredUsers(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy).thenApplyAsync(users -> {
+    public CompletionStage<Result> getFilteredUsers(Http.Request request, String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> travellerTypes, String orderBy) {
+        return userRepository.getFilteredUsers(fname, lname, gender, minAge, maxAge, nationalities, travellerTypes, orderBy).thenApplyAsync(users -> {
 
             GetUsersRes response = new GetUsersRes(users);
             ObjectMapper mapper = new ObjectMapper();
@@ -132,7 +122,7 @@ public class UserController extends Controller {
 
             // Not Found Check
             if (user == null) {
-                return notFound("Traveller not found");
+                return notFound(APIResponses.TRAVELLER_NOT_FOUND);
             }
 
             User userGivenToken = request.attrs().get(Attrs.USER);
@@ -190,7 +180,7 @@ public class UserController extends Controller {
         return userRepository.getUser(userId).thenComposeAsync(newUser -> {
             // Not Found Check
             if (newUser == null) {
-                return CompletableFuture.completedFuture(notFound("Traveller not found"));
+                return CompletableFuture.completedFuture(notFound(APIResponses.TRAVELLER_NOT_FOUND));
             }
             return userRepository.updateUser(req, userId).thenApplyAsync(uid -> ok("Traveller Updated"));
         });
@@ -209,7 +199,7 @@ public class UserController extends Controller {
 
             // Not Found Check
             if (user == null) {
-                return notFound("Traveller not found");
+                return notFound(APIResponses.TRAVELLER_NOT_FOUND);
             }
 
             // Forbidden Check

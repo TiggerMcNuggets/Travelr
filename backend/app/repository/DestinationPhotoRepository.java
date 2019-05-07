@@ -1,18 +1,10 @@
 package repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import controllers.dto.Photo.UpdatePhotoReq;
-import finders.UserFinder;
-import finders.PhotoFinder;
 import io.ebean.*;
 import models.*;
-import play.db.ebean.EbeanConfig;
-import play.db.ebean.EbeanDynamicEvolutions;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;

@@ -3,18 +3,13 @@ package finders;
 import io.ebean.ExpressionList;
 import io.ebean.Finder;
 import models.User;
-import utils.Moment;
-import utils.comparators.TravellerComparatorForNationalitites;
-import utils.comparators.TravellerComparatorForType;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class UserFinder extends Finder<Long, User> {
 

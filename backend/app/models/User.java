@@ -1,7 +1,6 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import controllers.UserController;
 import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
 import io.ebean.annotation.NotNull;

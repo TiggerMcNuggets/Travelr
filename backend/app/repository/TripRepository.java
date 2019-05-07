@@ -2,7 +2,6 @@ package repository;
 
 import com.google.inject.Inject;
 import controllers.dto.Trip.CreateTripReq;
-import controllers.dto.Trip.CreateTripRes;
 import controllers.dto.Trip.TripDestinationReq;
 import finders.DestinationFinder;
 import finders.TripFinder;

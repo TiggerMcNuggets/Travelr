@@ -1,6 +1,5 @@
 package models;
 
-import controllers.DestinationController;
 import controllers.dto.Destination.CreateDestReq;
 import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;

@@ -3,7 +3,6 @@ package controllers;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
@@ -15,7 +14,6 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.DestinationPhotoRepository;
-import repository.PersonalPhotoRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
@@ -23,10 +21,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import java.util.concurrent.CompletionStage;
-
-import static play.mvc.Results.ok;
 
 public class DestinationPhotoController extends Controller {
 
@@ -52,14 +46,14 @@ public class DestinationPhotoController extends Controller {
      *         401 response if access is denied
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> list(Http.Request request, Long id, Long dest_id) {
+    public CompletionStage<Result> list(Http.Request request, Long id, Long destId) {
         FileHelper fh = new FileHelper();
         fh.makeDirectory("resources/destinationImages");
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
         //what we do here with the id (compares for user id)
-        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync((photos) -> {
+        return destinationPhotoRepository.list(id, user.id == id || isAdmin, destId).thenApplyAsync(photos -> {
             //is this line ok? "public"
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
@@ -76,7 +70,7 @@ public class DestinationPhotoController extends Controller {
         try {
             return ok(file);
         } catch (Exception e) {
-            return badRequest("Missing file");
+            return badRequest(APIResponses.MISSING_FILE);
         }
     }
 
@@ -84,30 +78,28 @@ public class DestinationPhotoController extends Controller {
      * Uploads a destination photo to the server file system.
      * @param request The request containing the image data to upload.
      * @param id The id of the traveller/user uploading the image.
-     * @param dest_id The id of the destination uploading the image of.
+     * @param destId The id of the destination uploading the image of.
      * @return A result whether the image upload was successful or not.
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long dest_id) {
+    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long destId) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
             String fileName = picture.getFilename();
-            long fileSize = picture.getFileSize();
-            String contentType = picture.getContentType();
             Files.TemporaryFile file = picture.getRef();
             FileHelper fh = new FileHelper();
             fh.makeDirectory("resources/destinationImages");
             file.copyTo(Paths.get("resources/destinationImages/" + fileName), true);
-            return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
-                if (photo_id != null) {
-                    return ok("File uploaded with Photo ID " + photo_id);
+            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync(photoId -> {
+                if (photoId != null) {
+                    return ok("File uploaded with Photo ID " + photoId);
                 } else {
                     return badRequest("Error adding reference to the database.");
                 }
             });
         } else {
-            return  CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
         }
     }
 
@@ -132,10 +124,6 @@ public class DestinationPhotoController extends Controller {
             if (photo == null) {
                 return CompletableFuture.completedFuture(notFound("Photo not found"));
             }
-            // Forbidden Check
-//            if (photo.traveller.id != user.id) {
-//                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-//            }
             return destinationPhotoRepository.update(req, id).thenApplyAsync(destId -> ok("Photo updated"));
 
         });
