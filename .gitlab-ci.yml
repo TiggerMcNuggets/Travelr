@@ -15,6 +15,7 @@ recent-artifacts:
   stage: deploy
   script:
     - sudo -S ./binary /sbin/shutdown -r now
+    - SnootQuavers3484
     - cd ./backend
     - sbt dist
     - cd ./target/universal
