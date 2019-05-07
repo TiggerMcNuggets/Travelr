@@ -111,16 +111,13 @@ hr {
   justify-content: space-between;
   width: 100%;
 }
-
 </style>
 
 
 <script>
 import { store } from "../../store/index";
 import base_url from "../../repository/BaseUrl";
-import {
-  getImages
-} from "../../repository/PersonalPhotosRepository";
+import { getImages } from "../../repository/PersonalPhotosRepository";
 
 export default {
   store,
@@ -138,7 +135,6 @@ export default {
   props: ["closeDialogue", "setDestinationImages"],
 
   methods: {
-
     //sets the user's profile photo as the selected
     processSelected() {
       this.setDestinationImages(this.selectedImages);
@@ -188,7 +184,7 @@ export default {
         row.push(imageList[i]);
       }
 
-      if (row) newImageList.unshift(row);
+      newImageList.unshift(row);
       newImageList.reverse();
       return newImageList;
     }

@@ -37,7 +37,12 @@
       </div>
 
       <v-divider class="photo-header-divider"></v-divider>
-      <v-text-field v-if="searchActive" v-model="searchValue" label="Destination name" prepend-icon="search"></v-text-field>
+      <v-text-field
+        v-if="searchActive"
+        v-model="searchValue"
+        label="Trip name"
+        prepend-icon="search"
+      ></v-text-field>
 
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Browse</v-tab>
@@ -237,14 +242,19 @@ export default {
     }
   },
 
-computed: {
-
+  computed: {
     destinationsFiltered() {
-      const filteredList = this.destinations.filter(destination => destination.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1);
+      const filteredList = this.destinations.filter(
+        destination =>
+          destination.name
+            .toLowerCase()
+            .search(this.searchValue.toLowerCase()) !== -1
+      );
       //Currently sorting trips by id, in future we will sort trips by creation time
-      return filteredList.sort(function(a, b){ return a.id - b.id; });
+      return filteredList.sort(function(a, b) {
+        return a.id - b.id;
+      });
     }
-
   },
 
   methods: {

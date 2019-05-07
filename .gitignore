@@ -197,4 +197,3 @@ local.properties
 
 backend/public/
 
-backend/conf/evolutions/default/1\.sql
