@@ -10,7 +10,7 @@
 
       <v-btn
         v-if="isMyProfile || isAdminUser"
-        @click="goToEdit(user_id)"
+        @click="goToEdit(id)"
         class="profile-edit-button"
         fab
         small

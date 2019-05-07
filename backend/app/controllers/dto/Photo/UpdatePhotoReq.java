@@ -1,4 +1,4 @@
-package controllers.dto.photo;
+package controllers.dto.Photo;
 
 import play.data.validation.Constraints;
 
