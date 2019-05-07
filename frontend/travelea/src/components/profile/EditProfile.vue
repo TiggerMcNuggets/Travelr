@@ -169,7 +169,7 @@ export default {
             return store.dispatch("fetchMe");
           })
           .then(() => {
-            this.$router.push("/profile");
+            this.$router.push("/user/"+this.id);
           })
           .catch(e => {
             console.log(e);
