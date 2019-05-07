@@ -15,16 +15,13 @@ tag_checker:
 recent-artifacts:
   stage: deploy
   script:
-    - echo "import pty; pty.spawn('/bin/bash')" > /tmp/asdf.py
-    - python /tmp/asdf.py
-    -  su - sengstudent
-    - echo SnootQuavers3484 | sudo -S /sbin/shutdown -r now
     - cd ./backend
     - sbt dist
     - cd ./target/universal
     - rm -rf /home/gitlab-runner/dev/*
     - cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
     - unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
+
   artifacts:
     paths:
       - backend/target/universal/*.zip
