@@ -32,7 +32,7 @@ public class LogoutSteps {
             state.setResult(route(state.getApplication(), logout));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             Assert.assertTrue(false);
         }
     }

@@ -10,7 +10,7 @@
 
       <v-btn
         v-if="isMyProfile || isAdminUser"
-        @click="goToEdit(user_id)"
+        @click="goToEdit(id)"
         class="profile-edit-button"
         fab
         small
@@ -183,21 +183,16 @@ export default {
       id: this.$route.params.id
     };
   },
-
-   watch: {
+  watch: {
     '$route.params.id': function() {
       this.init();
     }
   },
-
-
   created: function() {
-    this.traveller = store.getters.getUser;
-    this.checkIfProfileOwner();
-    this.isAdminUser = store.getters.getIsUserAdmin;
+      this.init();
   },
   methods: {
-      init() {
+    init() {
       this.traveller = store.getters.getUser;
       this.checkIfProfileOwner();
       this.isAdminUser = store.getters.getIsUserAdmin;
@@ -206,7 +201,7 @@ export default {
       this.id = this.$route.params.id;
       this.isMyProfile = (store.getters.getUser.id == this.id);
     },
-    goToEdit(id) {
+    goToEdit() {
       this.$router.push("/user/"+this.id+"/edit")
     }
 

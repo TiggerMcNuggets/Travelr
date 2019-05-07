@@ -4,7 +4,7 @@ import moment from "moment";
 export const rules = {
   nameRules: [
     v => !!v || "This field is required",
-    v => (v && v.length <= 20) || "This field is too long"
+    v => (v && v.length <= 60) || "This field is too long"
   ],
   numberRules: [
     v => !!v || "This field is required",

@@ -1,29 +1,23 @@
 package repository;
 
-import controllers.UserController;
-import controllers.dto.User.CreateUserReq;
-import controllers.dto.User.NationalityReq;
-import controllers.dto.User.UpdateUserReq;
+import controllers.dto.user.CreateUserReq;
+import controllers.dto.user.NationalityReq;
+import controllers.dto.user.UpdateUserReq;
 import finders.UserFinder;
-import io.ebean.ExpressionList;
 import models.Nationality;
 import models.TravellerType;
 import models.User;
 import models.UserNationality;
 import play.db.ebean.Transactional;
-import utils.Moment;
 
 import javax.inject.Inject;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 

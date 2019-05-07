@@ -6,8 +6,8 @@ export default {
         return Repository.get(`/users/${id}/destinations`);
     },
 
-    getDestination(user_id, dest_id) {
-        return Repository.get(`/users/${user_id}/destinations/${dest_id}`)
+    getDestination(id, destId) {
+        return Repository.get(`/users/${id}/destinations/${destId}`)
     },
 
     createDestination(userId, payload) {
@@ -16,7 +16,15 @@ export default {
 
     updateDestination(id, payload) {
         return Repository.put(`/destinations/${id}`, payload)
-    }    
+    },
+
+    makePublic(destId) {
+        return Repository.post(`/destinations/${destId}/make_public`);
+    }
+
+    // deleteDestination(userId, destinationId) {
+    //     return Repository.delete(`/users/${userId}/destinations/${destinationId}`);
+    // }
 }
 
 

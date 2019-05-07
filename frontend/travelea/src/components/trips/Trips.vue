@@ -67,7 +67,6 @@
 }
 
 .top-destination-content {
-  background-color: #edf5e1;
   display: flex;
   justify-content: space-between;
 }

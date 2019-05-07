@@ -1,3 +1,4 @@
+
 /* eslint-disable */
 
 <template>
@@ -158,7 +159,7 @@ export default {
   },
 
   created: function() {
-    destinationRepository.getDestination(this.$route.params.dest_id).then(result => {
+    destinationRepository.getDestination(this.$route.params.id, this.$route.params.dest_id).then(result => {
       this.destination = result.data;
     });
   }

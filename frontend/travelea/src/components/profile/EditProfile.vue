@@ -83,13 +83,10 @@ import PhotoSelect from "../photos/PhotoSelect";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
 import {
-  getProfilePic,
   uploadProfilePic,
-  setProfilePic
 } from "../../repository/PersonalPhotosRepository";
 
 import { store } from "../../store/index";
-import { storeImage } from "../../repository/PersonalPhotosRepository";
 
 export default {
   name: "EditProfile",
@@ -106,9 +103,6 @@ export default {
       travellerTypes: [],
       passports: []
     };
-  },
-  mounted() {
-    this.getTraveller();
   },
   methods: {
     // Sets the file property to the new file uploaded
@@ -129,8 +123,8 @@ export default {
     getTraveller() {
       userRepo.getUser(this.id).then(result => {
         this.traveller = result.data;
+        this.setTravellerToFields();
       });
-      this.setTravellerToFields();
     },
 
     setTravellerToFields() {
@@ -172,7 +166,7 @@ export default {
             return store.dispatch("fetchMe");
           })
           .then(() => {
-            this.$router.push("/profile");
+            this.$router.push("/user/"+this.id);
           })
           .catch(e => {
             console.log(e);
@@ -183,10 +177,10 @@ export default {
 
   created: function() {
     this.id = this.$route.params.id;
-
     if (!this.id) {
       this.id = store.getters.getUser.id;
     }
+    this.getTraveller();
   }
 };
 </script>

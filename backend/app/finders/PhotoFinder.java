@@ -1,11 +1,7 @@
 package finders;
 
-import io.ebean.Expr;
 import io.ebean.Finder;
-import models.Destination;
 import models.PersonalPhoto;
-
-import java.util.List;
 
 public class PhotoFinder extends Finder<Long, PersonalPhoto> {
 

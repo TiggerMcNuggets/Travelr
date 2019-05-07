@@ -7,7 +7,7 @@
         <h4>{{this.dialogName}}</h4>
         <v-layout>
           <v-flex xs12 md12 class="row-input-margin">
-            <v-text-field v-model="trip.title" :rules="nameRules" :counter="20" label="Trip Name"></v-text-field>
+            <v-text-field v-model="trip.title" :rules="nameRules" :counter="60" label="Trip Name"></v-text-field>
           </v-flex>
         </v-layout>
         <ul>
@@ -174,6 +174,7 @@ export default {
   },
   data() {
     return {
+        userId: (this.$route.params.user_id) ? this.$route.params.user_id : this.$route.params.id,
         tripToDisplay: null,
         draggableEnabled: true,
         dialogName: "Create a new trip",
@@ -362,7 +363,8 @@ export default {
      * Makes component usable for both create and edit component
      */
     mounted() {
-      this.getDestinations(this.id);
+        console.log(this.$route);
+      this.getDestinations(this.userId);
       if (this.passedTrip !== null) {
         this.dialogName = "Edit current trip";
         let tripToEdit = {title: '', destinations: []};

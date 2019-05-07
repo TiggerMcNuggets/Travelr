@@ -1,8 +1,6 @@
-package controllers.dto.Destination;
+package controllers.dto.destination;
 
 import play.data.validation.Constraints;
-
-import javax.validation.Constraint;
 
 public class CreateDestReq {
     @Constraints.Required

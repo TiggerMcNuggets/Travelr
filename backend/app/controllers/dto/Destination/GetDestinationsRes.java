@@ -1,12 +1,6 @@
-package controllers.dto.Destination;
+package controllers.dto.destination;
 
-import io.ebean.annotation.JsonIgnore;
 import models.Destination;
-import models.User;
-import play.data.validation.Constraints;
-
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
 
 public class GetDestinationsRes {
 
