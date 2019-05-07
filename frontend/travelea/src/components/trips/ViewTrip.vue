@@ -25,7 +25,7 @@
               </v-list-tile-avatar>
               <v-list-tile-content>
                 <v-list-tile-title v-html="destination.name"></v-list-tile-title>
-                <v-list-tile-sub-title v-html="'<span>Arriving On: '+destination.arrivalDate+' - Departing On: '+destination.departureDate+'</span>'"></v-list-tile-sub-title>
+                <v-list-tile-sub-title v-if="destination.arrivalDate != null && destination.departureDate != null" v-html="'<span>Arriving On: '+destination.arrivalDate+' - Departing On: '+destination.departureDate+'</span>'"></v-list-tile-sub-title>
               </v-list-tile-content>
             </v-list-tile>
             <v-divider :key="destination.name+destination.ordinal" :inset="is_inset"></v-divider>
@@ -106,8 +106,12 @@ export default {
           });
           trip.destinations = ordered_dests;
           for (let i = 0; i < trip.destinations.length; i++) {
-            trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-            trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+            if (trip.destinations[i].arrivalDate != null) {
+              trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+            }
+            if (trip.destinations[i].arrivalDate != null) {
+              trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+            }
           }
           this.trip = trip;
       });
