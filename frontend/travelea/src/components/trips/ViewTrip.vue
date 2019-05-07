@@ -2,37 +2,58 @@
 
 <template>
 
-<v-container>
+  <v-card>
+  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
+      <div class="section">
+      <div>
+        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+          <v-icon dark>keyboard_arrow_left</v-icon>
+        </v-btn>
+      </div>
+          <h2 class="headline">{{ trip.name }}</h2>
+        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShouldDisplayButton()">
+          <v-icon dark>edit</v-icon>
+        </v-btn>
+      </div>
 
-   <v-btn round color="primary" v-on:click="goBack" dark>Go Back</v-btn>
-    <v-btn round color="#FF5722" v-on:click="toggleShouldDisplayButton" dark>Edit trip</v-btn>
-    <v-alert class="success" :value="modifiedTrip" color="success">Trip edited successfully!</v-alert>
-    <v-dialog v-model="shouldDisplayDialog" max-width="100%">
-        <create-trip style="background-color: white;"
-                     v-if="true"
-                     :regetTrips="() => console.log('no need')"
-                     :passedTrip="tripId"
-                     :updateViewTripPage="this.updateViewTripPage"
-        />
-    </v-dialog>
-    <h1>{{ trip.name }}</h1>
-    <v-card>
-    <v-list two-line>
-    <template v-for="destination in trip.destinations">
-            <v-list-tile :key="destination.ordinal">
-              <v-list-tile-avatar>
-                <img ><!-- where we will add the link to our primary image -->
-              </v-list-tile-avatar>
-              <v-list-tile-content>
-                <v-list-tile-title v-html="destination.name"></v-list-tile-title>
-                <v-list-tile-sub-title v-if="destination.arrivalDate != null && destination.departureDate != null" v-html="'<span>Arriving On: '+destination.arrivalDate+' - Departing On: '+destination.departureDate+'</span>'"></v-list-tile-sub-title>
-              </v-list-tile-content>
-            </v-list-tile>
-            <v-divider :key="destination.name+destination.ordinal" :inset="is_inset"></v-divider>
-          </template>
-    </v-list>
-    </v-card>
+    <v-divider class="photo-header-divider"></v-divider>
+      <v-timeline align-top >
+      <v-dialog v-model="shouldDisplayDialog" max-width="100%">
+          <create-trip style="background-color: white;"
+                      v-if="true"
+                      :regetTrips="() => console.log('no need')"
+                      :passedTrip="tripId"
+                      :updateViewTripPage="this.updateViewTripPage"
+          />
+      </v-dialog>
+      <v-timeline-item
+        v-for="(destination, i) in trip.destinations"
+        :key="i"
+        color="red lighten-2"
+        fill-dot
+      >
+        <v-card
+          color="red lighten-2"
+          dark
+        >
+          <v-card-title class="title"> {{ destination.name }}</v-card-title>
+          <v-card-text class="white text--primary">
+            <p v-if="destination.arrivalDate != null">Arrival Date: {{ destination.arrivalDate }}</p>
+            <p v-if="destination.departureDate != null">Departure Date: {{ destination.departureDate }}</p>
+            <v-btn
+              color="red lighten-2"
+              class="mx-0"
+              outline
+              @click="viewDestination(destination.id)"
+            >
+              View Destination
+            </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-timeline-item>
+    </v-timeline>
 </v-container>
+</v-card>
 
 </template>
 
@@ -50,6 +71,8 @@ export default {
   // local variables
   data() {
     return {
+        isMyProfile: false,
+        isAdmin: store.getters.getIsUserAdmin,
         tripId:  this.$route.params.trip_id,
         userId:  this.$route.params.id,
         modifiedTrip: false,
@@ -59,6 +82,9 @@ export default {
     };
   },
   methods: {
+      viewDestination(dest_id) {
+        this.$router.push("/user/"+this.userId+"/destinations/"+dest_id);
+      },
       goBack: function() {
         window.history.back();
       },
@@ -99,6 +125,10 @@ export default {
     },
 
   created: function() {
+      this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
+      if (!this.isMyProfile && !this.isAdmin) {
+        this.$router.go(-1);
+      }
       tripRepo.getTrip(this.userId, this.tripId).then((result) => {
           let trip = result.data;
           let ordered_dests = trip.destinations.sort(function(a, b){
