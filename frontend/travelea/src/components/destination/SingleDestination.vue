@@ -21,7 +21,10 @@
             
           </div>
           <div>
-            <v-btn class="upload-toggle-button" fab small dark color="indigo">
+            <v-btn v-if="destination.isPublic" class="upload-toggle-button" fab small dark color="indigo">
+              <v-icon dark>lock_open</v-icon>
+            </v-btn>
+            <v-btn v-else class="upload-toggle-button" fab small dark color="indigo">
               <v-icon dark>lock</v-icon>
             </v-btn>
             <v-btn
