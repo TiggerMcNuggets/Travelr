@@ -164,12 +164,16 @@ public class DestinationController extends Controller {
     /**
      * Updates a destination that belongs to a user
      * @param request the http request
-     * @param id the id of the destination
+     * @param userId the id of the destination
+     * @param destId the id of the destination
      * @return 200 with string if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> updateUserDestination(Http.Request request, Long id) {
+    public CompletionStage<Result> updateUserDestination(Http.Request request, Long userId, Long destId) {
         Form<CreateDestReq> updateDestinationForm = formFactory.form(CreateDestReq.class).bindFromRequest(request);
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
 
         User user = request.attrs().get(Attrs.USER);
 
@@ -179,16 +183,12 @@ public class DestinationController extends Controller {
 
         CreateDestReq req = updateDestinationForm.get();
 
-        return destinationRepository.getOneDestination(id).thenComposeAsync(destination -> {
+        return destinationRepository.getOneDestination(destId).thenComposeAsync(destination -> {
             // Not Found Check
             if (destination == null) {
                 return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
             }
-            // Forbidden Check
-            if (destination.user.id != user.id) {
-                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-            }
-            return destinationRepository.update(req, id).thenApplyAsync(destId -> ok("Destination updated"));
+            return destinationRepository.update(req, destId).thenApplyAsync(destinationId -> ok("Destination updated"));
 
         });
 
