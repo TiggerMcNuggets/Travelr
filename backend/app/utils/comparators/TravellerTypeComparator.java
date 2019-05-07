@@ -1,7 +1,5 @@
 package utils.comparators;
 
-import models.Nationality;
-import models.User;
 import models.TravellerType;
 
 import java.util.Comparator;

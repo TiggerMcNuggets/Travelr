@@ -1,73 +1,176 @@
 /* eslint-disable */
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-<v-card>
-  <v-container style="margin-left: 0px; margin-top: -20px;">
-    
-    <v-btn fab small dark color="indigo" @click="$router.go(-1)">
-        <v-icon dark>keyboard_arrow_left</v-icon>
-    </v-btn>
-    <div v-if="isMyProfile">
-      <v-btn class="button-min-width" flat @click="toggleShowCreateDestination">
-        <v-icon dark left>keyboard_arrow_right</v-icon>Add new destination
-      </v-btn>      
-    </div>
-    <ul>
-      <h2>Destinations</h2>
-      <li
-        class="destination-list-element"
-        v-for="item in destinations"
-        :value="item.value"
-        :key="item.value">
-        <v-card class="top-destination-content destination-container">
-          <div class="row-container">
-            <div class="private-public-side-bar" v-bind:class="{ 'pink-background': item.isPublic, 'blue-background': !item.isPublic }">
-            </div>
-            <div class="hoverable" v-on:click="viewDestination(item.id)">
-              <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
-              <div class="row-container">
-                <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
-              </div>
-              <div class="row-container">
-                <h3>Type: {{item.type}}</h3>
-              </div>
-            </div>
-          </div>
-          <div v-if="isMyProfile">
-            <v-btn icon @click="deleteDestination(item.id)">
-              <v-icon color="red lighten-1">delete</v-icon>
-            </v-btn>
-            <v-btn icon @click="editDestination(item.id)">
-              <v-icon color="orange lighten-1">edit</v-icon>
-            </v-btn>
-            <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
-              <v-icon color="blue lighten-1">lock</v-icon>
-            </v-btn>
-            <v-btn v-if="item.isPublic" icon @click="() => console.log('clicked on open lock')">
-              <v-icon color="hotpink lighten-1">lock_open</v-icon>
-            </v-btn>
-          </div>
+<template>
+<v-card >
+  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
 
-            <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
+    <div class="section">
+      <div class="dest-name">
+        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+          <v-icon dark>keyboard_arrow_left</v-icon>
+        </v-btn>
+          <h2 class="headline">Destinations</h2>
+      </div>
+      <div>
+      <v-btn
+      class="upload-toggle-button"
+      fab
+      small
+      dark
+      color="indigo"
+      v-if="isMyProfile || isAdminUser"
+      @click="toggleShowCreateDestination"
+      >
+      <v-icon dark>add</v-icon>
+      </v-btn>
+      </div>
+    </div>
+
+    <v-divider class="photo-header-divider"></v-divider>
+
+    <v-tabs
+            v-model="active"
+            slider-color="blue"
+    >
+      <v-tab
+              :key="1"
+              ripple
+      >
+        Browse
+
+      </v-tab>
+      <v-tab
+              :key="2"
+              ripple
+      >
+        Map
+      </v-tab>
+      <v-tab-item
+              :key="1"
+      >
+        <ul>
+          <li
+                  class="destination-list-element"
+                  v-for="item in destinations"
+                  :value="item.value"
+                  :key="item.value"
+          >
+            <div class="top-destination-content">
+              <h2 @click="viewDestination(item.id)">{{ item.name }}</h2>
+              <span>
+            <!-- item.id -->
+            <div v-if="isMyProfile" @click="editDestination(item.id)">
+              <a>Edit</a>
+            </div>
+                <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
+          </span>
+            </div>
+            <ul class="horizontal-details">
+              <li>
+                <p>
+                  <strong>COUNTRY:</strong>
+                  {{ item.country }}
+                </p>
+              </li>
+              <li>
+                <p>
+                  <strong>TYPE:</strong>
+                  {{ item.type }}
+                </p>
+              </li>
+              <li>
+                <p>
+                  <strong>DISTRICT:</strong>
+                  {{ item.district }}
+                </p>
+              </li>
+              <li>
+                <p>
+                  <strong>LATITUDE:</strong>
+                  {{ item.latitude }}
+                </p>
+              </li>
+              <li>
+                <p>
+                  <strong>LONGITUDE:</strong>
+                  {{ item.longitude }}
+                </p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+      </v-tab-item>
+      <v-tab-item
+              :key="2"
+      >
+        <v-card>
+          <MapDashboard
+            :destinations="this.destinations"/>
         </v-card>
-      </li>
-    </ul>
+      </v-tab-item>
+    </v-tabs>
     
 
     <v-dialog v-model="dialog" width="800">
        <destination-create :createDestinationCallback="updateDestinationList" />
     </v-dialog>
-    
-  </v-container>
+
+  </v-container >
   </v-card>
 </template>
 
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
+.outer-container {
+  max-width: 100%;
+  width: 100% !important;
+}
 
-.private-public-side-bar {
-  width: 10px;
+ul {
+  padding-left: 0px;
+}
+
+h2 {
+  align-self: flex-end;
+}
+
+hr {
+  margin-bottom: 25px;
+}
+
+.section {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.dest-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.dest-name div {
+  text-align: start;
+}
+.dest-sub-info p {
+  margin-bottom: 0px;
+  color: grey;
+}
+
+.dest-name button {
   margin-right: 20px;
+}
+
+.outer-container {
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.horizontal-details {
+  padding-top: 15px;
+  background-color: #05386b;
 }
 .blue-background {
   background-color: #0d47a1;
@@ -107,6 +210,7 @@ ul {
 .destination-list-element {
   padding-top: 20px;
 }
+
 </style>
 
 
@@ -114,13 +218,22 @@ ul {
 import { store } from "../../store/index";
 import {RepositoryFactory} from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
+import DestinationCreate from "./DestinationCreate";
+import MapDashboard from "../map/MapDashboard";
 import DestinationCreate from "./DestinationCreate"
+
 
 export default {
   store,
   // local variables
   data() {
     return {
+      dialog: false,
+      showEditDestination: false,
+      destinations: [],
+      isMyProfile: false,
+      user_id: null,
+      active: null
         showTooltip: false,
         dialog: false,
         showEditDestination: false,
@@ -128,10 +241,13 @@ export default {
         isMyProfile: false,
         user_id: null
     };
-  }, 
+  },
+    computed: {
+    },
    // child components
   components: {
-    DestinationCreate: DestinationCreate
+      MapDashboard,
+      DestinationCreate: DestinationCreate,
   },
   watch: {
     '$route.params.id': function() {
@@ -182,7 +298,10 @@ export default {
       let id = this.$route.params.id;
       this.user_id = id;
       this.isMyProfile = (store.getters.getUser.id);
-    }
+    },
+      log: function(evt) {
+          window.console.log(evt);
+      }
   },
   created: function() {
     this.init();

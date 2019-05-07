@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -34,7 +35,7 @@ public class SecurityController extends Controller {
         Form<Login> loginForm = formFactory.form(Login.class).bindFromRequest(request);
 
         if (loginForm.hasErrors()) {
-            return badRequest("Bad Request");
+            return badRequest(APIResponses.BAD_REQUEST);
         }
 
         Login login = loginForm.get();

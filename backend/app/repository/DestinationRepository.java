@@ -1,12 +1,12 @@
 package repository;
 
-import controllers.DestinationController;
-import controllers.dto.Destination.CreateDestReq;
-import finders.DestinationFinder;
+import controllers.dto.destination.CreateDestReq;
 import models.Destination;
+import models.TripDestination;
 import models.User;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -82,31 +82,48 @@ public class DestinationRepository {
         }, context);
     }
 
+    /**
+     * Makes a destination public and merges previous destinations if same
+     * @param destinationId the new destination
+     * @return completable future of the destination id
+     */
     public CompletableFuture<Long> makeDestinationPublic(Long destinationId) {
         return supplyAsync(() -> {
 
             Destination destination = Destination.find.byId(destinationId);
 
-            User adminUser = User.find.findById(1L);
-
+            if (destination == null) {
+                return null;
+            }
 
             List<Destination> sameDestinations = Destination.find.getSameDestinations(destinationId);
 
-            // No similar destinations, no merge has happened
-            if(sameDestinations.size() == 0) {
-                destination.isPublic = true;
-
-                destination.update();
-
-            } else {
-                // TODO MERGE OTHER DESTINATIONS HERE
+            // If same destinations: merge
+            if(sameDestinations.size() > 0) {
+                mergeDestinations(destination, sameDestinations);
             }
+
+            destination.isPublic = true;
+            destination.update();
 
             return destinationId;
         }, context);
     }
 
+    /**
+     * Merges destinations by converting all same destinations in trips to the new destination
+     * @param sameDestinations The list of same destinations
+     */
+    private void mergeDestinations(Destination destination, List<Destination> sameDestinations) {
+        List<TripDestination> tripDestinations = new ArrayList<TripDestination>();
 
+        for (Destination sameDestination : sameDestinations) {
+            tripDestinations.addAll(TripDestination.find.getAllByDestinationId(sameDestination.getId()));
+        }
 
-    
+        for (TripDestination tripDestination : tripDestinations) {
+            tripDestination.setDestination(destination);
+            tripDestination.save();
+        }
+    }
 }

@@ -3,8 +3,8 @@ package controllers;
 import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
-import controllers.dto.Photo.ChooseProfilePicReq;
-import controllers.dto.Photo.UpdatePhotoReq;
+import controllers.constants.APIResponses;
+import controllers.dto.photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.User;
@@ -15,7 +15,6 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.DestinationPhotoRepository;
-import repository.PersonalPhotoRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
@@ -23,10 +22,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import java.util.concurrent.CompletionStage;
-
-import static play.mvc.Results.ok;
 
 public class DestinationPhotoController extends Controller {
 
@@ -62,7 +57,7 @@ public class DestinationPhotoController extends Controller {
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
         //what we do here with the id (compares for user id)
-        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync((photos) -> {
+        return destinationPhotoRepository.list(id, user.id == id || isAdmin, destId).thenApplyAsync(photos -> {
             //is this line ok? "public"
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
@@ -74,13 +69,12 @@ public class DestinationPhotoController extends Controller {
      * @param filename The file name of the image to get.
      * @return The raw image file which corresponds to the filename given.
      */
-    @Authorization.RequireAuth
     public Result getImageFromDatabase(String filename) {
         File file = new File(this.destinationPhotoFilepath + filename);
         try {
             return ok(file);
         } catch (Exception e) {
-            return badRequest("Missing file");
+            return badRequest(APIResponses.MISSING_FILE);
         }
     }
 
@@ -88,11 +82,11 @@ public class DestinationPhotoController extends Controller {
      * Uploads a destination photo to the server file system.
      * @param request The request containing the image data to upload.
      * @param id The id of the traveller/user uploading the image.
-     * @param dest_id The id of the destination uploading the image of.
+     * @param destId The id of the destination uploading the image of.
      * @return A result whether the image upload was successful or not.
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long dest_id) {
+    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long destId) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
@@ -111,7 +105,34 @@ public class DestinationPhotoController extends Controller {
                 }
             });
         } else {
-            return  CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
         }
     }
+
+    /**
+     * Updates a photo that belongs to a user's destination
+     * @param request the http request
+     * @param id the id of the photo
+     * @return 200 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateDestinationPhoto(Http.Request request, Long id) {
+        Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
+
+        if (updatePhotoForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
+        }
+
+        UpdatePhotoReq req = updatePhotoForm.get();
+
+        return destinationPhotoRepository.getOne(id).thenComposeAsync(photo -> {
+            // Not Found Check
+            if (photo == null) {
+                return CompletableFuture.completedFuture(notFound("Photo not found"));
+            }
+            return destinationPhotoRepository.update(req, id).thenApplyAsync(destId -> ok("Photo updated"));
+
+        });
+    }
+
 }

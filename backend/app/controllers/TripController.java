@@ -6,9 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
-import controllers.dto.Trip.CreateTripReq;
-import controllers.dto.Trip.CreateTripRes;
-import controllers.dto.Trip.GetTripRes;
+import controllers.constants.APIResponses;
+import controllers.dto.trip.CreateTripReq;
+import controllers.dto.trip.CreateTripRes;
+import controllers.dto.trip.GetTripRes;
 import io.ebean.Ebean;
 
 import models.Trip;
@@ -64,19 +65,19 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
 
         // Less than two destinations check
         if (req.hasLessThanTwoDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.LESS_THAN_TWO_DESTINATIONS));
         }
 
         // Two same destinations in a row check
         if (req.hasSameConsecutiveDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.TWO_SAME_DESTINATIONS_IN_A_ROW));
         }
 
         return tripRepository.createTrip(req, user).thenApplyAsync(tripId -> {
@@ -109,19 +110,19 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
 
         // Less than two destinations check
         if (req.hasLessThanTwoDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.LESS_THAN_TWO_DESTINATIONS));
         }
 
         // Two same destinations in a row check
         if (req.hasSameConsecutiveDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.TWO_SAME_DESTINATIONS_IN_A_ROW));
         }
 
         return tripRepository.createTrip(req, user).thenApplyAsync(tripId -> {
@@ -146,7 +147,7 @@ public class TripController extends Controller {
         return tripRepository.getTrip(id).thenApplyAsync(trip -> {
             // Not Found Check
             if (trip == null) {
-                return notFound("Trip not found");
+                return notFound(APIResponses.TRIP_NOT_FOUND);
             }
 
             // Forbidden Check
@@ -215,7 +216,7 @@ public class TripController extends Controller {
             ArrayList<GetTripRes> correctTrips = new ArrayList<>();
             for (Trip trip : trips) {
                 GetTripRes tripRes = new GetTripRes(trip);
-                List<TripDestination> correctDests = new ArrayList<TripDestination>();
+                List<TripDestination> correctDests = new ArrayList<>();
                 //Setting the blank name to the correct destination name
                 for (TripDestination dest : trip.destinations) {
                     dest.name = dest.destination.getName();
@@ -243,25 +244,25 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
 
         // Less than two destinations check
         if (req.hasLessThanTwoDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.LESS_THAN_TWO_DESTINATIONS));
         }
 
         // Two same destinations in a row check
         if (req.hasSameConsecutiveDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.TWO_SAME_DESTINATIONS_IN_A_ROW));
         }
 
         return tripRepository.getTrip(id).thenComposeAsync(trip -> {
             // Not Found Check
             if (trip == null) {
-                return CompletableFuture.completedFuture(notFound("Trip not found"));
+                return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
             }
 
             // Forbidden Check
@@ -294,25 +295,25 @@ public class TripController extends Controller {
 
         // Bad Request check
         if (createTripForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         CreateTripReq req = createTripForm.get();
 
         // Less than two destinations check
         if (req.hasLessThanTwoDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Less than two destinations"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.LESS_THAN_TWO_DESTINATIONS));
         }
 
         // Two same destinations in a row check
         if (req.hasSameConsecutiveDestinations()) {
-            return CompletableFuture.completedFuture(badRequest("Two same destinations in a row"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.TWO_SAME_DESTINATIONS_IN_A_ROW));
         }
 
         return tripRepository.getTrip(id).thenComposeAsync(trip -> {
             // Not Found Check
             if (trip == null) {
-                return CompletableFuture.completedFuture(notFound("Trip not found"));
+                return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
             }
 
 

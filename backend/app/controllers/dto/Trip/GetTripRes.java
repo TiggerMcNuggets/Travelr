@@ -1,6 +1,5 @@
-package controllers.dto.Trip;
+package controllers.dto.trip;
 
-import models.Destination;
 import models.Trip;
 import models.TripDestination;
 
@@ -31,7 +30,7 @@ public class GetTripRes {
     }
 
     public void setDestinations(List<TripDestination> destinations) {
-        this.destinations = new ArrayList<TripDestinationRes>();
+        this.destinations = new ArrayList<>();
         for (TripDestination tripDestination : destinations) {
             this.destinations.add(new TripDestinationRes(tripDestination));
         }
