@@ -49,54 +49,43 @@
               :key="1"
       >
         <ul>
+          <h2>Destinations</h2>
           <li
                   class="destination-list-element"
                   v-for="item in destinations"
                   :value="item.value"
-                  :key="item.value"
-          >
-            <div class="top-destination-content">
-              <h2 @click="viewDestination(item.id)">{{ item.name }}</h2>
-              <span>
-            <!-- item.id -->
-            <div v-if="isMyProfile" @click="editDestination(item.id)">
-              <a>Edit</a>
-            </div>
-                <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
-          </span>
-            </div>
-            <ul class="horizontal-details">
-              <li>
-                <p>
-                  <strong>COUNTRY:</strong>
-                  {{ item.country }}
-                </p>
-              </li>
-              <li>
-                <p>
-                  <strong>TYPE:</strong>
-                  {{ item.type }}
-                </p>
-              </li>
-              <li>
-                <p>
-                  <strong>DISTRICT:</strong>
-                  {{ item.district }}
-                </p>
-              </li>
-              <li>
-                <p>
-                  <strong>LATITUDE:</strong>
-                  {{ item.latitude }}
-                </p>
-              </li>
-              <li>
-                <p>
-                  <strong>LONGITUDE:</strong>
-                  {{ item.longitude }}
-                </p>
-              </li>
-            </ul>
+                  :key="item.value">
+            <v-card class="top-destination-content destination-container">
+              <div class="row-container">
+                <div class="private-public-side-bar" v-bind:class="{ 'pink-background': item.isPublic, 'blue-background': !item.isPublic }">
+                </div>
+                <div class="hoverable destination-container" v-on:click="viewDestination(item.id)">
+                  <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
+                  <div class="row-container">
+                    <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
+                  </div>
+                  <div class="row-container">
+                    <h3>Type: {{item.type}}</h3>
+                  </div>
+                </div>
+              </div>
+              <div v-if="isMyProfile">
+                <v-btn icon @click="deleteDestination(item.id)">
+                  <v-icon color="red lighten-1">delete</v-icon>
+                </v-btn>
+                <v-btn icon @click="editDestination(item.id)">
+                  <v-icon color="orange lighten-1">edit</v-icon>
+                </v-btn>
+                <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
+                  <v-icon color="blue lighten-1">lock</v-icon>
+                </v-btn>
+                <v-btn v-if="item.isPublic" icon @click="() => console.log('clicked on open lock')">
+                  <v-icon color="hotpink lighten-1">lock_open</v-icon>
+                </v-btn>
+              </div>
+
+              <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
+            </v-card>
           </li>
         </ul>
 
@@ -218,7 +207,6 @@ ul {
 import { store } from "../../store/index";
 import {RepositoryFactory} from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
-import DestinationCreate from "./DestinationCreate";
 import MapDashboard from "../map/MapDashboard";
 import DestinationCreate from "./DestinationCreate"
 
@@ -233,14 +221,9 @@ export default {
       destinations: [],
       isMyProfile: false,
       user_id: null,
-      active: null
-        showTooltip: false,
-        dialog: false,
-        showEditDestination: false,
-        destinations: [],
-        isMyProfile: false,
-        user_id: null
-    };
+      active: null,
+      showTooltip: false,
+      };
   },
     computed: {
     },
