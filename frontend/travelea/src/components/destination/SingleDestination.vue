@@ -16,16 +16,9 @@
             >
               <v-icon dark>keyboard_arrow_left</v-icon>
             </v-btn>
-            <div>
+        
               <h2 class="headline">{{destination.name}}</h2>
-              <div class="dest-sub-info">
-                <p>{{destination.type}}</p>
-                <span class="dot"></span>
-                <p>{{destination.district}}</p>
-                <span class="dot"></span>
-                <p>{{destination.country}}</p>
-              </div>
-            </div>
+            
           </div>
           <div>
             <v-btn class="upload-toggle-button" fab small dark color="indigo">
@@ -55,6 +48,18 @@
           </div>
         </div>
         <v-divider class="photo-header-divider"></v-divider>
+         <div class="dest-sub-info">
+                <p><strong>Type:</strong> {{destination.type}}</p>
+                <span class="dot"></span>
+                <p><strong>District:</strong> {{destination.district}}</p>
+                <span class="dot"></span>
+                <p><strong>Country:</strong> {{destination.country}}</p>
+                <span class="dot"></span>
+                  <p><strong>Latitude:</strong> {{destination.latitude}}</p>
+                <span class="dot"></span>
+                <p><strong>Longitude:</strong> {{destination.longitude}}</p>
+              </div>
+                <v-divider class="photo-header-divider"></v-divider>
         <div v-if="showUploadSection">
           <div class="upload-section section">
             <label>
@@ -116,7 +121,8 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+              <v-switch v-if="clickedImage.is_public" disabled v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+              <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
               <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
             </v-card-actions>
             <v-card-actions>
@@ -140,7 +146,7 @@
   height: 7px;
   width: 7px;
   margin: 0px 10px;
-  background-color: darkslategrey;
+  background-color: #3f51b5;
   border-radius: 50%;
   display: inline-block;
 }
@@ -159,6 +165,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-left: 70px;
 }
 .dest-sub-info p {
   margin-bottom: 0px;
