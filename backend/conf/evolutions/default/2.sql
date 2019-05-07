@@ -235,8 +235,12 @@ INSERT INTO traveller_type (name) values ('Frequent Weekender');
 INSERT INTO traveller_type (name) values ('Gap Year');
 
 
+INSERT INTO user (first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES ('Global', '', 'Admin', 0, 'Male', 'admin@admin.com', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 1529196155, 2);
+
 
 -- !Downs
 
 DELETE FROM nationality;
 DELETE FROM traveller_type;
+
+DELETE FROM User WHERE account_type = 2;
