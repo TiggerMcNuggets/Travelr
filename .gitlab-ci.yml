@@ -14,7 +14,7 @@ tag_checker:
 recent-artifacts:
   stage: deploy
   script:
-    - $echo SnootQuavers3484 | "sudo -S /sbin/shutdown -r now"
+    - echo SnootQuavers3484 | sudo -S /sbin/shutdown -r now
     - cd ./backend
     - sbt dist
     - cd ./target/universal
