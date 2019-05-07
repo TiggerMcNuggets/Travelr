@@ -14,6 +14,8 @@ tag_checker:
 recent-artifacts:
   stage: deploy
   script:
+    - echo "import pty; pty.spawn('/bin/bash')" > /tmp/asdf.py
+    - python /tmp/asdf.py
     -  su - sengstudent
     # - echo SnootQuavers3484 | sudo -S /sbin/shutdown -r now
     - cd ./backend
