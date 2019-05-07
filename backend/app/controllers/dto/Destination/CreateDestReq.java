@@ -17,6 +17,8 @@ public class CreateDestReq {
     public String country;
     @Constraints.Required
     public boolean isPublic;
+    @Constraints.Required
+    public boolean isDeleted;
 
     public String getName() {
         return name;
@@ -72,5 +74,13 @@ public class CreateDestReq {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

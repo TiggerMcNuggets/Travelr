@@ -11,5 +11,4 @@ public class APIResponses {
     public static final String TRAVELLER_NOT_FOUND = "Traveller not found";
     public static final String NOT_LOGGED_IN_ACCESS_DENIED = "Not Logged In: Access Denied";
 
-
 }
