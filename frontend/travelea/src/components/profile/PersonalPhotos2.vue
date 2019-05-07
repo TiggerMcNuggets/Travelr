@@ -84,8 +84,8 @@
           
                 
        
-              <v-btn  @click="updatePhotoVisability()">Apply changes</v-btn>
-              <v-btn   @click="setProfilePhoto()">Set Profile Photo</v-btn>
+              <v-btn  @click="updatePhotoVisability">Apply changes</v-btn>
+              <v-btn   @click="setProfilePhoto">Set Profile Photo</v-btn>
               
              
             </div>

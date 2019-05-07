@@ -27,7 +27,7 @@
               v-on:change="handleFileUpload()"
             >
           </label>
-          <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+          <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
         
