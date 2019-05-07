@@ -19,15 +19,7 @@ public class DestinationRepository {
     public DestinationRepository(DatabaseExecutionContext context) {
         this.context = context;
     }
-
-    /**
-     * Gets list of destinations that belongs to a user
-     * @param userId the user id
-     * @return completable future of list of destinations
-     */
-    public CompletableFuture<List<Destination>> getUserDestinations(Long userId) {
-        return supplyAsync(() -> Destination.find.getUserDestinations(userId), context);
-    }
+    
 
     /**
      * Gets list of destinations that is avaliable for a user
@@ -125,5 +117,16 @@ public class DestinationRepository {
             tripDestination.setDestination(destination);
             tripDestination.save();
         }
+    }
+
+    /**
+     *
+     * The method sets the variable deleted to true for the destination with given id
+     * @param destId the id of the destination to shallow delete
+     */
+    public void shallowDeleteDestination(Long destId) {
+        Destination dest = Destination.find.findById(destId);
+        dest.setDeleted(true);
+        dest.update();
     }
 }

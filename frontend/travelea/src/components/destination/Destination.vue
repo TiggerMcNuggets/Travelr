@@ -87,14 +87,14 @@
                   </v-btn>
                   <v-btn
                     v-if="item.isPublic"
+                    color="#FF69B4"
+                    flat
                     icon
                     @click="() => console.log('clicked on open lock')"
                   >
                     <v-icon color="hotpink lighten-1">lock_open</v-icon>
                   </v-btn>
                 </div>
-
-                <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
               </v-card>
             </li>
           </ul>
@@ -274,8 +274,10 @@ export default {
     toggleShowSearch: function() {
       this.searchActive = !this.searchActive;
     },
-    deleteDestination: function() {
-      // TODO: ion progress
+    deleteDestination: function(destId) {
+      destinationRepository.deleteDestination(this.user_id, destId).then(() => {
+          this.init();
+      });
     },
     updateDestinationList: function() {
       this.getDestinationList();

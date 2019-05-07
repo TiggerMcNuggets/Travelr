@@ -13,9 +13,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
         super(Destination.class);
     }
 
-    public List<Destination> getUserDestinations(Long userId) {
-        return query().where().eq("user.id", userId).findList();
-    }
 
     public Destination findById(Long id) {
         return query().where().eq("id", id).findOneOrEmpty().orElse(null);
@@ -30,7 +27,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
                 .eq("isPublic", true)
                 .eq("user.id", userId)
                 .endOr()
-                .eq("isDeleted", false)
+                .eq("deleted", false)
                 .endAnd()
                 .findList();
     }
@@ -56,6 +53,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
                     .eq("name", destination.name)
                     .eq("district", destination.district)
                     .eq("country", destination.country)
+                    .eq("deleted", false)
                     .endAnd()
                     .findList()
         );
@@ -68,6 +66,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
                 .and()
                 .eq("longitude", destination.longitude)
                 .eq("latitude", destination.latitude)
+                .eq("deleted", false)
                 .endAnd()
                 .findList()
         );
@@ -83,7 +82,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
         Destination destination = findById(destinationId);
 
-        destination.user = null;
+        destination.setUser(null);
 
         destination.update();
 
