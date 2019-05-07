@@ -94,8 +94,8 @@
           </v-flex>
         </v-layout>
         <div class="buttons-div">
-          <v-btn color="red" v-on:click="routeBackToPrevPage">CANCEL</v-btn>
-          <v-btn v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
+          <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
+          <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
         </div>
       </div>
     </v-form>
