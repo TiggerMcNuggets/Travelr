@@ -116,7 +116,7 @@ public class CreateTripsSteps {
             state.setResult(route(state.getApplication(), createTrip));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             Assert.assertTrue(false);
         }
     }
@@ -134,7 +134,7 @@ public class CreateTripsSteps {
             state.setResult(route(state.getApplication(), createTrip));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             Assert.assertTrue(false);
         }
     }

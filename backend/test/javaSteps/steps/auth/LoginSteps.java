@@ -61,7 +61,7 @@ public class LoginSteps {
             state.setResult(route(state.getApplication(), login));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             Assert.assertTrue(false);
         }
     }

@@ -2,7 +2,6 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ebean.Finder;
-import finders.UserNationalityFinder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;

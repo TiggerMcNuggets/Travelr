@@ -3,8 +3,8 @@ package controllers;
 import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
-import controllers.dto.Photo.ChooseProfilePicReq;
-import controllers.dto.Photo.UpdatePhotoReq;
+import controllers.constants.APIResponses;
+import controllers.dto.photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.User;
@@ -15,7 +15,6 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.DestinationPhotoRepository;
-import repository.PersonalPhotoRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
@@ -25,10 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import java.util.concurrent.CompletionStage;
-
-import static play.mvc.Results.ok;
 
 public class DestinationPhotoController extends Controller {
 
@@ -80,7 +75,7 @@ public class DestinationPhotoController extends Controller {
         try {
             return ok(file);
         } catch (Exception e) {
-            return badRequest("Missing file");
+            return badRequest(APIResponses.MISSING_FILE);
         }
     }
 
@@ -88,11 +83,11 @@ public class DestinationPhotoController extends Controller {
      * Uploads a destination photo to the server file system.
      * @param request The request containing the image data to upload.
      * @param id The id of the traveller/user uploading the image.
-     * @param dest_id The id of the destination uploading the image of.
+     * @param destId The id of the destination uploading the image of.
      * @return A result whether the image upload was successful or not.
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long dest_id) {
+    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long destId) {
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null) {
@@ -104,7 +99,7 @@ public class DestinationPhotoController extends Controller {
             FileHelper fh = new FileHelper();
             fh.makeDirectory(this.destinationPhotoFilepath);
             file.copyTo(Paths.get(this.destinationPhotoFilepath + fileName), true);
-            return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
+            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync((photo_id) -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
                 } else {
@@ -112,7 +107,7 @@ public class DestinationPhotoController extends Controller {
                 }
             });
         } else {
-            return  CompletableFuture.completedFuture(badRequest("Missing file"));
+            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
         }
     }
 
@@ -161,7 +156,7 @@ public class DestinationPhotoController extends Controller {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
 
         if (updatePhotoForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Bad Request"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         UpdatePhotoReq req = updatePhotoForm.get();

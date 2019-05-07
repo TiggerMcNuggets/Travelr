@@ -1,8 +1,6 @@
-package controllers.dto.Trip;
+package controllers.dto.trip;
 
 import play.data.validation.Constraints;
-
-import javax.validation.Constraint;
 
 public class TripDestinationReq {
 

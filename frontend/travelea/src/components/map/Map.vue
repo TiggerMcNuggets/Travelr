@@ -1,6 +1,6 @@
 <template>
     <div class="map-container" >
-        // this will be useful next sprint, the code works but the API key does not support this at the moment
+        <!--// this will be useful next sprint, the code works but the API key does not support this at the moment-->
         <!--<h1>Autocomplete Example (#164)</h1>-->
         <!--<label>-->
             <!--AutoComplete-->

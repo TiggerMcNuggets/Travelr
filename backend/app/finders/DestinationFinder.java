@@ -1,13 +1,10 @@
 package finders;
 
-import io.ebean.Expr;
 import io.ebean.Finder;
 import models.Destination;
-import models.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DestinationFinder extends Finder<Long, Destination> {
 
@@ -86,9 +83,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
         Destination destination = findById(destinationId);
 
-        User user = User.find.findById(1L);
-
-        destination.user = user;
+        destination.user = null;
 
         destination.update();
 

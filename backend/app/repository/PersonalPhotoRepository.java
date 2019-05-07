@@ -1,20 +1,11 @@
 package repository;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import controllers.dto.Photo.UpdatePhotoReq;
-import finders.UserFinder;
-import finders.PhotoFinder;
+import controllers.dto.photo.UpdatePhotoReq;
 import io.ebean.*;
-import models.Nationality;
 import models.PersonalPhoto;
 import models.User;
-import play.db.ebean.EbeanConfig;
-import play.db.ebean.EbeanDynamicEvolutions;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -43,7 +34,7 @@ public class PersonalPhotoRepository {
 
             for (PersonalPhoto personalPhoto: photoList) {
                 if (personalPhoto.getPhoto_filename().equals(imageFileName)) {
-                    System.out.println("Duplicate Photo");
+                    System.err.println("Duplicate Photo");
                     return null;
                 }
             }

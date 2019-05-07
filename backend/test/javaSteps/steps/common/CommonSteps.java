@@ -38,7 +38,7 @@ public class CommonSteps  {
             state.setResult(route(state.getApplication(), resample));
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             Assert.assertTrue(false);
         }
     }

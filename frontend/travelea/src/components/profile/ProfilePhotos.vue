@@ -11,10 +11,7 @@
 
 
 <script>
-import ProfileNav from "./profileNav";
 import PersonalPhotos from "./PersonalPhotos2";
-import dateTime from "../common/dateTime/dateTime.js";
-import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import { store } from "../../store/index";
 
 export default {
