@@ -1,4 +1,4 @@
-package controllers.dto.Trip;
+package controllers.dto.trip;
 
 public class CreateTripRes {
     private Long id;

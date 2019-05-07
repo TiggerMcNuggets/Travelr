@@ -1,4 +1,5 @@
 import UserRepository from "../../repository/UserRepository";
+import dateTime from "../../components/common/dateTime/dateTime.js";
 
 /**
  * Users store sub-module
@@ -54,6 +55,7 @@ export default {
                 const response = await UserRepository.getUsers(new_params);
                 let filtered_data = [];
                 for (let i = 0; i < response['data'].length; i++) {
+                    response.data[i]['dateOfBirth'] = dateTime.convertTimestampToString(response.data[i]['dateOfBirth']);
                     let meets_nationality_param = true;
                     let meets_traveller_param = true;
                     if (new_params.nationality) {
@@ -99,7 +101,7 @@ export default {
                 types.sort();
                 commit('setTravellerTypes', types);
             } catch (e) {
-                return;
+                console.log(e);
             }
         },
         async getAllNationalities({ commit }) {
@@ -113,12 +115,14 @@ export default {
                 nationalities.sort();
                 commit('setNationalities', nationalities);
             } catch (e) {
-                return;
+                console.log(e);
             }
         },
+
+        // eslint-disable-next-line
         async deleteUser({commit}, userId) {
             try {
-                const response = await UserRepository.deleteUser(userId);
+                await UserRepository.deleteUser(userId);
             } catch (e) {
                 console.log(e);
             }

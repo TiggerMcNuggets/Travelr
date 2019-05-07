@@ -40,6 +40,7 @@ GET         /api/users/:user_id/destinations/:dest_id/photo    controllers.Desti
 GET         /api/destinations/photo/:filename   controllers.DestinationPhotoController.getImageFromDatabase(filename: String)
 POST        /api/users/:user_id/destinations/:dest_id/photo    controllers.DestinationPhotoController.uploadDestinationPhoto(request: Request, user_id: Long, dest_id: Long)
 PUT        /api/destinations/photo/:photo_id     controllers.DestinationPhotoController.updateDestinationPhoto(request: Request, photo_id: Long)
+PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.DestinationPhotoController.addExistingPhotoToDestinationPhotos(request: Request, user_id: Long, dest_id: Long)
 
 
 # Destinations (NEW)

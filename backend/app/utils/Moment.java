@@ -29,7 +29,7 @@ public class Moment {
             date = format.parse(this.pattern);
             return date;
         } catch (ParseException e) {
-            System.out.println("Moment, toDOBFormat: Not parsable date object");
+            System.err.println("Moment, toDOBFormat: Not parsable date object");
             return null;
         }
     }

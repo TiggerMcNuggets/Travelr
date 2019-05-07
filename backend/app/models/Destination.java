@@ -1,7 +1,6 @@
 package models;
 
-import controllers.DestinationController;
-import controllers.dto.Destination.CreateDestReq;
+import controllers.dto.destination.CreateDestReq;
 import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import finders.DestinationFinder;

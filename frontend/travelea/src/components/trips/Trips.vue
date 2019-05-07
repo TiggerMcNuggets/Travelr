@@ -1,8 +1,46 @@
 /* eslint-disable */
 
 <template>
-  <v-container style="margin-left: 0px;">
-    <div v-if="this.isMyProfile || this.isAdmin">
+  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
+    <div class="section">
+        <div class="dest-name">
+          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+            <v-icon dark>keyboard_arrow_left</v-icon>
+          </v-btn>
+    
+          <h2 class="headline">Trips</h2>
+  
+        </div>
+        <div>
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+            v-if="isMyProfile || isAdminUser"
+            @click="toggleShowCreateTrip"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+            @click="toggleShowSearch"
+          >
+            <v-icon dark>search</v-icon>
+          </v-btn>
+        </div>
+      </div>
+
+        <v-divider class="photo-header-divider"></v-divider>
+      <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
+    
+    <!-- <div v-if="this.isMyProfile || this.isAdmin">
       <div v-if="!showCreateTrip && (this.isMyProfile || this.isAdmin)">
         <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
           <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
@@ -11,11 +49,11 @@
           v-if="showCreateTrip"
           v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
         />
-      </div>
+      </div> -->
       <div v-if="showCreateTrip">
-        <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
+        <!-- <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
           <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
-        </v-btn>
+        </v-btn> -->
           <create-trip
           v-if="showCreateTrip"
           :toggleShowCreateTrip="toggleShowCreateTrip"
@@ -24,18 +62,17 @@
           :updateViewTripPage="() => console.log()"
           />
       </div>
-    </div>
+    <!-- </div> -->
 
     <ul>
-      <h2 v-if="isMyProfile">My Trips</h2>
-      <h2 v-else>User Trips</h2>
-      <div class="input-field-right-margin">
+    
+      <!-- <div class="input-field-right-margin">
         <v-text-field
                 v-model="searchValue"
                 label="Trip name"
                 prepend-icon="search"
         ></v-text-field>
-      </div>
+      </div> -->
       <li
         class="trips-list-element"
         v-for="item in tripsFiltered"
@@ -55,11 +92,6 @@
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
-
-.input-field-right-margin {
-  margin-right: 80%;
-}
-
 .horizontal-details li {
   display: inline-block;
   padding-right: 20px;
@@ -67,7 +99,6 @@
 }
 
 .top-destination-content {
-  background-color: #edf5e1;
   display: flex;
   justify-content: space-between;
 }
@@ -110,7 +141,8 @@ export default {
         isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
       isAdminUser: false,
-      user_id: this.$route.params.id
+      user_id: this.$route.params.id,
+      searchActive: false
     };
   },
   // the place where you want to make the store values readable
@@ -136,6 +168,9 @@ export default {
         .catch((err) => {
             console.log(err);
         })
+    },
+    toggleShowSearch: function() {
+      this.searchActive = !this.searchActive;
     },
     getUserTrips: function() {
         tripRepository.getUserTrips(this.user_id)

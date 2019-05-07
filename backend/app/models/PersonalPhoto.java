@@ -1,7 +1,6 @@
 package models;
 
 import finders.PhotoFinder;
-import io.ebean.Finder;
 import org.checkerframework.common.aliasing.qual.Unique;
 import play.data.validation.Constraints;
 

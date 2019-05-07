@@ -17,7 +17,7 @@
                 v-for="item in row"
                 :value="item.value"
                 :key="item.value"
-                class="image-container"
+                class="select-image-container"
               >
                 <v-icon v-if="imageIsSelected(item)" class="lock-icon" left>done</v-icon>
                 <div v-if="imageIsSelected(item)" class="triangle image-selected"></div>
@@ -35,7 +35,7 @@
     </div>
     <v-divider></v-divider>
     <v-btn color="primary" flat @click="closeDialogue">Close</v-btn>
-    <v-btn color="primary" flat v-on:click="setDestinationImages()">Add Photos to Destination</v-btn>
+    <v-btn color="primary" flat v-on:click="processSelected()">Add Photos to Destination</v-btn>
   </v-card>
 </template>
 
@@ -45,7 +45,7 @@
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 100px 100px 0 0;
+  border-width: 70px 70px 0 0;
   border-color: greenyellow transparent transparent transparent !important;
   opacity: 0.3;
   position: absolute;
@@ -58,8 +58,8 @@
   position: absolute;
   z-index: 12;
   font-size: 2.3em;
-  margin-top: 0.3em;
-  margin-left: 0.3em;
+  margin-top: 0.2em;
+  margin-left: 0.2em;
   align-self: flex-start !important;
 }
 
@@ -67,9 +67,9 @@
   margin-top: 16px;
 }
 
-.image-container {
+.select-image-container {
   width: 24%;
-  height: 270px;
+  height: 170px;
   border: 1px solid lightgrey;
   background-position: center;
   padding: 7px;
@@ -111,16 +111,13 @@ hr {
   justify-content: space-between;
   width: 100%;
 }
-
 </style>
 
 
 <script>
 import { store } from "../../store/index";
 import base_url from "../../repository/BaseUrl";
-import {
-  getImages
-} from "../../repository/PersonalPhotosRepository";
+import { getImages } from "../../repository/PersonalPhotosRepository";
 
 export default {
   store,
@@ -135,15 +132,12 @@ export default {
     };
   },
 
-  props: ["closeDialogue"],
+  props: ["closeDialogue", "setDestinationImages"],
 
   methods: {
-
     //sets the user's profile photo as the selected
-    setDestinationImages() {
-      // This might be a call back from props, but this is where the stuff happens with the selected images/image.
-      console.log(this.selectedImages);
-      this.closeDialogue();
+    processSelected() {
+      this.setDestinationImages(this.selectedImages);
     },
 
     // Gets the image from the server
@@ -190,7 +184,7 @@ export default {
         row.push(imageList[i]);
       }
 
-      if (row) newImageList.unshift(row);
+      newImageList.unshift(row);
       newImageList.reverse();
       return newImageList;
     }
