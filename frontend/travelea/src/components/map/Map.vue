@@ -96,9 +96,9 @@
             },
             chooseIconForMarker(marker) {
               if (marker.isPublic) {
-                  return pinkMarker;
-              } else {
                   return blueMarker;
+              } else {
+                  return pinkMarker;
               }
             },
 

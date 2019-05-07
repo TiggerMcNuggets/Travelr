@@ -11,11 +11,13 @@ junit:
     - cd ./backend
     - sbt test
 
+
+# recent artifacts on all non-tagged commits on any branch
 recent-artifacts:
   stage: deploy
   script:
     - cd ./backend
-    - sbt dist
+    - sbt dist 
   artifacts:
     paths:
       - backend/target/universal/*.zip
@@ -23,40 +25,42 @@ recent-artifacts:
   except:
     - tags
 
+# Deploy prod server and release artifacts on tagged master commits
 release-artifacts:
  stage: deploy
  script:
     - cd ./backend
     - sbt dist
+    - sudo systemctl stop Prod.service
+    - cd ./target/universal
+    - sudo rm -rf /home/gitlab-runner/prod/*
+    - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/prod/
+    - sudo unzip /home/gitlab-runner/prod/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/prod/
+    - sudo systemctl start Prod.service
  artifacts:
     paths:
     - backend/target/universal/*.zip
  only:
     - tags
-    
-#serve:
-#  stage: deploy
-#  script:
-#    - cd ./backend
-#    - sbt dist
-#    
-    # Kill existing process (if any)
-#    - echo $PWD
-#    - $(kill $(cat /home/gitlab-runner/builds/abc247a3/0/seng302-2019/team-300/play.pid) && sleep 3) || true
-#    
-#    # Deploy to server http://csse-s302g3.canterbury.ac.nz:8443/
-#    - cd target/universal
-#    - unzip team300-travelea-1.0.0-SNAPSHOT.zip
-#    - rm team300-travelea-1.0.0-SNAPSHOT.zip
-#    - cd team300-travelea-1.0.0-SNAPSHOT/bin
-#    - setsid nohup ./team300-travelea -Dplay.http.secret.key=QCYtAnfkaZiwrNwnxIlR6CTfG3gf90Latabg5241ABR5W1uDFNIk1 -Dplay.evolutions.db.default.autoApply=true -Dhttp.port=8443 -Dpidfile.path=/home/gitlab-runner/builds/abc247a3/0/seng302-2019/team-300/play.pid > nohup.out &
-    
-    # Populate database
-#    - sleep 6
-#    - curl -X POST http://csse-s302g3.canterbury.ac.nz:8443/api/populate
-#  only:
-#    - master@seng302-2019/team-300
-    
+
+# Deploy dev server on non-tagged master commits
+deploy-dev:
+  stage: deploy
+  script:
+    - cd ./backend
+    - sbt dist
+    - sudo systemctl stop Dev.service
+    - cd ./target/universal
+    - sudo rm -rf /home/gitlab-runner/dev/*
+    - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
+    - sudo unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
+    - sudo systemctl start Dev.service
+  only:
+    - master@seng302-2019/team-300
+  except:
+    - tags
+
+# Run sonar scanner on master commits 
 update-sonar:
     stage: deploy
     script:

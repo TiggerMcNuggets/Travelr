@@ -2,14 +2,34 @@
 /* eslint-disable */
 
 <template>
+  <v-card>
   <div class="outer-container">
-    <div class="banner">
-      <h1>EDIT DESTINATION</h1>
-      <hr>
-    </div>
-
+    
     <v-form ref="form" lazy-validation>
       <div class="container">
+
+           <div class="section">
+        <div class="dest-name">
+          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
+            <v-icon dark>keyboard_arrow_left</v-icon>
+          </v-btn>
+          <h2 class="headline">Edit Destination</h2>
+        </div>
+        <div>
+          <v-btn
+            class="upload-toggle-button"
+            fab
+            small
+            dark
+            color="indigo"
+             @click="toggleShowUploadPhoto"
+            v-if="isMyProfile || isAdminUser"
+          >
+            <v-icon dark>add</v-icon>
+          </v-btn>
+        </div>
+      </div>
+      <v-divider class="photo-header-divider"></v-divider>
         <v-layout>
           <v-flex xs12 md6>
             <v-text-field
@@ -74,12 +94,13 @@
           </v-flex>
         </v-layout>
         <div class="buttons-div">
-          <v-btn color="red" class="update-button" v-on:click="routeBackToPrevPage">CANCEL</v-btn>
-          <v-btn class="update-button" v-on:click="updateDestination">UPDATE DESTINATION</v-btn>
+          <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
+          <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
         </div>
       </div>
     </v-form>
   </div>
+  </v-card>
 </template>
 
 <style>
@@ -99,7 +120,6 @@
 }
 
 .container {
-  margin: 10px 100px;
   align-self: center;
   display: inline-block;
   text-align: left;
@@ -145,9 +165,11 @@ export default {
     };
   },
   methods: {
+    
+
     updateDestination: function() {
       if (this.$refs.form.validate()) {
-        destinationRepository.updateDestination(this.$route.params.dest_id, this.destination).then(() => {
+        destinationRepository.updateDestination(this.$route.params.id, this.$route.params.dest_id, this.destination).then(() => {
           this.$refs.form.reset();
           this.routeBackToPrevPage();
         });

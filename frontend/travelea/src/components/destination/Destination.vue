@@ -37,7 +37,12 @@
       </div>
 
       <v-divider class="photo-header-divider"></v-divider>
-      <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
+      <v-text-field
+        v-if="searchActive"
+        v-model="searchValue"
+        label="Trip name"
+        prepend-icon="search"
+      ></v-text-field>
 
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Browse</v-tab>
@@ -55,7 +60,7 @@
                 <div class="row-container">
                   <div
                     class="private-public-side-bar side-border"
-                    v-bind:class="{ 'pink-background2': item.isPublic, 'blue-background': !item.isPublic }"
+                    v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
                   ></div>
                   <div
                     class="hoverable destination-container"
@@ -70,26 +75,35 @@
                     </div>
                   </div>
                 </div>
-                <div v-if="isMyProfile || isAdminUser">
-                  <v-btn icon @click="deleteDestination(item.id)">
+                <div>
+                  <v-btn
+                          v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                          icon
+                          @click="deleteDestination(item.id)">
                     <v-icon color="red lighten-1">delete</v-icon>
                   </v-btn>
-                  <v-btn icon @click="editDestination(item.id)">
+                  <v-btn
+                          v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                          icon
+                          @click="editDestination(item.id)">
                     <v-icon color="orange lighten-1">edit</v-icon>
                   </v-btn>
-                  <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
+                  <v-btn
+                          v-if="!item.isPublic"
+                          icon
+                          @click="makePublic(item.id)">
                     <v-icon color="blue lighten-1">lock</v-icon>
                   </v-btn>
                   <v-btn
                     v-if="item.isPublic"
+                    color="#FF69B4"
+                    flat
                     icon
                     @click="() => console.log('clicked on open lock')"
                   >
                     <v-icon color="hotpink lighten-1">lock_open</v-icon>
                   </v-btn>
                 </div>
-
-                <!--Sprint 3 todo<a v-on:click="deleteDestination(item.id)">Delete</a>-->
               </v-card>
             </li>
           </ul>
@@ -160,7 +174,7 @@ hr {
   padding-top: 15px;
 }
 
-.pink-background2 {
+.pink-background {
   background-color: hotpink;
 }
 
@@ -226,7 +240,6 @@ export default {
       searchActive: false
     };
   },
-  computed: {},
   // child components
   components: {
     MapDashboard,
@@ -238,14 +251,19 @@ export default {
     }
   },
 
-computed: {
-
+  computed: {
     destinationsFiltered() {
-      const filteredList = this.destinations.filter(destination => destination.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1);
+      const filteredList = this.destinations.filter(
+        destination =>
+          destination.name
+            .toLowerCase()
+            .search(this.searchValue.toLowerCase()) !== -1
+      );
       //Currently sorting trips by id, in future we will sort trips by creation time
-      return filteredList.sort(function(a, b){ return a.id - b.id; });
+      return filteredList.sort(function(a, b) {
+        return a.id - b.id;
+      });
     }
-
   },
 
   methods: {
@@ -253,7 +271,7 @@ computed: {
       this.checkIfProfileOwner();
       this.getDestinationList();
     },
-    editDestination(id) {dialog
+    editDestination(id) {
       this.$router.push("/user/" + this.user_id + "/destinations/edit/" + id);
     },
     viewDestination(id) {
@@ -265,8 +283,10 @@ computed: {
     toggleShowSearch: function() {
       this.searchActive = !this.searchActive;
     },
-    deleteDestination: function() {
-      // TODO: ion progress
+    deleteDestination: function(destId) {
+      destinationRepository.deleteDestination(this.user_id, destId).then(() => {
+          this.init();
+      });
     },
     updateDestinationList: function() {
       this.getDestinationList();
@@ -307,3 +327,4 @@ computed: {
   }
 };
 </script>
+

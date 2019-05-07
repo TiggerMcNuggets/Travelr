@@ -50,10 +50,11 @@ public class Destination extends BaseModel {
     @NotNull
     public boolean isPublic;
 
+
     @NotNull
     @JsonIgnore
     @Column(columnDefinition = "boolean default 0")
-    public boolean isDeleted;
+    public boolean deleted;
 
     public Destination(CreateDestReq request, User user) {
         this.name = request.name;
@@ -64,6 +65,7 @@ public class Destination extends BaseModel {
         this.country = request.country;
         this.user = user;
         this.isPublic = request.isPublic;
+        this.deleted = false;
     }
 
     // USED IN TEST DATA
@@ -76,6 +78,7 @@ public class Destination extends BaseModel {
         this.country = country;
         this.user = user;
         this.isPublic = false;
+        this.deleted = false;
     }
 
 
@@ -136,6 +139,14 @@ public class Destination extends BaseModel {
 
     public void setUser(models.User user) {
         this.user = user;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
 
