@@ -104,9 +104,6 @@ export default {
       passports: []
     };
   },
-  mounted() {
-    this.getTraveller();
-  },
   methods: {
     // Sets the file property to the new file uploaded
     handleFileUpload() {
@@ -126,8 +123,8 @@ export default {
     getTraveller() {
       userRepo.getUser(this.id).then(result => {
         this.traveller = result.data;
+        this.setTravellerToFields();
       });
-      this.setTravellerToFields();
     },
 
     setTravellerToFields() {
@@ -169,7 +166,7 @@ export default {
             return store.dispatch("fetchMe");
           })
           .then(() => {
-            this.$router.push("/profile");
+            this.$router.push("/user/"+this.id);
           })
           .catch(e => {
             console.log(e);
@@ -180,10 +177,10 @@ export default {
 
   created: function() {
     this.id = this.$route.params.id;
-
     if (!this.id) {
       this.id = store.getters.getUser.id;
     }
+    this.getTraveller();
   }
 };
 </script>
