@@ -37,7 +37,7 @@
       </div>
 
       <v-divider class="photo-header-divider"></v-divider>
-      <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
+      <v-text-field v-if="searchActive" v-model="searchValue" label="Destination name" prepend-icon="search"></v-text-field>
 
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Browse</v-tab>
