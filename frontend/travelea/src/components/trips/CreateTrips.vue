@@ -262,6 +262,11 @@ export default {
         });
     },
 
+    /**
+     * Checks if the url id is the same as the current users id
+     * If it is sets isMyProfile to true
+     * else sets isMyProfile to false
+     */
     checkIfProfileOwner() {
       this.id = this.$route.params.id;
       this.isMyProfile = store.getters.getUser.id == this.id;
@@ -310,6 +315,11 @@ export default {
       this.trip.destinations = newDestinations;
     },
 
+    /**
+     * Checks if passedTrip is null
+     * If it is then calls fucntion createTrip
+     * else calls function updateTrip
+     */
     onConfirm: function() {
       if (this.passedTrip === null) {
         this.createTrip();
@@ -318,6 +328,12 @@ export default {
       }
     },
 
+    /**
+     * Checks if the create trip form passes validation
+     * If the user is an admin calls the function createTripForUser
+     * else calls the function createTrip
+     * then calls the function regetTrips
+     */
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
@@ -343,6 +359,10 @@ export default {
       }
     },
 
+    /**
+     * Checks if the update trip form passes validation
+     * If it does then updates trip and updates the view trip page
+     */
     updateTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();

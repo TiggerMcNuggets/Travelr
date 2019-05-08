@@ -3,8 +3,8 @@
 <template>
   <div class="profile-outer-container">
     <div class="profile-inner-container">
-      <v-layout row>        
-        <aside>          
+      <v-layout row>
+        <aside>
           <ProfileNav
             :fname.sync="traveller.firstName"
             :mname.sync="traveller.middleName"
@@ -63,7 +63,9 @@ main {
 .profile-main {
   width: 100%;
   margin: 0px;
+  text-align: left;
 }
+
 </style>
 
 
@@ -89,10 +91,10 @@ export default {
   },
 
   components: {
-    ProfileNav,
+    ProfileNav
   },
   watch: {
-    '$route.params.id': function() {
+    "$route.params.id": function() {
       this.init();
     }
   },
@@ -100,27 +102,39 @@ export default {
     this.init();
   },
   methods: {
+    /**
+     * Initialises the id and the user data to be displayed on the profile page.
+     */
     init() {
       let id = this.$route.params.id;
-      
-      if(!id) { 
-        id = store.getters.getUser.id
+
+      if (!id) {
+        id = store.getters.getUser.id;
       }
+
+      // Gets user data
       UserRepository.getUser(id)
         .then(response => {
           this.traveller = response.data;
-          this.setTravellerToFields(); 
-          this.isMyProfile = (store.getters.getUser.id == id)
-        })    
+          this.setTravellerToFields();
+          this.isMyProfile = store.getters.getUser.id == id;
+        })
         .catch(err => {
           console.log(err);
-        })
+        });
     },
+
+    /**
+     * Gets traveller data and sets these the the component fields.
+     */
     getTraveller() {
       this.traveller = store.getters.getUser;
       this.setTravellerToFields();
     },
 
+    /**
+     * Sets the traveller to the component fields of the component.
+     */
     setTravellerToFields() {
       [
         this.nationalities,
@@ -132,7 +146,7 @@ export default {
       this.dateOfBirth = dateTime.convertTimestampToString(
         this.traveller.dateOfBirth
       );
-    }    
+    }
   }
 };
 </script>

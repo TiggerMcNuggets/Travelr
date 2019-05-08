@@ -30,14 +30,12 @@
           <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
-        
       </v-card>
     </v-flex>
   </v-form>
 </template>
 
 <style>
-
 .upload-section {
   padding: 30px 10px;
 }
@@ -73,18 +71,15 @@
 <script>
 import userRepo from "../../repository/UserRepository";
 import TravellerForm from "../common/travellerForm/TravellerForm";
-import PhotoSelect from "../photos/PhotoSelect";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
-import {
-  uploadProfilePic,
-} from "../../repository/PersonalPhotosRepository";
+import { uploadProfilePic } from "../../repository/PersonalPhotosRepository";
 
 import { store } from "../../store/index";
 
 export default {
   name: "EditProfile",
-  components: { TravellerForm, PhotoSelect },
+  components: { TravellerForm },
 
   store,
   data() {
@@ -100,9 +95,17 @@ export default {
   },
   methods: {
     // Sets the file property to the new file uploaded
+
+    /**
+     * Sets the file selected from the file system which will be uploaded.
+     */
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
+
+    /**
+     * Submits the file and uploads it as the users profile pic using the backend endpoint.
+     */
     submitFile() {
       let formData = new FormData();
       formData.append("picture", this.file);
@@ -111,6 +114,10 @@ export default {
         window.location = "/user/" + this.$route.params.id + "/edit";
       });
     },
+
+    /**
+     * Gets the traveller data which is being edited by using the backend endpoint.
+     */
     getTraveller() {
       userRepo.getUser(this.id).then(result => {
         this.traveller = result.data;
@@ -118,6 +125,9 @@ export default {
       });
     },
 
+    /**
+     * Sets the nationalities and the passports lists, formatted date of birth of the user being edited.
+     */
     setTravellerToFields() {
       [
         this.nationalities,
@@ -133,6 +143,9 @@ export default {
       );
     },
 
+    /**
+     * Gets the nationalities and the passports lists, formatted date of birth from the current form.
+     */
     setFieldsToTraveller() {
       this.traveller.nationalities = travellerFormHelper.convertToNationalitiesReq(
         this.nationalities,
@@ -144,10 +157,10 @@ export default {
       this.traveller.travellerTypes = this.travellerTypes;
     },
 
-    closeDialogue() {
-      this.dialog = false;
-    },
-
+    /**
+     * Validates the data in the form and if valid updated the users details in the database. Redirects the user back to
+     * their profile page.
+     */
     handleEdit() {
       if (this.$refs.form.validate()) {
         this.setFieldsToTraveller();
@@ -157,7 +170,7 @@ export default {
             return store.dispatch("fetchMe");
           })
           .then(() => {
-            this.$router.push("/user/"+this.id);
+            this.$router.push("/user/" + this.id);
           })
           .catch(e => {
             console.log(e);
@@ -166,6 +179,9 @@ export default {
     }
   },
 
+  /**
+   * Gets the id of the user upon component creation.
+   */
   created: function() {
     this.id = this.$route.params.id;
     if (!this.id) {
