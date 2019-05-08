@@ -47,7 +47,16 @@ public class DestinationRepository {
      */
     public CompletableFuture<Long> add(CreateDestReq request, Long userId) {
         return supplyAsync(() -> {
+
+
+
             Destination destination = new Destination(request, User.find.byId(userId));
+            List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
+
+            if (sameDestinations.size() > 0) {
+                return null;
+            }
+
             destination.insert();
             return destination.id;
         }, context);
@@ -59,7 +68,7 @@ public class DestinationRepository {
      * @param destinationId the destination id
      * @return completable future of the new destination
      */
-    public CompletableFuture<Long> update(CreateDestReq request, Long destinationId) {
+    public CompletableFuture<Long> update(CreateDestReq request, Long destinationId, Long userId) {
         return supplyAsync(() -> {
             Destination destination = Destination.find.byId(destinationId);
             destination.setName(request.name);
@@ -68,6 +77,13 @@ public class DestinationRepository {
             destination.setType(request.type);
             destination.setCountry(request.country);
             destination.setDistrict(request.district);
+
+            List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
+
+            if (sameDestinations.size() > 0) {
+                return null;
+            }
+
             destination.save();
 
             return destination.id;

@@ -24,7 +24,7 @@ public class CreateDestinationSteps {
      */
     @Given("I provide complete destination information")
     public void iProvideCompleteDestinationInformation() {
-        destinationData = Json.parse("{ \"name\": \"string\", \"latitude\": 1, \"longitude\": 1, \"type\": \"string\", \"district\": \"string\", \"country\": \"string\"}");
+        destinationData = Json.parse("{ \"name\": \"string\", \"latitude\": 5, \"longitude\": 5, \"type\": \"string\", \"district\": \"string\", \"country\": \"string\"}");
     }
 
 //    @When("I create a destination")
