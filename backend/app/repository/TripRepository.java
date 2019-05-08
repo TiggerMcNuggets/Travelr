@@ -74,7 +74,7 @@ public class TripRepository {
             return trip.id;
         }, context);
     }
-
+` `
     /**
      * Gets a trip for a user by trip id
      * @param id the trip id

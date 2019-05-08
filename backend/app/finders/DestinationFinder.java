@@ -13,11 +13,21 @@ public class DestinationFinder extends Finder<Long, Destination> {
         super(Destination.class);
     }
 
-
+    /**
+     * retrieves destination from database by Id
+     * @param id the id of the destination we search databse for
+     * @return the found destination, otherwise null
+     */
     public Destination findById(Long id) {
         return query().where().eq("id", id).findOneOrEmpty().orElse(null);
     }
 
+    /**
+     * retrieves all the destinations from the database that are available for user to see, based on if destination
+     * is public or user created the destination
+     * @param userId the Id of the user requesting to see destinations
+     * @return a list of destinations that user is allowed to see
+     */
     public List<Destination> getAvaliableDestinations(Long userId) {
 
         return query()
@@ -78,6 +88,11 @@ public class DestinationFinder extends Finder<Long, Destination> {
     }
 
 
+    /**
+     * removes user attachment from destinaton when it is made public, admin is now the onlt
+     * owner of the destination
+     * @param destinationId
+     */
     public void transferToAdmin(Long destinationId) {
 
         Destination destination = findById(destinationId);

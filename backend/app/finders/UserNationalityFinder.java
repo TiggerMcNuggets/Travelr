@@ -11,6 +11,12 @@ public class UserNationalityFinder extends Finder<Long, UserNationality> {
         super(UserNationality.class);
     }
 
+    /**
+     * returns all user nationalities that match the user and nationality given
+     * @param user
+     * @param nationality
+     * @return
+     */
     public UserNationality ByUserNationality(User user, Nationality nationality) {
         if(user == null || nationality == null) {
             return null;
