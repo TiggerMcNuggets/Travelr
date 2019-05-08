@@ -51,6 +51,7 @@ scalacOptions in (Compile, doc) += "-no-java-comments"
 scalacOptions += "-target:jvm-1.8"
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
 
 // Maintainer
