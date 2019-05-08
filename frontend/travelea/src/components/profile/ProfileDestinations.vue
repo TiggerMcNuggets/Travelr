@@ -36,19 +36,6 @@
 </template>
 
 <style>
-.trips-tile {
-  margin-left: 20px;
-}
-
-.destinations-tile {
-  margin-top: 20px;
-  height: 290px;
-}
-
-.photos-tile {
-  height: 300px;
-}
-
 aside {
   width: 25%;
   margin-right: 20px;
@@ -78,14 +65,10 @@ main {
 
 <script>
 import ProfileNav from "./profileNav";
-// import Trips from "../trips/Trips";
-// import PersonalPhotos from "./PersonalPhotos2";
 import dateTime from "../common/dateTime/dateTime.js";
-// import ProfileRepository from "../../repository/ProfileRepository";
 import Destination from "../destination/Destination";
 import { store } from "../../store/index";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
-
 
 export default {
   name: "Profile",
@@ -103,22 +86,29 @@ export default {
 
   components: {
     ProfileNav,
- //   Trips,
-  //  PersonalPhotos,
     Destination
   },
 
+  /**
+   * Gets traveller data on mount of the component.
+   */
   mounted() {
     this.getTraveller();
   },
 
   methods: {
+    /**
+     * Gets the traveller data.
+     */
     getTraveller() {
       let user = store.getters.getUser;
       this.traveller = user.profile;
       this.setTravellerToFields();
     },
 
+    /**
+     * Sets the traveller data to the fields of the component.
+     */
     setTravellerToFields() {
       [
         this.nationalities,

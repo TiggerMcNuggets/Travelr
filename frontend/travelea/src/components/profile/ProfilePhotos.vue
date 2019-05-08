@@ -6,7 +6,6 @@
 
 
 <style>
-
 </style>
 
 
@@ -19,8 +18,7 @@ export default {
   store,
 
   data() {
-    return {
-    };
+    return {};
   },
 
   components: {
@@ -28,6 +26,5 @@ export default {
   },
 
   methods: {}
-  
 };
 </script>
