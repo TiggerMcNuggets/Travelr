@@ -79,6 +79,7 @@ export default {
                             {text: 'Gender', value: 'gender', align: 'left', sortable: true},
                             {text: 'Nationalities', value: 'nationalities', align: 'left', sortable: true},
                             {text: 'Traveller Types', value: 'types', align: 'left', sortable: true}];
+            //Checking if user is admin and addind delete button if they are
             if (this.isAdmin) {
                 columns.push({text: 'Delete', align: 'left', sortable: false})
             }
