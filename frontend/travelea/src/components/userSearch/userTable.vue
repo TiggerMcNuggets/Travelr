@@ -57,11 +57,21 @@ export default {
             isAdmin: false
         }
     },
-    // the place where you want to make the store values readable
+
     computed: {
+        /**
+         * Returns a list of users from the store
+         * @return A list of users from the store
+         */
         users() {
             return store.state.users.users;
         },
+
+        /**
+         * Gets a list of columns for the table in format {text: String, value: String, align: String, sortable: boolean}
+         * If the user is an admin add column delete to list.
+         * @return a list of what columns should be in the table
+         */
         getColumns() {
             const columns = [{text: 'First Name', value: 'firstName', align: 'left', sortable: true},
                             {text: 'Last Name', value: 'lastName', align: 'left', sortable: true},
@@ -69,6 +79,7 @@ export default {
                             {text: 'Gender', value: 'gender', align: 'left', sortable: true},
                             {text: 'Nationalities', value: 'nationalities', align: 'left', sortable: true},
                             {text: 'Traveller Types', value: 'types', align: 'left', sortable: true}];
+            //Checking if user is admin and addind delete button if they are
             if (this.isAdmin) {
                 columns.push({text: 'Delete', align: 'left', sortable: false})
             }
@@ -76,10 +87,18 @@ export default {
         },
     },
     methods: {
+        /**
+         * Takes in a users ID, Deletes the user then regets all users from the database into the store
+         * @param userId 
+         */
         async deleteUser(userId) {
             await store.dispatch("deleteUser", userId);
             await store.dispatch("getUsers", false);
         },
+        /**
+         * Takes in a users id and redirects current page to that users account.
+         * @param id
+         */
         goToUser(id) {
             var endpoint = '/user/' + id
             this.$router.push(endpoint)

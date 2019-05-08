@@ -18,7 +18,6 @@
 
 
 <script>
-// import { store } from "../../store/index";
 import userTable from "./userTable"
 import searchFilter from "./searchFilter"
 

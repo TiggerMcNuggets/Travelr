@@ -82,7 +82,6 @@
 </style>
 
 <script>
-// import { getAllUsers } from "../../repository/UserRepository";
 import { store } from "../../store/index";
 
 export default {
@@ -105,9 +104,16 @@ export default {
         }
     },
     methods: {
+        /**
+         * Gets all users that match the search params located in data.
+         */
         async searchUsers() {
             await store.dispatch("getUsers", this.search_params);
         },
+        /**
+         * Resets all search_params to empty strings.
+         * Calls searchUsers function to reget all users with no search parameters.
+         */
         resetSearch: function() {
             this.search_params.firstName = '';
             this.search_params.lastName = '';
@@ -120,11 +126,18 @@ export default {
             this.searchUsers();
         }
     },
-    // the place where you want to make the store values readable
     computed: {
+        /**
+         * Gets a list of nationalities from the store
+         * @return list of nationalities
+         */
         nationalities() {
             return store.state.users.nationalities;
         },
+        /**
+         * Gets a list of traveller types from the store
+         * @return list of traveller types
+         */
         travellerTypes() {
             return store.state.users.travellerTypes;
         }

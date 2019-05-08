@@ -147,7 +147,9 @@ export default {
   },
   // the place where you want to make the store values readable
   computed: {
-
+    /**
+     * Filters the list of trips according to the search value
+     */
     tripsFiltered() {
       const filteredList = this.trips.filter(trip => trip.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1);
       //Currently sorting trips by id, in future we will sort trips by creation time
@@ -160,6 +162,9 @@ export default {
     CreateTrip: CreateTrips
   },
   methods: {
+    /**
+     * Gets trips from the API using using the user_id found in params
+     */
     getTrips: function() {
         tripRepository.getUserTrips(this.user_id)
         .then((res) => {
@@ -169,9 +174,17 @@ export default {
             console.log(err);
         })
     },
+
+    /**
+     * Toggles searchActive from true to false or false to true
+     */
     toggleShowSearch: function() {
       this.searchActive = !this.searchActive;
     },
+
+    /**
+     * Gets users trips from the API using using the user_id found in params
+     */
     getUserTrips: function() {
         tripRepository.getUserTrips(this.user_id)
         .then((res) => {
@@ -182,6 +195,11 @@ export default {
         })
     },
 
+    /**
+     * If the user is either admin or owns the profile
+     * redirects the current page to the trip page
+     * @param id the trip id
+     */
     openTrip: function(id) {
       let route = `/user/${this.user_id}/trips/`;
       if (this.isMyProfile || store.getters.getIsUserAdmin) {
@@ -190,10 +208,17 @@ export default {
       this.$router.push(route);
     },
 
+    /**
+     * Toggles showCreateTrip from true to false or false to true
+     */
     toggleShowCreateTrip: function() {
       this.showCreateTrip = !this.showCreateTrip;
     },
 
+    /**
+     * Calls the function toggleShowCreateTrip
+     * then gets the trips the current profile the user is on
+     */
     regetTrips: function() {
       this.toggleShowCreateTrip();
       if (this.isMyProfile) {
@@ -203,6 +228,10 @@ export default {
       }
     },
 
+    /**
+     * Checks if the profile the user is on is theres
+     * if it is sets isMyProfile to true
+     */
     checkIfProfileOwner() {
       let id = this.$route.params.id;
       this.isMyProfile = (store.getters.getUser.id == id);
