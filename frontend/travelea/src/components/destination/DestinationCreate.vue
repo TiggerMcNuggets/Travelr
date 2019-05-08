@@ -2,7 +2,7 @@
 
 <template>
   <!-- <div class="width-for-container"> -->
-    <v-layout white>
+  <v-layout white>
     <v-form ref="form" lazy-validation>
       <v-container grid-list-xl>
         <h4>Add new destination</h4>
@@ -83,8 +83,8 @@
       </v-alert>
       </v-container>
     </v-form>
-  <!-- </div> -->
-    </v-layout>
+    <!-- </div> -->
+  </v-layout>
 </template>
 
 <style>
@@ -101,7 +101,7 @@
 
 
 <script>
-import {RepositoryFactory} from "../../repository/RepositoryFactory";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
 
 import { rules } from "../form_rules";
@@ -109,9 +109,11 @@ import { store } from "../../store/index";
 
 export default {
   store,
+
   props: {
     createDestinationCallback: Function
   },
+
   data() {
     return {
       destination: {},
@@ -120,7 +122,12 @@ export default {
       ...rules
     };
   },
+
   methods: {
+    /**
+     * Sends a request to the API to create a destination based on the data entered into the form.
+     * Checks for an error and logs result if unsuccessful.
+     */
     createDestination: function() {
       if (this.$refs.form.validate()) {
         destinationRepository.createDestination(this.userId, this.destination)
@@ -135,6 +142,10 @@ export default {
         })
       }
     },
+
+    /**
+     * Resets the form values to blank.
+     */
     resetValues: function() {
       this.$refs.form.reset();
     }

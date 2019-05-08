@@ -82,34 +82,47 @@ export default {
     };
   },
   methods: {
+      /**
+       * Redirects users page to the destination page of the provided destination id
+       * @param dest_id the id of the destination
+       */
       viewDestination(dest_id) {
         this.$router.push("/user/"+this.userId+"/destinations/"+dest_id);
       },
-      goBack: function() {
-        window.history.back();
-      },
 
-      // decides if the edit trip dialog should be displayed
+      /**
+       * Decides if the edit trip dialog should be displayed
+       */
       toggleShouldDisplayButton: function() {
         this.shouldDisplayDialog = !this.shouldDisplayDialog;
       },
 
-      // toggles the boolean that makes the alert dialog pop up
+      /**
+       * Toggles the boolean that makes the alert dialog pop up
+       */
       toggleModifiedTrip() {
           this.modifiedTrip = !this.modifiedTrip;
       },
 
-      // invoked by child component creat-trip once the trip has been modified, passed as prop
+      /**
+       * Invoked by child component create-trip once the trip has been modified, is passed as prop
+       */
       updateViewTripPage: function() {
           tripRepo.getTrip(this.userId, this.tripId).then((result) => {
               let trip = result.data;
+              // Sorts the destinations ensure they are in the order of their ordinal
               let ordered_dests = trip.destinations.sort(function(a, b){
                   return a.ordinal - b.ordinal;
               });
               trip.destinations = ordered_dests;
+              // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
               for (let i = 0; i < trip.destinations.length; i++) {
-                trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-                trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+                if (trip.destinations[i].arrivalDate != null) {
+                  trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+                }
+                if (trip.destinations[i].arrivalDate != null) {
+                  trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+                }
               }
               this.trip = trip;
               this.toggleShouldDisplayButton();
@@ -126,6 +139,7 @@ export default {
 
   created: function() {
       this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
+      // If the person viewing the trip is not admin and does not own the trip then takes them back to the page they were on
       if (!this.isMyProfile && !this.isAdmin) {
         this.$router.go(-1);
       }
@@ -135,6 +149,7 @@ export default {
               return a.ordinal - b.ordinal;
           });
           trip.destinations = ordered_dests;
+          // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
           for (let i = 0; i < trip.destinations.length; i++) {
             if (trip.destinations[i].arrivalDate != null) {
               trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);

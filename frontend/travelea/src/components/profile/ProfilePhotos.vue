@@ -6,12 +6,11 @@
 
 
 <style>
-
 </style>
 
 
 <script>
-import PersonalPhotos from "./PersonalPhotos2";
+import PersonalPhotos from "./PersonalPhotos";
 import { store } from "../../store/index";
 
 export default {
@@ -19,17 +18,13 @@ export default {
   store,
 
   data() {
-    return {
-    };
+    return {};
   },
 
   components: {
     PersonalPhotos
   },
 
-
-
   methods: {}
-  
 };
 </script>
