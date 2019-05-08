@@ -35,6 +35,6 @@ To run the project for **development**:
 1. Clone the version you'd like to run from the eng-git repository
 2. Navigate to the project's root directory
 3. To run the **backend**, navigate to `/backend` and run the command: `sbt dist`
-4. Once the backend is built and running, navigate to: `localhost:9000` and click "Apply the script now!", you should see an Action Not Found screen.
+4. Once the backend is built and running, navigate to: `localhost:9000`
 5. To run the **frontend**, navigate to `/frontend/travelea` and run the commands: `npm install` and `npm run serve`
 6. Navigate to: `localhost:8080` OR whatever the console states when running the previous command
