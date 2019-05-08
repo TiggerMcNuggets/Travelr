@@ -48,6 +48,7 @@ libraryDependencies ++= Seq (
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
 
 scalacOptions in (Compile, doc) += "-no-java-comments"
+scalacOptions += "-target:jvm-1.8"
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
