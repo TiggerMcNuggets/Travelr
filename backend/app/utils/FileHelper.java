@@ -10,6 +10,11 @@ public class FileHelper {
   public FileHelper() {
   }
 
+  /**
+   * creates a new file directory given a directory path
+   * @param directory_path
+   * @return
+   */
   public boolean makeDirectory(String directory_path) {
     Path path = Paths.get(directory_path);
     File file = new File(directory_path);
@@ -22,7 +27,11 @@ public class FileHelper {
     }
   }
 
-
+  /**
+   * returns the file extension given a file name eg.".png"
+   * @param
+   * @return
+   */
   public String getFileExtension(String f) {
     String ext = "";
     int i = f.lastIndexOf('.');
@@ -32,12 +41,22 @@ public class FileHelper {
     return ext;
   }
 
+  /**
+   * returns true if file extension is of the correct type for photos
+   * @param name
+   * @return
+   */
   public Boolean isValidFile(String name) {
     String extension = getFileExtension(name);
     return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg");
   }
 
 
+  /**
+   * returns image filname with hashed name
+   * @param name
+   * @return
+   */
   public String getHashedImage(String name) {
     return name.hashCode() + "." + getFileExtension(name);
   }

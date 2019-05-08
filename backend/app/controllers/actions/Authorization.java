@@ -25,6 +25,9 @@ public class Authorization {
         // boolean value() default true;
     }
 
+    /**
+     * checks if user is logged in and/or user is admin
+     */
     public static class RequireAuthAction extends Action<RequireAuth> {
         public CompletionStage<Result> call(Http.Request req) {
             String authToken;
