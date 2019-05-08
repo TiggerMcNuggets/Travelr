@@ -97,6 +97,14 @@
           <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
           <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
         </div>
+
+        <v-alert
+          :value="isError"
+          type="error"
+          >
+          This destination is already available to you
+        </v-alert>
+
       </div>
     </v-form>
   </div>
@@ -161,6 +169,7 @@ export default {
   data() {
     return {
       destination: {},
+      isError: false,
       ...rules
     };
   },
@@ -171,7 +180,11 @@ export default {
       if (this.$refs.form.validate()) {
         destinationRepository.updateDestination(this.$route.params.id, this.$route.params.dest_id, this.destination).then(() => {
           this.$refs.form.reset();
+          this.isError = false;
           this.routeBackToPrevPage();
+        })
+        .catch(() => {
+          this.isError = true;
         });
       }
     },

@@ -132,6 +132,12 @@ public class DestinationController extends Controller {
         CreateDestReq req = createDestinationForm.get();
 
         return destinationRepository.add(req,userId).thenApplyAsync(id -> {
+
+            // If destination already exists
+            if (id == null) {
+                return badRequest();
+            }
+
             CreateDestRes response = new CreateDestRes(id);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
@@ -188,7 +194,16 @@ public class DestinationController extends Controller {
             if (destination == null) {
                 return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
             }
-            return destinationRepository.update(req, destId).thenApplyAsync(destinationId -> ok("Destination updated"));
+
+            return destinationRepository.update(req, destId, userId).thenApplyAsync(destinationId -> {
+
+                //If destination is the same as another destination
+                if (destinationId == null) {
+                    return badRequest();
+                }
+
+                return ok("Destination updated");
+            });
 
         });
 
@@ -221,7 +236,7 @@ public class DestinationController extends Controller {
             if (destination.user.id != user.id) {
                 return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
             }
-            return destinationRepository.update(req, id).thenApplyAsync(destId -> ok("Destination updated"));
+            return destinationRepository.update(req, id, user.getId()).thenApplyAsync(destId -> ok("Destination updated"));
 
         });
 

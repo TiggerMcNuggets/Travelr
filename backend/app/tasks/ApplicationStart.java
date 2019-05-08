@@ -3,11 +3,16 @@ package tasks;
 import javax.inject.*;
 
 import com.typesafe.config.Config;
+import models.Nationality;
+import models.TravellerType;
 import models.User;
+import models.UserNationality;
 import play.inject.ApplicationLifecycle;
 import play.Environment;
 import repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 // This creates an `tasks.ApplicationStart` object once at start-up.
@@ -28,7 +33,7 @@ public class ApplicationStart {
                 user.setAccountType(2);
                 user.insert();
             }
-//        }
+
 
         // Shut-down hook
         lifecycle.addStopHook( () -> {
