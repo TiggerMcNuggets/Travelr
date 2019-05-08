@@ -267,7 +267,7 @@ public class DestinationController extends Controller {
      * @param id The id of the destination that is going to be made public
      * @return 201 with string if all ok
      */
-    @Authorization.RequireAdminAuth
+    @Authorization.RequireAuth
     public CompletionStage<Result> makeDestinationPublic(Long id) {
 
         return destinationRepository.makeDestinationPublic(id).thenApplyAsync(destinationId -> {

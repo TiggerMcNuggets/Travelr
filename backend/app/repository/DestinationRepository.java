@@ -81,7 +81,11 @@ public class DestinationRepository {
             List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
 
             if (sameDestinations.size() > 0) {
-                return null;
+                for (Destination dest : sameDestinations) {
+                    if (dest.getId() != destinationId) {
+                        return null;
+                    }
+                }
             }
 
             destination.save();
