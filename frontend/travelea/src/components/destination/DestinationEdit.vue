@@ -103,6 +103,7 @@
             <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
           </div>
         </div>
+        <v-alert :value="isError" type="error">This destination is already available to you</v-alert>
       </v-form>
     </div>
   </v-card>
@@ -136,6 +137,7 @@ export default {
   data() {
     return {
       destination: {},
+      isError: false,
       ...rules
     };
   },
@@ -154,7 +156,11 @@ export default {
           )
           .then(() => {
             this.$refs.form.reset();
+            this.isError = false;
             this.routeBackToPrevPage();
+          })
+          .catch(() => {
+            this.isError = true;
           });
       }
     },

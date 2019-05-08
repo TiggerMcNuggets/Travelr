@@ -75,6 +75,12 @@
           <v-btn color="red" v-on:click="resetValues">RESET VALUES</v-btn>
           <v-btn v-on:click="createDestination">CREATE DESTINATION</v-btn>
         </div>
+      <v-alert
+        :value="isError"
+        type="error"
+        >
+        This destination is already available to you
+      </v-alert>
       </v-container>
     </v-form>
     <!-- </div> -->
@@ -112,6 +118,7 @@ export default {
     return {
       destination: {},
       userId: this.$route.params.id,
+      isError: false,
       ...rules
     };
   },
@@ -123,15 +130,16 @@ export default {
      */
     createDestination: function() {
       if (this.$refs.form.validate()) {
-        destinationRepository
-          .createDestination(this.userId, this.destination)
-          .then(() => {
-            this.$refs.form.reset();
-            this.createDestinationCallback();
-          })
-          .catch(() => {
-            console.log("error creating destination");
-          });
+        destinationRepository.createDestination(this.userId, this.destination)
+        .then(() => {
+          this.$refs.form.reset();
+          this.isError = false;
+          this.createDestinationCallback();
+        })
+        .catch(() => {
+          this.isError = true;
+          console.log("error creating destination");
+        })
       }
     },
 

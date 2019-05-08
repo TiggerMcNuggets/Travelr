@@ -33,13 +33,23 @@ public class DestinationFinder extends Finder<Long, Destination> {
     }
 
     /**
-     *
+     * Gets same destinations by a given destination id
      * @param destinationId The Id of the destination that is being made public
      * @return A list of destinations that are similar, realistically  this should be either a list of 1 or 0 destinations
      */
     public List<Destination> getSameDestinations(Long destinationId) {
 
         Destination destination = findById(destinationId);
+        return getSameDestinationsByDest(destination);
+
+    }
+
+    /**
+     * Gets same destinations by a given destination
+     * @param destination The destination that is being made public
+     * @return A list of destinations that are similar, realistically  this should be either a list of 1 or 0 destinations
+     */
+    public List<Destination> getSameDestinationsByDest(Destination destination) {
 
         List<Destination> destinations = new ArrayList<>();
 
@@ -71,11 +81,43 @@ public class DestinationFinder extends Finder<Long, Destination> {
                 .findList()
         );
 
-
-
         return destinations;
 
     }
+
+    /**
+     * Get same destinations out of the ones avaiable to the user
+     * @param destination The destination that is being made public
+     * @param userId The id of the user
+     * @return A list of destinations that are similar, realistically  this should be either a list of 1 or 0 destinations
+     */
+    public List<Destination> getSameDestinationsAvailable(Destination destination, Long userId) {
+
+        List<Destination> destinations = getAvaliableDestinations(userId);
+        List<Destination> sameDestinations = new ArrayList<Destination>();
+
+        for (Destination dest : destinations) {
+
+            if (!dest.deleted) {
+
+                // Add if country, district and name are the same
+                if (dest.getName().equals(destination.getName()) &&
+                        dest.getDistrict().equals(destination.getDistrict()) &&
+                        dest.getCountry().equals(destination.getCountry()) &&
+                        !dest.deleted) {
+                    sameDestinations.add(dest);
+                }
+
+                // Add if longitude and latitude are the same
+                else if (dest.getLatitude().equals(destination.getLatitude()) && dest.getLongitude().equals(destination.getLongitude())) {
+                    sameDestinations.add(dest);
+                }
+            }
+        }
+
+        return sameDestinations;
+    }
+
 
 
     public void transferToAdmin(Long destinationId) {
