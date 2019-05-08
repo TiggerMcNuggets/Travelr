@@ -3,27 +3,30 @@
     <v-flex d-flex xs4 order-xs5>
       <v-layout column>
         <div @click="goToUserPhotos(user_id)">
-         <div >
-          <v-card d-flex class="photos-tile tile">
-            <v-img
-              src="https://images.pexels.com/photos/747964/pexels-photo-747964.jpeg?cs=srgb&dl=background-calm-clouds-747964.jpg&fm=jpg"
-              class="tile-image"
-            ></v-img>
-            <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Photos</h2>
-            <h2 v-else class="headline font-weight-light tile-heading">User Photos</h2>
-          </v-card>
-           </div>
+          <div>
+            <v-card d-flex class="photos-tile tile">
+              <v-img
+                src="https://images.pexels.com/photos/747964/pexels-photo-747964.jpeg?cs=srgb&dl=background-calm-clouds-747964.jpg&fm=jpg"
+                class="tile-image"
+              ></v-img>
+              <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Photos</h2>
+              <h2 v-else class="headline font-weight-light tile-heading">User Photos</h2>
+            </v-card>
+          </div>
         </div>
-        <div v-if="isMyProfile || $store.getters.getIsUserAdmin" @click="goToUserDesinations(user_id)">
-         <div>
-          <v-card d-flex class="destinations-tile tile">
-            <v-img
-              class="tile-image"
-              src="https://www.rd.com/wp-content/uploads/2017/11/this-is-the-one-destination-people-want-to-visit-before-they-die-hint-its-not-in-europe_458190886_maria-savenko-1024x683.jpg"
-            ></v-img>
-            <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Destinations</h2>
-            <h2 v-else class="headline font-weight-light tile-heading">User Destinations</h2>
-          </v-card>
+        <div
+          v-if="isMyProfile || $store.getters.getIsUserAdmin"
+          @click="goToUserDesinations(user_id)"
+        >
+          <div>
+            <v-card d-flex class="destinations-tile tile">
+              <v-img
+                class="tile-image"
+                src="https://www.rd.com/wp-content/uploads/2017/11/this-is-the-one-destination-people-want-to-visit-before-they-die-hint-its-not-in-europe_458190886_maria-savenko-1024x683.jpg"
+              ></v-img>
+              <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Destinations</h2>
+              <h2 v-else class="headline font-weight-light tile-heading">User Destinations</h2>
+            </v-card>
           </div>
         </div>
       </v-layout>
@@ -34,12 +37,11 @@
         <v-flex d-flex>
           <div @click="goToUserTrips(user_id)">
             <v-card d-flex class="trips-tile tile">
-        
               <v-img
                 src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1353&q=80"
                 class="tile-image"
               ></v-img>
-              
+
               <h2 v-if="isMyProfile" class="headline font-weight-light tile-heading">My Trips</h2>
               <h2 v-else class="headline font-weight-light tile-heading">User Trips</h2>
             </v-card>
@@ -51,7 +53,6 @@
 </template>
 
 <style>
-
 .trips-tile {
   margin-left: 20px;
 }
@@ -91,9 +92,7 @@
 
 
 <script>
-
 import { store } from "../../store/index";
-// import PersonalPhotos from "./PersonalPhotos2";
 
 export default {
   name: "ProfileDashboard",
@@ -108,33 +107,59 @@ export default {
     };
   },
   watch: {
-    '$route.params.id': function() {
+    "$route.params.id": function() {
       this.init();
     }
   },
   methods: {
+    /**
+     * Checks if the user signed in matches the profile being looked at.
+     */
     init() {
       this.checkIfProfileOwner();
     },
+
+    /**
+     * Redirects the user to the destinations page.
+     * @param id The id of the user
+     */
     goToUserDesinations(id) {
-        const endpoint = '/user/' + id + '/destinations'
-        this.$router.push(endpoint)
+      const endpoint = "/user/" + id + "/destinations";
+      this.$router.push(endpoint);
     },
+
+    /**
+     * Returns whether the signed in user is the looking at their own page.
+     */
     checkIfProfileOwner() {
       let id = this.$route.params.id;
       this.isMyProfile = store.getters.getUser.id == id;
     },
+
+    /**
+     * Redirects the user to the trips page.
+     * @param id The id of the user
+     */
     goToUserTrips(id) {
-        const endpoint = '/user/' + id + '/trips';
-        this.$router.push(endpoint)
+      const endpoint = "/user/" + id + "/trips";
+      this.$router.push(endpoint);
     },
+
+    /**
+     * Redirects the user to the photos page.
+     * @param id
+     */
     goToUserPhotos(id) {
-        const endpoint = '/user/' + id + '/photos';
-        this.$router.push(endpoint)
+      const endpoint = "/user/" + id + "/photos";
+      this.$router.push(endpoint);
     }
   },
+
+  /**
+   * Initialises the component on creation.
+   */
   created: function() {
     this.init();
-  },
+  }
 };
 </script>

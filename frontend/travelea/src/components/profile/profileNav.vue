@@ -19,7 +19,6 @@
       >
         <v-icon dark>edit</v-icon>
       </v-btn>
-
     </div>
 
     <div>
@@ -156,8 +155,8 @@ li {
 
 <script>
 import { store } from "../../store/index";
-import DefaultPic from "../../assets/defaultPic.png"
-import base_url from "../../repository/BaseUrl"
+import DefaultPic from "../../assets/defaultPic.png";
+import base_url from "../../repository/BaseUrl";
 
 export default {
   store,
@@ -183,33 +182,55 @@ export default {
       id: this.$route.params.id
     };
   },
+
+  /**
+   * Watches change of the the id param in the url to update data of the user on the sidebar accordingly.
+   */
   watch: {
-    '$route.params.id': function() {
+    "$route.params.id": function() {
       this.init();
     }
   },
+
+  /**
+   * Initialises the component on creation.
+   */
   created: function() {
-      this.init();
+    this.init();
   },
+
   methods: {
+    /**
+     * Initialises the applicaiton by getting the traveller and checking their authority for the page being displayed.
+     */
     init() {
       this.traveller = store.getters.getUser;
       this.checkIfProfileOwner();
       this.isAdminUser = store.getters.getIsUserAdmin;
     },
+
+    /**
+     * Checks if the user is viewing their own page.
+     */
     checkIfProfileOwner() {
       this.id = this.$route.params.id;
-      this.isMyProfile = (store.getters.getUser.id == this.id);
+      this.isMyProfile = store.getters.getUser.id == this.id;
     },
-    goToEdit() {
-      this.$router.push("/user/"+this.id+"/edit")
-    }
 
+    /**
+     * Redirects the user to the profile edit page.
+     */
+    goToEdit() {
+      this.$router.push("/user/" + this.id + "/edit");
+    }
   },
   computed: {
-    
+    /**
+     * Gets the src of the profile picture
+     * @returns {string} The src of the profile picture.
+     */
     getImgUrl() {
-      if (!this.profilePic || this.profilePic == 'defaultPic.png') {
+      if (!this.profilePic || this.profilePic == "defaultPic.png") {
         return DefaultPic;
       } else {
         return base_url + "/api/travellers/profile-photo/" + this.id;

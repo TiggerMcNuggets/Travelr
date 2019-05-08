@@ -77,21 +77,20 @@
                 </div>
                 <div>
                   <v-btn
-                          v-if="(isMyProfile || isAdminUser) && !item.isPublic"
-                          icon
-                          @click="deleteDestination(item.id)">
+                    v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                    icon
+                    @click="deleteDestination(item.id)"
+                  >
                     <v-icon color="red lighten-1">delete</v-icon>
                   </v-btn>
                   <v-btn
-                          v-if="(isMyProfile || isAdminUser) && !item.isPublic"
-                          icon
-                          @click="editDestination(item.id)">
+                    v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                    icon
+                    @click="editDestination(item.id)"
+                  >
                     <v-icon color="orange lighten-1">edit</v-icon>
                   </v-btn>
-                  <v-btn
-                          v-if="!item.isPublic"
-                          icon
-                          @click="makePublic(item.id)">
+                  <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
                     <v-icon color="blue lighten-1">lock</v-icon>
                   </v-btn>
                   <v-btn
@@ -220,12 +219,14 @@ ul {
 import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
+
 import MapDashboard from "../map/MapDashboard";
 import DestinationCreate from "./DestinationCreate";
 
 export default {
   store,
   // local variables
+
   data() {
     return {
       dialog: false,
@@ -240,6 +241,7 @@ export default {
       searchActive: false
     };
   },
+
   // child components
   components: {
     MapDashboard,
@@ -267,31 +269,67 @@ export default {
   },
 
   methods: {
+    /**
+     * Initialises the application and checks if the user is displaying thier destinations or viewing someone elses.
+     * Gets the destination list information to display.
+     */
+
     init() {
       this.checkIfProfileOwner();
       this.getDestinationList();
     },
+
+    /**
+     * Redirects the user to the destinations edit page.
+     * @param id The id of the destination to redirect to.
+     */
     editDestination(id) {
       this.$router.push("/user/" + this.user_id + "/destinations/edit/" + id);
     },
+
+    /**
+     * Redirects the user to the single destination page based on a given id
+     * @param id The id of the single destination which was clicked.
+     */
     viewDestination(id) {
       this.$router.push("/user/" + this.user_id + "/destinations/" + id);
     },
+
+    /**
+     * Toggles the dialog to create a new destination.
+     */
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
     },
+
+    /**
+     * Toggles the search bar to search the destinations by name.
+     */
     toggleShowSearch: function() {
       this.searchActive = !this.searchActive;
     },
+
+    /**
+     * Deletes the destination from the database.
+     * @param destId The id of the destination to delete.
+     */
     deleteDestination: function(destId) {
       destinationRepository.deleteDestination(this.user_id, destId).then(() => {
-          this.init();
+        this.init();
       });
     },
+
+    /**
+     * Refreshes the destination list
+     */
     updateDestinationList: function() {
       this.getDestinationList();
       this.dialog = false;
     },
+
+    /**
+     * Sets the list of destinations by request to the API
+     */
     getDestinationList: function() {
       destinationRepository
         .getDestinations(this.user_id)
@@ -302,6 +340,11 @@ export default {
           console.log(err);
         });
     },
+
+    /**
+     * Makes a destination public and checks for error.
+     * @param destId The destination id to make public
+     */
     makePublic: function(destId) {
       destinationRepository
         .makePublic(destId)
@@ -313,15 +356,28 @@ export default {
           console.log(err);
         });
     },
+
+    /**
+     * Checks if the id of the page being viewed belongs to the signed in user.
+     */
     checkIfProfileOwner() {
       let id = this.$route.params.id;
       this.user_id = id;
       this.isMyProfile = store.getters.getUser.id;
     },
+
+    /**
+     * Logs the event to the window.
+     * @param evt The event to log
+     */
     log: function(evt) {
       window.console.log(evt);
     }
   },
+
+  /**
+   * Initialises the function on component creation.
+   */
   created: function() {
     this.init();
   }

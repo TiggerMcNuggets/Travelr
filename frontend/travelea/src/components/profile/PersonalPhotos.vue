@@ -3,7 +3,7 @@
 <template>
   <div class="outer-container">
     <div class="inner-container">
-       <div class="section">
+      <div class="section">
         <div class="dest-name">
           <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
             <v-icon dark>keyboard_arrow_left</v-icon>
@@ -17,7 +17,7 @@
             small
             dark
             color="indigo"
-             @click="toggleShowUploadPhoto"
+            @click="toggleShowUploadPhoto"
             v-if="isMyProfile || isAdminUser"
           >
             <v-icon dark>add</v-icon>
@@ -79,20 +79,15 @@
 
           <v-card-actions>
             <!-- <v-spacer></v-spacer> -->
-             <div v-if="isAdminUser || isMyProfile" class='photo-popup-options'>
-               <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-          
-                
-       
-              <v-btn  @click="updatePhotoVisability">Apply changes</v-btn>
-              <v-btn   @click="setProfilePhoto">Set Profile Photo</v-btn>
-              
-             
+            <div v-if="isAdminUser || isMyProfile" class="photo-popup-options">
+              <v-switch v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+
+              <v-btn @click="updatePhotoVisability">Apply changes</v-btn>
+              <v-btn @click="setProfilePhoto">Set Profile Photo</v-btn>
             </div>
-                 
           </v-card-actions>
           <v-card-actions>
-           <v-btn color="red" @click="dialog = false">Close</v-btn>
+            <v-btn color="red" @click="dialog = false">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -103,10 +98,6 @@
 
 <style>
 @import "../../assets/css/style.css";
-
-.photo-popup-button {
-  margin-top: 20px;
-}
 </style>
 
 
@@ -143,23 +134,31 @@ export default {
   },
 
   methods: {
-    // Sets the file property the the file being uploaded.
+    /**
+     * Sets the file property the the file being uploaded.
+     */
     handleFileUpload() {
       this.file = this.$refs.file.files[0];
     },
 
-    // Toggles the upload section for the photos
+    /**
+     * Toggles the upload section for the photos
+     */
     toggleShowUploadPhoto: function() {
       this.showUploadSection = !this.showUploadSection;
     },
 
-    // Updates whether the photo is public or private depending on the swich state.
+    /**
+     * Updates whether the photo is public or private depending on the switch state.
+     */
     updatePhotoVisability() {
       this.clickedImage.is_public = this.publicPhotoSwitch;
       updatePersonalPhoto(this.clickedImage);
     },
 
-    //sets the user's profile photo as the selected
+    /**
+     * Sets the user's profile photo as the selected
+     */
     setProfilePhoto() {
       setProfilePic(this.id, {
         photo_filename: this.clickedImage.photo_filename
@@ -168,7 +167,9 @@ export default {
       });
     },
 
-    // Submits the image file and uploads it to the server
+    /**
+     * Submits the image file and uploads it to the server
+     */
     submitFile() {
       this.uploadError = false;
       this.uploadSuccessful = false;
@@ -190,12 +191,20 @@ export default {
       this.$refs.file.value = "";
     },
 
-    // Gets the image from the server
+    //
+    /**
+     * Gets the image for the server
+     * @param item The photo item
+     * @returns {string} The url to get that image.
+     */
     getImgUrl(item) {
       return base_url + "/api/travellers/photo/" + item.photo_filename;
     },
 
-    // Gets the local image file path
+    /**
+     * Sets the width of the dialog based on image width.
+     * @param selectedImage
+     */
     setDialogueContent(selectedImage = "") {
       this.dialog = true;
       this.clickedImage = selectedImage;
@@ -207,7 +216,11 @@ export default {
       this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
     },
 
-    // Groups the images into rows
+    /**
+     * Groups the images into rows with four columns.
+     * @param imageList The list of image data from the server.
+     * @returns {Array} A list of rows each with four images.
+     */
     groupImages(imageList) {
       let newImageList = [];
       let row = [];
@@ -226,6 +239,9 @@ export default {
     }
   },
 
+  /**
+   * Initialises user id and image data on component creation.
+   */
   created: function() {
     this.id = this.$route.params.id;
 

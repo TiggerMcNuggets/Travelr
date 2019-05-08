@@ -50,17 +50,17 @@
 <script>
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import SignupFields from "../signup/SignupFields";
-
-// import signup from "../signup/signup.js";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
-
 import { store } from "../../store/index";
 
 export default {
   name: "AdminCreateProfile",
+
   components: { TravellerForm, SignupFields },
+
   store,
+
   data() {
     return {
       checkbox: true,
@@ -75,27 +75,45 @@ export default {
       confirmPassword: ""
     };
   },
+
   methods: {
+    /**
+     * Sets the nationalities and the passports lists, formatted date of birth, and whether the admin checkbox should be
+     * ticked or not to the current state.
+     */
     setTraveller() {
+      // Sets the nationalities and passport lists.
       this.traveller.nationalities = travellerFormHelper.convertToNationalitiesReq(
         this.nationalities,
         this.passports
       );
+
+      // Sets the formatted date of birth of the traveller.
       this.traveller.dateOfBirth = dateTime.convertStringToTimestamp(
         this.dateOfBirth
       );
+
+      // Sets the admin text box to selected.
       if (this.checkbox) {
         this.traveller.accountType = 1;
       }
     },
 
+    /**
+     * Allows the user to sign up as an admin
+     * @returns {Promise<boolean>} Whether the sign up is successful or not.
+     */
     async signup() {
       let response;
+
+      // Tries to sign up the user as admin
       try {
         response = await store.dispatch("signupOtherUser", this.traveller);
       } catch (e) {
         console.log(e);
       }
+
+      // Checks if email is taken or not
       if (!response) {
         this.emailAlert = true;
         setTimeout(() => {
@@ -105,6 +123,8 @@ export default {
       }
       return true;
     },
+
+    //
     async handleSignup() {
       if (this.$refs.form.validate()) {
         this.setTraveller();

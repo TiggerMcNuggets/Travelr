@@ -63,10 +63,6 @@
   align-self: flex-start !important;
 }
 
-.photo-header-divider {
-  margin-top: 16px;
-}
-
 .select-image-container {
   width: 24%;
   height: 170px;
@@ -106,11 +102,6 @@ hr {
   margin-bottom: 25px;
 }
 
-.section {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
 </style>
 
 
@@ -132,20 +123,32 @@ export default {
     };
   },
 
+  // props methods being passed in from parent.
   props: ["closeDialogue", "setDestinationImages"],
 
   methods: {
-    //sets the user's profile photo as the selected
+    /**
+     * Sets the user's profile photo as the selected
+     */
     processSelected() {
       this.setDestinationImages(this.selectedImages);
     },
 
-    // Gets the image from the server
+    /**
+     * Gets the image url for the server to get the image.
+     * @param item The photo item
+     * @returns {string}
+     */
     getImgUrl(item) {
       return base_url + "/api/travellers/photo/" + item.photo_filename;
     },
 
-    // Checks if the photo is selected that is it is present in the selected images list.
+    //
+    /**
+     * Checks if the photo is selected that is it is present in the selected images list.
+     * @param selectedImage The image that is been clicked to check
+     * @returns {boolean} Whether the image is selected or not.
+     */
     imageIsSelected(selectedImage) {
       for (let i = 0; i <= this.selectedImages.length; i++) {
         if (selectedImage === this.selectedImages[i]) {
@@ -155,7 +158,10 @@ export default {
       return false;
     },
 
-    // Unselects the image and removes from the list of selected images.
+    /**
+     * Deselects the image and removes from the list of selected images.
+     * @param selectedImage The image to remove from the selected images.
+     */
     unselectImage(selectedImage) {
       for (let i = 0; i <= this.selectedImages.length; i++) {
         if (selectedImage === this.selectedImages[i]) {
@@ -164,14 +170,22 @@ export default {
       }
     },
 
-    // Toggles if the image is selected or not adding or removing from selected list.
+
+    /**
+     * Toggles if the image is selected and adding or removing from selected list.
+     * @param selectedImage The image which was clicked.
+     */
     selectImage(selectedImage) {
       this.imageIsSelected(selectedImage)
         ? this.unselectImage(selectedImage)
         : this.selectedImages.push(selectedImage);
     },
 
-    // Groups the images into rows
+    /**
+     * Groups the images into rows with four columns.
+     * @param imageList The list of image data from the server.
+     * @returns {Array} A list of rows each with four images.
+     */
     groupImages(imageList) {
       let newImageList = [];
       let row = [];
@@ -190,7 +204,9 @@ export default {
     }
   },
 
-  // Initialises the component with the image data.
+  /**
+   * Initialises the component with the image data.
+   */
   created: function() {
     this.id = this.$route.params.id;
 
