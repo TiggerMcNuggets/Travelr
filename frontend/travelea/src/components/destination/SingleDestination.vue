@@ -399,11 +399,13 @@ export default {
     this.isMyProfile = store.getters.getUser.id == this.id;
     this.isAdminUser = store.getters.getIsUserAdmin;
 
+    // Gets all the images to display on the page.
     getImages(this.id, this.dest_id).then(result => {
       console.log(result.data);
       this.files = this.groupImages(result.data);
     });
 
+    // Gets the information relating to selected destination.
     destinationRepository
       .getDestination(this.id, this.dest_id)
       .then(response => {

@@ -11,7 +11,7 @@
 
 
 <script>
-import PersonalPhotos from "./PersonalPhotos2";
+import PersonalPhotos from "./PersonalPhotos";
 import { store } from "../../store/index";
 
 export default {
@@ -26,8 +26,6 @@ export default {
   components: {
     PersonalPhotos
   },
-
-
 
   methods: {}
   
