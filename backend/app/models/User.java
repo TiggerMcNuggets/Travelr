@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ public class User extends BaseModel {
 
     @JsonIgnore
     @NotNull
-    public int timestamp;
+    public Long timestamp;
 
     @JsonIgnore
     @Column(columnDefinition = "integer default 0")
@@ -149,11 +150,11 @@ public class User extends BaseModel {
         this.userProfilePhoto = userProfilePhoto;
     }
 
-    public int getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -246,6 +247,8 @@ public class User extends BaseModel {
         this.gender = request.gender;
         this.dateOfBirth = request.dateOfBirth;
         this.accountType = request.accountType;
+        Date date = new Date();
+        this.timestamp = date.getTime() / 1000;
     }
 
     public User(String first, String last, String email, int dob) {
@@ -255,6 +258,8 @@ public class User extends BaseModel {
         this.userProfilePhoto = "defaultPic.png";
         this.dateOfBirth = dob;
         this.gender = "Male";
+        Date date = new Date();
+        this.timestamp = date.getTime() / 1000;
     }
 
 }
