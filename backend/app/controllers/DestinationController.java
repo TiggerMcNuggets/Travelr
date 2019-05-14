@@ -16,6 +16,7 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Results;
 import repository.DestinationRepository;
 
 import javax.inject.Inject;
@@ -193,6 +194,10 @@ public class DestinationController extends Controller {
             // Not Found Check
             if (destination == null) {
                 return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+            }
+
+            if(destination.isPublic && !request.attrs().get(Attrs.IS_USER_ADMIN) && !(destination.getUser().getId() == userId)) {
+                return CompletableFuture.completedFuture(Results.forbidden("Permission denied: Trying to edit a public destination and not admin"));
             }
 
             return destinationRepository.update(req, destId, userId).thenApplyAsync(destinationId -> {
