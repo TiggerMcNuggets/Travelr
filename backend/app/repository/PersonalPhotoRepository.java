@@ -29,7 +29,7 @@ public class PersonalPhotoRepository {
         return supplyAsync(() -> {
             User traveller = User.find.findById(id);
             if (traveller == null) return null; // bad user
-            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("traveller_id", id);
+            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("user_id", id);
             List<PersonalPhoto> photoList = query.findList();
 
             for (PersonalPhoto personalPhoto: photoList) {
@@ -47,14 +47,16 @@ public class PersonalPhotoRepository {
     /**
      * Returns all photos assoociated with a user.
      * @param id user id The user id
+     * @param privatePhotos  if true will not return the public photos that are available to the user
      * @return CompletionStage<List<PersonalPhoto>> The list of personal photos associated with the user.
      */
     public CompletionStage<List<PersonalPhoto>> list(Long id, Boolean privatePhotos) {
         return supplyAsync(() -> {
-            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("traveller_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
+            ExpressionList<PersonalPhoto> query = PersonalPhoto.find.query().where().eq("user_id", id).or(Expr.eq("is_public", true), Expr.eq("is_public", !privatePhotos));
             return query.findList();
         }, executionContext);
     }
+
 
     /**
      * Updates a photo that belongs to a user

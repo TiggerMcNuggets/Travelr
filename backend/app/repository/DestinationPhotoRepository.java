@@ -27,7 +27,7 @@ public class DestinationPhotoRepository {
      */
     public CompletionStage<List<DestinationPhoto>> list(Long id, Boolean privatePhotos, Long dest_id) {
         return supplyAsync(() -> {
-            ExpressionList<DestinationPhoto> query = DestinationPhoto.find.query().where().and().or().eq("traveller_id", id).eq("is_public", true).endOr().eq("destination_id", dest_id).endAnd();
+            ExpressionList<DestinationPhoto> query = DestinationPhoto.find.query().where().and().or().eq("user_id", id).eq("is_public", true).endOr().eq("destination_id", dest_id).endAnd();
             return query.findList();
         }, executionContext);
     }
@@ -41,7 +41,7 @@ public class DestinationPhotoRepository {
             User traveller = User.find.findById(id);
             Destination destination = Destination.find.findById(dest_id);
             if (traveller == null) return null; // bad user
-            ExpressionList<DestinationPhoto> query = DestinationPhoto.find.query().where().eq("destination_id", dest_id).and().eq("traveller_id", id);
+            ExpressionList<DestinationPhoto> query = DestinationPhoto.find.query().where().eq("destination_id", dest_id).and().eq("user_id", id);
             List<DestinationPhoto> photoList = query.findList();
 
             for (DestinationPhoto destinationPhoto: photoList) {

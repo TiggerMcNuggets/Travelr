@@ -17,7 +17,7 @@ public class DestinationPhoto extends BaseModel {
     public static final DestinationPhotoFinder find = new DestinationPhotoFinder();
 
     @ManyToOne
-    public User traveller;
+    public User user;
 
     @ManyToOne
     public Destination destination;
@@ -42,25 +42,25 @@ public class DestinationPhoto extends BaseModel {
      * @param photo_filename The local file path where the image is stored.
      */
     public DestinationPhoto(User traveller, String photo_filename, Destination destination) {
-        this.traveller = traveller;
+        this.user = traveller;
         this.photo_filename = photo_filename;
         this.destination = destination;
     }
 
     /**
-     * Gets the traveller which the photo is associated with.
-     * @return The traveller instance.
+     * Gets the user which the photo is associated with.
+     * @return The user instance.
      */
-    public User getTraveller() {
-        return traveller;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the traveller which the photo is associated with.
-     * @param traveller The traveller instance.
+     * Sets the user which the photo is associated with.
+     * @param user The user instance.
      */
-    public void setTraveller(User traveller) {
-        this.traveller = traveller;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
