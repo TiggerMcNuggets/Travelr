@@ -37,7 +37,7 @@ public class PersonalPhoto extends BaseModel {
 
     /**
      * The PersonalPhoto constructor.
-     *
+     * @param user The user to be linked to the photo
      * @param photo_filename The local file path where the image is stored.
      */
     public PersonalPhoto(User user, String photo_filename) {
