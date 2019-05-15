@@ -78,6 +78,12 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Trip> trips;
 
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
+    public List<PersonalPhoto> personalPhotos;
+
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
+    public List<DestinationPhoto> destinationPhotos;
+
 
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
