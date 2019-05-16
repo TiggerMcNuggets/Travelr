@@ -1,18 +1,21 @@
 <template>
   <div class="map-container">
-    <!--// this will be useful next sprint, the code works but the API key does not support this at the moment-->
-    <!--<h1>Autocomplete Example (#164)</h1>-->
-    <!--<label>-->
-    <!--AutoComplete-->
-    <!--<GmapAutocomplete-->
-    <!--placeholder="This is a placeholder text"-->
-    <!--@place_changed="setPlace">-->
-    <!--</GmapAutocomplete>-->
-    <!--<button @click="usePlace">Add</button>-->
-    <!--</label>-->
-    <!--<br/>-->
 
-    <GmapMap class="main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map">
+    <!-- this will be useful next sprint, the code works but the API key does not support this at the moment-->
+    <div class="overlayed">
+      <v-label>
+        <GmapAutocomplete
+                placeholder="Search"
+                @place_changed="setPlace"
+                class="v-text-field search-box"
+        ></GmapAutocomplete>
+        <btn class="search-btn" @click="usePlace">
+          <i aria-hidden="true" class="v-icon material-icons">search</i>
+        </btn>
+      </v-label>
+    </div>
+
+    <GmapMap class="main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map" :options="{mapTypeControl: false}">
       <GmapMarker
         v-for="(marker, index) in destinationsMarkers"
         :key="index"
@@ -23,7 +26,7 @@
       />
       <GmapInfoWindow
         :options="{maxWidth: 300}"
-        :position="infoWindow.position"
+        relative:position="infoWindow.position"
         :opened="infoWindow.open"
         @closeclick="closeInfoWindow()"
       >
@@ -45,19 +48,40 @@
 </template>
 
 <style>
-.map-container {
-  width: 100%;
-  height: 800px;
-}
-.main-map {
-  width: 100%;
-  height: 100%;
-}
+  .search-box {
+    margin-left: 15px;
+    margin-top: 15px;
+    padding: 12px;
+    padding-right: 40px;
+    background-color: whitesmoke;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    width: 300px;
+  }
+  .search-btn {
+    margin-left: -32px;
+    padding: 0;
+  }
+  .overlayed {
+    position: absolute;
+    z-index: 2;
+  }
+  .map-container {
+    width: 100%;
+    height: 780px;
+  }
+  .main-map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
 </style>
 
 <script>
 const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
 const blueMarker = require("../../assets/blue-google-maps-marker.svg");
+const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
+
 export default {
   data() {
     return {
@@ -73,14 +97,14 @@ export default {
     };
   },
   props: {
-    destinationsMarkers: Array
+    destinationsMarkers: Array,
   },
   watch: {},
   components: {},
   methods: {
     /**
      * Opens up the small information window for the particular map icon which is clicked on.
-     * @param item The destination item being clicked on.
+     * @param item The destination item being cldestinationsMarkersicked on.
      */
     openInfoWindowTemplate(item) {
       this.infoWindow.position = { lat: item.latitude, lng: item.longitude };
@@ -117,31 +141,35 @@ export default {
      * @param marker
      */
     chooseIconForMarker(marker) {
-      if (marker.isPublic) {
+      if (marker.isPublic == true) {
         return blueMarker;
-      } else {
+      } else if (marker.isPublic == false) {
         return pinkMarker;
+      } else {
+        return purpleMarker;
+      }
+    },
+
+    setPlace(place) {
+      this.place = place;
+    },
+
+    usePlace() {
+      if (this.place) {
+        this.destinationsMarkers.push({
+          latitude: this.place.geometry.location.lat(),
+          longitude: this.place.geometry.location.lng()
+        });
+
+        // pan and zoom to marker
+        this.$refs.map.$mapObject.panTo({
+          lat: this.place.geometry.location.lat(),
+          lng: this.place.geometry.location.lng()
+        });
+
+        this.$refs.map.$mapObject.setZoom(11);
       }
     }
-
-    // this code will be needed for next sprint
-
-    // setPlace(place) {
-    //     this.place = place
-    // },
-    // usePlace() {
-    //     if (this.place) {
-    //         this.markers.push({
-    //             position: {
-    //                 lat: this.place.geometry.location.lat(),
-    //                 lng: this.place.geometry.location.lng(),
-    //             }
-    //         });
-    //         this.place = null;
-    //     }
-    // }
-
-    //
   },
   created() {}
 };
