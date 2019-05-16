@@ -25,7 +25,7 @@ public class DestinationPhotoRepository {
      * @param id destination id The destination id
      * @return CompletionStage<List<DestinationPhoto>> The list of personal photos associated with the user.
      */
-    public CompletionStage<List<DestinationPhoto>> list(Long id, Boolean privatePhotos, Long dest_id) {
+    public CompletionStage<List<DestinationPhoto>>  list(Long id, Boolean privatePhotos, Long dest_id) {
         return supplyAsync(() -> {
             ExpressionList<DestinationPhoto> query = DestinationPhoto.find.query().where().and().or().eq("user_id", id).eq("is_public", true).endOr().eq("destination_id", dest_id).endAnd();
             return query.findList();

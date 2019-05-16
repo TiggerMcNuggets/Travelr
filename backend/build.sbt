@@ -47,11 +47,9 @@ scalacOptions in (Compile, doc) += "-no-java-comments"
 
 // Set Java version to 1.8
 scalacOptions += "-target:jvm-1.8"
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
 // Set config for testing
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
 // Maintainer
 maintainer := "frd15@uclive.ac.nz"
-
