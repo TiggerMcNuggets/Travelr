@@ -39,7 +39,7 @@
               small
               dark
               color="indigo"
-              v-if="((isMyProfile  && !destination.isPublic) || isAdminUser)"
+              v-if="((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id))"
               @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
