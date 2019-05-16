@@ -2,11 +2,14 @@ package finders;
 
 import io.ebean.Finder;
 import models.Destination;
+import models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DestinationFinder extends Finder<Long, Destination> {
+
+    UserFinder userFinder = new UserFinder();
 
 
     public DestinationFinder() {
@@ -138,7 +141,9 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
         Destination destination = findById(destinationId);
 
-        destination.setUser(null);
+        // Changes the owner to the global admin
+        User globalAdminUser = userFinder.findById(Long.valueOf(1));
+        destination.setUser(globalAdminUser);
 
         destination.update();
 
