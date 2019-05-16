@@ -1,5 +1,6 @@
 package finders;
 
+import controllers.constants.AdminConstants;
 import io.ebean.Finder;
 import models.Destination;
 import models.User;
@@ -142,7 +143,7 @@ public class DestinationFinder extends Finder<Long, Destination> {
         Destination destination = findById(destinationId);
 
         // Changes the owner to the global admin
-        User globalAdminUser = userFinder.findById(Long.valueOf(1));
+        User globalAdminUser = userFinder.findById(AdminConstants.ADMIN_ID);
         destination.setUser(globalAdminUser);
 
         destination.update();
