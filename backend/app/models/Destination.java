@@ -5,10 +5,10 @@ import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import finders.DestinationFinder;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Destination entity managed by Ebean
@@ -47,6 +47,9 @@ public class Destination extends BaseModel {
     @JsonIgnore
     public User user;
 
+    @ManyToMany(cascade= CascadeType.ALL)
+    public List<TravellerType> travellerTypes;
+
     @NotNull
     public boolean isPublic;
 
@@ -65,6 +68,7 @@ public class Destination extends BaseModel {
         this.country = request.country;
         this.user = user;
         this.isPublic = request.isPublic;
+        this.travellerTypes = retrieveTravellerTypes(request.travellerTypes);
         this.deleted = false;
     }
 
@@ -133,6 +137,14 @@ public class Destination extends BaseModel {
         this.country = country;
     }
 
+    public List<TravellerType> getTravellerTypes() {
+        return travellerTypes;
+    }
+
+    public void setTravellerTypes(List<TravellerType> travellerTypes) {
+        this.travellerTypes = travellerTypes;
+    }
+
     public models.User getUser() {
         return user;
     }
@@ -147,6 +159,22 @@ public class Destination extends BaseModel {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * attaches numbers to actual traveller types from list when creating traveller
+     * types for new destination
+     * @param requestTravellerTypes list of numbers that reference traveller types from request
+     * @return list of actual traveller types for destination
+     */
+    public ArrayList<TravellerType> retrieveTravellerTypes(List<Integer> requestTravellerTypes) {
+        ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
+        if (requestTravellerTypes.size() > 0) {
+            for (long i : requestTravellerTypes) {
+                travellerTypes.add(TravellerType.find.byId(i));
+            }
+        }
+        return travellerTypes;
     }
 }
 
