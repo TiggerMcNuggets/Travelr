@@ -200,7 +200,9 @@ public class DestinationController extends Controller {
                 return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
             }
 
-            if(destination.isPublic && !request.attrs().get(Attrs.IS_USER_ADMIN) && !(destination.getUser().getId() == userId)) {
+            Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+            Boolean isDestinationOwner = (destination.getUser().getId() == userId)
+            if(destination.isPublic && !isAdmin && !isDestinationOwner) {
                 return CompletableFuture.completedFuture(Results.forbidden("Permission denied: Trying to edit a public destination and not admin"));
             }
 
