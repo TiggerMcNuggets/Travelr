@@ -101,6 +101,7 @@
           <div class="buttons-div">
             <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
             <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
+            <v-btn @click="undo" :disabled="_canUndo()">UNDO</v-btn>
           </div>
         </div>
         <v-alert :value="isError" type="error">This destination is already available to you</v-alert>
@@ -132,8 +133,10 @@
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
 import { rules } from "../form_rules";
+import RollbackMixin from "../mixins/RollbackMixin.vue";
 
 export default {
+  mixins: [RollbackMixin],
   data() {
     return {
       destination: {},
@@ -142,27 +145,60 @@ export default {
     };
   },
   methods: {
+
+    setDestination: function() {
+      destinationRepository
+        .getDestination(this.$route.params.id, this.$route.params.dest_id)
+        .then(result => {
+          this.destination = result.data;
+          this._setPreviousBody(result.data);
+        });
+    },
+
     /**
      * Updates a destination by through a request to the API based on the updated data in the form.
      * This function will first check if the data is valid and only submit successfully if it is.
      */
     updateDestination: function() {
       if (this.$refs.form.validate()) {
+        const userId = this.$route.params.id;
+        const destId = this.$route.params.dest_id;
         destinationRepository
           .updateDestination(
-            this.$route.params.id,
-            this.$route.params.dest_id,
+            userId, 
+            destId,
             this.destination
           )
           .then(() => {
-            this.$refs.form.reset();
+            const url = `/users/${userId}/destinations/${destId}`;   
+            console.log(this._previousBody);         
+            this._rollbackManager.checkpoint(
+              'PUT',
+              {
+                url: url,
+                body: this.destination
+              },
+              {
+                url: url,
+                body: this._previousBody
+              }
+            );
+            
+            this._setPreviousBody(this.destination);
+            // this.$refs.form.reset();
             this.isError = false;
-            this.routeBackToPrevPage();
+            // this.routeBackToPrevPage();
           })
-          .catch(() => {
+          .catch((e) => {
+            console.error(e);
             this.isError = true;
           });
       }
+    },
+
+    undo: function() {
+      const actions = [this.setDestination];
+      this._undo(actions); 
     },
 
     /**
@@ -177,11 +213,7 @@ export default {
    * Gets the current destination data to display in the form to update on component creation.
    */
   created: function() {
-    destinationRepository
-      .getDestination(this.$route.params.id, this.$route.params.dest_id)
-      .then(result => {
-        this.destination = result.data;
-      });
+    this.setDestination();
   }
 };
 </script>
