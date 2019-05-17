@@ -125,6 +125,7 @@ public class DestinationRepository {
 
     /**
      * Merges destinations by converting all same destinations in trips to the new destination
+     * Merges images from all destinations in sameDestinations into destination
      * @param sameDestinations The list of same destinations
      */
     private void mergeDestinations(Destination destination, List<Destination> sameDestinations) {
