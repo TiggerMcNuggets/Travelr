@@ -142,11 +142,8 @@ public class DestinationRepository {
         }
 
         for (DestinationPhoto destinationPhoto : destinationPhotos) {
-            //System.out.println(destinationPhoto.getDestination().getName());
             destinationPhoto.setDestination(destination);
-            //System.out.println(destinationPhoto.getPhoto_filename());
-            //System.out.println(destinationPhoto.getDestination().getName());
-
+            destinationPhoto.save();
         }
 
     }
