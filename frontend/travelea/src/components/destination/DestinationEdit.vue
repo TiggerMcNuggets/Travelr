@@ -134,6 +134,7 @@
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
 import { rules } from "../form_rules";
+import { store } from "../../store/index";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 
 export default {
@@ -142,6 +143,8 @@ export default {
     return {
       destination: {},
       isError: false,
+      isMyProfile: false,
+      isAdminUser: false,
       ...rules
     };
   },
@@ -153,6 +156,9 @@ export default {
         .then(result => {
           this.destination = result.data;
           this.mSetPreviousBody(result.data);
+
+          this.isMyProfile = store.getters.getUser.id === this.$route.params.id;
+          this.isAdminUser = store.getters.getIsUserAdmin;
         });
     },
 
