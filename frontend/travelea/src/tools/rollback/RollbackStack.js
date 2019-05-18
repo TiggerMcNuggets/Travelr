@@ -8,7 +8,7 @@ export default class RollbackStack {
     constructor() {
         this.stack = [];
         this.pointer = -1;
-    };
+    }
 
     /**
      * Resets the stack so there are no actions to undo or redo
@@ -16,7 +16,7 @@ export default class RollbackStack {
     flush = () => {
         this.stack = [];
         this.pointer = -1;
-    } 
+    };
 
     /**
      * Returns a reaction to undo original action
@@ -28,18 +28,17 @@ export default class RollbackStack {
         this.pointer -= 1;
         return reaction;
 
-    }
+    };
 
     /**
      * Returns an action to redo original action
-     * @return {Funciton} a function that redoes original action
+     * @return {Function} a function that redoes original action
      */
     redo = () => {
         if (!this.canRedo()) return;
         this.pointer += 1;
-        const action = this.stack[this.pointer].action;
-        return action
-    }
+        return this.stack[this.pointer].action
+    };
 
     /**
      * Checks if stack can be undone
@@ -48,16 +47,16 @@ export default class RollbackStack {
     canUndo = () => {
         if (this.pointer === -1) return false;
         return true;
-    }
+    };
 
     /**
      * Checks if stack can be redone
      * @return {boolean} true if the stack can be redone, false if not
      */
     canRedo = () => {
-        if (this.pointer + 1 === this.stack.length) return false;
-        return true;
-    }
+        return this.pointer + 1 !== this.stack.length;
+
+    };
 
     /**
      * Adds an item to the stack
@@ -68,5 +67,5 @@ export default class RollbackStack {
         this.pointer += 1;
         this.stack = this.stack.slice(0, this.pointer);
         this.stack.push(item);
-    }
+    };
 }
