@@ -101,7 +101,8 @@
           <div class="buttons-div">
             <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
             <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
-            <v-btn @click="undo" :disabled="_canUndo()">UNDO</v-btn>
+            <v-btn @click="undo" :disabled="!mCanUndo()">UNDO</v-btn>
+            <v-btn @click="redo" :disabled="!mCanRedo()">REDO</v-btn>
           </div>
         </div>
         <v-alert :value="isError" type="error">This destination is already available to you</v-alert>
@@ -151,7 +152,7 @@ export default {
         .getDestination(this.$route.params.id, this.$route.params.dest_id)
         .then(result => {
           this.destination = result.data;
-          this._setPreviousBody(result.data);
+          this.mSetPreviousBody(result.data);
         });
     },
 
@@ -170,9 +171,8 @@ export default {
             this.destination
           )
           .then(() => {
-            const url = `/users/${userId}/destinations/${destId}`;   
-            console.log(this._previousBody);         
-            this._rollbackManager.checkpoint(
+            const url = `/users/${userId}/destinations/${destId}`;  
+            this.mCheckpoint(
               'PUT',
               {
                 url: url,
@@ -180,14 +180,11 @@ export default {
               },
               {
                 url: url,
-                body: this._previousBody
+                body: this.mPreviousBody
               }
             );
-            
-            this._setPreviousBody(this.destination);
-            // this.$refs.form.reset();
+            this.mSetPreviousBody(this.destination);
             this.isError = false;
-            // this.routeBackToPrevPage();
           })
           .catch((e) => {
             console.error(e);
@@ -198,7 +195,12 @@ export default {
 
     undo: function() {
       const actions = [this.setDestination];
-      this._undo(actions); 
+      this.mUndo(actions); 
+    },
+
+    redo: function() {
+      const actions = [this.setDestination];
+      this.mRedo(actions);
     },
 
     /**

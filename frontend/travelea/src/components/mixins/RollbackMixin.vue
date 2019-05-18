@@ -6,34 +6,50 @@ import { Types } from "../../tools/rollback/RollbackManager";
 export default {
     data() {
         return {
-            _rollbackManager: undefined,
-            _previousBody: {}
+            mRollbackManager: undefined,
+            mPreviousBody: {},
         }
     },
     created() {
-        this._rollbackManager = new RollbackManager();
+        this.mRollbackManager = new RollbackManager();
         console.log("rollback mixin started");
     },
     methods: {
-        _setPreviousBody: function(previousBody) {
-            this._previousBody = {...previousBody};
+        mCheckpoint: function(type, actionBody, reactionBody) {
+            this.mRollbackManager.checkpoint(type, actionBody, reactionBody);
+        },
+
+        mSetPreviousBody: function(previousBody) {
+            this.mPreviousBody = {...previousBody};
         }, 
         /**
          * Array<Function> actions,contains a list of actions the component needs to perform to keep the frontend synced
          */
-        _undo: async function(actions) {
+        mUndo: async function(actions) {
             try {
-                let res = await this._rollbackManager.undo();
+                let res = await this.mRollbackManager.undo();
                 for (let action of actions) action();
             } catch(e) {
                 console.error(e);
             }
         },
 
-        _canUndo: function() {
-            return this._rollbackManager.canUndo();
+        mRedo: async function(actions) {
+            try {
+                let res = await this.mRollbackManager.redo();
+                for (let action of actions) action();
+            } catch (e) {
+                console.error(e);
+            }
         },
 
+        mCanUndo: function() {
+            return this.mRollbackManager.canUndo();
+        },
+
+        mCanRedo: function() {
+            return this.mRollbackManager.canRedo();
+        }
     }
 }
 </script>

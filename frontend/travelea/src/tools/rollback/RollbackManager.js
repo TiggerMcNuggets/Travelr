@@ -29,7 +29,7 @@ export default class RollbackManager {
             this.stack.push(response);
         }
     }
-
+ 
     /** 
      * 
     */
@@ -38,8 +38,17 @@ export default class RollbackManager {
         return await reaction();
     }
 
+    async redo() {
+        const action = this.stack.redo();
+        return await action();
+    }
+
     canUndo() {
         return this.stack.canUndo();
+    }
+
+    canRedo() {
+        return this.stack.canRedo();
     }
 
 }

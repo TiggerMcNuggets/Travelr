@@ -19,7 +19,7 @@ export default class RollbackStack {
     flush = () => {
         this.stack = [];
         this.pointer = -1;
-    }
+    } 
 
     /**
      * Returns / Performs a reaction to undo original action
@@ -40,7 +40,7 @@ export default class RollbackStack {
     redo = () => {
         if (!this.canRedo()) return;
         this.pointer += 1;
-        const action = this.stack[index].action;
+        const action = this.stack[this.pointer].action;
         return action
     }
 
