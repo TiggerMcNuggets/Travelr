@@ -24,7 +24,6 @@ export default class RollbackStack {
      */
     undo = () => {
         if (!this.canUndo()) return;
-        console.log(this.pointer);
         const reaction = this.stack[this.pointer].reaction;
         this.pointer -= 1;
         return reaction;
