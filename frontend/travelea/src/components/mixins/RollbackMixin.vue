@@ -9,8 +9,8 @@ import { Types } from "../../tools/rollback/RollbackManager";
 export default {
     data() {
         return {
-            mRollbackManager: undefined,
-            mPreviousBody: {},
+            rollbackManager: undefined,
+            rollbackPreviousBody: {},
         }
     },
 
@@ -18,47 +18,67 @@ export default {
      * Create a new rollback manager to interface between this mixin and both the rollback stack and worker
      */
     created() {
-        this.mRollbackManager = new RollbackManager();
+        this.rollbackManager = new RollbackManager();
     },
     methods: {
+
         /**
          * Adds a new checkpoint to the stack
-         * @param {}
+         * @param {string} type The original action http method
+         * @param {url: string, body: Object} actionBody The url and json body for the action request
+         * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
          */
-        mCheckpoint: function(type, actionBody, reactionBody) {
-            this.mRollbackManager.checkpoint(type, actionBody, reactionBody);
+        rollbackCheckpoint: function(type, actionBody, reactionBody) {
+            this.rollbackManager.checkpoint(type, actionBody, reactionBody);
         },
 
-        mSetPreviousBody: function(previousBody) {
-            this.mPreviousBody = {...previousBody};
+        /** 
+         * Sets the previous body to be used for a future reaction
+         * @param {Object} previousBody The object to set the previous body to
+         */
+        rollbackSetPreviousBody: function(previousBody) {
+            this.rollbackPreviousBody = {...previousBody};
         }, 
         /**
-         * Array<Function> actions,contains a list of actions the component needs to perform to keep the frontend synced
+         * Tries to undo and call a list of given functions to be performed afterwards
+         * @param {Function[]} actions A list of functions to perform after the undo
          */
-        mUndo: async function(actions) {
+        rollbackUndo: async function(actions) {
             try {
-                let res = await this.mRollbackManager.undo();
+                let res = await this.rollbackManager.undo();
                 for (let action of actions) action();
             } catch(e) {
                 console.error(e);
             }
         },
 
-        mRedo: async function(actions) {
+        /**
+         * Tries to redo and call a list of given functions to be performed afterwards
+         * @param {Function[]} actions A list of functions to perform after redo
+         */
+        rollbackRedo: async function(actions) {
             try {
-                let res = await this.mRollbackManager.redo();
+                let res = await this.rollbackManager.redo();
                 for (let action of actions) action();
             } catch (e) {
                 console.error(e);
             }
         },
 
-        mCanUndo: function() {
-            return this.mRollbackManager.canUndo();
+        /**
+         * Calls the rollback manager canUndo method to return whether there is something to undo in the stack
+         * @return {boolean} true if there is an action to be undone, false if not
+         */
+        rollbackCanUndo: function() {
+            return this.rollbackManager.canUndo();
         },
 
-        mCanRedo: function() {
-            return this.mRollbackManager.canRedo();
+        /**
+         * Calls the rollback manager canRedo method to return whether there is something to redo in the stack
+         * @return {boolean} true if there is an action to be redone, false if not
+         */
+        rollbackCanRedo: function() {
+            return this.rollbackManager.canRedo();
         }
     }
 }
