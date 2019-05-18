@@ -3,6 +3,9 @@
 import RollbackManager from '../../tools/rollback/RollbackManager';
 import { Types } from "../../tools/rollback/RollbackManager";
 
+/**
+ * Mixin to be included anywhere that needs undo or redo functionatliy
+ */
 export default {
     data() {
         return {
@@ -10,11 +13,18 @@ export default {
             mPreviousBody: {},
         }
     },
+
+    /**
+     * Create a new rollback manager to interface between this mixin and both the rollback stack and worker
+     */
     created() {
         this.mRollbackManager = new RollbackManager();
-        console.log("rollback mixin started");
     },
     methods: {
+        /**
+         * Adds a new checkpoint to the stack
+         * @param {}
+         */
         mCheckpoint: function(type, actionBody, reactionBody) {
             this.mRollbackManager.checkpoint(type, actionBody, reactionBody);
         },

@@ -2,13 +2,10 @@
  * Stack used for undoing and redoing actions
  */
 export default class RollbackStack {
+    /**
+     * Constructor
+     */
     constructor() {
-        /**
-         * [(
-         *  action: function,
-         *  reaction: function
-         * )]
-         */
         this.stack = [];
         this.pointer = -1;
     };
@@ -22,8 +19,8 @@ export default class RollbackStack {
     } 
 
     /**
-     * Returns / Performs a reaction to undo original action
-     * Gets current item's reaction and then decreases pointer
+     * Returns a reaction to undo original action
+     * @return {Function} a function that undoes original action
      */
     undo = () => {
         if (!this.canUndo()) return;
@@ -34,8 +31,8 @@ export default class RollbackStack {
     }
 
     /**
-     * Returns / Performs an action to redo orgininal action
-     * Increases pointer first and then gets reaction
+     * Returns an action to redo original action
+     * @return {Funciton} a function that redoes original action
      */
     redo = () => {
         if (!this.canRedo()) return;
@@ -46,8 +43,7 @@ export default class RollbackStack {
 
     /**
      * Checks if stack can be undone
-     * Checks if pointer is -1 (original pointer value not pointing to any reaction)
-     * @return true if the stack can be undone, false if not
+     * @return {boolean} true if the stack can be undone, false if not
      */
     canUndo = () => {
         if (this.pointer === -1) return false;
@@ -56,17 +52,21 @@ export default class RollbackStack {
 
     /**
      * Checks if stack can be redone
-     * Checks if 
+     * @return {boolean} true if the stack can be redone, false if not
      */
     canRedo = () => {
         if (this.pointer + 1 === this.stack.length) return false;
         return true;
     }
 
+    /**
+     * Adds an item to the stack
+     * Replaces anything in front of the current position (pointer) with the new item
+     * @param {action: Function, reaction: Function} item an object containing the action and reaction function
+     */
     push = (item) => {
         this.pointer += 1;
         this.stack = this.stack.slice(0, this.pointer);
         this.stack.push(item);
     }
-
 }

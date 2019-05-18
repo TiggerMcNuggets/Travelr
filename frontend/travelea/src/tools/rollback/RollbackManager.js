@@ -5,50 +5,70 @@ export const Types = {
     PUT: 'PUT'
 }
 
+/**
+ * Provides an interface for the mixin to interact with the rollback stack and worker
+ */
 export default class RollbackManager {
 
-
+    /**
+     * Constructor
+     */
     constructor() {
         this.stack = new RollbackStack();
         this.rollbackWorker = new RollbackWorker();
     }
 
     /**
-     * 
-     * @param string type 
-     * @param {url: string, body: object} actionBody 
-     * @param {url: string, body: object} reactionBody 
+     * Pushes a checkpoint onto the stack
+     * Uses RollbackWorker to convert type, actionBody and reactionBody into an action 
+     * and reaction function and then pushes result onto the rollback stack 
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
      */
     checkpoint(type, actionBody, reactionBody) {
-        if (type === Types.PUT) {
-            const response = 
-                this.rollbackWorker.putActionReaction({
-                    actionBody: actionBody,
-                    reactionBody: reactionBody
-                });
-            this.stack.push(response);
+        let response;
+
+        switch(type) {
+            case Types.PUT:
+                response = this.rollbackWorker.putActionReaction(actionBody, reactionBody);
+                break;
+            default:
+                return;
         }
+
+        this.stack.push(response);
     }
  
     /** 
-     * 
-    */
+     * Calls the stack undo method and calls the resulting function
+     */
     async undo() {
         const reaction = this.stack.undo();
-        return await reaction();
+        await reaction();
     }
 
+    /**
+     * Calls the stack redo method and calls the resulting function
+     */
     async redo() {
         const action = this.stack.redo();
-        return await action();
+        await action();
     }
 
+    /**
+     * Calls the stack canUndo method to return whether there is something to undo in the stack
+     * @return {boolean} true if there is an action to be undone, false if not
+     */
     canUndo() {
         return this.stack.canUndo();
     }
 
+    /**
+     * Calls the stack canRedo method to return whether there is something to redo in the stack
+     * @return {boolean} true if there is an action to be redone, false if not
+     */
     canRedo() {
         return this.stack.canRedo();
     }
-
 }
