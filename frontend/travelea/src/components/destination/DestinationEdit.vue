@@ -24,7 +24,7 @@
                 fab
                 small
                 flat
-                :disabled="!mCanUndo()"
+                :disabled="!rollbackCanUndo()"
                 @click="undo"
               >
                 <v-icon dark>undo</v-icon>
@@ -34,7 +34,7 @@
                 fab
                 small
                 flat
-                :disabled="!mCanRedo()"
+                :disabled="!rollbackCanRedo()"
                 @click="redo"
               >
                 <v-icon dark>redo</v-icon>
@@ -164,7 +164,7 @@ export default {
           this.destination = result.data;
 
           // This is set to later be pushed as a reaction to the rollback stack
-          this.mSetPreviousBody(result.data);
+          this.rollbackSetPreviousBody(result.data);
         });
     },
 
@@ -189,20 +189,22 @@ export default {
             const url = `/users/${userId}/destinations/${destId}`;  
 
             // Pushes checkpoint containing type of action, action body, and reaction body
-            this.mCheckpoint(
+            console.log(this.destination.name);
+            console.log(this.rollbackPreviousBody.name);
+            this.rollbackCheckpoint(
               'PUT',
               {
                 url: url,
-                body: this.destination
+                body: {...this.destination}
               },
               {
                 url: url,
-                body: this.mPreviousBody
+                body: this.rollbackPreviousBody
               }
             );
 
             // Update previous body to be used for the next checkpoints reaction
-            this.mSetPreviousBody(this.destination);
+            this.rollbackSetPreviousBody(this.destination);
             this.isError = false;
           })
           .catch((e) => {
@@ -217,7 +219,7 @@ export default {
      */
     undo: function() {
       const actions = [this.setDestination];
-      this.mUndo(actions); 
+      this.rollbackUndo(actions); 
     },
 
     /**
@@ -225,7 +227,7 @@ export default {
      */
     redo: function() {
       const actions = [this.setDestination];
-      this.mRedo(actions);
+      this.rollbackRedo(actions);
     },
 
     /**
