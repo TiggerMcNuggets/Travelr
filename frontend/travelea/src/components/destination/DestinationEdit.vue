@@ -189,8 +189,6 @@ export default {
             const url = `/users/${userId}/destinations/${destId}`;  
 
             // Pushes checkpoint containing type of action, action body, and reaction body
-            console.log(this.destination.name);
-            console.log(this.rollbackPreviousBody.name);
             this.rollbackCheckpoint(
               'PUT',
               {

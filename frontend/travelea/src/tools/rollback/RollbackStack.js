@@ -24,7 +24,6 @@ export default class RollbackStack {
      */
     undo = () => {
         if (!this.canUndo()) return;
-        console.log(this.pointer);
         const reaction = this.stack[this.pointer].reaction;
         this.pointer -= 1;
         return reaction;
@@ -38,7 +37,6 @@ export default class RollbackStack {
     redo = () => {
         if (!this.canRedo()) return;
         this.pointer += 1;
-        console.log(this.pointer);
         const action = this.stack[this.pointer].action;
         return action
     }
