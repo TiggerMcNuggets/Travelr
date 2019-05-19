@@ -3,7 +3,7 @@ import RollbackWorker from "./RollbackWorker"
 
 export const Types = {
     PUT: 'PUT'
-}
+};
 
 /**
  * Provides an interface for the mixin to interact with the rollback stack and worker

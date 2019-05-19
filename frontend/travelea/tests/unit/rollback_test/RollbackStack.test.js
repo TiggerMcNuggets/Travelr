@@ -45,13 +45,58 @@ describe('Tests the rollback stack data structure', () => {
     });
 
     /**
-     * Successful undo: the reaction stored at the pointer place is returned, pointer is decreased, said reaction is returned
+     * Unsuccessful undo: just returns undefined
      */
-    it('ensures when undo is called successfully, the data structure integrity is preserved', () => {
-
+    it('ensures when undo is called unsuccessfully, the data structure integrity is preserved', () => {
         const undoRes = rollbackStack.undo();
         expect(undoRes === undefined).toBe(true);
         expect(rollbackStack.pointer).toBe(-1);
         expect(rollbackStack.stack.length).toBe(0);
+    });
+
+    it('ensures the canUndo response is coherent with the state of the stack', () => {
+        // expected empty non-undoable stack
+        expect(rollbackStack.canUndo()).toBe(false);
+        rollbackStack.push(mockActionReaction);
+        expect(rollbackStack.canUndo()).toBe(true);
+        rollbackStack.undo();
+        expect(rollbackStack.canUndo()).toBe(false);
+    });
+
+    ///////////
+
+    /**
+     * Successful undo: the reaction stored at the pointer place is returned, pointer is decreased, said reaction is returned
+     */
+    it('ensures when redo is called successfully, the data structure integrity is preserved', () => {
+
+        rollbackStack.push(mockActionReaction);
+        rollbackStack.push(mockActionReaction);
+        rollbackStack.undo();
+
+        const redoRes = rollbackStack.redo();
+        expect(typeof redoRes === "function").toBe(true);
+        expect(redoRes()).toBe('action');
+        expect(rollbackStack.pointer).toBe(1);
+        expect(rollbackStack.stack.length).toBe(2);
+    });
+
+    /**
+     * Unsuccessful redo: just returns undefined
+     */
+    it('ensures when redo is called unsuccessfully, the data structure integrity is preserved', () => {
+        const redoRes = rollbackStack.redo();
+        expect(redoRes === undefined).toBe(true);
+        expect(rollbackStack.pointer).toBe(-1);
+        expect(rollbackStack.stack.length).toBe(0);
+    });
+
+    it('ensures the canRedo response is coherent with the state of the stack', () => {
+        // expected empty non-undoable stack
+        expect(rollbackStack.canRedo()).toBe(false);
+        rollbackStack.push(mockActionReaction);
+        expect(rollbackStack.canRedo()).toBe(false);
+        rollbackStack.undo();
+        expect(rollbackStack.canRedo()).toBe(true);
     });
 });
