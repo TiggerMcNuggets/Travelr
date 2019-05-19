@@ -1,7 +1,6 @@
 
 <script>
 import RollbackManager from '../../tools/rollback/RollbackManager';
-import { Types } from "../../tools/rollback/RollbackManager";
 
 /**
  * Mixin to be included anywhere that needs undo or redo functionatliy

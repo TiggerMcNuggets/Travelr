@@ -19,26 +19,11 @@
                 <v-icon dark>keyboard_arrow_left</v-icon>
               </v-btn>
               <h2 class="headline">Edit Destination</h2>
-              <v-btn
-                class="upload-toggle-button"
-                fab
-                small
-                flat
-                :disabled="!rollbackCanUndo()"
-                @click="undo"
-              >
-                <v-icon dark>undo</v-icon>
-              </v-btn>
-              <v-btn
-                class="upload-toggle-button"
-                fab
-                small
-                flat
-                :disabled="!rollbackCanRedo()"
-                @click="redo"
-              >
-                <v-icon dark>redo</v-icon>
-              </v-btn>
+              <undo-redo-buttons
+                :canRedo="rollbackCanRedo()"
+                :canUndo="rollbackCanUndo()"
+                :undo="undo"
+                :redo="redo"></undo-redo-buttons>
             </div>
 
           </div>
@@ -140,11 +125,14 @@
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
 import { rules } from "../form_rules";
-import { store } from "../../store/index";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
+import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 
 export default {
   mixins: [RollbackMixin],
+  components: {
+    UndoRedoButtons: UndoRedoButtons
+  },
   data() {
     return {
       destination: {},
