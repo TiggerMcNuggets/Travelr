@@ -50,7 +50,6 @@ public class CreateDestinationSteps {
     public void i_create_a_destination_for_user_with_id(int int1) {
         try {
             // Create request object
-            System.out.println("http://localhost:9000/api/user/"+int1+"/destinations");
             Http.RequestBuilder createDestinationForUser = Helpers.fakeRequest()
                     .method("POST")
                     .header("X-Authorization", state.getToken())

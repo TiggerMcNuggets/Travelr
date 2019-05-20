@@ -2,6 +2,7 @@ package repository;
 
 import controllers.dto.destination.CreateDestReq;
 import models.Destination;
+import models.TravellerType;
 import models.DestinationPhoto;
 import models.TripDestination;
 import models.User;
@@ -78,7 +79,14 @@ public class DestinationRepository {
             destination.setType(request.type);
             destination.setCountry(request.country);
             destination.setDistrict(request.district);
+            destination.travellerTypes.clear();
 
+            destination.travellerTypes = new ArrayList<TravellerType>();
+            if(request.travellerTypes != null) {
+                for (long i : request.travellerTypes) {
+                    destination.travellerTypes.add(TravellerType.find.byId(i));
+                }
+            }
             List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
 
             if (sameDestinations.size() > 0) {
