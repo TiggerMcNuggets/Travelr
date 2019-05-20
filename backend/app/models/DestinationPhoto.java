@@ -19,6 +19,14 @@ public class DestinationPhoto extends BaseModel {
     @ManyToOne
     public User user;
 
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
+
     @ManyToOne
     public Destination destination;
 
