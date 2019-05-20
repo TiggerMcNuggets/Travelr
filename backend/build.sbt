@@ -54,4 +54,3 @@ javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
 // Maintainer
 maintainer := "frd15@uclive.ac.nz"
-

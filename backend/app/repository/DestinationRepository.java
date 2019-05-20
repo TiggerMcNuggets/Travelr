@@ -2,6 +2,7 @@ package repository;
 
 import controllers.dto.destination.CreateDestReq;
 import models.Destination;
+import models.DestinationPhoto;
 import models.TripDestination;
 import models.User;
 
@@ -124,12 +125,15 @@ public class DestinationRepository {
 
     /**
      * Merges destinations by converting all same destinations in trips to the new destination
+     * Merges images from all destinations in sameDestinations into destination
      * @param sameDestinations The list of same destinations
      */
     private void mergeDestinations(Destination destination, List<Destination> sameDestinations) {
         List<TripDestination> tripDestinations = new ArrayList<TripDestination>();
+        List<DestinationPhoto> destinationPhotos = new ArrayList<DestinationPhoto>();
 
         for (Destination sameDestination : sameDestinations) {
+            destinationPhotos.addAll(DestinationPhoto.find.getAllPhotosForDestination(sameDestination.id));
             tripDestinations.addAll(TripDestination.find.getAllByDestinationId(sameDestination.getId()));
         }
 
@@ -137,6 +141,12 @@ public class DestinationRepository {
             tripDestination.setDestination(destination);
             tripDestination.save();
         }
+
+        for (DestinationPhoto destinationPhoto : destinationPhotos) {
+            destinationPhoto.setDestination(destination);
+            destinationPhoto.save();
+        }
+
     }
 
     /**
