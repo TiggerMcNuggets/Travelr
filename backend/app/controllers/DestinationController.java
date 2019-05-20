@@ -55,7 +55,6 @@ public class DestinationController extends Controller {
                     for(Destination destination : destinations) {
                         list.add(new GetDestinationsRes(destination));
                     }
-
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(list);
                     return ok(jsonResponse);

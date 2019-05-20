@@ -89,10 +89,20 @@ public class PopulateController extends Controller {
         }
 
         Destination dest1 = new Destination("River", 1.0, 1.0, "123", "123", "123", user1);
+        dest1.setTravellerTypes(travellerTypes);
+
         Destination dest2 = new Destination("Mountain", 2.0, 2.0, "123", "123", "123", user1);
+        dest2.setTravellerTypes(travellerTypes);
+
         Destination dest3 = new Destination("City", 3.0, 3.0, "123", "123", "123", user2);
+        dest3.setTravellerTypes(travellerTypes);
+
         Destination dest4 = new Destination("Beach", 4.0, 4.0, "123", "123", "123", user2);
+        dest4.setTravellerTypes(travellerTypes);
+
         Destination dest5 = new Destination("Ski", 5.0, 5.0, "123", "123", "123", user3);
+        dest5.setTravellerTypes(travellerTypes);
+
 
         dest1.insert();
         dest2.insert();

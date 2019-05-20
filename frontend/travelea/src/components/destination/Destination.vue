@@ -73,6 +73,16 @@
                     <div class="row-container">
                       <h3>Type: {{item.type}}</h3>
                     </div>
+
+                    <div class="row-container">
+                      <h3>Traveller Types:</h3>
+                      <ul class="chip-list">
+                        <li v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
+                          <v-chip>{{type.name}}</v-chip>
+                        </li>
+                      </ul>
+                    </div>
+
                   </div>
                 </div>
                 <div>
