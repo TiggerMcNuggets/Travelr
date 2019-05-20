@@ -81,8 +81,10 @@ public class DestinationRepository {
             destination.travellerTypes.clear();
 
             destination.travellerTypes = new ArrayList<TravellerType>();
-            for (long i : request.travellerTypes) {
-                destination.travellerTypes.add(TravellerType.find.byId(i));
+            if(request.travellerTypes != null) {
+                for (long i : request.travellerTypes) {
+                    destination.travellerTypes.add(TravellerType.find.byId(i));
+                }
             }
             List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
 
