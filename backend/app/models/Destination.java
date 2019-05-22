@@ -169,7 +169,7 @@ public class Destination extends BaseModel {
      */
     public ArrayList<TravellerType> retrieveTravellerTypes(List<Integer> requestTravellerTypes) {
         ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
-        if (requestTravellerTypes.size() > 0) {
+        if (requestTravellerTypes != null) {
             for (long i : requestTravellerTypes) {
                 travellerTypes.add(TravellerType.find.byId(i));
             }
