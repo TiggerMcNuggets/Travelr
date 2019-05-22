@@ -79,7 +79,11 @@ public class DestinationController extends Controller {
                 return notFound(APIResponses.DESTINATION_NOT_FOUND);
             }
 
-            return ok(Ebean.json().toJson(destination));
+            Object response;
+            response = new GetDestinationsRes(destination);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
         });
     }
 

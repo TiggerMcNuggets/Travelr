@@ -49,7 +49,7 @@
         <v-tab :key="2" ripple>Map</v-tab>
 
         <v-tab-item :key="1">
-          <ul>
+          <  >
             <li
               class="destination-list-element"
               v-for="item in destinationsFiltered"
@@ -73,16 +73,12 @@
                     <div class="row-container">
                       <h3>Type: {{item.type}}</h3>
                     </div>
-
                     <div class="row-container">
                       <h3>Traveller Types:</h3>
-                      <ul class="chip-list">
-                        <li v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
-                          <v-chip>{{type.name}}</v-chip>
-                        </li>
-                      </ul>
+                        <md-chips v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
+                          <v-chip small>{{type.name}}</v-chip>
+                        </md-chips>
                     </div>
-
                   </div>
                 </div>
                 <div>
