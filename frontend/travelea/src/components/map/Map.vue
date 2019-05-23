@@ -6,12 +6,14 @@
       <v-label>
         <GmapAutocomplete
                 placeholder="Search"
-                @place_changed="setPlace"
+                @place_changed="usePlace"
                 class="v-text-field search-box"
+                :select-first-on-enter="true"
+                @keydown.native.enter.prevent
         ></GmapAutocomplete>
-        <btn class="search-btn" @click="usePlace">
+        <button class="search-btn" @click="usePlace">
           <i aria-hidden="true" class="v-icon material-icons">search</i>
-        </btn>
+        </button>
       </v-label>
     </div>
 
@@ -25,27 +27,30 @@
         :icon="chooseIconForMarker(marker, index)"
       />
       <GmapInfoWindow
-        :options="{maxWidth: 300}"
-        relative:position="infoWindow.position"
+        :options="{maxWidth: 500}"
+        :position="infoWindow.position"
         :opened="infoWindow.open"
         @closeclick="closeInfoWindow()"
       >
         <div v-if="selectedDest !== null">
-          <div>
+          <div v-if="selectedDest.hasOwnProperty('id')">
             <h2>Country: {{this.selectedDest.country}}</h2>
             <h2>District: {{this.selectedDest.district}}</h2>
             <h2>Name: {{this.selectedDest.name}}</h2>
-            <h2>Type: {{this.selectedDest.type}}</h2>
+            <h2>Type: {{this.selectedDest.type}}</h2>s
             <v-btn color="orange darken-2" dark v-on:click="navigateToDestination(selectedDest.id)">
               Visit
               <v-icon dark right>arrow_forward</v-icon>
             </v-btn>
           </div>
+          <div v-else>
+            <destination-create :createDestinationCallback="createDestinationCallback"/>
+          </div>
         </div>
       </GmapInfoWindow>
     </GmapMap>
   </div>
-</template>
+</template>s
 
 <style>
   .search-box {
@@ -61,6 +66,7 @@
   .search-btn {
     margin-left: -32px;
     padding: 0;
+    cursor: pointer;
   }
   .overlayed {
     position: absolute;
@@ -78,6 +84,7 @@
 </style>
 
 <script>
+import DestinationCreate from "../destination/DestinationCreate";
 const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
 const blueMarker = require("../../assets/blue-google-maps-marker.svg");
 const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
@@ -98,13 +105,14 @@ export default {
   },
   props: {
     destinationsMarkers: Array,
+    createDestinationCallback: Function,
   },
   watch: {},
-  components: {},
+  components: {DestinationCreate},
   methods: {
     /**
      * Opens up the small information window for the particular map icon which is clicked on.
-     * @param item The destination item being cldestinationsMarkersicked on.
+     * @param item The destination item being clicked on.
      */
     openInfoWindowTemplate(item) {
       this.infoWindow.position = { lat: item.latitude, lng: item.longitude };
@@ -141,24 +149,22 @@ export default {
      * @param marker
      */
     chooseIconForMarker(marker) {
-      if (marker.isPublic == true) {
+      if (marker.isPublic === true) {
         return blueMarker;
-      } else if (marker.isPublic == false) {
+      } else if (marker.isPublic === false) {
         return pinkMarker;
       } else {
         return purpleMarker;
       }
     },
 
-    setPlace(place) {
+    usePlace(place) {
       this.place = place;
-    },
 
-    usePlace() {
       if (this.place) {
         this.destinationsMarkers.push({
           latitude: this.place.geometry.location.lat(),
-          longitude: this.place.geometry.location.lng()
+          longitude: this.place.geometry.location.lng(),
         });
 
         // pan and zoom to marker
@@ -169,6 +175,8 @@ export default {
 
         this.$refs.map.$mapObject.setZoom(11);
       }
+
+      this.log(this.destinationsMarkers);
     }
   },
   created() {}

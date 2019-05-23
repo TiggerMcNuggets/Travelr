@@ -136,7 +136,8 @@ export default {
           this.isError = false;
           this.createDestinationCallback();
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           this.isError = true;
           console.log("error creating destination");
         })

@@ -119,7 +119,10 @@
         </v-tab-item>
         <v-tab-item :key="2">
           <v-card>
-            <MapDashboard :destinations="this.destinations"/>
+            <MapDashboard
+              :destinations="this.destinations"
+              :createDestinationCallback="updateDestinationList"
+            />
           </v-card>
         </v-tab-item>
       </v-tabs>

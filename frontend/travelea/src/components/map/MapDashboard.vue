@@ -2,7 +2,10 @@
 
 <template>
   <div class="destination-map">
-    <Map :destinationsMarkers="this.destinationsMarkers"></Map>
+    <Map
+      :destinationsMarkers="this.destinationsMarkers"
+      :createDestinationCallback="createDestinationCallback"
+    />
     <MapMenu
       :destinations="this.destinations"
       :updateDestinationsMarkers="this.updateDestinationsMarkers"
@@ -51,7 +54,8 @@ export default {
     };
   },
   props: {
-    destinations: Array
+    destinations: Array,
+    createDestinationCallback: Function
   },
   computed: {},
   // child components
