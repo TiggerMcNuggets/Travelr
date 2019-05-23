@@ -37,6 +37,7 @@ create table destination_photo (
 
 create table nationality (
   id                            bigint auto_increment not null,
+  is_old                        boolean default 0 not null,
   name                          varchar(255),
   version                       bigint not null,
   deleted                       boolean default false not null,

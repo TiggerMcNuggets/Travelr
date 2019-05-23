@@ -9,7 +9,7 @@ Feature: Login
     Given I provide the email "admin@test.com" and the password "123"
     When I login
     Then I will receive a 200 response
-    And I will receive the id 2
+    And I will receive the id 1
 
   Scenario: Log in with missing fields
     Given I provide an incomplete login json

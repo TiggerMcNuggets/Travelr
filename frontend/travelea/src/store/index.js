@@ -3,17 +3,14 @@ import Vuex from 'vuex'
 
 import user from './user'
 import users from './users/users'
-import travellerTypes from './users/users'
-import nationalities from './users/users'
+
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     modules: {
         user: user,
-        users: users,
-        travellerTypes: travellerTypes,
-        nationalities: nationalities,
+        users: users
     }
 });
 

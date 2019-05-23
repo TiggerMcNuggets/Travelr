@@ -22,7 +22,7 @@ Feature: EditTravellers
   Scenario: Edit my own profile as normal user
     Given I provide the token "abc"
     And I provide a complete editTraveller json
-    And The traveller id is 3
+    And The traveller id is 2
     When I edit the traveller
     Then I will receive a 200 response
 
