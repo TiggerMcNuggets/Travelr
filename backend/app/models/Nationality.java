@@ -13,7 +13,7 @@ public class Nationality extends BaseModel {
 
     @NotNull
     @Column(columnDefinition = "boolean default 0")
-    private boolean is_old;
+    public boolean is_old;
 
     @Constraints.Required
     public String name;
@@ -22,4 +22,5 @@ public class Nationality extends BaseModel {
         this.name = name;
         this.is_old = false;
     }
+
 }
