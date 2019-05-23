@@ -6,6 +6,10 @@ import play.data.validation.Constraints;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Model used to translate the Nationality class with the database structure
+ * Containing the nationality name and if the nationality still exists
+ */
 @Entity
 public class Nationality extends BaseModel {
 
