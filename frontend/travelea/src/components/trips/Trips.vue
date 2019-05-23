@@ -8,6 +8,13 @@
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
 
+        <undo-redo-buttons
+          :canRedo="rollbackCanRedo()"
+          :canUndo="rollbackCanUndo()"
+          :undo="undo"
+          :redo="redo"
+        ></undo-redo-buttons>
+
         <h2 class="headline">Trips</h2>
       </div>
       <div>
@@ -30,6 +37,7 @@
     </div>
 
     <v-divider class="photo-header-divider"></v-divider>
+    <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
     <!-- <div v-if="this.isMyProfile || this.isAdmin">
@@ -51,7 +59,7 @@
         :toggleShowCreateTrip="toggleShowCreateTrip"
         :regetTrips="regetTrips"
         :passedTrip="null"
-        :updateViewTripPage="() => console.log()"
+        :updateViewTripPage="() => getUserTrips"
       />
     </div>
     <!-- </div> -->
@@ -70,22 +78,21 @@
         :value="item.value"
         :key="item.value"
       >
-        <v-card >
+        <v-card>
           <v-flex d-flex justify-space-between align-center>
-          <div class="top-destination-content" v-on:click="openTrip(item.id)">
-            <h2>{{ item.name }}</h2>
-          </div>
-          <div class='crud-options'>
-            <v-btn
-              v-if="(isMyProfile || isAdminUser) && !item.isPublic"
-              icon
-              @click="deleteTrip(item.id)"
-            >
-              <v-icon color="red lighten-1">delete</v-icon>
-            </v-btn>
-          
-          </div>
-            </v-flex>
+            <div class="top-destination-content" v-on:click="openTrip(item.id)">
+              <h2>{{ item.name }}</h2>
+            </div>
+            <div class="crud-options">
+              <v-btn
+                v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                icon
+                @click="deleteTrip(item.id)"
+              >
+                <v-icon color="red lighten-1">delete</v-icon>
+              </v-btn>
+            </div>
+          </v-flex>
         </v-card>
       </li>
     </ul>
@@ -135,10 +142,16 @@ ul {
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 let tripRepository = RepositoryFactory.get("trip");
 
 export default {
   store,
+
+   mixins: [RollbackMixin],
+
+
   // local variables
   data() {
     return {
@@ -149,7 +162,8 @@ export default {
       isMyProfile: false,
       isAdminUser: false,
       user_id: this.$route.params.id,
-      searchActive: false
+      searchActive: false,
+      undoRedoError: false
     };
   },
   // the place where you want to make the store values readable
@@ -170,9 +184,19 @@ export default {
   },
   // child components
   components: {
+    UndoRedoButtons,
     CreateTrip: CreateTrips
   },
   methods: {
+       /**
+     * Sets all alert error visible fields to invisible
+     */
+    clearAlerts() {
+      this.undoRedoError = false;
+    },
+
+
+
     /**
      * Gets trips from the API using using the user_id found in params
      */
@@ -228,13 +252,23 @@ export default {
       this.showCreateTrip = !this.showCreateTrip;
     },
 
-     /**
+    /**
      * Deletes the trip from the database.
-     * @param destId The id of the trip to delete.
+     * @param tripId The id of the trip to delete.
      */
-    deleteTrip: function(destId) {
-      // this.clearAlerts();
-      tripRepository.deleteTrip(this.user_id, destId).then(() => {
+    deleteTrip: function(tripId) {
+      this.clearAlerts();
+      tripRepository.deleteTrip(this.user_id, tripId).then(() => {
+        const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
+         this.rollbackCheckpoint(
+        'DELETE',
+        {
+            url: url,
+        },
+        {
+            url: url,
+        }
+        );
         this.getUserTrips();
       });
     },
@@ -259,8 +293,38 @@ export default {
     checkIfProfileOwner() {
       let id = this.$route.params.id;
       this.isMyProfile = store.getters.getUser.id == id;
+    },
+
+
+    /**
+    * Undoes the last action and gets destinations afterwards
+    */
+    undo: function() {
+      const actions = [this.getUserTrips, this.clearAlerts];
+      try {
+        this.rollbackUndo(actions); 
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    },
+
+    /**
+     * Redoes the last action and gets destinations afterwards
+     */
+    redo: function() {
+      const actions = [this.getUserTrips, this.clearAlerts];
+      try {
+        this.rollbackRedo(actions);
+      } catch (err) {
+        this.undoRedoError = true;
+      }
     }
   },
+
+    
+
+
+
   created: function() {
     this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;
