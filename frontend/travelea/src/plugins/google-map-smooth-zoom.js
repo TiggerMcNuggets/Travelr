@@ -85,7 +85,7 @@ class GoogleMapSmoothZoom {
 
         var z = google.maps.event.addListener( this.map, 'zoom_changed', event => {
             google.maps.event.removeListener( z );
-            this._zoomIn( level, cnt + 1 );
+            this._zoomIn( level, cnt + 0.5 );
         } )
 
         this._doZoom( cnt );
@@ -110,7 +110,7 @@ class GoogleMapSmoothZoom {
 
         var z = google.maps.event.addListener( this.map, 'zoom_changed', event => {
             google.maps.event.removeListener( z );
-            this._zoomOut( level, cnt - 1 );
+            this._zoomOut( level, cnt - 0.5 );
         } )
 
         this._doZoom( cnt );

@@ -3,7 +3,7 @@
 <template>
   <div class="destination-map">
     <Map
-      :destinationsMarkers="this.destinationsMarkers"
+      :destinationMarkers="this.destinationMarkers"
       :createDestinationCallback="createDestinationCallback"
     />
     <MapMenu
@@ -50,7 +50,7 @@ export default {
   // local variables
   data() {
     return {
-      destinationsMarkers: []
+      destinationMarkers: []
     };
   },
   props: {
@@ -69,7 +69,9 @@ export default {
      * @param listDest
      */
     updateDestinationsMarkers(listDest) {
-      this.destinationsMarkers = listDest;
+      this.destinationMarkers = listDest.map((dest) => {
+        return {...dest, temp: false}
+      });
     }
   },
   created() {}

@@ -111,7 +111,8 @@ export default {
   store,
 
   props: {
-    createDestinationCallback: Function
+    createDestinationCallback: Function,
+    prefillData: Object
   },
 
   data() {
@@ -149,6 +150,13 @@ export default {
      */
     resetValues: function() {
       this.$refs.form.reset();
+    }
+  },
+
+  created() {
+    // If the destination create window has been opened on the Map and already has latitude and longitude.
+    if (this.prefillData) {
+      this.destination = this.prefillData;
     }
   }
 };

@@ -5,11 +5,11 @@
     <div class="overlayed">
       <v-label>
         <GmapAutocomplete
-                placeholder="Search"
-                @place_changed="usePlace"
-                class="v-text-field search-box"
-                :select-first-on-enter="true"
-                @keydown.native.enter.prevent
+          placeholder="Search"
+          @place_changed="usePlace"
+          class="v-text-field search-box"
+          :select-first-on-enter="true"
+          @keydown.native.enter.prevent
         ></GmapAutocomplete>
         <button class="search-btn" @click="usePlace">
           <i aria-hidden="true" class="v-icon material-icons">search</i>
@@ -17,13 +17,15 @@
       </v-label>
     </div>
 
-    <GmapMap class="main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map" :options="{mapTypeControl: false}">
+    <GmapMap class="main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map" :options="{mapTypeControl: false}" @click="onMapClick($event)">
       <GmapMarker
-        v-for="(marker, index) in destinationsMarkers"
+        v-for="(marker, index) in destinationMarkers"
         :key="index"
         :position="{lat: marker.latitude, lng: marker.longitude}"
         :clickable="true"
-        @click="openInfoWindowTemplate(destinationsMarkers[index])"
+        :draggable="true"
+        @click="openInfoWindowTemplate(destinationMarkers[index])"
+        @dragend="updateCoordinatesAfterDrag($event, index)"
         :icon="chooseIconForMarker(marker, index)"
       />
       <GmapInfoWindow
@@ -37,20 +39,20 @@
             <h2>Country: {{this.selectedDest.country}}</h2>
             <h2>District: {{this.selectedDest.district}}</h2>
             <h2>Name: {{this.selectedDest.name}}</h2>
-            <h2>Type: {{this.selectedDest.type}}</h2>s
+            <h2>Type: {{this.selectedDest.type}}</h2>
             <v-btn color="orange darken-2" dark v-on:click="navigateToDestination(selectedDest.id)">
               Visit
               <v-icon dark right>arrow_forward</v-icon>
             </v-btn>
           </div>
           <div v-else>
-            <destination-create :createDestinationCallback="createDestinationCallback"/>
+            <destination-create :createDestinationCallback="createDestinationCallback" :prefillData="{...selectedDest}"/>
           </div>
         </div>
       </GmapInfoWindow>
     </GmapMap>
   </div>
-</template>s
+</template>
 
 <style>
   .search-box {
@@ -89,6 +91,8 @@ const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
 const blueMarker = require("../../assets/blue-google-maps-marker.svg");
 const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
 
+import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom"
+
 export default {
   data() {
     return {
@@ -104,12 +108,13 @@ export default {
     };
   },
   props: {
-    destinationsMarkers: Array,
+    destinationMarkers: Array,
     createDestinationCallback: Function,
   },
   watch: {},
   components: {DestinationCreate},
   methods: {
+
     /**
      * Opens up the small information window for the particular map icon which is clicked on.
      * @param item The destination item being clicked on.
@@ -145,7 +150,8 @@ export default {
     },
 
     /**
-     * Determines whether the map marker should be pink or blue depending if it is public or private.
+     * Determines whether the map marker should be pink or blue depending if it is public or private, or purple
+     * if privacy is undefined.
      * @param marker
      */
     chooseIconForMarker(marker) {
@@ -158,25 +164,63 @@ export default {
       }
     },
 
+    /*
+     * Gets the selected place from the Google Maps autocomplete and adds it to destinations. After this,
+     * it pans and zooms to the selected place's location
+     * @param place The currently selected place
+     */
     usePlace(place) {
       this.place = place;
+      console.log(place);
 
       if (this.place) {
-        this.destinationsMarkers.push({
+        this.destinationMarkers.push({
           latitude: this.place.geometry.location.lat(),
           longitude: this.place.geometry.location.lng(),
+          temp: true
         });
 
-        // pan and zoom to marker
-        this.$refs.map.$mapObject.panTo({
-          lat: this.place.geometry.location.lat(),
-          lng: this.place.geometry.location.lng()
-        });
 
-        this.$refs.map.$mapObject.setZoom(11);
+
+        const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
+
+        // Zoom out -> Pan to marker -> Zoom in to marker
+        zoomer.out(10).then( () => {
+          this.$refs.map.$mapObject.panTo({
+            lat: this.place.geometry.location.lat(),
+            lng: this.place.geometry.location.lng()
+          });
+
+          this.$refs.map.$mapObject.panTo({
+            lat: this.place.geometry.location.lat(),
+            lng: this.place.geometry.location.lng()
+          });
+          zoomer.in(12);
+        });
       }
+    },
 
-      this.log(this.destinationsMarkers);
+    /*
+     * Updates the location of the currently selected marker after a user stops dragging it.
+     */
+    updateCoordinatesAfterDrag(location, destinationMarkerIndex) {
+      this.destinationMarkers[destinationMarkerIndex] = {
+        latitude: parseFloat(location.latLng.lat()), longitude: parseFloat(location.latLng.lng())
+      };
+    },
+
+    /*
+     * Perceives a click on the map and creates a destination at the click location
+     */
+    onMapClick(clickEvent) {
+      this.usePlace({
+        geometry: {
+          location: {
+            lat: clickEvent.latLng.lat,
+            lng: clickEvent.latLng.lng
+          }
+        }
+      });
     }
   },
   created() {}
