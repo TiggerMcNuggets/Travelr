@@ -25,9 +25,9 @@ public class DeleteTravellerSteps {
         try {
             // Create request object
             Http.RequestBuilder edit = Helpers.fakeRequest()
-                    .method("DELETE")
+                    .method("PUT")
                     .header("X-Authorization", state.getToken())
-                    .uri("https://localhost:9000/api/travellers/" + state.getTravellerId());
+                    .uri("https://localhost:9000/api/travellers/" + state.getTravellerId() + "/toggle_deleted");
 
             // Send request
             state.setResult(route(state.getApplication(), edit));

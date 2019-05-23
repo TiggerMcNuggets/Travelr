@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
@@ -55,7 +56,6 @@ public class DestinationController extends Controller {
                     for(Destination destination : destinations) {
                         list.add(new GetDestinationsRes(destination));
                     }
-
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(list);
                     return ok(jsonResponse);
@@ -80,7 +80,11 @@ public class DestinationController extends Controller {
                 return notFound(APIResponses.DESTINATION_NOT_FOUND);
             }
 
-            return ok(Ebean.json().toJson(destination));
+            Object response;
+            response = new GetDestinationsRes(destination);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
         });
     }
 
@@ -254,11 +258,19 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
         if (middlewareRes != null) return middlewareRes;
-        Destination destination = Destination.find.findById(destId);
+        Destination destination = Destination.find.findByIdIncludeDeleted(destId);
 
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
-        destinationRepository.shallowDeleteDestination(destId);
-        return CompletableFuture.completedFuture(ok());
+        return destinationRepository.toggleDestinationDeleted(destId).thenApplyAsync(deleted -> {
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode response = mapper.createObjectNode();
+
+            response.put("id", destId);
+            response.put("deleted", deleted);
+
+            return ok(response.toString());
+        });
 
     }
 

@@ -13,7 +13,7 @@ create table destination (
   country                       varchar(255) not null,
   user_id                       bigint,
   is_public                     boolean default false not null,
-  deleted                       boolean default 0 not null,
+  deleted                       boolean default false not null,
   constraint pk_destination primary key (id)
 );
 
@@ -29,6 +29,7 @@ create table destination_photo (
   destination_id                bigint,
   photo_filename                varchar(255) not null,
   is_public                     boolean default 0 not null,
+  deleted                       boolean default false not null,
   constraint pk_destination_photo primary key (id)
 );
 
@@ -36,6 +37,7 @@ create table nationality (
   id                            bigint auto_increment not null,
   is_old                        boolean default 0 not null,
   name                          varchar(255),
+  deleted                       boolean default false not null,
   constraint pk_nationality primary key (id)
 );
 
@@ -44,12 +46,14 @@ create table personal_photo (
   user_id                       bigint,
   photo_filename                varchar(255) not null,
   is_public                     boolean default 0 not null,
+  deleted                       boolean default false not null,
   constraint pk_personal_photo primary key (id)
 );
 
 create table traveller_type (
   id                            bigint auto_increment not null,
   name                          varchar(255),
+  deleted                       boolean default false not null,
   constraint pk_traveller_type primary key (id)
 );
 
@@ -57,6 +61,7 @@ create table trip (
   id                            bigint auto_increment not null,
   user_id                       bigint,
   name                          varchar(255),
+  deleted                       boolean default false not null,
   constraint pk_trip primary key (id)
 );
 
@@ -68,6 +73,7 @@ create table trip_destination (
   departure_date                integer,
   name                          varchar(255),
   ordinal                       integer not null,
+  deleted                       boolean default false not null,
   constraint pk_trip_destination primary key (id)
 );
 
@@ -84,6 +90,7 @@ create table user (
   user_profile_photo            varchar(255),
   timestamp                     bigint not null,
   account_type                  integer default 0 not null,
+  deleted                       boolean default false not null,
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id)
 );
@@ -99,6 +106,7 @@ create table user_nationality (
   user_id                       bigint,
   nationality_id                bigint,
   has_passport                  boolean not null default false not null,
+  deleted                       boolean default false not null,
   constraint pk_user_nationality primary key (id)
 );
 

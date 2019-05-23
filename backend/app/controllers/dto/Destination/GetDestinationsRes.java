@@ -1,6 +1,9 @@
 package controllers.dto.destination;
 
 import models.Destination;
+import models.TravellerType;
+
+import java.util.List;
 
 public class GetDestinationsRes {
 
@@ -21,6 +24,9 @@ public class GetDestinationsRes {
 
     public Long id;
 
+    public List<TravellerType> travellerTypes;
+
+
     public GetDestinationsRes(Destination destination) {
         this.name = destination.name;
         this.latitude = destination.latitude;
@@ -30,6 +36,7 @@ public class GetDestinationsRes {
         this.country = destination.country;
         this.isPublic = destination.isPublic;
         this.id = destination.id;
+        this.travellerTypes = destination.travellerTypes;
     }
 
 }
