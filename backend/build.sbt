@@ -19,10 +19,7 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 libraryDependencies += "io.ebean.test" % "ebean-test-config" % "11.36.1" % "test"
 
 
-// Rip
-//libraryDependencies += "org.modelmapper" % "modelmapper" % "0.7.5"
-
-
+// Use Play Evolutions
 libraryDependencies += evolutions
 libraryDependencies ++= Seq(evolutions, jdbc)
 
@@ -46,12 +43,14 @@ libraryDependencies ++= Seq (
 )
 
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
-
 scalacOptions in (Compile, doc) += "-no-java-comments"
 
-javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
+// Set Java version to 11?
+////scalacOptions += "-target:11"
+//javacOptions ++= Seq("-source", "jdk-11", "-target", "jdk-11")
 
+// Set config for testing
+javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
 // Maintainer
 maintainer := "frd15@uclive.ac.nz"
-

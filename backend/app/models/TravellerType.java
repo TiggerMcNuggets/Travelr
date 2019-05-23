@@ -15,6 +15,10 @@ public class TravellerType extends BaseModel {
     @ManyToMany
     public User user;
 
+    @JsonIgnore
+    @ManyToMany
+    public Destination destination;
+
     @Constraints.Required
     public String name;
 

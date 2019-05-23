@@ -18,7 +18,7 @@ public class PersonalPhoto extends BaseModel {
     public static final PhotoFinder find = new PhotoFinder();
 
     @ManyToOne
-    public User traveller;
+    public User user;
 
     /**
      * The photo filename.
@@ -37,28 +37,28 @@ public class PersonalPhoto extends BaseModel {
 
     /**
      * The PersonalPhoto constructor.
-     *
+     * @param user The user to be linked to the photo
      * @param photo_filename The local file path where the image is stored.
      */
-    public PersonalPhoto(User traveller, String photo_filename) {
-        this.traveller = traveller;
+    public PersonalPhoto(User user, String photo_filename) {
+        this.user = user;
         this.photo_filename = photo_filename;
     }
 
     /**
-     * Gets the traveller which the photo is associated with.
-     * @return The traveller instance.
+     * Gets the user which the photo is associated with.
+     * @return The user instance.
      */
     public User getTraveller() {
-        return traveller;
+        return user;
     }
 
     /**
-     * Sets the traveller which the photo is associated with.
-     * @param traveller The traveller instance.
+     * Sets the user which the photo is associated with.
+     * @param traveller The user instance.
      */
     public void setTraveller(User traveller) {
-        this.traveller = traveller;
+        this.user = traveller;
     }
 
     /**
