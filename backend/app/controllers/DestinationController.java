@@ -255,17 +255,18 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
         if (middlewareRes != null) return middlewareRes;
-        Destination destination = Destination.find.findById(destId);
+        Destination destination = Destination.find.findByIdIncludeDeleted(destId);
 
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
         return destinationRepository.toggleDestinationDeleted(destId).thenApplyAsync(deleted -> {
+
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode response = mapper.createObjectNode();
 
             response.put("id", destId);
             response.put("deleted", deleted);
 
-            return ok(response);
+            return ok(response.toString());
         });
 
     }

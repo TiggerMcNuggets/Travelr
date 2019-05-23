@@ -226,7 +226,7 @@ public class UserController extends Controller {
                 response.put("id", userId);
                 response.put("deleted", deleted);
 
-                return ok(response);
+                return ok(response.toString());
             });
         });
     }

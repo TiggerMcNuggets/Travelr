@@ -177,7 +177,7 @@ public class DestinationRepository {
         return supplyAsync(() -> {
             Destination dest = Destination.find.findByIdIncludeDeleted(id);
             dest.deleted = !dest.deleted;
-            dest.save();
+            dest.update();
             return dest.deleted;
         }, context);
     }

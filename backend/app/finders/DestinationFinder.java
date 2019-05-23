@@ -46,7 +46,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
                 .eq("isPublic", true)
                 .eq("user.id", userId)
                 .endOr()
-                .eq("deleted", false)
                 .endAnd()
                 .findList();
     }
@@ -82,7 +81,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
                     .eq("name", destination.name)
                     .eq("district", destination.district)
                     .eq("country", destination.country)
-                    .eq("deleted", false)
                     .endAnd()
                     .findList()
         );
