@@ -15,10 +15,6 @@ public class BaseModel extends Model {
   public Long id;
 
   @JsonIgnore
-  @Version
-  public Long version;
-
-  @JsonIgnore
   @SoftDelete
   public boolean deleted;
 
