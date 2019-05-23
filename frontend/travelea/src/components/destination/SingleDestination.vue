@@ -86,8 +86,8 @@
           <span class="dot"></span>
           <p>
             <strong>Traveller Types:</strong>
-            <!--{{getTravellerTypes(destination.travellerTypes)}}-->
-            {{destination.travellerTypes[0].name}}
+            {{getTravellerTypes(destination.travellerTypes)}}
+            <!--{{destination.travellerTypes[0].name}}-->
 
           </p>
         </div>
@@ -392,10 +392,13 @@ export default {
     },
 
     getTravellerTypes(travellerTypes) {
-      if (travellerTypes != null) {
+      if (travellerTypes !== null) {
         let travellerTypesString = "";
-        for (var i; i < travellerTypes.size(); i++) {
-          travellerTypesString += travellerTypes[i].name + ", ";
+        for (let i = 0; i < travellerTypes.length; i++) {
+          travellerTypesString += travellerTypes[i].name;
+          if(i !== (travellerTypes.length - 1)){
+            travellerTypesString += ", ";
+          }
         }
         return travellerTypesString;
       } else {

@@ -75,9 +75,9 @@
                     </div>
                     <div class="row-container">
                       <h3>Traveller Types:</h3>
-                        <md-chips v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
+                        <v-list v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
                           <v-chip small>{{type.name}}</v-chip>
-                        </md-chips>
+                        </v-list>
                     </div>
                   </div>
                 </div>
