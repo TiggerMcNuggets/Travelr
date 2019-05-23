@@ -1,0 +1,18 @@
+package controllers.dto.Destination;
+
+import play.data.validation.Constraints;
+
+import java.util.List;
+
+public class CreateDestinationEditReq {
+
+    @Constraints.Required
+    public long userId;
+
+    @Constraints.Required
+    public long destinationId;
+
+    @Constraints.Required
+    public List<Long> travellerTypeIds;
+
+}
