@@ -354,7 +354,18 @@ export default {
     /**
      * Refreshes the destination list
      */
-    updateDestinationList: function() {
+    updateDestinationList: function(destId) {
+      this.clearAlerts();
+      const url = `/users/${this.user_id}/destinations/${destId}/toggle_deleted`;  
+        this.rollbackCheckpoint(
+        'POST',
+        {
+            url: url,
+        },
+        {
+            url: url,
+        }
+      );
       this.getDestinationList();
       this.dialog = false;
     },
