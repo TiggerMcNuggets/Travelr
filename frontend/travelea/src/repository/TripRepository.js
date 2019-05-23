@@ -27,5 +27,9 @@ export default {
 
     updateTrip(user_id, id, tripBody) {
         return Repository.put(`/users/${user_id}/trips/${id}`, tripBody);
+    },
+
+    deleteTrip(userId, tripId) {
+        return Repository.put(`/users/${userId}/trips/${tripId}/toggle_deleted`);
     }
 }
