@@ -159,12 +159,27 @@ public class DestinationRepository {
 
     /**
      *
-     * The method sets the variable deleted to true for the destination with given id
-     * @param destId the id of the destination to shallow delete
+     * The method deletes destination
+     * @param destId the id of the destination to delete
      */
-    public void shallowDeleteDestination(Long destId) {
+    public void deleteDestination(Long destId) {
         Destination dest = Destination.find.findById(destId);
-        dest.setDeleted(true);
+        dest.delete();
         dest.update();
     }
+
+    /**
+     * Changes the user's destination field to the oppositive of its current value
+     * @param id the users id
+     * @return the users new deleted value
+     */
+    public CompletableFuture<Boolean> toggleDestinationDeleted(Long id) {
+        return supplyAsync(() -> {
+            Destination dest = Destination.find.findByIdIncludeDeleted(id);
+            dest.deleted = !dest.deleted;
+            dest.update();
+            return dest.deleted;
+        }, context);
+    }
+
 }
