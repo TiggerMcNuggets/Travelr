@@ -170,19 +170,39 @@ export default {
      * @param place The currently selected place
      */
     usePlace(place) {
+      const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
       this.place = place;
-      console.log(place);
+
+      console.log(place)
+
+      if (!this.place.geometry) {
+        return;
+      }
 
       if (this.place) {
-        this.destinationMarkers.push({
+        let dataFormat = {
           latitude: this.place.geometry.location.lat(),
           longitude: this.place.geometry.location.lng(),
           temp: true
-        });
+        };
 
+        if (this.place.name) {
+          dataFormat.name = this.place.name;
+        }
 
+        if (this.place.address_components) {
+          dataFormat.country = (this.place.address_components.filter(x => {
+            return x.types.includes("country")
+          })[0].long_name);
 
-        const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
+          dataFormat.district = (this.place.address_components.filter(x => {
+            if (x.types.includes("administrative_area_level_1")) {
+              return x.types.includes("administrative_area_level_1")
+            }
+          })[0].long_name);
+        }
+
+        this.destinationMarkers.push(dataFormat);
 
         // Zoom out -> Pan to marker -> Zoom in to marker
         zoomer.out(10).then( () => {
@@ -213,13 +233,14 @@ export default {
      * Perceives a click on the map and creates a destination at the click location
      */
     onMapClick(clickEvent) {
+      console.log(clickEvent);
       this.usePlace({
         geometry: {
           location: {
             lat: clickEvent.latLng.lat,
             lng: clickEvent.latLng.lng
           }
-        }
+        },
       });
     }
   },
