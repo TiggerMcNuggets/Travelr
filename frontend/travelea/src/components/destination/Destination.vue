@@ -22,7 +22,6 @@
           >
             <v-icon dark>add</v-icon>
           </v-btn>
-
           <v-btn
             class="upload-toggle-button"
             fab
