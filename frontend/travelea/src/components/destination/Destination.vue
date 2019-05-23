@@ -49,7 +49,6 @@
         <v-tab :key="2" ripple>Map</v-tab>
 
         <v-tab-item :key="1">
-          <  >
             <li
               class="destination-list-element"
               v-for="item in destinationsFiltered"
