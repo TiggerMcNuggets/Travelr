@@ -2,6 +2,12 @@
   <v-form ref="form" v-model="isValid" lazy-validation>
     <v-flex lg6 offset-lg3 sm8 offset-sm2 text-xs-center>
       <v-card class="signup-card">
+        <undo-redo-buttons
+          :canRedo="rollbackCanRedo()"
+          :canUndo="rollbackCanUndo()"
+          :undo="undo"
+          :redo="redo">
+        </undo-redo-buttons>
         <TravellerForm
           :fname.sync="traveller.firstName"
           :mname.sync="traveller.middleName"
@@ -30,6 +36,8 @@
       </v-card>
       <v-alert class="email-alert" :value="emailAlert" color="error">Email already taken</v-alert>
       <v-alert class="success" :value="createdUser" color="success">User created!</v-alert>
+      <v-alert class="success" :value="undoSuccessAlert" color="success">User creation undone!</v-alert>
+      <v-alert class="success" :value="redoSuccessAlert" color="success">User creation redone!</v-alert>
     </v-flex>
   </v-form>
 </template>
@@ -50,14 +58,17 @@
 <script>
 import TravellerForm from "../common/travellerForm/TravellerForm";
 import SignupFields from "../signup/SignupFields";
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import travellerFormHelper from "../common/travellerForm/travellerFormHelper";
 import dateTime from "../common/dateTime/dateTime.js";
 import { store } from "../../store/index";
 
 export default {
   name: "AdminCreateProfile",
+  mixins: [RollbackMixin],
 
-  components: { TravellerForm, SignupFields },
+  components: { TravellerForm, SignupFields, UndoRedoButtons },
 
   store,
 
@@ -66,6 +77,8 @@ export default {
       checkbox: true,
       isValid: false,
       emailAlert: false,
+      undoSuccessAlert: false,
+      redoSuccessAlert: false,
       createdUser: false,
       traveller: {},
 
@@ -77,6 +90,28 @@ export default {
   },
 
   methods: {
+
+    /**
+     * Sets all visible alerts to invisible
+     */
+    clearAlerts() {
+      this.emailAlert = false;
+      this.createdUser = false;
+      this.undoSuccessAlert = false;
+      this.redoSuccessAlert = false;
+    },
+
+    /**
+     * Clears all fields and form validation errors
+     */
+    clearFields() {
+      this.traveller = {};
+      this.nationalities = [];
+      this.passports = [];
+      this.confirmPassword = ""
+      this.$refs.form.reset();
+    },
+
     /**
      * Sets the nationalities and the passports lists, formatted date of birth, and whether the admin checkbox should be
      * ticked or not to the current state.
@@ -116,27 +151,53 @@ export default {
       // Checks if email is taken or not
       if (!response) {
         this.emailAlert = true;
-        setTimeout(() => {
-          this.emailAlert = false;
-        }, 5000);
         return false;
       }
+
+      const url = `/travellers/${response.data.id}/toggle_deleted`;  
+      this.rollbackCheckpoint(
+      'POST',
+      {
+          url: url,
+      },
+      {
+          url: url,
+      }
+      );
+      this.clearFields();
       return true;
     },
 
-    //
+    /**
+     * Checks form validation and creates the user
+     */
     async handleSignup() {
+      this.clearAlerts();
       if (this.$refs.form.validate()) {
         this.setTraveller();
 
         if (await this.signup()) {
           this.createdUser = true;
-          setTimeout(() => {
-            this.createdUser = false;
-          }, 3000);
         }
       }
-    }
+    },
+
+    /**
+    * Undoes the last action
+    */
+    undo: function() {
+      const actions = [this.clearAlerts, () => { this.undoSuccessAlert = true; }];
+      this.rollbackUndo(actions); 
+
+    },
+
+    /**
+     * Redoes the last action
+     */
+    redo: function() {
+      const actions = [this.clearAlerts, () => { this.redoSuccessAlert = true; }];
+      this.rollbackRedo(actions);
+    },
   }
 };
 </script>

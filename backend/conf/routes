@@ -23,7 +23,7 @@ GET         /api/travellers/me                  controllers.UserController.getMe
 GET         /api/travellers/:id/trips           controllers.TripController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
-DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
+PUT         /api/travellers/:id/toggle_deleted  controllers.UserController.toggleUserDeleted(request: Request, id: Long)
 
 # Personal Photos and Profile Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)

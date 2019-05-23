@@ -120,12 +120,8 @@ export default {
         },
 
         // eslint-disable-next-line
-        async deleteUser({commit}, userId) {
-            try {
-                await UserRepository.deleteUser(userId);
-            } catch (e) {
-                console.log(e);
-            }
+        async toggleUserDeleted({commit}, userId) {
+            await UserRepository.toggleUserDeleted(userId);
         }
     }
 }

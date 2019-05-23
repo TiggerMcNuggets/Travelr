@@ -1,70 +1,83 @@
 <template>
     <v-card>
-            <v-card-title>
-            Profiles
-            <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search"
-                append-icon="search"
-                label="Search"
-                single-line
-                hide-details
-            ></v-text-field>
-            </v-card-title>
-                <v-data-table
-                :headers="getColumns"
-                :items="users"
-                :search="search"
-                >
-                <template v-slot:items="props">
-                    <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
-                    <td class="text-xs-right">{{ props.item.lastName }}</td>
-                    <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
-                    <td class="text-xs-right">{{ props.item.gender }}</td>
-                    <td>
-                        <ul style="list-style-type:none">
-                            <li v-for="(nationality, index) in props.item.nationalities" :key="index">
-                                {{ nationality.name }} <br/>
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <ul style="list-style-type:none">
-                            <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
-                                {{ travelType.name }} <br/>
-                            </li>
-                        </ul>
-                    </td>
-                    <td v-if="isAdmin" class="text-xs-right">
-                        <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
-                            <v-icon>delete</v-icon>
-                        </v-btn>
-                    </td>
-                </template>
-                </v-data-table>
-        </v-card>
+        <undo-redo-buttons
+            :canRedo="rollbackCanRedo()"
+            :canUndo="rollbackCanUndo()"
+            :undo="undo"
+            :redo="redo">
+        </undo-redo-buttons>
+        <v-card-title>
+        Profiles
+        <v-spacer></v-spacer>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+        ></v-text-field>
+        </v-card-title>
+            <v-data-table
+            :headers="getColumns"
+            :items="users"
+            :search="search"
+            >
+            <template v-slot:items="props">
+                <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
+                <td class="text-xs-right">{{ props.item.lastName }}</td>
+                <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
+                <td class="text-xs-right">{{ props.item.gender }}</td>
+                <td>
+                    <ul style="list-style-type:none">
+                        <li v-for="(nationality, index) in props.item.nationalities" :key="index">
+                            {{ nationality.name }} <br/>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <ul style="list-style-type:none">
+                        <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
+                            {{ travelType.name }} <br/>
+                        </li>
+                    </ul>
+                </td>
+                <td v-if="isAdmin" class="text-xs-right">
+                    <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
+                        <v-icon>delete</v-icon>
+                    </v-btn>
+                </td>
+            </template>
+        </v-data-table>
+        <v-alert :value="isError" type="error">Cannot delete yourself or the global admin</v-alert>
+    </v-card>
 </template>
 
 
 <script>
-import { store } from "../../store/index";
+
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 
 export default {
-    store,
+    mixins: [RollbackMixin],
+    components: {
+        UndoRedoButtons: UndoRedoButtons
+    },
     data () {
         return {   
             search: '',
-            isAdmin: false
+            isAdmin: false,
+            isError: false
         }
     },
 
     computed: {
         /**
-         * Returns a list of users from the store
-         * @return A list of users from the store
+         * Returns a list of users from the this.$store.state
+         * @return A list of users from the this.$store.state
          */
         users() {
-            return store.state.users.users;
+            return this.$store.state.users.users;
         },
 
         /**
@@ -87,14 +100,47 @@ export default {
         },
     },
     methods: {
+
         /**
-         * Takes in a users ID, Deletes the user then regets all users from the database into the store
+         * Updates the store with the users gotten from the backend
+         */
+        getUsers() {
+            this.$store.dispatch("getUsers", false)
+            .then(() => {
+                return;
+            })
+            .catch(err => {
+                console.error(err);
+            })
+        },
+
+        /**
+         * Takes in a users ID, Deletes the user then regets all users from the database into the this.$store.state
          * @param userId 
          */
         async deleteUser(userId) {
-            await store.dispatch("deleteUser", userId);
-            await store.dispatch("getUsers", false);
+            this.isError = false;
+            try {
+                await this.$store.dispatch("toggleUserDeleted", userId);
+            } catch(err) {
+                this.isError = true;
+                console.error(err);
+                return;
+            }
+            
+            const url = `/travellers/${userId}/toggle_deleted`;  
+            this.rollbackCheckpoint(
+            'DELETE',
+            {
+                url: url,
+            },
+            {
+                url: url,
+            }
+            );
+            this.getUsers();
         },
+
         /**
          * Takes in a users id and redirects current page to that users account.
          * @param id
@@ -102,11 +148,29 @@ export default {
         goToUser(id) {
             var endpoint = '/user/' + id
             this.$router.push(endpoint)
-        }
+        },
+
+        /**
+        * Undoes the last action and gets users afterwards
+        */
+        undo: function() {
+            this.isError = false;
+            const actions = [this.getUsers];
+            this.rollbackUndo(actions); 
+        },
+
+        /**
+         * Redoes the last action and gets users afterwards
+         */
+        redo: function() {
+            this.isError = false;
+            const actions = [this.getUsers];
+            this.rollbackRedo(actions);
+        },
     },
     created: async function() {
-        await store.dispatch("getUsers", false);
-        if (store.getters.getIsUserAdmin) {
+        await this.$store.dispatch("getUsers", false);
+        if (this.$store.getters.getIsUserAdmin) {
             this.isAdmin = true;
         }
     }
