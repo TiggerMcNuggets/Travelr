@@ -3,6 +3,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
@@ -218,11 +219,14 @@ public class UserController extends Controller {
             }
 
             return userRepository.toggleUserDeleted(userId).thenApplyAsync(deleted -> {
-                if (deleted) {
-                    return ok("User " + userId + " is now deleted");
-                } else {
-                    return ok("User " + userId + " is now not deleted");
-                }
+
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode response = mapper.createObjectNode();
+
+                response.put("id", userId);
+                response.put("deleted", deleted);
+
+                return ok(response);
             });
         });
     }

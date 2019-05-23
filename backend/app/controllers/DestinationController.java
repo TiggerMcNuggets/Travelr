@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
@@ -257,8 +258,15 @@ public class DestinationController extends Controller {
         Destination destination = Destination.find.findById(destId);
 
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
-        destinationRepository.shallowDeleteDestination(destId);
-        return CompletableFuture.completedFuture(ok());
+        return destinationRepository.toggleDestinationDeleted(destId).thenApplyAsync(deleted -> {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode response = mapper.createObjectNode();
+
+            response.put("id", destId);
+            response.put("deleted", deleted);
+
+            return ok(response);
+        });
 
     }
 
