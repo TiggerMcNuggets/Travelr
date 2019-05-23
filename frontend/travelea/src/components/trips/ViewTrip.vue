@@ -1,4 +1,3 @@
-/* eslint-disable */
 
 <template>
 
@@ -75,7 +74,6 @@ export default {
         isAdmin: store.getters.getIsUserAdmin,
         tripId:  this.$route.params.trip_id,
         userId:  this.$route.params.id,
-        modifiedTrip: false,
         is_inset: true,
         trip: {},
         shouldDisplayDialog: false
@@ -95,13 +93,6 @@ export default {
        */
       toggleShouldDisplayButton: function() {
         this.shouldDisplayDialog = !this.shouldDisplayDialog;
-      },
-
-      /**
-       * Toggles the boolean that makes the alert dialog pop up
-       */
-      toggleModifiedTrip() {
-          this.modifiedTrip = !this.modifiedTrip;
       },
 
       /**
@@ -125,11 +116,6 @@ export default {
                 }
               }
               this.trip = trip;
-              this.toggleShouldDisplayButton();
-              this.toggleModifiedTrip();
-              setTimeout(() => {
-                  this.toggleModifiedTrip();
-              }, 2000)
           });
       }
   },

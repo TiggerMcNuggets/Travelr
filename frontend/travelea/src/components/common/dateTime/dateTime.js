@@ -17,7 +17,7 @@ dateTime.convertStringToTimestamp = date => {
  * @param timestamp The timestamp (seconds since beginning of 1970)
  */
 dateTime.convertTimestampToString = timestamp => {
-  return moment.unix(timestamp).format("YYYY-MM-DD");
-}
+  return (timestamp !== null) ? moment.unix(timestamp).format("YYYY-MM-DD") : 'N/A';
+};
 
 export default dateTime;
