@@ -27,13 +27,13 @@ export default {
 
     getMe() {
         return Repository.get('/travellers/me');
-      },
+    },
 
     getNationalities() {
         return Repository.get(`/nationalities`);
     },
 
-    deleteUser(userId) {
-        return Repository.delete(`/travellers/${userId}`);
+    toggleUserDeleted(userId) {
+        return Repository.put(`/travellers/${userId}/toggle_deleted`);
     }
 }

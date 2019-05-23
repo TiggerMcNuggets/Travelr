@@ -102,5 +102,14 @@ public class UserFinder extends Finder<Long, User> {
         return query.findList();
     }
 
+    /**
+     * Finds a user by id no matter if they're deleted or not
+     * @param id the users id
+     * @return the user
+     */
+    public User findByIdIncludeDeleted(Long id) {
+        return query().setIncludeSoftDeletes().fetch("nationalities").fetch("nationalities.nationality").fetch("travellerTypes").where().eq("id", id).findOneOrEmpty().orElse(null);
+    }
+
 
 }

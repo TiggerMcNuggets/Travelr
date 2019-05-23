@@ -25,7 +25,7 @@ Feature: GetDestinations
 
   Scenario: Get others destinations as normal user
     Given I provide the token "abc"
-    And The traveller id is 2
+    And The traveller id is 1
     When I get destinations
     Then I will receive a 403 response
 

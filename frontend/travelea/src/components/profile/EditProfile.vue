@@ -94,7 +94,7 @@ export default {
     };
   },
   methods: {
-    // Sets the file property to the new file uploaded
+    // Sets the file property to the new file uploaded 
 
     /**
      * Sets the file selected from the file system which will be uploaded.

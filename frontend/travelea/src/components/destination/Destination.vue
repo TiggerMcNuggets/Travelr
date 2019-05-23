@@ -22,7 +22,6 @@
           >
             <v-icon dark>add</v-icon>
           </v-btn>
-
           <v-btn
             class="upload-toggle-button"
             fab
@@ -49,7 +48,6 @@
         <v-tab :key="2" ripple>Map</v-tab>
 
         <v-tab-item :key="1">
-          <ul>
             <li
               class="destination-list-element"
               v-for="item in destinationsFiltered"
@@ -72,6 +70,12 @@
                     </div>
                     <div class="row-container">
                       <h3>Type: {{item.type}}</h3>
+                    </div>
+                    <div class="row-container">
+                      <h3>Traveller Types:</h3>
+                        <v-list v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
+                          <v-chip small>{{type.name}}</v-chip>
+                        </v-list>
                     </div>
                   </div>
                 </div>
