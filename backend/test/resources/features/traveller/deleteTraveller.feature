@@ -6,7 +6,7 @@ Feature: DeleteTravellers
     Then I will receive a 200 response
 
   Scenario: Non-admin user deletes their own traveller account
-    Given The traveller id is 3
+    Given The traveller id is 2
     And I provide the token "abc"
     When I delete the traveller
     Then I will receive a 200 response
@@ -24,7 +24,7 @@ Feature: DeleteTravellers
     Then I will receive a 403 response
 
   Scenario: Admin user tries to delete a master admin user
-    Given The traveller id is 6
+    Given The traveller id is 5
     And I provide the token "123"
     When I delete the traveller
     Then I will receive a 403 response

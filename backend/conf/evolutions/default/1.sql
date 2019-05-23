@@ -1,6 +1,7 @@
+# --- Created by Ebean DDL
+# To stop Ebean DDL generation, remove this comment and start using Evolutions
 
-
--- !Ups
+# --- !Ups
 
 create table destination (
   id                            bigint auto_increment not null,
@@ -33,6 +34,7 @@ create table destination_photo (
 
 create table nationality (
   id                            bigint auto_increment not null,
+  is_old                        boolean default 0 not null,
   name                          varchar(255),
   constraint pk_nationality primary key (id)
 );
@@ -140,7 +142,7 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
--- !Downs
+# --- !Downs
 
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;
