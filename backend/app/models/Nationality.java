@@ -9,12 +9,21 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Nationality extends BaseModel {
 
+    /**
+     * Ad-hoc finder used to communicate with the database
+     */
     public static final Finder<Long, Nationality> find = new Finder<>(Nationality.class);
 
+    /**
+     * Indicates if the nationality currently exists
+     */
     @NotNull
     @Column(columnDefinition = "boolean default 0")
     public boolean is_old;
 
+    /**
+     * The nationality name
+     */
     @Constraints.Required
     public String name;
 
