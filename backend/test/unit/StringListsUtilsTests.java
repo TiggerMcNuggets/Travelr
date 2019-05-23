@@ -79,6 +79,6 @@ public class StringListsUtilsTests {
         ArrayList<String> difference = StringListsUtils.subtraction(first, second);
         assertEquals(2, difference.size());
         assertEquals(difference.get(0), "Z");
-        assertEquals(difference.get(0), "Y");
+        assertEquals(difference.get(1), "Y");
     }
 }
