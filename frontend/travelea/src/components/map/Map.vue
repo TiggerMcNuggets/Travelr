@@ -23,7 +23,7 @@
         :key="index"
         :position="{lat: marker.latitude, lng: marker.longitude}"
         :clickable="true"
-        :draggable="true"
+        :draggable="destinationMarkers[index].temp"
         @click="openInfoWindowTemplate(destinationMarkers[index])"
         @dragend="updateCoordinatesAfterDrag($event, index)"
         :icon="chooseIconForMarker(marker, index)"
@@ -35,7 +35,7 @@
         @closeclick="closeInfoWindow()"
       >
         <div v-if="selectedDest !== null">
-          <div v-if="selectedDest.hasOwnProperty('id')">
+          <div v-if="selectedDest.hasOwnProperty('id') && !infoWindow.editMode">
             <h2>Country: {{this.selectedDest.country}}</h2>
             <h2>District: {{this.selectedDest.district}}</h2>
             <h2>Name: {{this.selectedDest.name}}</h2>
@@ -44,10 +44,16 @@
               Visit
               <v-icon dark right>arrow_forward</v-icon>
             </v-btn>
+            <v-btn color="red darken-2" dark icon v-on:click="infoWindow.editMode = !infoWindow.editMode">
+              <v-icon>edit</v-icon>
+            </v-btn>
           </div>
-          <div v-else>
+          <div v-if="!selectedDest.hasOwnProperty('id') && !infoWindow.editMode">
             <destination-create :createDestinationCallback="createDestinationCallback" :prefillData="{...selectedDest}"/>
           </div>
+          <v-flex v-if="infoWindow.editMode">
+            <destination-edit-fields :updateDestinationCallback="updateDestinationCallback" :prefillData="{...selectedDest}"/>
+          </v-flex>
         </div>
       </GmapInfoWindow>
     </GmapMap>
@@ -87,6 +93,8 @@
 
 <script>
 import DestinationCreate from "../destination/DestinationCreate";
+import DestinationEditFields from "../destination/DestinationEditFields";
+
 const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
 const blueMarker = require("../../assets/blue-google-maps-marker.svg");
 const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
@@ -101,7 +109,9 @@ export default {
         : this.$route.params.id,
       infoWindow: {
         position: { lat: 0, lng: 0 },
-        open: false
+        open: false,
+        createMode: false,
+        editMode: false
       },
       selectedDest: null,
       place: null
@@ -110,9 +120,10 @@ export default {
   props: {
     destinationMarkers: Array,
     createDestinationCallback: Function,
+    updateDestinationCallback: Function,
   },
   watch: {},
-  components: {DestinationCreate},
+  components: {DestinationCreate, DestinationEditFields},
   methods: {
 
     /**
@@ -120,7 +131,8 @@ export default {
      * @param item The destination item being clicked on.
      */
     openInfoWindowTemplate(item) {
-      this.infoWindow.position = { lat: item.latitude, lng: item.longitude };
+      const xOffset = 0.01;
+      this.infoWindow.position = { lat: item.latitude + xOffset, lng: item.longitude };
       this.infoWindow.open = true;
       this.selectedDest = item;
     },
@@ -130,6 +142,7 @@ export default {
      */
     closeInfoWindow() {
       this.infoWindow.open = false;
+      this.infoWindow.editMode = false;
       this.selectedDest = null;
     },
 
@@ -172,8 +185,6 @@ export default {
     usePlace(place) {
       const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
       this.place = place;
-
-      console.log(place)
 
       if (!this.place.geometry) {
         return;

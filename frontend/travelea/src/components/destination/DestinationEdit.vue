@@ -1,110 +1,40 @@
-
-/* eslint-disable */
-
 <template>
   <v-card>
     <div class="outer-container">
-      <v-form ref="form" lazy-validation>
-        <div class="container">
-          <div class="section">
-            <div class="dest-name">
-              <v-btn
-                class="upload-toggle-button"
-                fab
-                small
-                dark
-                color="indigo"
-                @click="$router.go(-1)"
-              >
-                <v-icon dark>keyboard_arrow_left</v-icon>
-              </v-btn>
-              <h2 class="headline">Edit Destination</h2>
-              <undo-redo-buttons
-                :canRedo="rollbackCanRedo()"
-                :canUndo="rollbackCanUndo()"
-                :undo="undo"
-                :redo="redo"></undo-redo-buttons>
-            </div>
-
-          </div>
-          <v-divider class="photo-header-divider"></v-divider>
-          <v-layout>
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model="destination.name"
-                :rules="nameRules"
-                :counter="10"
-                label="Destination Name"
-                required
-              ></v-text-field>
-            </v-flex>
-
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model="destination.type"
-                :rules="nameRules"
-                :counter="10"
-                label="Destination Type"
-                required
-              ></v-text-field>
-            </v-flex>
-          </v-layout>
-
-          <v-layout>
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model="destination.district"
-                :rules="nameRules"
-                :counter="10"
-                label="Destination District"
-                required
-              ></v-text-field>
-            </v-flex>
-
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model="destination.country"
-                :rules="nameRules"
-                :counter="10"
-                label="Country"
-                required
-              ></v-text-field>
-            </v-flex>
-          </v-layout>
-
-          <v-layout>
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model.number="destination.latitude"
-                :rules="numberRules"
-                label="Latitude"
-                required
-              ></v-text-field>
-            </v-flex>
-
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model.number="destination.longitude"
-                :rules="numberRules"
-                label="Longitude"
-                required
-              ></v-text-field>
-            </v-flex>
-          </v-layout>
-          <div class="buttons-div">
-            <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
-            <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
+      <div class="container">
+        <div class="section">
+          <div class="dest-name">
+            <v-btn
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              @click="$router.go(-1)"
+            >
+              <v-icon dark>keyboard_arrow_left</v-icon>
+            </v-btn>
+            <h2 class="headline">Edit Destination</h2>
+            <undo-redo-buttons
+              :canRedo="rollbackCanRedo()"
+              :canUndo="rollbackCanUndo()"
+              :undo="undo"
+              :redo="redo"></undo-redo-buttons>
           </div>
         </div>
-        <v-alert :value="isError" type="error">This destination is already available to you</v-alert>
-      </v-form>
+
+        <v-divider class="photo-header-divider"></v-divider>
+        <destination-edit-fields
+                :updateDestinationCallback="updateDestination"
+                :prefillData="{...prefillData}">
+        </destination-edit-fields>
+
+      </div>
     </div>
   </v-card>
 </template>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-
 .outer-container {
   text-align: center;
 }
@@ -127,15 +57,17 @@ let destinationRepository = RepositoryFactory.get("destination");
 import { rules } from "../form_rules";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+import DestinationEditFields from "./DestinationEditFields"
 
 export default {
   mixins: [RollbackMixin],
   components: {
-    UndoRedoButtons: UndoRedoButtons
+    UndoRedoButtons: UndoRedoButtons,
+    DestinationEditFields: DestinationEditFields
   },
   data() {
     return {
-      destination: {},
+      prefillData: null,
       isError: false,
       ...rules
     };
@@ -143,13 +75,13 @@ export default {
   methods: {
 
     /**
-     * Requests a destination and sets destination property to it
+     * Requests a destination and sets the prefillData property to it
      */
     setDestination: function() {
       destinationRepository
         .getDestination(this.$route.params.id, this.$route.params.dest_id)
         .then(result => {
-          this.destination = result.data;
+          this.prefillData = result.data;
 
           // This is set to later be pushed as a reaction to the rollback stack
           this.rollbackSetPreviousBody(result.data);
@@ -161,43 +93,43 @@ export default {
      * This function will first check if the data is valid and only submit successfully if it is.
      * A checkpoint is pushed to the undo redo stack containing information for the action and reaction
      */
-    updateDestination: function() {
-      if (this.$refs.form.validate()) {
-        const userId = this.$route.params.id;
-        const destId = this.$route.params.dest_id;
+    updateDestination: function(destination) {
+      const userId = this.$route.params.id;
+      const destId = this.$route.params.dest_id;
 
-        // Call the update request
-        destinationRepository
-          .updateDestination(
-            userId, 
-            destId,
-            this.destination
-          )
-          .then(() => {
-            const url = `/users/${userId}/destinations/${destId}`;  
+      // Call the update request
+      destinationRepository
+        .updateDestination(
+          userId,
+          destId,
+          destination
+        )
+        .then(() => {
+          const url = `/users/${userId}/destinations/${destId}`;
 
-            // Pushes checkpoint containing type of action, action body, and reaction body
-            this.rollbackCheckpoint(
-              'PUT',
-              {
-                url: url,
-                body: {...this.destination}
-              },
-              {
-                url: url,
-                body: this.rollbackPreviousBody
-              }
-            );
+          // Pushes checkpoint containing type of action, action body, and reaction body
+          this.rollbackCheckpoint(
+            'PUT',
+            {
+              url: url,
+              body: {...destination}
+            },
+            {
+              url: url,
+              body: this.rollbackPreviousBody
+            }
+          );
 
-            // Update previous body to be used for the next checkpoints reaction
-            this.rollbackSetPreviousBody(this.destination);
-            this.isError = false;
-          })
-          .catch((e) => {
-            console.error(e);
-            this.isError = true;
-          });
-      }
+          // Update previous body to be used for the next checkpoints reaction
+          this.rollbackSetPreviousBody(destination);
+          this.doneUpdatingCallback();
+
+          this.isError = false;
+        })
+        .catch((e) => {
+          console.error(e);
+          this.isError = true;
+        });
     },
 
     /**

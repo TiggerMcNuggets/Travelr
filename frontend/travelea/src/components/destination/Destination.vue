@@ -123,6 +123,7 @@
             <MapDashboard
               :destinations="this.destinations"
               :createDestinationCallback="updateDestinationList"
+              :updateDestinationCallback="updateDestinationCallback"
             />
           </v-card>
         </v-tab-item>

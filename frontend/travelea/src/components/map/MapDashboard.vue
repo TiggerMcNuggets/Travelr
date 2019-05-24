@@ -5,6 +5,7 @@
     <Map
       :destinationMarkers="this.destinationMarkers"
       :createDestinationCallback="createDestinationCallback"
+      :updateDestinationCallback="updateDestinationCallback"
     />
     <MapMenu
       :destinations="this.destinations"
