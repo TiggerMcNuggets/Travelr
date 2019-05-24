@@ -18,10 +18,14 @@ export default {
   },
 
   makePublic(destId) {
-      return Repository.post(`/destinations/${destId}/make_public`);
+    return Repository.put(`/destinations/${destId}/make_public`);
+  },
+
+  makePrivate(destId) {
+    return Repository.put(`/destinations/${destId}/make_private`);
   },
 
   deleteDestination(userId, destinationId) {
-      return Repository.put(`/users/${userId}/destinations/${destinationId}/toggle_deleted`);
+    return Repository.put(`/users/${userId}/destinations/${destinationId}/toggle_deleted`);
   }
 }

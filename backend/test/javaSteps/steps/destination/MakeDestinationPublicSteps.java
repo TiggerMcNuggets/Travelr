@@ -31,7 +31,7 @@ public class MakeDestinationPublicSteps {
         try {
             // Create request object
             Http.RequestBuilder info = Helpers.fakeRequest()
-                    .method("POST")
+                    .method("PUT")
                     .header("X-Authorization", state.getToken())
                     .uri("https://localhost:9000/api/destinations/" + destinationId + "/make_public");
 
