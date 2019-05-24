@@ -6,6 +6,7 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Destination.CreateDestinationEditReq;
+import controllers.dto.Destination.DestinationEditRequestReponse;
 import models.DestinationEditRequest;
 import models.User;
 import play.data.Form;
@@ -59,10 +60,10 @@ public class DestinationEditRequestController extends Controller {
         return destinationEditRequestRepository
                 .getAllEditRequests()
                 .thenApplyAsync((requests) -> {
-                    System.out.println(requests.get(0).travellerTypes);
-                    System.out.println(requests.get(0));
+                    System.out.println(requests.get(0).destination.getName());
+                    DestinationEditRequestReponse res = new DestinationEditRequestReponse(requests);
                     ObjectMapper mapper = new ObjectMapper();
-                    JsonNode jsonResponse = mapper.valueToTree(requests);
+                    JsonNode jsonResponse = mapper.valueToTree(res);
                     return ok(jsonResponse);
                 });
     }

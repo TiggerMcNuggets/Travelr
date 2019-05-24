@@ -57,9 +57,9 @@ public class DestinationEditRequestRepository {
     public CompletableFuture<Boolean> acceptRequest(long id) {
         return supplyAsync(() -> {
             DestinationEditRequest req = DestinationEditRequest.find.byId(id);
-            Destination destination = req.destination;
+            Destination destination = req.getDestination();
 
-            destination.travellerTypes = req.travellerTypes;
+            destination.travellerTypes = req.getTravellerTypes();
 
             destination.save();
 

@@ -1,7 +1,4 @@
-# --- Created by Ebean DDL
-# To stop Ebean DDL generation, remove this comment and start using Evolutions
-
-# --- !Ups
+-- !Ups
 
 create table destination (
   id                            bigint auto_increment not null,
@@ -25,6 +22,8 @@ create table destination_traveller_type (
 
 create table destination_edit_request (
   id                            bigint auto_increment not null,
+  user_id                       bigint,
+  destination_id                bigint,
   deleted                       boolean default false not null,
   constraint pk_destination_edit_request primary key (id)
 );
@@ -131,6 +130,12 @@ alter table destination_traveller_type add constraint fk_destination_traveller_t
 create index ix_destination_traveller_type_traveller_type on destination_traveller_type (traveller_type_id);
 alter table destination_traveller_type add constraint fk_destination_traveller_type_traveller_type foreign key (traveller_type_id) references traveller_type (id) on delete restrict on update restrict;
 
+create index ix_destination_edit_request_user_id on destination_edit_request (user_id);
+alter table destination_edit_request add constraint fk_destination_edit_request_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_destination_edit_request_destination_id on destination_edit_request (destination_id);
+alter table destination_edit_request add constraint fk_destination_edit_request_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
+
 create index ix_destination_edit_request_traveller_type_destination_ed_1 on destination_edit_request_traveller_type (destination_edit_request_id);
 alter table destination_edit_request_traveller_type add constraint fk_destination_edit_request_traveller_type_destination_ed_1 foreign key (destination_edit_request_id) references destination_edit_request (id) on delete restrict on update restrict;
 
@@ -168,7 +173,7 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
-# --- !Downs
+-- !Downs
 
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;
@@ -178,6 +183,12 @@ drop index if exists ix_destination_traveller_type_destination;
 
 alter table destination_traveller_type drop constraint if exists fk_destination_traveller_type_traveller_type;
 drop index if exists ix_destination_traveller_type_traveller_type;
+
+alter table destination_edit_request drop constraint if exists fk_destination_edit_request_user_id;
+drop index if exists ix_destination_edit_request_user_id;
+
+alter table destination_edit_request drop constraint if exists fk_destination_edit_request_destination_id;
+drop index if exists ix_destination_edit_request_destination_id;
 
 alter table destination_edit_request_traveller_type drop constraint if exists fk_destination_edit_request_traveller_type_destination_ed_1;
 drop index if exists ix_destination_edit_request_traveller_type_destination_ed_1;
