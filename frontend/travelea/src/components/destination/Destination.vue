@@ -97,7 +97,7 @@
                   <v-btn
                     v-if="(isMyProfile || isAdminUser) && !item.isPublic"
                     icon
-                    @click="editDestination(item.id)"
+                    @click="toggleEditDestination(item)"
                   >
                     <v-icon color="orange lighten-1">edit</v-icon>
                   </v-btn>
@@ -123,7 +123,6 @@
             <MapDashboard
               :destinations="this.destinations"
               :createDestinationCallback="updateDestinationList"
-              :updateDestinationCallback="updateDestinationCallback"
             />
           </v-card>
         </v-tab-item>
@@ -131,6 +130,10 @@
 
       <v-dialog v-model="dialog" width="800">
         <destination-create :createDestinationCallback="updateDestinationList"/>
+      </v-dialog>
+
+      <v-dialog v-model="editDialog" width="800">
+        <destination-edit-fields :prefillData="prefillData"/>
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -239,11 +242,13 @@ import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import MapDashboard from "../map/MapDashboard";
 import DestinationCreate from "./DestinationCreate";
+import DestinationEditFields from "./DestinationEditFields";
 
 export default {
   store,
   mixins: [RollbackMixin],
   components: {
+    DestinationEditFields,
     UndoRedoButtons,
     MapDashboard,
     DestinationCreate
@@ -252,6 +257,7 @@ export default {
   data() {
     return {
       dialog: false,
+      editDialog: false,
       showEditDestination: false,
       destinations: [],
       isMyProfile: false,
@@ -261,10 +267,10 @@ export default {
       filteredList: [],
       searchValue: "",
       searchActive: false,
-      undoRedoError: false
+      undoRedoError: false,
+      prefillData: null
     };
   },
-
 
   watch: {
     "$route.params.id": function() {
@@ -326,6 +332,14 @@ export default {
      */
     toggleShowCreateDestination: function() {
       this.dialog = !this.dialog;
+    },
+
+    /**
+     * Toggles the dialog to edit a destination.
+     */
+    toggleEditDestination: function(item) {
+      this.prefillData = item;
+      this.editDialog = !this.editDialog;
     },
 
     /**
