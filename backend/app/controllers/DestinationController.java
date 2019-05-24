@@ -203,7 +203,7 @@ public class DestinationController extends Controller {
             Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
             Boolean isDestinationOwner = (destination.getUser().getId() == userId);
             if(destination.isPublic && !isAdmin && !isDestinationOwner) {
-                return CompletableFuture.completedFuture(Results.forbidden("Permission denied: Trying to edit a public destination and not admin"));
+                return CompletableFuture.completedFuture(Results.forbidden(APIResponses.FORBIDDEN_DESTINATION_EDIT));
             }
 
             return destinationRepository.update(req, destId, userId).thenApplyAsync(destinationId -> {
