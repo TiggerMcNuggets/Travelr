@@ -4,10 +4,15 @@
   <div class="create-trip-container">
     <v-form ref="form" lazy-validation>
       <div class="add-trip-form">
-        <h3>Add New Trip</h3>
+        <h3>{{this.dialogName}}</h3>
+        <UndoRedoButtons
+              :canRedo="rollbackCanRedo()"
+              :canUndo="rollbackCanUndo()"
+              :undo="undo"
+              :redo="redo"></UndoRedoButtons>
         <v-layout class="trip-name">
           <v-flex xs12 md12 class="row-input-margin">
-            <v-text-field v-model="trip.title" :rules="nameRules" :counter="60" label="Trip Name"></v-text-field>
+            <v-text-field v-model="trip.name" :rules="nameRules" :counter="60" label="Trip Name"></v-text-field>
           </v-flex>
         </v-layout>
         <ul>
@@ -162,11 +167,6 @@
 .times-padding {
   padding: 1em;
 }
-
-.ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
-}
 .list-group-item {
   cursor: move;
   margin-bottom: 20px;
@@ -188,12 +188,16 @@ import {
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
 
+import RollbackMixin from '../mixins/RollbackMixin';
+import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 let tripRepository = RepositoryFactory.get("trip");
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
+  mixins: [RollbackMixin],
   components: {
+    UndoRedoButtons,
     draggable: draggable
   },
   props: {
@@ -211,7 +215,7 @@ export default {
       draggableEnabled: true,
       dialogName: "Create a new trip",
       trip: {
-        title: "",
+        name: "",
         destinations: [
           {
             title: null,
@@ -252,7 +256,7 @@ export default {
      * Gets the list of valid destinations available to a user
      */
     getDestinations: function() {
-      destinationRepository
+      return destinationRepository
         .getDestinations(this.id)
         .then(res => {
           this.userDestinations = res.data;
@@ -304,7 +308,7 @@ export default {
      */
     addDestinationToTrip: function() {
       const template = {
-        title: null,
+        name: null,
         arrivalDate: null,
         departureDate: null,
         arrivalDateMenu: false,
@@ -369,7 +373,22 @@ export default {
         tripRepository
           .updateTrip(this.id, parseInt(this.passedTrip), trip)
           .then(() => {
-            this.updateViewTripPage();
+              const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
+              this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                      url: url,
+                      body: trip
+                  },
+                  {
+                      url: url,
+                      body: this.rollbackPreviousBody
+                  }
+              );
+
+              // Update previous body to be used for the next checkpoints reaction
+              this.rollbackSetPreviousBody({...trip});
+              this.updateViewTripPage();
           })
           .catch(e => {
             console.log(e);
@@ -379,13 +398,15 @@ export default {
 
     /**
      * Creates a trip object from the data passed that conforms with the API specs
-     * @return trip
+     * @return {name: string, destinations: Array}
      **/
     tripAssembler: function() {
-      let trip = { name: this.trip.title, destinations: [] };
+      let trip = { name: this.trip.name, destinations: [] };
       this.trip.destinations.forEach((destination, index) => {
         const destById = this.userDestinations.find(
-          dest => destination.title === dest.name
+          dest => {
+              return destination.title === dest.name
+          }
         );
         trip.destinations.push({
           id: destById.id,
@@ -395,8 +416,63 @@ export default {
         });
       });
       return trip;
-    }
+    },
+    /**
+     * Undoes the last action and calls setDestination() afterwards
+     */
+    undo: function() {
+        const actions = [this.getTrip];
+        this.rollbackUndo(actions);
+    },
+
+    /**
+     * Redoes the last action and calls setDestination() afterwards
+     */
+    redo: function() {
+        const actions = [this.getTrip];
+        this.rollbackRedo(actions);
+    },
+
+
+    /**
+     * Helper function to create the trip object that is shown on the component
+     */
+    setTrip(result, tripToEdit) {
+        const tripById = result.data;
+        tripToEdit.name = tripById.name;
+        for (let i = 0; i < tripById.destinations.length; i++) {
+            const destToAdd = {};
+            const currentDest = tripById.destinations[i];
+            destToAdd.title = currentDest.name;
+            destToAdd.arrivalDate =
+                currentDest.arrivalDate === null
+                    ? null
+                    : moment.unix(currentDest.arrivalDate).format("YYYY-MM-DD");
+            destToAdd.departureDate =
+                currentDest.departureDate === null
+                    ? null
+                    : moment.unix(currentDest.departureDate).format("YYYY-MM-DD");
+            destToAdd.arrivalDateMenu = false;
+            destToAdd.departureDateMenu = false;
+            tripToEdit.destinations.push(destToAdd);
+        }
+        return tripToEdit;
+      },
+
+      /**
+       * Returns an async function that resolves in the trip object to display
+       */
+      getTrip() {
+          let tripToEdit = { name: "", destinations: [] };
+          return tripRepository.getTrip(this.id, this.passedTrip).then(result => {
+              const trip = this.setTrip(result, tripToEdit);
+              this.trip = trip;
+              return trip;
+          });
+      },
   },
+
+
   /**
    * When the component finished mounting, the destinations for the combobox are retrieved and then
    * in case the parent component passed a valid trip id, the trip is retrieved and the
@@ -404,35 +480,21 @@ export default {
    * Makes component usable for both create and edit component
    */
   mounted() {
-    console.log(this.$route);
-    this.getDestinations(this.userId);
-    if (this.passedTrip !== null) {
-      this.dialogName = "Edit current trip";
-      let tripToEdit = { title: "", destinations: [] };
-      tripRepository.getTrip(this.id, this.passedTrip).then(result => {
-        const tripById = result.data;
-        tripToEdit.title = tripById.name;
-        for (let i = 0; i < tripById.destinations.length; i++) {
-          const destToAdd = {};
-          const currentDest = tripById.destinations[i];
-          destToAdd.title = currentDest.name;
-          destToAdd.arrivalDate =
-            currentDest.arrivalDate === null
-              ? null
-              : moment.unix(currentDest.arrivalDate).format("YYYY-MM-DD");
-          destToAdd.departureDate =
-            currentDest.departureDate === null
-              ? null
-              : moment.unix(currentDest.departureDate).format("YYYY-MM-DD");
-          destToAdd.arrivalDateMenu = false;
-          destToAdd.departureDateMenu = false;
-          tripToEdit.destinations.push(destToAdd);
-          this.trip = tripToEdit;
-        }
-      });
-    }
+    this.getDestinations(this.userId)
+        .then(() => {
+        if (this.passedTrip !== null) {
+            this.dialogName = "Edit current trip";
+            return this.getTrip()
+        }})
+        .then(() => {
+            // needed for rollback functionality
+            this.rollbackSetPreviousBody(this.tripAssembler());
+        });
   },
 
+  /**
+   * Sets if the user is the owner or if admin
+   */
   created: function() {
     this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;

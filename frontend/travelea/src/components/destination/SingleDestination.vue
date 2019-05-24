@@ -83,6 +83,13 @@
             <strong>Longitude:</strong>
             {{destination.longitude}}
           </p>
+          <span class="dot"></span>
+          <p>
+            <strong>Traveller Types:</strong>
+            {{getTravellerTypes(destination.travellerTypes)}}
+            <!--{{destination.travellerTypes[0].name}}-->
+
+          </p>
         </div>
         <v-divider class="photo-header-divider"></v-divider>
         <div v-if="showUploadSection">
@@ -382,6 +389,21 @@ export default {
       newImageList.unshift(row);
       newImageList.reverse();
       return newImageList;
+    },
+
+    getTravellerTypes(travellerTypes) {
+      if (travellerTypes !== null) {
+        let travellerTypesString = "";
+        for (let i = 0; i < travellerTypes.length; i++) {
+          travellerTypesString += travellerTypes[i].name;
+          if(i !== (travellerTypes.length - 1)){
+            travellerTypesString += ", ";
+          }
+        }
+        return travellerTypesString;
+      } else {
+        return "-";
+      }
     }
   },
 

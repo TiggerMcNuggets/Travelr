@@ -27,6 +27,15 @@ public class DestinationFinder extends Finder<Long, Destination> {
     }
 
     /**
+     * retrieves destination from database by Id
+     * @param id the id of the destination we search databse for
+     * @return the found destination, otherwise null
+     */
+    public Destination findByIdIncludeDeleted(Long id) {
+        return query().setIncludeSoftDeletes().where().eq("id", id).findOneOrEmpty().orElse(null);
+    }
+
+    /**
      * retrieves all the destinations from the database that are available for user to see, based on if destination
      * is public or user created the destination
      * @param userId the Id of the user requesting to see destinations
@@ -41,7 +50,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
                 .eq("isPublic", true)
                 .eq("user.id", userId)
                 .endOr()
-                .eq("deleted", false)
                 .endAnd()
                 .findList();
     }
@@ -77,7 +85,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
                     .eq("name", destination.name)
                     .eq("district", destination.district)
                     .eq("country", destination.country)
-                    .eq("deleted", false)
                     .endAnd()
                     .findList()
         );

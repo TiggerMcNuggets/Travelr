@@ -2,6 +2,8 @@ package repository;
 
 import controllers.dto.destination.CreateDestReq;
 import models.Destination;
+import models.TravellerType;
+import models.DestinationPhoto;
 import models.TripDestination;
 import models.User;
 
@@ -77,7 +79,14 @@ public class DestinationRepository {
             destination.setType(request.type);
             destination.setCountry(request.country);
             destination.setDistrict(request.district);
+            destination.travellerTypes.clear();
 
+            destination.travellerTypes = new ArrayList<TravellerType>();
+            if(request.travellerTypes != null) {
+                for (long i : request.travellerTypes) {
+                    destination.travellerTypes.add(TravellerType.find.byId(i));
+                }
+            }
             List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
 
             if (sameDestinations.size() > 0) {
@@ -124,12 +133,15 @@ public class DestinationRepository {
 
     /**
      * Merges destinations by converting all same destinations in trips to the new destination
+     * Merges images from all destinations in sameDestinations into destination
      * @param sameDestinations The list of same destinations
      */
     private void mergeDestinations(Destination destination, List<Destination> sameDestinations) {
         List<TripDestination> tripDestinations = new ArrayList<TripDestination>();
+        List<DestinationPhoto> destinationPhotos = new ArrayList<DestinationPhoto>();
 
         for (Destination sameDestination : sameDestinations) {
+            destinationPhotos.addAll(DestinationPhoto.find.getAllPhotosForDestination(sameDestination.id));
             tripDestinations.addAll(TripDestination.find.getAllByDestinationId(sameDestination.getId()));
         }
 
@@ -137,16 +149,37 @@ public class DestinationRepository {
             tripDestination.setDestination(destination);
             tripDestination.save();
         }
+
+        for (DestinationPhoto destinationPhoto : destinationPhotos) {
+            destinationPhoto.setDestination(destination);
+            destinationPhoto.save();
+        }
+
     }
 
     /**
      *
-     * The method sets the variable deleted to true for the destination with given id
-     * @param destId the id of the destination to shallow delete
+     * The method deletes destination
+     * @param destId the id of the destination to delete
      */
-    public void shallowDeleteDestination(Long destId) {
+    public void deleteDestination(Long destId) {
         Destination dest = Destination.find.findById(destId);
-        dest.setDeleted(true);
+        dest.delete();
         dest.update();
     }
+
+    /**
+     * Changes the user's destination field to the oppositive of its current value
+     * @param id the users id
+     * @return the users new deleted value
+     */
+    public CompletableFuture<Boolean> toggleDestinationDeleted(Long id) {
+        return supplyAsync(() -> {
+            Destination dest = Destination.find.findByIdIncludeDeleted(id);
+            dest.deleted = !dest.deleted;
+            dest.update();
+            return dest.deleted;
+        }, context);
+    }
+
 }

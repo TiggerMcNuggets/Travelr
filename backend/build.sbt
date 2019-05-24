@@ -39,19 +39,19 @@ libraryDependencies ++= Seq (
   "io.cucumber" % "cucumber-jvm" % "4.2.0" % " test " ,
   "io.cucumber" % "cucumber-junit" % "4.2.0" % " test " ,
   "io.cucumber" % "cucumber-java" % "4.2.0",
-  "org.xerial" % "sqlite-jdbc" % "3.25.2"
+  "org.xerial" % "sqlite-jdbc" % "3.25.2",
+  javaWs
 )
 
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
 scalacOptions in (Compile, doc) += "-no-java-comments"
 
-// Set Java version to 1.8
-scalacOptions += "-target:jvm-1.8"
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
+// Set Java version to 11?
+////scalacOptions += "-target:11"
+//javacOptions ++= Seq("-source", "jdk-11", "-target", "jdk-11")
 
 // Set config for testing
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
 // Maintainer
 maintainer := "frd15@uclive.ac.nz"
-
