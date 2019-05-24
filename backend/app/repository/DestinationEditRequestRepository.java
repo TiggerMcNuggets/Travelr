@@ -28,7 +28,7 @@ public class DestinationEditRequestRepository {
         }, context);
     }
 
-    public CompletableFuture<DestinationEditRequest> createRequest(CreateDestinationEditReq request, User user) {
+    public CompletableFuture<Long> createRequest(CreateDestinationEditReq request, User user) {
         return supplyAsync(() -> {
             List<TravellerType> travellerTypes = new ArrayList<>();
 
@@ -37,7 +37,7 @@ public class DestinationEditRequestRepository {
                 travellerTypes.add(TravellerType.find.byId(id));
             }
 
-            Destination destination = Destination.find.byId(request.destinationId)
+            Destination destination = Destination.find.byId(request.destinationId);
 
             DestinationEditRequest destinationEditRequest = new DestinationEditRequest();
 
@@ -45,9 +45,11 @@ public class DestinationEditRequestRepository {
             destinationEditRequest.travellerTypes = travellerTypes;
             destinationEditRequest.destination = destination;
 
-            destinationEditRequest.save();
+            destinationEditRequest.insert();
 
             return destinationEditRequest.id;
+
+
         }, context);
     }
 

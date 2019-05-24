@@ -7,9 +7,6 @@ import java.util.List;
 public class CreateDestinationEditReq {
 
     @Constraints.Required
-    public long userId;
-
-    @Constraints.Required
     public long destinationId;
 
     @Constraints.Required

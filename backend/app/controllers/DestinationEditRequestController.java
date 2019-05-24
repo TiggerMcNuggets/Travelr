@@ -28,6 +28,7 @@ public class DestinationEditRequestController extends Controller {
 
     private final DestinationEditRequestRepository destinationEditRequestRepository;
 
+    @Inject
     public DestinationEditRequestController(DestinationEditRequestRepository repository) {
         destinationEditRequestRepository = repository;
     }
@@ -58,6 +59,8 @@ public class DestinationEditRequestController extends Controller {
         return destinationEditRequestRepository
                 .getAllEditRequests()
                 .thenApplyAsync((requests) -> {
+                    System.out.println(requests.get(0).travellerTypes);
+                    System.out.println(requests.get(0));
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(requests);
                     return ok(jsonResponse);

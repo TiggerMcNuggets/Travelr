@@ -23,6 +23,18 @@ create table destination_traveller_type (
   constraint pk_destination_traveller_type primary key (destination_id,traveller_type_id)
 );
 
+create table destination_edit_request (
+  id                            bigint auto_increment not null,
+  deleted                       boolean default false not null,
+  constraint pk_destination_edit_request primary key (id)
+);
+
+create table destination_edit_request_traveller_type (
+  destination_edit_request_id   bigint not null,
+  traveller_type_id             bigint not null,
+  constraint pk_destination_edit_request_traveller_type primary key (destination_edit_request_id,traveller_type_id)
+);
+
 create table destination_photo (
   id                            bigint auto_increment not null,
   user_id                       bigint,
@@ -119,6 +131,12 @@ alter table destination_traveller_type add constraint fk_destination_traveller_t
 create index ix_destination_traveller_type_traveller_type on destination_traveller_type (traveller_type_id);
 alter table destination_traveller_type add constraint fk_destination_traveller_type_traveller_type foreign key (traveller_type_id) references traveller_type (id) on delete restrict on update restrict;
 
+create index ix_destination_edit_request_traveller_type_destination_ed_1 on destination_edit_request_traveller_type (destination_edit_request_id);
+alter table destination_edit_request_traveller_type add constraint fk_destination_edit_request_traveller_type_destination_ed_1 foreign key (destination_edit_request_id) references destination_edit_request (id) on delete restrict on update restrict;
+
+create index ix_destination_edit_request_traveller_type_traveller_type on destination_edit_request_traveller_type (traveller_type_id);
+alter table destination_edit_request_traveller_type add constraint fk_destination_edit_request_traveller_type_traveller_type foreign key (traveller_type_id) references traveller_type (id) on delete restrict on update restrict;
+
 create index ix_destination_photo_user_id on destination_photo (user_id);
 alter table destination_photo add constraint fk_destination_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -161,6 +179,12 @@ drop index if exists ix_destination_traveller_type_destination;
 alter table destination_traveller_type drop constraint if exists fk_destination_traveller_type_traveller_type;
 drop index if exists ix_destination_traveller_type_traveller_type;
 
+alter table destination_edit_request_traveller_type drop constraint if exists fk_destination_edit_request_traveller_type_destination_ed_1;
+drop index if exists ix_destination_edit_request_traveller_type_destination_ed_1;
+
+alter table destination_edit_request_traveller_type drop constraint if exists fk_destination_edit_request_traveller_type_traveller_type;
+drop index if exists ix_destination_edit_request_traveller_type_traveller_type;
+
 alter table destination_photo drop constraint if exists fk_destination_photo_user_id;
 drop index if exists ix_destination_photo_user_id;
 
@@ -194,6 +218,10 @@ drop index if exists ix_user_nationality_nationality_id;
 drop table if exists destination;
 
 drop table if exists destination_traveller_type;
+
+drop table if exists destination_edit_request;
+
+drop table if exists destination_edit_request_traveller_type;
 
 drop table if exists destination_photo;
 

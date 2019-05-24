@@ -53,6 +53,18 @@ PUT         /api/users/:userId/destinations/:destId                  controllers
 POST        /api/destinations/:id/make_public                        controllers.DestinationController.makeDestinationPublic(id: Long)
 PUT         /api/users/:user_id/destinations/:dest_id/toggle_deleted controllers.DestinationController.shallowDeleteDestination(request: Request, user_id: Long, dest_id: Long)
 
+
+GET         /api/destinations/edit_requests                          controllers.DestinationEditRequestController.getAllRequests(request: Request)
+POST        /api/destinations/edit_requests                          controllers.DestinationEditRequestController.createRequest(request: Request)
+POST        /api/destinations/edit_requests/:requestId/accept        controllers.DestinationEditRequestController.acceptRequest(request: Request, requestId: Long)
+POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
+
+
+
+
+
+
+
 # Trips (Old)
 GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
 
