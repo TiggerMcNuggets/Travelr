@@ -3,6 +3,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
@@ -188,34 +189,48 @@ public class UserController extends Controller {
 
 
     /**
-     * Deletes a user by given id
+     * Toggles a user's deletion status
      * @param request the http request
-     * @param id the user id
-     * @return 200 with user if all ok
+     * @param userId the user id
+     * @return 200 with user id if all ok
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> deleteUser(Http.Request request, Long id) {
-        return userRepository.getUser(id).thenApplyAsync(user -> {
+    public CompletionStage<Result> toggleUserDeleted(Http.Request request, Long userId) {
+        return userRepository.getUserIncludeDeleted(userId).thenComposeAsync(user -> {
 
             // Not Found Check
             if (user == null) {
-                return notFound(APIResponses.TRAVELLER_NOT_FOUND);
+                return CompletableFuture.completedFuture(notFound(APIResponses.TRAVELLER_NOT_FOUND));
             }
 
-            // Forbidden Check
-            User userGiveToken = request.attrs().get(Attrs.USER);
-            if (userGiveToken.id != id && userGiveToken.accountType == 0) {
-                return forbidden("Forbidden: you have too low privileges and you are not the account owner");
+            // Forbidden Checks
+            User userGivenToken = request.attrs().get(Attrs.USER);
+
+            if (userGivenToken.id == user.id) {
+                return CompletableFuture.completedFuture(forbidden("Cannot delete yourself"));
+            }
+
+            if (userGivenToken.accountType == 0) {
+                return CompletableFuture.completedFuture(forbidden("Not an admin"));
             }
 
             if (user.accountType == 2) {
-                return forbidden("You cannot delete a master admin");
-            } else {
-                user.delete();
-                return ok("Deleted user with user id: " + id);
+                return CompletableFuture.completedFuture(forbidden("You cannot delete a master admin"));
             }
+
+            return userRepository.toggleUserDeleted(userId).thenApplyAsync(deleted -> {
+
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode response = mapper.createObjectNode();
+
+                response.put("id", userId);
+                response.put("deleted", deleted);
+
+                return ok(response.toString());
+            });
         });
     }
+
 
     public Result index() {
         return ok("Travel EA - Home");

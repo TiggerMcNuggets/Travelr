@@ -2,6 +2,8 @@ package controllers.dto.destination;
 
 import play.data.validation.Constraints;
 
+import java.util.List;
+
 public class CreateDestReq {
     @Constraints.Required
     public String name;
@@ -19,6 +21,8 @@ public class CreateDestReq {
     public boolean isPublic;
     @Constraints.Required
     public boolean isDeleted;
+
+    public List<Integer> travellerTypes;
 
     public String getName() {
         return name;

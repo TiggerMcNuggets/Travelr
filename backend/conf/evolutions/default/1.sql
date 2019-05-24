@@ -1,5 +1,7 @@
+# --- Created by Ebean DDL
+# To stop Ebean DDL generation, remove this comment and start using Evolutions
 
---- !Ups
+# --- !Ups
 
 create table destination (
   id                            bigint auto_increment not null,
@@ -11,8 +13,14 @@ create table destination (
   country                       varchar(255) not null,
   user_id                       bigint,
   is_public                     boolean default false not null,
-  deleted                       boolean default 0 not null,
+  deleted                       boolean default false not null,
   constraint pk_destination primary key (id)
+);
+
+create table destination_traveller_type (
+  destination_id                bigint not null,
+  traveller_type_id             bigint not null,
+  constraint pk_destination_traveller_type primary key (destination_id,traveller_type_id)
 );
 
 create table destination_photo (
@@ -21,12 +29,15 @@ create table destination_photo (
   destination_id                bigint,
   photo_filename                varchar(255) not null,
   is_public                     boolean default 0 not null,
+  deleted                       boolean default false not null,
   constraint pk_destination_photo primary key (id)
 );
 
 create table nationality (
   id                            bigint auto_increment not null,
+  is_old                        boolean default 0 not null,
   name                          varchar(255),
+  deleted                       boolean default false not null,
   constraint pk_nationality primary key (id)
 );
 
@@ -35,12 +46,14 @@ create table personal_photo (
   user_id                       bigint,
   photo_filename                varchar(255) not null,
   is_public                     boolean default 0 not null,
+  deleted                       boolean default false not null,
   constraint pk_personal_photo primary key (id)
 );
 
 create table traveller_type (
   id                            bigint auto_increment not null,
   name                          varchar(255),
+  deleted                       boolean default false not null,
   constraint pk_traveller_type primary key (id)
 );
 
@@ -48,6 +61,7 @@ create table trip (
   id                            bigint auto_increment not null,
   user_id                       bigint,
   name                          varchar(255),
+  deleted                       boolean default false not null,
   constraint pk_trip primary key (id)
 );
 
@@ -59,6 +73,7 @@ create table trip_destination (
   departure_date                integer,
   name                          varchar(255),
   ordinal                       integer not null,
+  deleted                       boolean default false not null,
   constraint pk_trip_destination primary key (id)
 );
 
@@ -75,6 +90,7 @@ create table user (
   user_profile_photo            varchar(255),
   timestamp                     bigint not null,
   account_type                  integer default 0 not null,
+  deleted                       boolean default false not null,
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id)
 );
@@ -90,11 +106,18 @@ create table user_nationality (
   user_id                       bigint,
   nationality_id                bigint,
   has_passport                  boolean not null default false not null,
+  deleted                       boolean default false not null,
   constraint pk_user_nationality primary key (id)
 );
 
 create index ix_destination_user_id on destination (user_id);
 alter table destination add constraint fk_destination_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_destination_traveller_type_destination on destination_traveller_type (destination_id);
+alter table destination_traveller_type add constraint fk_destination_traveller_type_destination foreign key (destination_id) references destination (id) on delete restrict on update restrict;
+
+create index ix_destination_traveller_type_traveller_type on destination_traveller_type (traveller_type_id);
+alter table destination_traveller_type add constraint fk_destination_traveller_type_traveller_type foreign key (traveller_type_id) references traveller_type (id) on delete restrict on update restrict;
 
 create index ix_destination_photo_user_id on destination_photo (user_id);
 alter table destination_photo add constraint fk_destination_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -127,10 +150,16 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
---- !Downs
+# --- !Downs
 
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;
+
+alter table destination_traveller_type drop constraint if exists fk_destination_traveller_type_destination;
+drop index if exists ix_destination_traveller_type_destination;
+
+alter table destination_traveller_type drop constraint if exists fk_destination_traveller_type_traveller_type;
+drop index if exists ix_destination_traveller_type_traveller_type;
 
 alter table destination_photo drop constraint if exists fk_destination_photo_user_id;
 drop index if exists ix_destination_photo_user_id;
@@ -163,6 +192,8 @@ alter table user_nationality drop constraint if exists fk_user_nationality_natio
 drop index if exists ix_user_nationality_nationality_id;
 
 drop table if exists destination;
+
+drop table if exists destination_traveller_type;
 
 drop table if exists destination_photo;
 

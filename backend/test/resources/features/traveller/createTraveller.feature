@@ -10,7 +10,7 @@ Feature: CreateTraveller
     And I provide the email "new@email.com"
     When I signup
     Then I will receive a 201 response
-    And I will receive the id 7
+    And I will receive the id 6
 
   Scenario: Signs up with missing fields
     Given I provide an incomplete traveller json

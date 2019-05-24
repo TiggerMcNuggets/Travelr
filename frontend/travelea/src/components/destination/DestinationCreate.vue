@@ -131,10 +131,13 @@ export default {
     createDestination: function() {
       if (this.$refs.form.validate()) {
         destinationRepository.createDestination(this.userId, this.destination)
-        .then(() => {
+        .then((response) => {
           this.$refs.form.reset();
           this.isError = false;
-          this.createDestinationCallback();
+
+
+
+          this.createDestinationCallback(response.data.id);
         })
         .catch(() => {
           this.isError = true;

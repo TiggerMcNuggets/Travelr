@@ -39,29 +39,21 @@ export default {
             this.rollbackPreviousBody = {...previousBody};
         }, 
         /**
-         * Tries to undo and call a list of given functions to be performed afterwards
+         * Calls undo and call a list of given functions to be performed afterwards
          * @param {Function[]} actions A list of functions to perform after the undo
          */
         rollbackUndo: async function(actions) {
-            try {
-                let res = await this.rollbackManager.undo();
-                for (let action of actions) action();
-            } catch(e) {
-                console.error(e);
-            }
+            let res = await this.rollbackManager.undo();
+            for (let action of actions) action();
         },
 
         /**
-         * Tries to redo and call a list of given functions to be performed afterwards
+         * Calls redo and call a list of given functions to be performed afterwards
          * @param {Function[]} actions A list of functions to perform after redo
          */
         rollbackRedo: async function(actions) {
-            try {
-                let res = await this.rollbackManager.redo();
-                for (let action of actions) action();
-            } catch (e) {
-                console.error(e);
-            }
+            let res = await this.rollbackManager.redo();
+            for (let action of actions) action();
         },
 
         /**

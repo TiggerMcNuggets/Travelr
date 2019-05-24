@@ -104,6 +104,15 @@ public class UserRepository {
     }
 
     /**
+     * Gets one user by id
+     * @param id the user id
+     * @return completable future of user
+     */
+    public CompletableFuture<User> getUserIncludeDeleted(Long id) {
+        return supplyAsync(() -> userFinder.findByIdIncludeDeleted(id), context);
+    }
+
+    /**
      * Updates the details of a user that matches their header and the id
      * @param request the request DTO
      * @param id the user id
@@ -145,4 +154,17 @@ public class UserRepository {
         }, context);
     }
 
+    /**
+     * Changes the user's destination field to the oppositive of its current value
+     * @param id the users id
+     * @return the users new deleted value
+     */
+    public CompletableFuture<Boolean> toggleUserDeleted(Long id) {
+        return supplyAsync(() -> {
+            User user = User.find.findByIdIncludeDeleted(id);
+            user.deleted = !user.deleted;
+            user.save();
+            return user.deleted;
+        }, context);
+    }
 }

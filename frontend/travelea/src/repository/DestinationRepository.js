@@ -17,11 +17,15 @@ export default {
     return Repository.put(`/users/${userId}/destinations/${destId}`, payload);
   },
 
-    makePublic(destId) {
-        return Repository.post(`/destinations/${destId}/make_public`);
-    },
+  makePublic(destId) {
+    return Repository.put(`/destinations/${destId}/make_public`);
+  },
 
-    deleteDestination(userId, destinationId) {
-        return Repository.delete(`/users/${userId}/destinations/${destinationId}`);
-    }
+  makePrivate(destId) {
+    return Repository.put(`/destinations/${destId}/make_private`);
+  },
+
+  deleteDestination(userId, destinationId) {
+    return Repository.put(`/users/${userId}/destinations/${destinationId}/toggle_deleted`);
+  }
 }

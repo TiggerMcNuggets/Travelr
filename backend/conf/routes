@@ -23,7 +23,7 @@ GET         /api/travellers/me                  controllers.UserController.getMe
 GET         /api/travellers/:id/trips           controllers.TripController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
-DELETE      /api/travellers/:id                 controllers.UserController.deleteUser(request: Request, id: Long)
+PUT         /api/travellers/:id/toggle_deleted  controllers.UserController.toggleUserDeleted(request: Request, id: Long)
 
 # Personal Photos and Profile Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
@@ -46,12 +46,13 @@ PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.Dest
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
 # Destinations (NEW)
-GET         /api/users/:id/destinations                     controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
-POST        /api/users/:id/destinations                     controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
-GET         /api/users/:user_id/destinations/:dest_id       controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
-PUT         /api/users/:userId/destinations/:destId               controllers.DestinationController.updateUserDestinationGivenUser(request: Request, userId: Long, destId: Long)
-POST        /api/destinations/:id/make_public               controllers.DestinationController.makeDestinationPublic(id: Long)
-DELETE      /api/users/:user_id/destinations/:dest_id       controllers.DestinationController.shallowDeleteDestination(request: Request, user_id: Long, dest_id: Long)
+GET         /api/users/:id/destinations                              controllers.DestinationController.getUserDestinationsGivenUser(request: Request, id: Long)
+POST        /api/users/:id/destinations                              controllers.DestinationController.createDestinationGivenUser(request: Request, id: Long)
+GET         /api/users/:user_id/destinations/:dest_id                controllers.DestinationController.getUserDestinationGivenUser(request: Request, user_id: Long, dest_id: Long)
+PUT         /api/users/:userId/destinations/:destId                  controllers.DestinationController.updateUserDestinationGivenUser(request: Request, userId: Long, destId: Long)
+PUT        /api/destinations/:id/make_public                        controllers.DestinationController.makeDestinationPublic(id: Long)
+PUT        /api/destinations/:id/make_private                       controllers.DestinationController.makeDestinationPrivate(request: Request, id: Long)
+PUT         /api/users/:user_id/destinations/:dest_id/toggle_deleted controllers.DestinationController.shallowDeleteDestination(request: Request, user_id: Long, dest_id: Long)
 
 # Trips (Old)
 GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
