@@ -27,5 +27,9 @@ export default {
 
   deleteDestination(userId, destinationId) {
     return Repository.put(`/users/${userId}/destinations/${destinationId}/toggle_deleted`);
+  },
+
+  getEditRequests() {
+    return Repository.get('/destinations/edit_requests');
   }
 }
