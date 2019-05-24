@@ -7,7 +7,6 @@
       flat
       :disabled="!canUndo"
       @click="undo"
-      @keyup.enter="undo"
     >
       <v-icon dark>undo</v-icon>
     </v-btn>
@@ -27,6 +26,8 @@ export default {
   },
 
   mounted() {
+
+    // Detects the ctrl z event and executes the undo operation.
     window.addEventListener(
       "keyup",
       function(event) {
@@ -36,6 +37,7 @@ export default {
       }.bind(this)
     );
 
+    // Detects the ctrl y event and executes the redo operation.
     window.addEventListener(
       "keyup",
       function(event) {
