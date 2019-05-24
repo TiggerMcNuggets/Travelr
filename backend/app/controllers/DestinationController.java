@@ -282,7 +282,7 @@ public class DestinationController extends Controller {
     }
 
     /**
-     * Makes a destination public if the authenticated user is an admin
+     * Makes a destination public
      * @param id The id of the destination that is going to be made public
      * @return 201 with string if all ok
      */
@@ -294,6 +294,31 @@ public class DestinationController extends Controller {
                 return notFound();
             }
             return created("Destination is now public");
+        });
+    }
+    /**
+     * Makes a destination private
+     * @param id The id of the destination that is going to be made private
+     * @return 201 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> makeDestinationPrivate(Http.Request request, Long id) {
+
+        User user = request.attrs().get(Attrs.USER);
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user.id);
+        if (middlewareRes != null) return middlewareRes;
+
+        return destinationRepository.getOneDestination(id).thenApplyAsync(destination -> {
+
+            // Check that destination hasn't been used by anyone else (null)
+            if (destination != null && destination.user == null) {
+                return forbidden("Forbidden: There are other users using the destination");
+            }
+
+            destination.isPublic = false;
+            destination.save();
+            return created("Destination is now private");
         });
     }
 }
