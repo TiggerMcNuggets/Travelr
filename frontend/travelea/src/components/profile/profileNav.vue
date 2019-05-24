@@ -52,7 +52,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-avatar v-on="on">
-                      <v-icon right>info</v-icon>
+                      <v-icon color="gray" right>info</v-icon>
                     </v-avatar>
                   </template>
                   <span>Outdated Nationality</span>

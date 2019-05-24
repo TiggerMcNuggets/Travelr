@@ -23,7 +23,7 @@ public class NationalityRepository {
      */
     public CompletableFuture<List<Nationality>> getNationalities() {
         return supplyAsync(() -> {
-            return Nationality.find.all();
+            return Nationality.find.query().where().eq("is_old", false).findList();
         }, context);
     }
 }
