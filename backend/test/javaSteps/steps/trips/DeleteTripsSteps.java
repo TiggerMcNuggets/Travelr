@@ -57,38 +57,29 @@ public class DeleteTripsSteps {
     }
 
     @Then("in the list of trips the trip with id {int} will not be present.")
-    public void in_the_list_of_trips_the_trip_with_id_will_not_be_present(Integer trip_id) {
+    public void in_the_list_of_trips_the_trip_with_id_will_not_be_present(Integer tripId) {
         JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
-        System.out.println(responseBody);
-//        Assert.assertEquals(responseBody.get("email").asText(), email);
+        boolean isFound = false;
+        for (JsonNode trip : responseBody) {
+            if (trip.get("id").asInt() == tripId) {
+                isFound = true;
+            }
+        }
+        Assert.assertFalse(isFound);
     }
 
     @Then("in the list of trips the trip with id {int} will be present")
-    public void in_the_list_of_trips_the_trip_with_id_will_be_present(Integer int1) {
+    public void in_the_list_of_trips_the_trip_with_id_will_be_present(Integer tripId) {
         JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
-//        Assert.assertEquals(responseBody.get("email").asText(), email);
-    }
-
-    @When("I get all trips for traveller")
-    public void i_get_all_trips_for_traveller()  {
-        try {
-
-            String url = "http://localhost:9000/api/travellers/" + state.getTravellerId() + "/trips";
-
-            // Create request object
-            Http.RequestBuilder getTravellerTrips = Helpers.fakeRequest()
-                    .method("GET")
-                    .header("X-Authorization", state.getToken())
-                    .uri(url);
-
-            // Send request
-            state.setResult(route(state.getApplication(), getTravellerTrips));
-
-        } catch (Exception e) {
-            System.err.println(e);
-            Assert.assertTrue(false);
+        boolean isFound = false;
+        for (JsonNode trip : responseBody) {
+            if (trip.get("id").asInt() == tripId) {
+                isFound = true;
+            }
         }
+        Assert.assertTrue(isFound);
     }
+
 
 
 
