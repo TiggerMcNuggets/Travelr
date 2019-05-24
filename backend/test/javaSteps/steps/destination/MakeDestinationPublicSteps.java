@@ -1,7 +1,9 @@
 package javaSteps.steps.destination;
 
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import finders.DestinationFinder;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
 import play.mvc.Http;
@@ -16,6 +18,7 @@ public class MakeDestinationPublicSteps {
 
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
+    private DestinationFinder destinationFinder = new DestinationFinder();
     private int destinationId;
 
     @Given("The private destination id is {int}")
@@ -39,5 +42,11 @@ public class MakeDestinationPublicSteps {
             System.out.println(e);
             Assert.assertTrue(false);
         }
+    }
+
+    @Then("the owner of the destination with id {int} is {int}")
+    public void the_owner_of_the_destination_with_id_is(Integer dest_id, Integer owner_id) {
+        Assert.assertEquals(destinationFinder.findById(Long.valueOf(dest_id)).getUser().getId(), Long.valueOf(owner_id));
+
     }
 }

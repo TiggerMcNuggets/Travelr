@@ -17,6 +17,7 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Results;
 import repository.DestinationRepository;
 
 import javax.inject.Inject;
@@ -197,6 +198,12 @@ public class DestinationController extends Controller {
             // Not Found Check
             if (destination == null) {
                 return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+            }
+
+            Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+            Boolean isDestinationOwner = (destination.getUser().getId() == userId);
+            if(destination.isPublic && !isAdmin && !isDestinationOwner) {
+                return CompletableFuture.completedFuture(Results.forbidden(APIResponses.FORBIDDEN_DESTINATION_EDIT));
             }
 
             return destinationRepository.update(req, destId, userId).thenApplyAsync(destinationId -> {
