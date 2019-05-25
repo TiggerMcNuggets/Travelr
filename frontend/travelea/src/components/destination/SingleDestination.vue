@@ -20,12 +20,23 @@
           </div>
           <div>
             <v-btn
-                    v-if="destination.isPublic"
                     class="upload-toggle-button"
                     fab
                     small
                     dark
                     color="indigo"
+                    v-if="destination.isPublic"
+                    @click="toggleShowSuggestTravellerTypes"
+            >
+              <v-icon dark>card_travel</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="destination.isPublic"
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
             >
               <v-icon dark>lock_open</v-icon>
             </v-btn>
@@ -86,7 +97,6 @@
           <p>
             <strong>Traveller Types:</strong>
             {{getTravellerTypes(destination.travellerTypes)}}
-            <!--{{destination.travellerTypes[0].name}}-->
 
           </p>
         </div>
@@ -173,6 +183,30 @@
         </v-dialog>
       </div>
     </div>
+    <v-dialog v-model="showSuggestTravellerTypes" max-width="900px">
+      <v-card min-height="400px" style="padding: 20px">
+        <v-layout row wrap style="padding-left: 40px">
+          <v-flex xs12 md12>
+            <h2>Traveller Types</h2>
+          </v-flex>
+          <v-flex xs12 md11>
+            <v-select
+                    label="Associated Traveller Types"
+                    :items="typeList"
+                    item-text="name"
+                    item-value="id"
+                    v-model="TravellerTypes"
+                    attach multiple>
+            </v-select>
+          </v-flex>
+          <v-flex xs12 md11 style="text-align: center">
+            <v-btn v-on:click="submitTravellerTypes()">
+              Submit
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -210,44 +244,83 @@
 </style>
 
 <script>
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  import base_url from "../../repository/BaseUrl";
-  import PhotoSelect from "../photos/PhotoSelect";
-  let destinationRepository = RepositoryFactory.get("destination");
-  import { store } from "../../store/index";
-  import {
-    storeDestinationImage,
-    getImages,
-    updateDestinationPhoto,
-    addExistingPhoto
-  } from "../../repository/DestinationPhotoRepository";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import base_url from "../../repository/BaseUrl";
+import PhotoSelect from "../photos/PhotoSelect";
+let destinationRepository = RepositoryFactory.get("destination");
+import { store } from "../../store/index";
+import {
+  storeDestinationImage,
+  getImages,
+  updateDestinationPhoto,
+  addExistingPhoto
+} from "../../repository/DestinationPhotoRepository";
+import SelectDataRepository from "../../repository/SelectDataRepository";
 
   export default {
     store,
 
     components: { PhotoSelect },
 
-    // local variables
-    data() {
-      return {
-        files: [],
-        clickedImageURL: "",
-        clickedImage: {},
-        clickedImageWidth: 0,
-        dialog: false,
-        publicPhotoSwitch: false,
-        showUploadSection: false,
-        id: null,
-        isMyProfile: false,
-        isAdminUser: false,
-        destination: {},
-        dest_id: null,
-        uploadError: false,
-        chooseExistingDialog: false,
-        uploadSuccessful: false,
-        errorText:
-                "You are trying to upload a duplicate image or an error occured while uploading."
+  // local variables
+  data() {
+    return {
+      files: [],
+      TravellerTypes: [],
+      typeList: [],
+      clickedImageURL: "",
+      clickedImage: {},
+      clickedImageWidth: 0,
+      dialog: false,
+      publicPhotoSwitch: false,
+      showUploadSection: false,
+      id: null,
+      isMyProfile: false,
+      isAdminUser: false,
+      destination: {},
+      dest_id: null,
+      uploadError: false,
+      chooseExistingDialog: false,
+      uploadSuccessful: false,
+      errorText:
+        "You are trying to upload a duplicate image or an error occured while uploading.",
+      showSuggestTravellerTypes: false,
+    };
+  },
+
+  methods: {
+    /**
+     * adds a request to the destination to add/remove traveller types
+     **/
+    submitTravellerTypes() {
+      let destRequest = {
+        "destinationId": this.dest_id,
+        "travellerTypeIds": this.TravellerTypes
       };
+      destinationRepository.addDestinationEditRequest(destRequest)
+              .then(() => {
+                this.showSuggestTravellerTypes = false;
+              })
+              .catch(err => {
+                console.log(err);
+              });
+    },
+
+    /**
+     * populated list of traveller types for user to select from
+     **/
+    async populateSelects() {
+      const travellerTypes = await SelectDataRepository.travellerTypes();
+      this.typeList = travellerTypes.data;
+    },
+
+    /**
+     * Redirects the user to the edit destination page.
+     */
+    editDestination() {
+      this.$router.push(
+        "/user/" + this.id + "/destinations/edit/" + this.dest_id
+      );
     },
 
     methods: {
@@ -300,12 +373,18 @@
         this.file = this.$refs.file.files[0];
       },
 
-      /**
-       * Toggles the upload section for the photos
-       */
-      toggleShowUploadPhoto: function() {
-        this.showUploadSection = !this.showUploadSection;
-      },
+    /**
+     * Toggles the upload section for the photos
+     */
+    toggleShowUploadPhoto: function() {
+      this.showUploadSection = !this.showUploadSection;
+    },
+    /**
+     * Toggles the upload section for the photos
+     */
+    toggleShowSuggestTravellerTypes: function() {
+      this.showSuggestTravellerTypes = !this.showSuggestTravellerTypes;
+    },
 
       /**
        * Updates whether the photo is public or private depending on the switch state.
@@ -384,14 +463,13 @@
         return newImageList;
       },
 
-      getTravellerTypes(travellerTypes) {
-        if (travellerTypes !== null) {
-          let travellerTypesString = "";
-          for (let i = 0; i < travellerTypes.length; i++) {
-            travellerTypesString += travellerTypes[i].name;
-            if(i !== (travellerTypes.length - 1)){
-              travellerTypesString += ", ";
-            }
+    getTravellerTypes(travellerTypes) {
+      if (travellerTypes) {
+        let travellerTypesString = "";
+        for (let i = 0; i < travellerTypes.length; i++) {
+          travellerTypesString += travellerTypes[i].name;
+          if(i !== (travellerTypes.length - 1)){
+            travellerTypesString += ", ";
           }
           return travellerTypesString;
         } else {
@@ -400,12 +478,13 @@
       }
     },
 
-    /**
-     * Initialises the application on component creation.
-     */
-    created: function() {
-      this.id = this.$route.params.id;
-      this.dest_id = this.$route.params.dest_id;
+  /**
+   * Initialises the application on component creation.
+   */
+  created: function() {
+    this.populateSelects();
+    this.id = this.$route.params.id;
+    this.dest_id = this.$route.params.dest_id;
 
       if (!this.id) {
         this.id = store.getters.getUser.id;

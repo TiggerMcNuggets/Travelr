@@ -36,16 +36,29 @@
             ></v-text-field>
           </v-flex>
 
-          <v-flex xs12 md6>
-            <v-text-field
-              v-model="destination.country"
-              :counter="60"
-              label="Country"
-              required
-              :rules="nameRules"
-            ></v-text-field>
-          </v-flex>
-        </v-layout>
+          <v-layout>
+            <v-flex xs12 md12>
+              <v-select
+                      label="Associated Traveller Types"
+                      :items="typeList"
+                      item-text="name"
+                      item-value="id"
+                      v-model="destination.travellerTypes"
+                      attach multiple>
+              </v-select>
+            </v-flex>
+          </v-layout>
+
+          <v-layout>
+            <v-flex xs12 md6>
+              <v-text-field
+                v-model="destination.district"
+                :rules="nameRules"
+                :counter="10"
+                label="Destination District"
+                required
+              ></v-text-field>
+            </v-flex>
 
         <v-layout>
           <v-flex xs12 md6>
@@ -98,16 +111,56 @@
 </style>
 
 <script>
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
+import { rules } from "../form_rules";
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+import SelectDataRepository from "../../repository/SelectDataRepository";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
   import { rules } from "../form_rules";
   let destinationRepository = RepositoryFactory.get("destination");
 
+export default {
+  mixins: [RollbackMixin],
+  components: {
+    UndoRedoButtons: UndoRedoButtons
+  },
+  data() {
+    return {
+      destination: {},
+      isError: false,
+      typeList: [],
+      ...rules
+    };
+  },
+  methods: {
   export default {
     props: {
       editDestinationCallback: Function,
       prefillData: Object
     },
 
+    /**
+     * populated list of traveller types for user to select from
+     **/
+    async populateSelects() {
+      const travellerTypes = await SelectDataRepository.travellerTypes();
+      this.typeList = travellerTypes.data;
+    },
+
+    /**
+     * Requests a destination and sets destination property to it
+     */
+    setDestination: function() {
+      destinationRepository
+        .getDestination(this.$route.params.id, this.$route.params.dest_id)
+        .then(result => {
+          this.destination = result.data;
+
+          // This is set to later be pushed as a reaction to the rollback stack
+          this.rollbackSetPreviousBody(result.data);
+        });
     data() {
       return {
         destination: {},
@@ -156,5 +209,14 @@
         this.destination = this.prefillData;
       }
     }
-  };
+  },
+
+  /**
+   * Gets the current destination data to display in the form to update on component creation.
+   */
+  created: function() {
+    this.populateSelects();
+  }
+};
+    this.setDestination();
 </script>
