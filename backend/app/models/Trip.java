@@ -1,6 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import finders.TripFinder;
 import play.data.validation.Constraints;
 import javax.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ public class Trip extends BaseModel {
     public User user;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     public List<TripDestination> destinations;
 
     @Constraints.Required
