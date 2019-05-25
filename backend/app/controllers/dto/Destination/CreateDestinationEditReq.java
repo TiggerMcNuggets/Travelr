@@ -9,7 +9,6 @@ public class CreateDestinationEditReq {
     @Constraints.Required
     public long destinationId;
 
-    @Constraints.Required
     public List<Long> travellerTypeIds;
 
 }

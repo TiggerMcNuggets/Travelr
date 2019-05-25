@@ -16,18 +16,18 @@ public class PopulateController extends Controller {
     public Result populateDatabase() {
         Nationality nationality = new Nationality("Australian");
         nationality.insert();
-        new Nationality("Belgian").insert();
-        new Nationality("Chinese").insert();
+        new Nationality("Spain").insert();
+        new Nationality("China").insert();
         new Nationality("Danish").insert();
-        new Nationality("Egyption").insert();
+        new Nationality("Egypt").insert();
         new Nationality("French").insert();
         new Nationality("Greek").insert();
         new Nationality("Hungarian").insert();
-        new Nationality("Italian").insert();
-        new Nationality("Japanese").insert();
+        new Nationality("Italy").insert();
+        new Nationality("Japan").insert();
         new Nationality("Kenyan").insert();
         new Nationality("Lithuanian").insert();
-        new Nationality("Mexican").insert();
+        new Nationality("Mexico").insert();
         new Nationality("Portuguese").insert();
 
         new TravellerType("Thrill-seeker").insert();
