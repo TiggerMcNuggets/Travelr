@@ -1,12 +1,16 @@
 package finders;
 
+import controllers.constants.AdminConstants;
 import io.ebean.Finder;
 import models.Destination;
+import models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DestinationFinder extends Finder<Long, Destination> {
+
+    UserFinder userFinder = new UserFinder();
 
 
     public DestinationFinder() {
@@ -20,6 +24,15 @@ public class DestinationFinder extends Finder<Long, Destination> {
      */
     public Destination findById(Long id) {
         return query().where().eq("id", id).findOneOrEmpty().orElse(null);
+    }
+
+    /**
+     * retrieves destination from database by Id
+     * @param id the id of the destination we search databse for
+     * @return the found destination, otherwise null
+     */
+    public Destination findByIdIncludeDeleted(Long id) {
+        return query().setIncludeSoftDeletes().where().eq("id", id).findOneOrEmpty().orElse(null);
     }
 
     /**
@@ -37,7 +50,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
                 .eq("isPublic", true)
                 .eq("user.id", userId)
                 .endOr()
-                .eq("deleted", false)
                 .endAnd()
                 .findList();
     }
@@ -73,7 +85,6 @@ public class DestinationFinder extends Finder<Long, Destination> {
                     .eq("name", destination.name)
                     .eq("district", destination.district)
                     .eq("country", destination.country)
-                    .eq("deleted", false)
                     .endAnd()
                     .findList()
         );
@@ -138,7 +149,9 @@ public class DestinationFinder extends Finder<Long, Destination> {
 
         Destination destination = findById(destinationId);
 
-        destination.setUser(null);
+        // Changes the owner to the global admin
+        User globalAdminUser = userFinder.findById(AdminConstants.ADMIN_ID);
+        destination.setUser(globalAdminUser);
 
         destination.update();
 

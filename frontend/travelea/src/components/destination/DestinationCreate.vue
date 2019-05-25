@@ -159,10 +159,13 @@ export default {
       if (this.$refs.form.validate()) {
         this.destination.travellerTypes = this.TravellerTypes;
         destinationRepository.createDestination(this.userId, this.destination)
-        .then(() => {
+        .then((response) => {
           this.$refs.form.reset();
           this.isError = false;
-          this.createDestinationCallback();
+
+
+
+          this.createDestinationCallback(response.data.id);
         })
         .catch(() => {
           this.isError = true;

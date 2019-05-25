@@ -53,12 +53,6 @@ public class Destination extends BaseModel {
     @NotNull
     public boolean isPublic;
 
-
-    @NotNull
-    @JsonIgnore
-    @Column(columnDefinition = "boolean default 0")
-    public boolean deleted;
-
     public Destination(CreateDestReq request, User user) {
         this.name = request.name;
         this.latitude = request.latitude;
