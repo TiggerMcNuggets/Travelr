@@ -44,11 +44,11 @@ public class DestinationEditRequestResponse {
 
         public long id;
         public String name;
-        public List<TravellerTypeItem> travellerTypes;
+        public List<TravellerTypeItem> travellerTypes = new ArrayList<>();
 
         public DestinationItem(Destination destination) {
-            this.id = destination.id;
-            this.name = destination.name;
+            this.id = destination.getId();
+            this.name = destination.getName();
             for(TravellerType type : destination.getTravellerTypes()) {
                 travellerTypes.add(new TravellerTypeItem(type));
             }
@@ -62,7 +62,7 @@ public class DestinationEditRequestResponse {
         public String name;
 
         public TravellerTypeItem(TravellerType type) {
-            this.id = type.id;
+            this.id = type.getId();
             this.name = type.name;
 
         }
