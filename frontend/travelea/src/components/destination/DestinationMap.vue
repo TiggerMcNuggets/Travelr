@@ -16,29 +16,27 @@
     </div>
     <v-flex class="map-flex">
 
-      <GmapMap class="destination-main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map" :options="gMapOptions">
+      <GmapMap class="destination-main-map" :center="gMapOptions.center" ref="map" :options="gMapOptions" @click="onMapClick">
 
         <!-- Private destination markers -->
         <GmapMarker
-          v-for="(destination, index) in privateDestinations"
+          v-for="destination in privateDestinations"
           :key="destination.data.id"
           :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
           :draggable="false"
           :clickable="true"
           @click="focusDestination(destination)"
-          @dragend="updateCoordinatesAfterDrag($event, index)"
           :icon="privateMarker"
         />
 
         <!-- Public destination markers -->
         <GmapMarker
-          v-for="(destination, index) in publicDestinations"
+          v-for="destination in publicDestinations"
           :key="destination.data.id"
           :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
           :draggable="false"
           :clickable="true"
           @click="focusDestination(destination)"
-          @dragend="updateCoordinatesAfterDrag($event, index)"
           :icon="publicMarker"
         />
 
@@ -48,9 +46,8 @@
           :position="{lat: focussedDestination.data.latitude, lng: focussedDestination.data.longitude}"
           :draggable="false"
           :clickable="true"
-          @click="focusDestination(focussedDestination)"
-          @dragend="updateCoordinatesAfterDrag($event, focussedDestination)"
         />
+        <!--          @dragend="updateCoordinatesAfterDrag($event, focussedDestination)"-->
       </GmapMap>
     </v-flex>
 
@@ -102,12 +99,19 @@
           styles: GoogleMapStyle,
           maxZoom: 18,
           minZoom: 3,
+          zoom: 3,
+          streetViewControl: false,
+          mapTypeId: 'roadmap',
+          center: {lat: 0, lng: 120},
+          restriction: {
+            latLngBounds: {north: 85, south: -85, west: -180, east: 180},
+            strictBounds: true
+          },
         },
         infoWindow: {
           position: { lat: 0, lng: 0 },
           open: false
         },
-        place: null,
         publicMarker: blueMarker,
         privateMarker: purpleMarker
       };
@@ -136,7 +140,7 @@
           return this.focussedDestination.data.id;
         }
         return -1;
-      }
+      },
     },
 
     methods: {
@@ -201,13 +205,61 @@
        * Updates the location of the currently selected marker after a user stops dragging it.
        */
       updateCoordinatesAfterDrag(location, focussedDestination) {
-        this.focussedDestination.data.latitude = parseFloat(location.latLng.lat());
-        this.focussedDestination.data.longitude = parseFloat(location.latLng.lng());
+        this.focussedDestination.data.latitude = location.latLng.lat();
+        this.focussedDestination.data.longitude = location.latLng.lng();
         this.focusDestination(focussedDestination);
       },
 
       yeet() {
-        console.log("yeeter");
+        console.log("yeeted")
+      },
+
+      onSearch(destination) {
+        console.log(destination)
+        this.focussedDestination.data = destination;
+
+        if (!this.place.geometry) {
+          return;
+        }
+
+        if (this.place) {
+          let placeData = {
+            latitude: this.place.geometry.location.lat(),
+            longitude: this.place.geometry.location.lng(),
+            temp: true
+          };
+
+          if (this.place.name) {
+            placeData.name = this.place.name;
+          }
+
+          if (this.place.address_components) {
+            placeData.country = (this.place.address_components.filter(x => {
+              return x.types.includes("country")
+            })[0].long_name);
+
+            placeData.district = (this.place.address_components.filter(x => {
+              if (x.types.includes("administrative_area_level_1")) {
+                return x.types.includes("administrative_area_level_1")
+              }
+            })[0].long_name);
+          }
+
+          this.destinationMarkers.push(placeData);
+          this.panAndZoom();
+        }
+      },
+
+      placeNewMarker(coordinates) {
+        if (!this.focussedDestination.data) {
+          this.focussedDestination.data = {};
+        } else if (this.focussedDestination.data && this.focussedDestination.data.id) {
+          this.focussedDestination.data = {};
+        }
+
+        this.focussedDestination.data.latitude = coordinates.lat();
+        this.focussedDestination.data.longitude = coordinates.lng();
+        this.focusDestination(this.focussedDestination);
       },
 
       /*
@@ -215,12 +267,8 @@
        */
       onMapClick(clickEvent) {
         this.placeNewMarker({
-          geometry: {
-            location: {
-              lat: clickEvent.latLng.lat,
-              lng: clickEvent.latLng.lng
-            }
-          },
+          lat: clickEvent.latLng.lat,
+          lng: clickEvent.latLng.lng
         });
       }
     }

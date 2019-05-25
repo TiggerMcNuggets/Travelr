@@ -25,11 +25,12 @@
               </DestinationNav>
             </v-flex>
             <v-flex>
-              <DestinationMap :destinations="visableDestinations" :focussedDestination="{...focussedDestination}" :focusDestination="focusDestination"></DestinationMap>
+              <DestinationMap :destinations="visableDestinations" :focussedDestination="ballsDeep(focussedDestination)" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
-            <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
-              <DestinationDetails v-if="focussedDestination.data" :destination="{...focussedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
-            </v-flex>
+
+            <!--<v-flex xs4 sm3 md2 v-if="focussedDestination.data">-->
+              <!--<DestinationDetails v-if="focussedDestination.data" :destination="ballsDeep(focussedDestination)" :passBackDestination="submitDestination"></DestinationDetails>-->
+            <!--</v-flex>-->
           </v-layout>
         </v-flex>
     </v-layout>
@@ -72,12 +73,7 @@ export default {
     };
   },
 
-
-  watch: {      
-  },
-
-  computed: {
-    
+  watch: {
   },
 
   methods: {
@@ -93,7 +89,7 @@ export default {
       console.log(showDest[0])
     },
     focusDestination(destination) {
-      this.focussedDestination = destination;
+      this.focussedDestination = this.ballsDeep(destination);
 
       console.log("Focused");
       console.log(this.focussedDestination);
@@ -132,7 +128,10 @@ export default {
       .catch(err => {
           console.log(err);
         })
-    }
+    },
+      ballsDeep(object) {
+          return JSON.parse(JSON.stringify(object));
+      }
   },
   computed: {
     visableDestinations() {
