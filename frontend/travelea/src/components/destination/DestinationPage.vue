@@ -12,7 +12,7 @@
         </v-flex>
         <!-- Destinations Body -->
         <v-flex xs12> 
-          <v-layout row px-2>
+          <v-layout row>
             <v-flex xs4 sm3 md2>
               <DestinationNav :destinations="destinations" 
                               :focusDestination="focusDestination"
@@ -78,16 +78,23 @@ export default {
   },
 
   methods: {
-    toggleDestination(destinationId) {
+    toggleDestination(destination) {
 
-      var showDest = this.destinations.filter(x => x.data.id === destinationId)
+      var showDest = this.destinations.filter(x => x.data.id === destination.data.id)
       
       if(showDest[0]) {
         showDest[0].isShowing = !showDest[0].isShowing;
       }
+
+      console.log("Toggled");
+      console.log(showDest[0])
     },
     focusDestination(destination) {
-      this.focusedDestination = destination;
+      this.focusDestination = destination;
+
+      console.log("Focused");
+      console.log(this.focusDestination);
+
     },
     submitDestination(destination) {
       if(destination.id) {
