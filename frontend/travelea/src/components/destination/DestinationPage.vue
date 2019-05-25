@@ -21,14 +21,13 @@
               </DestinationNav>
             </v-flex>
             <v-flex>
-              <DestinationMap :destinations="destinations" :focussedDestination="{...focusedDestination}" :focusDestination="focusDestination"></DestinationMap>
+              <DestinationMap :destinations="visableDestinations" :focussedDestination="{...focusedDestination}" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
             <v-flex xs4 sm3 md2>
               <DestinationDetails :destination="{...focusedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
             </v-flex>
           </v-layout>
         </v-flex>
-
     </v-layout>
 </template>
 
@@ -129,6 +128,11 @@ export default {
       .catch(err => {
           console.log(err);
         })
+    }
+  },
+  computed: {
+    visableDestinations() {
+      return this.destinations.filter(x => x.isShowing);
     }
   },
 

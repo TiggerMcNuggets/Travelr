@@ -1,41 +1,41 @@
 <template>
-    <v-card height="830px" flat>
-      <v-layout row wrap>       
-        <v-flex xs12>
-          <v-card> 
-            <v-layout row wrap> 
-                <v-flex xs12>
-                  <v-tabs v-model="tab">
-                    <v-tab :key="1">
-                      Private
-                    </v-tab>
-                    <v-tab :key="2">
-                      Public
-                    </v-tab>                             
-                    <v-tab-item :key="1">
-                      <DestinationNavItem class="destination-nav-item"
-                                          v-bind:key="index" 
-                                          v-for="(destination, index) in privateDestinations" 
-                                          :destination="destination"
-                                          @click.native="toggleDestination(destination)"
-                                          @dblclick="focusDestination(destination)"/>
-                    </v-tab-item>
-                    <v-tab-item :key="2">
-                      <DestinationNavItem 
-                                          v-bind:key="index"                                           
-                                          v-for="(destination, index) in publicDestinations"
-                                          v-bind:class="{showing: destination.isShowing}" 
-                                          :destination="destination"
-                                          @click.native="toggleDestination(destination)"
-                                          @dblclick="focusDestination(destination)"/>
-                    </v-tab-item>
-                  </v-tabs>
-                </v-flex>                
+  <v-card height="830px" flat>
+    <v-layout row wrap>       
+      <v-flex xs12>
+        <v-card> 
+          <v-layout row wrap> 
+              <v-flex xs12>
+                <v-tabs v-model="tab">
+                  <v-tab :key="1">
+                    Private
+                  </v-tab>
+                  <v-tab :key="2">
+                    Public
+                  </v-tab>                             
+                  <v-tab-item :key="1">
+                    <DestinationNavItem class="destination-nav-item"
+                                        v-bind:key="index" 
+                                        v-for="(destination, index) in privateDestinations" 
+                                        :destination="destination"
+                                        @click.native="toggleDestination(destination)"
+                                        @dblclick="focusDestination(destination)"/>
+                  </v-tab-item>
+                  <v-tab-item :key="2">
+                    <DestinationNavItem 
+                                        v-bind:key="index"                                           
+                                        v-for="(destination, index) in publicDestinations"
+                                        v-bind:class="{showing: destination.isShowing}" 
+                                        :destination="destination"
+                                        @click.native="toggleDestination(destination)"
+                                        @dblclick="focusDestination(destination)"/>
+                  </v-tab-item>
+                </v-tabs>
+              </v-flex>                
             </v-layout>
           </v-card>
         </v-flex>
     </v-layout>
-    </v-card>   
+  </v-card>   
 </template>
 
 <style>
