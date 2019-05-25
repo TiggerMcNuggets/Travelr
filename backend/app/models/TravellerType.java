@@ -18,7 +18,6 @@ public class TravellerType extends BaseModel {
 
     @JsonIgnore
     @ManyToMany
-    @JsonBackReference
     public Destination destination;
 
     @Constraints.Required

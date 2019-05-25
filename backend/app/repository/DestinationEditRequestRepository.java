@@ -33,17 +33,21 @@ public class DestinationEditRequestRepository {
             List<TravellerType> travellerTypes = new ArrayList<>();
 
             for(Long id : request.travellerTypeIds) {
-
                 travellerTypes.add(TravellerType.find.byId(id));
             }
 
             Destination destination = Destination.find.byId(request.destinationId);
 
+            if(destination == null || travellerTypes.size() == 0 || user == null) {
+                //TODO throw error from repository layer to controller
+                return 0L;
+            }
+
             DestinationEditRequest destinationEditRequest = new DestinationEditRequest();
 
-            destinationEditRequest.user = user;
-            destinationEditRequest.travellerTypes = travellerTypes;
-            destinationEditRequest.destination = destination;
+            destinationEditRequest.setUser(user);
+            destinationEditRequest.setTravellerTypes(travellerTypes);
+            destinationEditRequest.setDestination(destination);
 
             destinationEditRequest.insert();
 
@@ -57,11 +61,24 @@ public class DestinationEditRequestRepository {
     public CompletableFuture<Boolean> acceptRequest(long id) {
         return supplyAsync(() -> {
             DestinationEditRequest req = DestinationEditRequest.find.byId(id);
+
+            //TODO Throw errors up from repository layer
+            if(req == null) {
+                return false;
+            }
+
             Destination destination = req.getDestination();
 
-            destination.travellerTypes = req.getTravellerTypes();
+            System.out.println(req.getTravellerTypes());
+            System.out.println(req.getDestination());
 
-            destination.save();
+            destination.getTravellerTypes().clear();
+
+            destination.getTravellerTypes().addAll(req.getTravellerTypes());
+
+            destination.update();
+
+            req.deletePermanent();
 
             return true;
         }, context);
@@ -70,6 +87,12 @@ public class DestinationEditRequestRepository {
     public CompletableFuture<Boolean> deleteRequest(long id) {
         return supplyAsync(() -> {
             DestinationEditRequest req = DestinationEditRequest.find.byId(id);
+
+            //TODO Throw errors up from repository layer
+
+            if(req == null) {
+                return false;
+            }
 
             req.deletePermanent();
 

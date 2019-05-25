@@ -6,8 +6,7 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Destination.CreateDestinationEditReq;
-import controllers.dto.Destination.DestinationEditRequestReponse;
-import models.DestinationEditRequest;
+import controllers.dto.Destination.DestinationEditRequestResponse;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -16,7 +15,6 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.DestinationEditRequestRepository;
-import repository.DestinationRepository;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
@@ -50,7 +48,14 @@ public class DestinationEditRequestController extends Controller {
 
         return destinationEditRequestRepository
                 .createRequest(destRequest, user)
-                .thenApplyAsync(id -> created(Json.toJson(id)));
+                .thenApplyAsync(id -> {
+
+                    if(id == 0L) {
+                        return badRequest();
+                    }
+
+                    return created(Json.toJson(id));
+                });
     }
 
 
@@ -60,8 +65,7 @@ public class DestinationEditRequestController extends Controller {
         return destinationEditRequestRepository
                 .getAllEditRequests()
                 .thenApplyAsync((requests) -> {
-                    System.out.println(requests.get(0).destination.getName());
-                    DestinationEditRequestReponse res = new DestinationEditRequestReponse(requests);
+                    DestinationEditRequestResponse res = new DestinationEditRequestResponse(requests);
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(res);
                     return ok(jsonResponse);
@@ -73,15 +77,28 @@ public class DestinationEditRequestController extends Controller {
 
         return destinationEditRequestRepository
                 .acceptRequest(id)
-                .thenApplyAsync((output) -> ok());
+                .thenApplyAsync((output) -> {
+                    if(output) {
+                        return ok();
+                    }
+
+                    return notFound();
+
+                });
     }
 
     @Authorization.RequireAdminAuth
     public CompletionStage<Result> denyRequest(Http.Request request, Long id) {
-
         return destinationEditRequestRepository
                 .deleteRequest(id)
-                .thenApplyAsync((output) -> ok());
+                .thenApplyAsync((output) -> {
+                    if(output) {
+                        return ok();
+                    }
+
+                    return notFound();
+
+                });
     }
 
 }

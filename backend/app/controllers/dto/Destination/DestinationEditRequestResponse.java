@@ -8,12 +8,12 @@ import models.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DestinationEditRequestReponse {
+public class DestinationEditRequestResponse {
 
 
     public List<DestinationEditRequestItem> requests = new ArrayList<>();
 
-    public DestinationEditRequestReponse(List<DestinationEditRequest> requests) {
+    public DestinationEditRequestResponse(List<DestinationEditRequest> requests) {
         for (DestinationEditRequest request : requests) {
             this.requests.add(new DestinationEditRequestItem(request));
         }

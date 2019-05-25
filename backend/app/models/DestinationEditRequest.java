@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.ebean.Finder;
 import play.data.validation.Constraints;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -17,7 +14,6 @@ public class DestinationEditRequest extends BaseModel {
 
     @Constraints.Required
     @ManyToOne
-    @JsonManagedReference
     public User user;
 
     @Constraints.Required
@@ -25,7 +21,7 @@ public class DestinationEditRequest extends BaseModel {
     public Destination destination;
 
     @Constraints.Required
-    @ManyToMany
+    @ManyToMany(cascade=CascadeType.REMOVE)
     public List<TravellerType> travellerTypes;
 
 
