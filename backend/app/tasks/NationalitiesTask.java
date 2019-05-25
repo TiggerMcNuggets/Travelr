@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.inject.Inject;
 
-import play.libs.ws.*;
+
 import play.mvc.Results;
 import scala.concurrent.ExecutionContext;
 
