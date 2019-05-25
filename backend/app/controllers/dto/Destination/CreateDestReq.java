@@ -22,7 +22,7 @@ public class CreateDestReq {
     @Constraints.Required
     public boolean isDeleted;
 
-    public List<Integer> travellerTypes;
+    public List<Long> travellerTypes;
 
     public String getName() {
         return name;

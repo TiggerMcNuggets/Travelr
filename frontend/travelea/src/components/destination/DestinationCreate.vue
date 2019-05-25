@@ -1,12 +1,9 @@
-/* eslint-disable */
-
 <template>
-  <!-- <div class="width-for-container"> -->
-  <v-layout white>
+  <v-layout white justify-space-around>
     <v-form ref="form" lazy-validation>
       <v-container grid-list-xl>
-        <h4>Add new destination</h4>
-        <v-layout justify-space-around="true">
+        <h4>Create new destination</h4>
+        <v-layout justify-space-around>
           <v-flex xs12 md6 class="row-input-margin">
             <v-text-field
               v-model="destination.name"
@@ -83,103 +80,88 @@
             ></v-text-field>
           </v-flex>
         </v-layout>
-        <div>
-          <v-btn color="red" v-on:click="resetValues">RESET VALUES</v-btn>
-          <v-btn v-on:click="createDestination">CREATE DESTINATION</v-btn>
-        </div>
-      <v-alert
-        :value="isError"
-        type="error"
-        >
+        <v-layout justify-space-around>
+            <v-btn color="red" v-on:click="resetValues">RESET VALUES</v-btn>
+            <v-btn v-on:click="createDestination">CREATE DESTINATION</v-btn>
+        </v-layout>
+      <v-alert :value="isError" type="error">
         This destination is already available to you
       </v-alert>
       </v-container>
     </v-form>
-    <!-- </div> -->
   </v-layout>
 </template>
 
-<style>
-@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-
-.outer-container {
-  text-align: center;
-}
-
-.width-for-container {
-  width: 60%;
-}
-</style>
-
-
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let destinationRepository = RepositoryFactory.get("destination");
+  import { rules } from "../form_rules";
+  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  let destinationRepository = RepositoryFactory.get("destination");
+  import SelectDataRepository from "../../repository/SelectDataRepository";
 
-import { rules } from "../form_rules";
-import { store } from "../../store/index";
-import SelectDataRepository from "../../repository/SelectDataRepository";
-
-export default {
-  store,
-
-  props: {
-    createDestinationCallback: Function
-  },
-
-  mounted() {
-    this.populateSelects();
-  },
-
-
-  data() {
-    return {
-      travellerTypes: [],
-      destination: {},
-      userId: this.$route.params.id,
-      isError: false,
-      typeList: [],
-      ...rules
-    };
-  },
-
-  methods: {
-    /**
-     * populated list of traveller types for user to select from
-     **/
-    async populateSelects() {
-      const travellerTypes = await SelectDataRepository.travellerTypes();
-      this.typeList = travellerTypes.data;
+  export default {
+    props: {
+      createDestinationCallback: Function,
+      prefillData: Object
     },
-    /**
-     * Sends a request to the API to create a destination based on the data entered into the form.
-     * Checks for an error and logs result if unsuccessful.
-     */
-    createDestination: function() {
-      if (this.$refs.form.validate()) {
-        this.destination.travellerTypes = this.travellerTypes;
-        destinationRepository.createDestination(this.userId, this.destination)
-        .then((response) => {
-          this.$refs.form.reset();
-          this.isError = false;
 
+    data() {
+      return {
+        travellerTypes: [],
+        destination: {},
+        userId: this.$route.params.id,
+        isError: false,
+        typeList: [],
+        ...rules
+      };
+    },
 
+    mounted() {
+      this.populateSelects();
+    },
 
-          this.createDestinationCallback(response.data.id);
-        })
-        .catch(() => {
-          this.isError = true;
-          console.log("error creating destination");
-        })
+    methods: {
+      /**
+       * populated list of traveller types for user to select from
+       **/
+      async populateSelects() {
+        const travellerTypes = await SelectDataRepository.travellerTypes();
+        this.typeList = travellerTypes.data;
+      },
+
+      /**
+       * Sends a request to the API to create a destination based on the data entered into the form.
+       * Checks for an error and logs result if unsuccessful.
+       */
+      createDestination: function () {
+        if (this.$refs.form.validate()) {
+          destinationRepository.createDestination(this.userId, this.destination)
+                  .then(() => {
+                    this.$refs.form.reset();
+                    this.isError = false;
+                    this.$emit('close-map-info-window');
+                    this.createDestinationCallback();
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    this.isError = true;
+                    console.log("error creating destination");
+                  })
+        }
+      },
+
+      /**
+       * Resets the form values to blank.
+       */
+      resetValues: function () {
+        this.$refs.form.reset();
       }
     },
 
-    /**
-     * Resets the form values to blank.
-     */
-    resetValues: function() {
-      this.$refs.form.reset();
+    created() {
+      // If the destination create window has been opened on the Map and already has latitude and longitude.
+      if (this.prefillData) {
+        this.destination = this.prefillData;
+      }
     }
-  }
-};
+  };
 </script>

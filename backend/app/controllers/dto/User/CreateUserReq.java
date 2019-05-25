@@ -30,7 +30,7 @@ public class CreateUserReq {
     public List<NationalityReq> nationalities;
 
     @Constraints.Required
-    public List<Integer> travellerTypes;
+    public List<Long> travellerTypes;
 
     public int accountType;
 
@@ -98,11 +98,11 @@ public class CreateUserReq {
         this.nationalities = nationalities;
     }
 
-    public List<Integer> getTravellerTypes() {
+    public List<Long> getTravellerTypes() {
         return travellerTypes;
     }
 
-    public void setTravellerTypes(List<Integer> travellerTypes) {
+    public void setTravellerTypes(List<Long> travellerTypes) {
         this.travellerTypes = travellerTypes;
     }
 
