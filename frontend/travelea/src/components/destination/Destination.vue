@@ -109,7 +109,7 @@
                     color="#FF69B4"
                     flat
                     icon
-                    @click="() => console.log('clicked on open lock')"
+                    @click="makePrivate(item.id)"
                   >
                     <v-icon color="hotpink lighten-1">lock_open</v-icon>
                   </v-btn>
@@ -138,6 +138,7 @@
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
+    <v-alert :value="setPrivateError" type="error">Cannot set destination private</v-alert>
   </v-card>
 </template>
 
@@ -251,6 +252,8 @@ export default {
       searchActive: false,
       undoRedoError: false,
       prefillData: null
+      undoRedoError: false,
+      setPrivateError: false
     };
   },
 
@@ -291,6 +294,7 @@ export default {
      */
     clearAlerts() {
       this.undoRedoError = false;
+      this.setPrivateError = false;
     },
 
     /**
@@ -347,7 +351,18 @@ export default {
     /**
      * Refreshes the destination list
      */
-    updateDestinationList: function() {
+    updateDestinationList: function(destId) {
+      this.clearAlerts();
+      const url = `/users/${this.user_id}/destinations/${destId}/toggle_deleted`;  
+        this.rollbackCheckpoint(
+        'POST',
+        {
+            url: url,
+        },
+        {
+            url: url,
+        }
+      );
       this.getDestinationList();
       this.dialog = false;
       this.editDialog = false;
@@ -376,12 +391,47 @@ export default {
       destinationRepository
         .makePublic(destId)
         .then(res => {
-          console.log(res);
+
+        this.rollbackCheckpoint(
+        'POST',
+        {
+            url: `/destinations/${destId}/make_public`,
+        },
+        {
+            url: `/destinations/${destId}/make_private`,
+        }
+        );
           this.init();
         })
         .catch(err => {
           console.log(err);
         });
+    },
+
+    /**
+     * Makes a destination private and checks for error
+     * @param destId The destination id to make private
+     */
+    makePrivate: function(destId) {
+      this.clearAlerts();
+      destinationRepository
+        .makePrivate(destId)
+        .then(res => {
+          this.rollbackCheckpoint(
+          'POST',
+          {
+              url: `destinations/${destId}/make_private`,
+          },
+          {
+              url: `destinations/${destId}/make_public`,
+          }
+        );
+          this.init();
+        })
+        .catch(err => {
+          console.log(err);
+          this.setPrivateError = true;
+        })
     },
 
     /**

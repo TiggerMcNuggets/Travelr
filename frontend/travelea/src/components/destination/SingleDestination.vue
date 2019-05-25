@@ -33,13 +33,13 @@
               <v-icon dark>lock</v-icon>
             </v-btn>
             <v-btn
-                    class="upload-toggle-button"
-                    fab
-                    small
-                    dark
-                    color="indigo"
-                    v-if="((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id))"
-                    @click="editDestination"
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              v-if="((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id))"
+              @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
             </v-btn>
@@ -414,9 +414,19 @@
       this.isMyProfile = store.getters.getUser.id === this.id;
       this.isAdminUser = store.getters.getIsUserAdmin;
 
-      // Gets all the images to display on the page.
-      getImages(this.id, this.dest_id).then(result => {
-        this.files = this.groupImages(result.data);
+    // Gets all the images to display on the page.
+    getImages(this.id, this.dest_id).then(result => {
+      this.files = this.groupImages(result.data);
+    });
+
+    // Gets the information relating to selected destination.
+    destinationRepository
+      .getDestination(this.id, this.dest_id)
+      .then(response => {
+        this.destination = response.data;
+      })
+      .catch(err => {
+        console.log(err);
       });
 
       // Gets the information relating to selected destination.

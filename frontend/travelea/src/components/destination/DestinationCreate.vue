@@ -26,6 +26,19 @@
         </v-layout>
 
         <v-layout>
+          <v-flex xs12 md12>
+            <v-select
+                    label="Associated Traveller Types"
+                    :items="typeList"
+                    item-text="name"
+                    item-value="id"
+                    v-model="travellerTypes"
+                    attach multiple>
+            </v-select>
+          </v-flex>
+        </v-layout>
+
+        <v-layout>
           <v-flex xs12 md6>
             <v-text-field
               v-model="destination.district"
@@ -35,7 +48,6 @@
               required
             ></v-text-field>
           </v-flex>
-
           <v-flex xs12 md6>
             <v-text-field
               v-model="destination.country"
@@ -93,6 +105,9 @@
       createDestinationCallback: Function,
       prefillData: Object
     },
+import { rules } from "../form_rules";
+import { store } from "../../store/index";
+import SelectDataRepository from "../../repository/SelectDataRepository";
 
     data() {
       return {
@@ -129,6 +144,50 @@
        */
       resetValues: function() {
         this.$refs.form.reset();
+  mounted() {
+    this.populateSelects();
+  },
+
+
+  data() {
+    return {
+      travellerTypes: [],
+      destination: {},
+      userId: this.$route.params.id,
+      isError: false,
+      typeList: [],
+      ...rules
+    };
+  },
+
+  methods: {
+    /**
+     * populated list of traveller types for user to select from
+     **/
+    async populateSelects() {
+      const travellerTypes = await SelectDataRepository.travellerTypes();
+      this.typeList = travellerTypes.data;
+    },
+    /**
+     * Sends a request to the API to create a destination based on the data entered into the form.
+     * Checks for an error and logs result if unsuccessful.
+     */
+    createDestination: function() {
+      if (this.$refs.form.validate()) {
+        this.destination.travellerTypes = this.travellerTypes;
+        destinationRepository.createDestination(this.userId, this.destination)
+        .then((response) => {
+          this.$refs.form.reset();
+          this.isError = false;
+
+
+
+          this.createDestinationCallback(response.data.id);
+        })
+        .catch(() => {
+          this.isError = true;
+          console.log("error creating destination");
+        })
       }
     },
 

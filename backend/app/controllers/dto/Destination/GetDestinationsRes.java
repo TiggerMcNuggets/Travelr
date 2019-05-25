@@ -20,6 +20,8 @@ public class GetDestinationsRes {
 
     public String country;
 
+    public Long ownerId;
+
     public boolean isPublic;
 
     public Long id;
@@ -35,6 +37,7 @@ public class GetDestinationsRes {
         this.district = destination.district;
         this.country = destination.country;
         this.isPublic = destination.isPublic;
+        this.ownerId = destination.getUser().getId();
         this.id = destination.id;
         this.travellerTypes = destination.travellerTypes;
     }
