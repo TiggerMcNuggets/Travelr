@@ -8,7 +8,7 @@
               <v-spacer></v-spacer>
               <v-layout justify-end align-center>
                  Undo/Redo Here
-                 <v-btn>Create Destination</v-btn>
+                 <v-btn @click="createDestination">Create Destination</v-btn>
               </v-layout>
              
             </v-layout>            
@@ -28,9 +28,14 @@
               <DestinationMap :destinations="visableDestinations" :focussedDestination="ballsDeep(focussedDestination)" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
 
-            <!--<v-flex xs4 sm3 md2 v-if="focussedDestination.data">-->
-              <!--<DestinationDetails v-if="focussedDestination.data" :destination="ballsDeep(focussedDestination)" :passBackDestination="submitDestination"></DestinationDetails>-->
-            <!--</v-flex>-->
+            <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
+              <DestinationDetails 
+                v-if="focussedDestination.data" 
+                :focussedDestination="ballsDeep(focussedDestination)" 
+                :passBackDestination="submitDestination"
+                :focusDestination="focusDestination"
+                ></DestinationDetails>
+            </v-flex>
           </v-layout>
         </v-flex>
     </v-layout>
@@ -69,7 +74,6 @@ export default {
       destinations: [],
       focussedDestination: {},
       userId: store.getters.getUser.id,
-      newDestination: false
     };
   },
 
@@ -77,6 +81,12 @@ export default {
   },
 
   methods: {
+    createDestination() {
+      this.focussedDestination = {
+        data: {
+        }
+      }
+    },
     toggleDestination(destination) {
 
       var showDest = this.destinations.filter(x => x.data.id === destination.data.id)
