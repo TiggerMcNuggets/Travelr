@@ -31,5 +31,15 @@ public class TripFinder extends Finder<Long, Trip> {
         return query().fetch("destinations.destination").where().eq("id", id).findOneOrEmpty().orElse(null);
     }
 
+    /**
+     * Retrieves a trip from database based on id and includes the soft deleted trips.
+     * @param id the id of the trip
+     * @return the found trip, otherwise null
+     */
+    public Trip findByIdIncludeDeleted(Long id) {
+        return query().setIncludeSoftDeletes().where().eq("id", id).findOneOrEmpty().orElse(null);
+    }
+
+
 
 }
