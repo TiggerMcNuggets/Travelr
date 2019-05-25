@@ -8,6 +8,12 @@
           <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
             <v-icon dark>keyboard_arrow_left</v-icon>
           </v-btn>
+          <undo-redo-buttons
+            :canRedo="rollbackCanRedo()"
+            :canUndo="rollbackCanUndo()"
+            :undo="undo"
+            :redo="redo">
+          </undo-redo-buttons>
           <h2 class="headline">Destinations</h2>
         </div>
         <div>
@@ -102,7 +108,7 @@
                     color="#FF69B4"
                     flat
                     icon
-                    @click="() => console.log('clicked on open lock')"
+                    @click="makePrivate(item.id)"
                   >
                     <v-icon color="hotpink lighten-1">lock_open</v-icon>
                   </v-btn>
@@ -122,6 +128,8 @@
         <destination-create :createDestinationCallback="updateDestinationList"/>
       </v-dialog>
     </v-container>
+    <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
+    <v-alert :value="setPrivateError" type="error">Cannot set destination private</v-alert>
   </v-card>
 </template>
 
@@ -223,13 +231,19 @@ ul {
 import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
-
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import MapDashboard from "../map/MapDashboard";
 import DestinationCreate from "./DestinationCreate";
 
 export default {
   store,
-  // local variables
+  mixins: [RollbackMixin],
+  components: {
+    UndoRedoButtons,
+    MapDashboard,
+    DestinationCreate
+  },
 
   data() {
     return {
@@ -242,15 +256,13 @@ export default {
       showTooltip: false,
       filteredList: [],
       searchValue: "",
-      searchActive: false
+      searchActive: false,
+      undoRedoError: false,
+      setPrivateError: false
     };
   },
 
-  // child components
-  components: {
-    MapDashboard,
-    DestinationCreate: DestinationCreate
-  },
+
   watch: {
     "$route.params.id": function() {
       this.init();
@@ -281,6 +293,14 @@ export default {
     init() {
       this.checkIfProfileOwner();
       this.getDestinationList();
+    },
+
+    /**
+     * Sets all visible fields to invisible
+     */
+    clearAlerts() {
+      this.undoRedoError = false;
+      this.setPrivateError = false;
     },
 
     /**
@@ -318,15 +338,37 @@ export default {
      * @param destId The id of the destination to delete.
      */
     deleteDestination: function(destId) {
+      this.clearAlerts();
       destinationRepository.deleteDestination(this.user_id, destId).then(() => {
-        this.init();
+        const url = `/users/${this.user_id}/destinations/${destId}/toggle_deleted`;  
+        this.rollbackCheckpoint(
+        'DELETE',
+        {
+            url: url,
+        },
+        {
+            url: url,
+        }
+        );
+        this.getDestinationList();
       });
     },
 
     /**
      * Refreshes the destination list
      */
-    updateDestinationList: function() {
+    updateDestinationList: function(destId) {
+      this.clearAlerts();
+      const url = `/users/${this.user_id}/destinations/${destId}/toggle_deleted`;  
+        this.rollbackCheckpoint(
+        'POST',
+        {
+            url: url,
+        },
+        {
+            url: url,
+        }
+      );
       this.getDestinationList();
       this.dialog = false;
     },
@@ -350,15 +392,51 @@ export default {
      * @param destId The destination id to make public
      */
     makePublic: function(destId) {
+      this.clearAlerts();
       destinationRepository
         .makePublic(destId)
         .then(res => {
-          console.log(res);
+
+        this.rollbackCheckpoint(
+        'POST',
+        {
+            url: `/destinations/${destId}/make_public`,
+        },
+        {
+            url: `/destinations/${destId}/make_private`,
+        }
+        );
           this.init();
         })
         .catch(err => {
           console.log(err);
         });
+    },
+
+    /**
+     * Makes a destination private and checks for error
+     * @param destId The destination id to make private
+     */
+    makePrivate: function(destId) {
+      this.clearAlerts();
+      destinationRepository
+        .makePrivate(destId)
+        .then(res => {
+          this.rollbackCheckpoint(
+          'POST',
+          {
+              url: `destinations/${destId}/make_private`,
+          },
+          {
+              url: `destinations/${destId}/make_public`,
+          }
+        );
+          this.init();
+        })
+        .catch(err => {
+          console.log(err);
+          this.setPrivateError = true;
+        })
     },
 
     /**
@@ -376,7 +454,31 @@ export default {
      */
     log: function(evt) {
       window.console.log(evt);
-    }
+    },
+
+    /**
+    * Undoes the last action and gets destinations afterwards
+    */
+    undo: function() {
+      const actions = [this.getDestinationList, this.clearAlerts];
+      try {
+        this.rollbackUndo(actions); 
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    },
+
+    /**
+     * Redoes the last action and gets destinations afterwards
+     */
+    redo: function() {
+      const actions = [this.getDestinationList, this.clearAlerts];
+      try {
+        this.rollbackRedo(actions);
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    },
   },
 
   /**

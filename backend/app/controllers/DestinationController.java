@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
@@ -16,6 +17,7 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.Results;
 import repository.DestinationRepository;
 
 import javax.inject.Inject;
@@ -198,6 +200,12 @@ public class DestinationController extends Controller {
                 return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
             }
 
+            Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+            Boolean isDestinationOwner = (destination.getUser().getId() == userId);
+            if(destination.isPublic && !isAdmin && !isDestinationOwner) {
+                return CompletableFuture.completedFuture(Results.forbidden(APIResponses.FORBIDDEN_DESTINATION_EDIT));
+            }
+
             return destinationRepository.update(req, destId, userId).thenApplyAsync(destinationId -> {
 
                 //If destination is the same as another destination
@@ -257,16 +265,24 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
         if (middlewareRes != null) return middlewareRes;
-        Destination destination = Destination.find.findById(destId);
+        Destination destination = Destination.find.findByIdIncludeDeleted(destId);
 
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
-        destinationRepository.shallowDeleteDestination(destId);
-        return CompletableFuture.completedFuture(ok());
+        return destinationRepository.toggleDestinationDeleted(destId).thenApplyAsync(deleted -> {
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode response = mapper.createObjectNode();
+
+            response.put("id", destId);
+            response.put("deleted", deleted);
+
+            return ok(response.toString());
+        });
 
     }
 
     /**
-     * Makes a destination public if the authenticated user is an admin
+     * Makes a destination public
      * @param id The id of the destination that is going to be made public
      * @return 201 with string if all ok
      */
@@ -278,6 +294,31 @@ public class DestinationController extends Controller {
                 return notFound();
             }
             return created("Destination is now public");
+        });
+    }
+    /**
+     * Makes a destination private
+     * @param id The id of the destination that is going to be made private
+     * @return 201 with string if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> makeDestinationPrivate(Http.Request request, Long id) {
+
+        User user = request.attrs().get(Attrs.USER);
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user.id);
+        if (middlewareRes != null) return middlewareRes;
+
+        return destinationRepository.getOneDestination(id).thenApplyAsync(destination -> {
+
+            // Check that destination hasn't been used by anyone else (null)
+            if (destination != null && destination.user == null) {
+                return forbidden("Forbidden: There are other users using the destination");
+            }
+
+            destination.isPublic = false;
+            destination.save();
+            return created("Destination is now private");
         });
     }
 }
