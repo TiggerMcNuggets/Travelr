@@ -24,7 +24,7 @@ Feature: DeleteTravellers
     Then I will receive a 403 response
 
   Scenario: Admin user tries to delete a master admin user
-    Given The traveller id is 5
+    Given The traveller id is 6
     And I provide the token "123"
     When I delete the traveller
     Then I will receive a 403 response
