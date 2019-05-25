@@ -21,13 +21,21 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <router-link to="/" class="white--text"><v-toolbar-title>Travelr</v-toolbar-title></router-link>
     </v-toolbar>
-    <v-content>
-      <v-container fluid pa-0 ma-0>
+    <v-content class="main-content">
+      <v-container class="main-container" fluid pa-0 ma-0>
         <router-view></router-view>
       </v-container>
     </v-content>
   </v-app>
 </template>
+
+<style>
+.main-content {
+  padding-left: 0px !important;
+  margin-left: 0px !important;
+}
+
+</style>
 
 <script>
 
