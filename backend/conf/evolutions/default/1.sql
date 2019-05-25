@@ -172,7 +172,6 @@ alter table user_nationality add constraint fk_user_nationality_user_id foreign 
 create index ix_user_nationality_nationality_id on user_nationality (nationality_id);
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
-
 -- !Downs
 
 alter table destination drop constraint if exists fk_destination_user_id;
