@@ -27,7 +27,7 @@
           :clickable="true"
           @click="focusDestination(destination)"
           @dragend="updateCoordinatesAfterDrag($event, index)"
-          :icon="chooseIconForMarker(destination, index)"
+          :icon="privateMarker"
         />
 
         <!-- Public destination markers -->
@@ -39,7 +39,7 @@
           :clickable="true"
           @click="focusDestination(destination)"
           @dragend="updateCoordinatesAfterDrag($event, index)"
-          :icon="chooseIconForMarker(destination, index)"
+          :icon="publicMarker"
         />
 
         <!-- Focussed destination marker -->
@@ -50,7 +50,6 @@
           :clickable="true"
           @click="focusDestination(focussedDestination)"
           @dragend="updateCoordinatesAfterDrag($event, focussedDestination)"
-          :icon="chooseIconForMarker()"
         />
       </GmapMap>
     </v-flex>
@@ -109,6 +108,8 @@
           open: false
         },
         place: null,
+        publicMarker: blueMarker,
+        privateMarker: purpleMarker
       };
     },
 
@@ -213,7 +214,7 @@
        * Perceives a click on the map and creates a destination at the click location
        */
       onMapClick(clickEvent) {
-        this.usePlace({
+        this.placeNewMarker({
           geometry: {
             location: {
               lat: clickEvent.latLng.lat,
