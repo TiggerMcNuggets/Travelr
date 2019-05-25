@@ -1,65 +1,61 @@
 <template>
-    <v-layout>            
-      <div class="destination-overlayed">
-        <v-label>
-          <GmapAutocomplete
-            placeholder="Search"
-            @place_changed="usePlace"
-            class="v-text-field destination-search-box"
-            :select-first-on-enter="true"
-            @keydown.native.enter.prevent
-          ></GmapAutocomplete>
-          <button class="destination-search-btn" @click="usePlace">
-            <i aria-hidden="true" class="v-icon material-icons">search</i>
-          </button>
-        </v-label>
-      </div>
-      <v-flex class="map-flex">
+  <v-layout>
+    <div class="destination-overlayed">
+      <v-label>
+        <GmapAutocomplete
+          placeholder="Search"
+          @place_changed="yeet"
+          class="v-text-field destination-search-box"
+          :select-first-on-enter="true"
+          @keydown.native.enter.prevent
+        ></GmapAutocomplete>
+        <button class="destination-search-btn" @click="yeet">
+          <i aria-hidden="true" class="v-icon material-icons">search</i>
+        </button>
+      </v-label>
+    </div>
+    <v-flex class="map-flex">
 
-        <GmapMap class="destination-main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map" :options="gMapOptions">
+      <GmapMap class="destination-main-map" :zoom="2" :center="{lat: 0, lng: 0}" ref="map" :options="gMapOptions">
 
-          <!-- Private destination markers -->
-          <GmapMarker
-                  v-for="(destination, index) in privateDestinations"
-                  :key="index"
-                  :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
-                  :clickable="true"
-                  :draggable="false"
-                  @click="openInfoWindowTemplate(destinations[index])"
-                  @dragend="updateCoordinatesAfterDrag($event, index)"
-                  :icon="chooseIconForMarker(destination, index)"
-          />
-
-          <!-- Public destination markers -->
-          <GmapMarker
-                v-for="(destination, index) in publicDestinations.data"
-                :key="index"
-                :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
-                :clickable="true"
-                :draggable="false"
-                @click="openInfoWindowTemplate(destinations[index])"
-                @dragend="updateCoordinatesAfterDrag($event, index)"
-                :icon="chooseIconForMarker(destination, index)"
+        <!-- Private destination markers -->
+        <GmapMarker
+          v-for="(destination, index) in privateDestinations"
+          :key="destination.data.id"
+          :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
+          :draggable="false"
+          :clickable="true"
+          @click="focusDestination(destination)"
+          @dragend="updateCoordinatesAfterDrag($event, index)"
+          :icon="chooseIconForMarker(destination, index)"
         />
 
-        <GmapInfoWindow
-                :options="{maxWidth: 500}"
-                :position="infoWindow.position"
-                :opened="infoWindow.open"
-                @closeclick="closeInfoWindow()"
-        >
-          <div v-if="selectedDest !== null">
-            <div v-if="selectedDest.data.hasOwnProperty('id')">
-              <h2>Name: {{this.selectedDest.data.name}}</h2>
-              <h2>Country: {{this.selectedDest.data.country}}</h2>
-              <h2>District: {{this.selectedDest.data.district}}</h2>
-              <h2>Type: {{this.selectedDest.data.type}}</h2>
-            </div>
-          </div>
-        </GmapInfoWindow>
+        <!-- Public destination markers -->
+        <GmapMarker
+          v-for="(destination, index) in publicDestinations"
+          :key="destination.data.id"
+          :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
+          :draggable="false"
+          :clickable="true"
+          @click="focusDestination(destination)"
+          @dragend="updateCoordinatesAfterDrag($event, index)"
+          :icon="chooseIconForMarker(destination, index)"
+        />
+
+        <!-- Focussed destination marker -->
+        <GmapMarker
+          v-if="focussedDestination.data"
+          :position="{lat: focussedDestination.data.latitude, lng: focussedDestination.data.longitude}"
+          :draggable="false"
+          :clickable="true"
+          @click="focusDestination(focussedDestination)"
+          @dragend="updateCoordinatesAfterDrag($event, focussedDestination)"
+          :icon="chooseIconForMarker()"
+        />
       </GmapMap>
-      </v-flex>
-    </v-layout>
+    </v-flex>
+
+  </v-layout>
 </template>
 
 <style>
@@ -67,14 +63,14 @@
     width: 200px;
   }
   .destination-search-box {
-      margin-left: 15px;
-      margin-top: 15px;
-      padding: 12px;
-      padding-right: 40px;
-      background-color: whitesmoke;
-      border-radius: 4px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-      width: 300px;
+    margin-left: 15px;
+    margin-top: 15px;
+    padding: 12px;
+    padding-right: 40px;
+    background-color: whitesmoke;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    width: 300px;
   }
   .destination-search-btn {
     margin-left: -32px;
@@ -112,27 +108,38 @@
           position: { lat: 0, lng: 0 },
           open: false
         },
-        selectedDest: null,
-        place: null
+        place: null,
       };
     },
 
     props: {
       destinations: Array,
-      focusDestination: Function
+      focusDestination: Function,
+      focussedDestination: Object
     },
 
     computed: {
       privateDestinations() {
-        return this.destinations.filter(x => !x.data.isPublic );
+        return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
       },
+
       publicDestinations() {
-        return this.destinations.filter(x => x.data.isPublic && x.data.isShowing);
+        return this.destinations.filter(x => x.data.isPublic && x.data.id !== this.focussedId);
+      },
+
+      /*
+       * Returns -1 to avoid indexing an undefined object.
+       */
+      focussedId() {
+        if (this.focussedDestination.data != null) {
+          return this.focussedDestination.data.id;
+        }
+        return -1;
       }
     },
 
-
     methods: {
+
       /**
        * Determines whether the map marker should be pink or blue depending if it is public or private, or purple
        * if privacy is undefined.
@@ -148,46 +155,6 @@
         }
       },
 
-      /*
-       * Gets the selected place from the Google Maps autocomplete and adds it to destinations. After this,
-       * it pans and zooms to the selected place's location
-       * @param place The currently selected place
-       */
-      usePlace(place) {
-        this.place = place;
-
-        if (!this.place.geometry) {
-          return;
-        }
-
-        if (this.place) {
-          let placeData = {
-            latitude: this.place.geometry.location.lat(),
-            longitude: this.place.geometry.location.lng(),
-            temp: true
-          };
-
-          if (this.place.name) {
-            placeData.name = this.place.name;
-          }
-
-          if (this.place.address_components) {
-            placeData.country = (this.place.address_components.filter(x => {
-              return x.types.includes("country")
-            })[0].long_name);
-
-            placeData.district = (this.place.address_components.filter(x => {
-              if (x.types.includes("administrative_area_level_1")) {
-                return x.types.includes("administrative_area_level_1")
-              }
-            })[0].long_name);
-          }
-
-          this.destinationMarkers.push(placeData);
-          this.panAndZoom();
-        }
-      },
-
       /**
        * Opens up the small information window for the particular map icon which is clicked on.
        * @param item The destination item being clicked on.
@@ -196,7 +163,7 @@
         const xOffset = 0.01;
         this.infoWindow.position = { lat: item.data.latitude + xOffset, lng: item.data.longitude };
         this.infoWindow.open = true;
-        this.selectedDest = item;
+        this.focussedDestination = item;
       },
 
       /**
@@ -205,7 +172,7 @@
       closeInfoWindow() {
         this.infoWindow.open = false;
         this.infoWindow.editMode = false;
-        this.selectedDest = null;
+        this.focussedDestination = null;
       },
 
       /*
@@ -232,10 +199,14 @@
       /*
        * Updates the location of the currently selected marker after a user stops dragging it.
        */
-      updateCoordinatesAfterDrag(location, destinationMarkerIndex) {
-        this.destinationMarkers[destinationMarkerIndex] = {
-          latitude: parseFloat(location.latLng.lat()), longitude: parseFloat(location.latLng.lng())
-        };
+      updateCoordinatesAfterDrag(location, focussedDestination) {
+        this.focussedDestination.data.latitude = parseFloat(location.latLng.lat());
+        this.focussedDestination.data.longitude = parseFloat(location.latLng.lng());
+        this.focusDestination(focussedDestination);
+      },
+
+      yeet() {
+        console.log("yeeter");
       },
 
       /*
