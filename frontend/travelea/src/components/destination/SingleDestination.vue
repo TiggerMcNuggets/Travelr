@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 <template>
   <v-card>
     <div class="outer-container">
@@ -21,6 +19,17 @@
           </div>
           <div>
             <v-btn
+              class="upload-toggle-button"
+              fab
+              small
+              dark
+              color="indigo"
+              v-if="destination.isPublic"
+              @click="toggleShowSuggestTravellerTypes"
+            >
+              <v-icon dark>card_travel</v-icon>
+            </v-btn>
+            <v-btn
               v-if="destination.isPublic"
               class="upload-toggle-button"
               fab
@@ -39,7 +48,7 @@
               small
               dark
               color="indigo"
-              v-if="((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id))"
+              v-if="(((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id)) && false)"
               @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
@@ -87,7 +96,6 @@
           <p>
             <strong>Traveller Types:</strong>
             {{getTravellerTypes(destination.travellerTypes)}}
-            <!--{{destination.travellerTypes[0].name}}-->
 
           </p>
         </div>
@@ -174,267 +182,321 @@
         </v-dialog>
       </div>
     </div>
+    <v-dialog v-model="showSuggestTravellerTypes" max-width="900px">
+      <v-card min-height="400px" style="padding: 20px">
+        <v-layout row wrap style="padding-left: 40px">
+          <v-flex xs12 md12>
+            <h2>Traveller Types</h2>
+          </v-flex>
+          <v-flex xs12 md11>
+            <v-select
+              label="Associated Traveller Types"
+              :items="typeList"
+              item-text="name"
+              item-value="id"
+              v-model="TravellerTypes"
+              attach multiple>
+            </v-select>
+          </v-flex>
+          <v-flex xs12 md11 style="text-align: center">
+            <v-btn v-on:click="submitTravellerTypes()">
+              Submit
+            </v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
-
 <style>
-@import "../../assets/css/style.css";
-.dot {
-  height: 7px;
-  width: 7px;
-  margin: 0px 10px;
-  background-color: #3f51b5;
-  border-radius: 50%;
-  display: inline-block;
-}
-
-.dest-name {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.dest-name div {
-  text-align: start;
-}
-
-.dest-sub-info {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-left: 70px;
-}
-.dest-sub-info p {
-  margin-bottom: 0px;
-  color: grey;
-}
-
-.dest-name button {
-  margin-right: 20px;
-}
+  @import "../../assets/css/style.css";
+  .dot {
+    height: 7px;
+    width: 7px;
+    margin: 0px 10px;
+    background-color: #3f51b5;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dest-name {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .dest-name div {
+    text-align: start;
+  }
+  .dest-sub-info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 70px;
+  }
+  .dest-sub-info p {
+    margin-bottom: 0px;
+    color: grey;
+  }
+  .dest-name button {
+    margin-right: 20px;
+  }
 </style>
 
-
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import base_url from "../../repository/BaseUrl";
-import PhotoSelect from "../photos/PhotoSelect";
-let destinationRepository = RepositoryFactory.get("destination");
-import { store } from "../../store/index";
-import {
-  storeDestinationImage,
-  getImages,
-  updateDestinationPhoto,
-  addExistingPhoto
-} from "../../repository/DestinationPhotoRepository";
+  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import base_url from "../../repository/BaseUrl";
+  import PhotoSelect from "../photos/PhotoSelect";
+  let destinationRepository = RepositoryFactory.get("destination");
+  import { store } from "../../store/index";
+  import {
+    storeDestinationImage,
+    getImages,
+    updateDestinationPhoto,
+    addExistingPhoto
+  } from "../../repository/DestinationPhotoRepository";
+  import SelectDataRepository from "../../repository/SelectDataRepository";
 
-export default {
-  store,
+  export default {
+    store,
 
-  components: { PhotoSelect },
+    components: { PhotoSelect },
 
-  // local variables
-  data() {
-    return {
-      files: [],
-      clickedImageURL: "",
-      clickedImage: {},
-      clickedImageWidth: 0,
-      dialog: false,
-      publicPhotoSwitch: false,
-      showUploadSection: false,
-      id: null,
-      isMyProfile: false,
-      isAdminUser: false,
-      destination: {},
-      dest_id: null,
-      uploadError: false,
-      chooseExistingDialog: false,
-      uploadSuccessful: false,
-      errorText:
-        "You are trying to upload a duplicate image or an error occured while uploading."
-    };
-  },
-
-  methods: {
-    /**
-     * Redirects the user to the edit destination page.
-     */
-    editDestination() {
-      this.$router.push(
-        "/user/" + this.id + "/destinations/edit/" + this.dest_id
-      );
+    // local variables
+    data() {
+      return {
+        files: [],
+        TravellerTypes: [],
+        typeList: [],
+        clickedImageURL: "",
+        clickedImage: {},
+        clickedImageWidth: 0,
+        dialog: false,
+        publicPhotoSwitch: false,
+        showUploadSection: false,
+        id: null,
+        isMyProfile: false,
+        isAdminUser: false,
+        destination: {},
+        dest_id: null,
+        uploadError: false,
+        chooseExistingDialog: false,
+        uploadSuccessful: false,
+        errorText:
+                "You are trying to upload a duplicate image or an error occured while uploading.",
+        showSuggestTravellerTypes: false,
+      };
     },
 
-    /**
-     * Sets the selected existing photos to be added to destination photos which have been selected from the dialog to
-     * choose existing photos. Takes each photo filename which has been selected and calls the API to add it to the users destination photos.
-     * Closes the dialogue once done.
-     * @param selectedImages The photo details for all the photos selected by the user.
-     */
-    setDestinationImages(selectedImages) {
-      for (let i = 0; i < selectedImages.length; i++) {
-        addExistingPhoto(this.id, this.dest_id, {
-          photo_filename: selectedImages[i].photo_filename
-        }).then(() => {
-          getImages(this.id, this.dest_id).then(result => {
-            this.files = this.groupImages(result.data);
+    methods: {
+      /**
+       * adds a request to the destination to add/remove traveller types
+       **/
+      submitTravellerTypes() {
+        let destRequest = {
+          "destinationId": this.dest_id,
+          "travellerTypeIds": this.TravellerTypes
+        };
+        destinationRepository.addDestinationEditRequest(destRequest)
+          .then(() => {
+            this.showSuggestTravellerTypes = false;
+          })
+          .catch(err => {
+            console.log(err);
           });
-        });
-      }
-      this.closeDialogue();
-    },
+      },
 
-    /**
-     * Opens the choose existing photo selector dialog.
-     */
-    uploadExisting() {
-      this.chooseExistingDialog = true;
-    },
+      /**
+       * populated list of traveller types for user to select from
+       **/
+      async populateSelects() {
+        const travellerTypes = await SelectDataRepository.travellerTypes();
+        this.typeList = travellerTypes.data;
+      },
 
-    /**
-     * Closes the choose existing photo dialog.
-     */
-    closeDialogue() {
-      this.chooseExistingDialog = false;
-    },
+      /**
+       * Redirects the user to the edit destination page.
+       */
+      editDestination() {
+        this.$router.push(
+                "/user/" + this.id + "/destinations/edit/" + this.dest_id
+        );
+      },
 
-    /**
-     * Sets the file property the the file being uploaded.
-     */
-    handleFileUpload() {
-      this.file = this.$refs.file.files[0];
-    },
-
-    /**
-     * Toggles the upload section for the photos
-     */
-    toggleShowUploadPhoto: function() {
-      this.showUploadSection = !this.showUploadSection;
-    },
-
-    /**
-     * Updates whether the photo is public or private depending on the switch state.
-     */
-    updatePhotoVisability() {
-      this.clickedImage.is_public = this.publicPhotoSwitch;
-      updateDestinationPhoto(this.clickedImage);
-    },
-
-    /**
-     * Submits the image file and uploads it to the server
-     */
-    submitFile() {
-      this.uploadError = false;
-      this.uploadExisting = false;
-      let formData = new FormData();
-      formData.append("picture", this.file);
-
-      storeDestinationImage(this.id, this.dest_id, formData)
-        .then(() => {
-          getImages(this.id, this.dest_id).then(result => {
-            this.uploadExisting = true;
-            this.files = this.groupImages(result.data);
+      /**
+       * Sets the selected existing photos to be added to destination photos which have been selected from the dialog to
+       * choose existing photos. Takes each photo filename which has been selected and calls the API to add it to the users destination photos.
+       * Closes the dialogue once done.
+       * @param selectedImages The photo details for all the photos selected by the user.
+       */
+      setDestinationImages(selectedImages) {
+        for (let i = 0; i < selectedImages.length; i++) {
+          addExistingPhoto(this.id, this.dest_id, {
+            photo_filename: selectedImages[i].photo_filename
+          }).then(() => {
+            getImages(this.id, this.dest_id).then(result => {
+              this.files = this.groupImages(result.data);
+            });
           });
-        })
-        .catch(error => {
-          this.uploadError = true;
-          this.errorText = error.response.data;
-        });
-      this.$refs.file.value = "";
-    },
-
-    /**
-     * Gets the image src url for the server
-     * @param item The photo item to get the image for.
-     * @returns {string} A url of where to find the photo to set as src
-     */
-    getImgUrl(item) {
-      return base_url + "/api/destinations/photo/" + item.photo_filename;
-    },
-
-    /**
-     * Sets the width of the dialog based on the image width.
-     * @param selectedImage The image which has been clicked on.
-     */
-    setDialogueContent(selectedImage = "") {
-      this.dialog = true;
-      this.clickedImage = selectedImage;
-      this.publicPhotoSwitch = selectedImage.is_public;
-      this.clickedImageURL = this.getImgUrl(selectedImage);
-      const myImage = new Image();
-      myImage.src =
-        base_url + "/api/destinations/photo/" + selectedImage.photo_filename;
-      this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
-    },
-
-    /**
-     * Groups the images into rows with four columns.
-     * @param imageList The list of image data from the server.
-     * @returns {Array} A list of rows each with four images.
-     */
-    groupImages(imageList) {
-      let newImageList = [];
-      let row = [];
-      const num_cols = 4;
-      for (let i = 0; i < imageList.length; i++) {
-        if (i % num_cols === 0 && row.length !== 0) {
-          newImageList.unshift(row);
-          row = [];
         }
-        row.push(imageList[i]);
-      }
+        this.closeDialogue();
+      },
 
-      newImageList.unshift(row);
-      newImageList.reverse();
-      return newImageList;
-    },
+      /**
+       * Opens the choose existing photo selector dialog.
+       */
+      uploadExisting() {
+        this.chooseExistingDialog = true;
+      },
 
-    getTravellerTypes(travellerTypes) {
-      if (travellerTypes !== null) {
-        let travellerTypesString = "";
-        for (let i = 0; i < travellerTypes.length; i++) {
-          travellerTypesString += travellerTypes[i].name;
-          if(i !== (travellerTypes.length - 1)){
-            travellerTypesString += ", ";
+      /**
+       * Closes the choose existing photo dialog.
+       */
+      closeDialogue() {
+        this.chooseExistingDialog = false;
+      },
+
+      /**
+       * Sets the file property the the file being uploaded.
+       */
+      handleFileUpload() {
+        this.file = this.$refs.file.files[0];
+      },
+
+      /**
+       * Toggles the upload section for the photos
+       */
+      toggleShowUploadPhoto: function() {
+        this.showUploadSection = !this.showUploadSection;
+      },
+      /**
+       * Toggles the upload section for the photos
+       */
+      toggleShowSuggestTravellerTypes: function() {
+        this.showSuggestTravellerTypes = !this.showSuggestTravellerTypes;
+      },
+
+      /**
+       * Updates whether the photo is public or private depending on the switch state.
+       */
+      updatePhotoVisability() {
+        this.clickedImage.is_public = this.publicPhotoSwitch;
+        updateDestinationPhoto(this.clickedImage);
+      },
+
+      /**
+       * Submits the image file and uploads it to the server
+       */
+      submitFile() {
+        this.uploadError = false;
+        this.uploadExisting = false;
+        let formData = new FormData();
+        formData.append("picture", this.file);
+
+        storeDestinationImage(this.id, this.dest_id, formData)
+                .then(() => {
+                  getImages(this.id, this.dest_id).then(result => {
+                    this.uploadExisting = true;
+                    this.files = this.groupImages(result.data);
+                  });
+                })
+                .catch(error => {
+                  this.uploadError = true;
+                  this.errorText = error.response.data;
+                });
+        this.$refs.file.value = "";
+      },
+
+      /**
+       * Gets the image src url for the server
+       * @param item The photo item to get the image for.
+       * @returns {string} A url of where to find the photo to set as src
+       */
+      getImgUrl(item) {
+        return base_url + "/api/destinations/photo/" + item.photo_filename;
+      },
+
+      /**
+       * Sets the width of the dialog based on the image width.
+       * @param selectedImage The image which has been clicked on.
+       */
+      setDialogueContent(selectedImage = "") {
+        this.dialog = true;
+        this.clickedImage = selectedImage;
+        this.publicPhotoSwitch = selectedImage.is_public;
+        this.clickedImageURL = this.getImgUrl(selectedImage);
+        const myImage = new Image();
+        myImage.src =
+                base_url + "/api/destinations/photo/" + selectedImage.photo_filename;
+        this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+      },
+
+      /**
+       * Groups the images into rows with four columns.
+       * @param imageList The list of image data from the server.
+       * @returns {Array} A list of rows each with four images.
+       */
+      groupImages(imageList) {
+        let newImageList = [];
+        let row = [];
+        const num_cols = 4;
+        for (let i = 0; i < imageList.length; i++) {
+          if (i % num_cols === 0 && row.length !== 0) {
+            newImageList.unshift(row);
+            row = [];
           }
+          row.push(imageList[i]);
         }
-        return travellerTypesString;
-      } else {
-        return "-";
+
+        newImageList.unshift(row);
+        newImageList.reverse();
+        return newImageList;
+      },
+
+      getTravellerTypes(travellerTypes) {
+        if (travellerTypes) {
+          let travellerTypesString = "";
+          for (let i = 0; i < travellerTypes.length; i++) {
+            travellerTypesString += travellerTypes[i].name;
+            if(i !== (travellerTypes.length - 1)){
+              travellerTypesString += ", ";
+            }
+          }
+          return travellerTypesString;
+        } else {
+          return "-";
+        }
       }
-    }
-  },
+    },
 
-  /**
-   * Initialises the application on component creation.
-   */
-  created: function() {
-    this.id = this.$route.params.id;
-    this.dest_id = this.$route.params.dest_id;
+    /**
+     * Initialises the application on component creation.
+     */
+    created: function() {
+      this.populateSelects();
+      this.id = this.$route.params.id;
+      this.dest_id = this.$route.params.dest_id;
 
-    if (!this.id) {
-      this.id = store.getters.getUser.id;
-    }
+      if (!this.id) {
+        this.id = store.getters.getUser.id;
+      }
 
-    this.isMyProfile = store.getters.getUser.id == this.id;
-    this.isAdminUser = store.getters.getIsUserAdmin;
+      this.isMyProfile = store.getters.getUser.id === this.id;
+      this.isAdminUser = store.getters.getIsUserAdmin;
 
-    // Gets all the images to display on the page.
-    getImages(this.id, this.dest_id).then(result => {
-      this.files = this.groupImages(result.data);
-    });
-
-    // Gets the information relating to selected destination.
-    destinationRepository
-      .getDestination(this.id, this.dest_id)
-      .then(response => {
-        this.destination = response.data;
-      })
-      .catch(err => {
-        console.log(err);
+      // Gets all the images to display on the page.
+      getImages(this.id, this.dest_id).then(result => {
+        this.files = this.groupImages(result.data);
       });
-  }
-};
+
+      // Gets the information relating to selected destination.
+      destinationRepository
+              .getDestination(this.id, this.dest_id)
+              .then(response => {
+                this.destination = response.data;
+              })
+              .catch(err => {
+                console.log(err);
+              });
+    }
+  };
 </script>

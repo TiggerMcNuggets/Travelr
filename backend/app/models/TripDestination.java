@@ -1,6 +1,9 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import finders.TripDestinationFinder;
+import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -11,6 +14,8 @@ public class TripDestination extends BaseModel {
     public static final TripDestinationFinder find = new TripDestinationFinder();
 
     @ManyToOne
+    @JsonIgnore
+    @JsonBackReference
     public Trip trip;
 
     @ManyToOne

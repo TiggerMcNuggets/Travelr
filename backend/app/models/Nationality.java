@@ -35,5 +35,4 @@ public class Nationality extends BaseModel {
         this.name = name;
         this.is_old = false;
     }
-
 }

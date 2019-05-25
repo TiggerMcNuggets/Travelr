@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import controllers.dto.destination.CreateDestReq;
 import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
@@ -48,6 +49,7 @@ public class Destination extends BaseModel {
     public User user;
 
     @ManyToMany(cascade= CascadeType.ALL)
+    @JsonManagedReference
     public List<TravellerType> travellerTypes;
 
     @NotNull
@@ -161,7 +163,7 @@ public class Destination extends BaseModel {
      * @param requestTravellerTypes list of numbers that reference traveller types from request
      * @return list of actual traveller types for destination
      */
-    public ArrayList<TravellerType> retrieveTravellerTypes(List<Integer> requestTravellerTypes) {
+    public ArrayList<TravellerType> retrieveTravellerTypes(List<Long> requestTravellerTypes) {
         ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
         if (requestTravellerTypes != null) {
             for (long i : requestTravellerTypes) {

@@ -2,7 +2,11 @@
 
 <template>
   <div class="destination-map">
-    <Map :destinationsMarkers="this.destinationsMarkers"></Map>
+    <Map
+      :destinationMarkers="this.destinationMarkers"
+      :createDestinationCallback="createDestinationCallback"
+      :editDestinationCallback="editDestinationCallback"
+    />
     <MapMenu
       :destinations="this.destinations"
       :updateDestinationsMarkers="this.updateDestinationsMarkers"
@@ -36,7 +40,6 @@ ul {
 }
 </style>
 
-
 <script>
 import { store } from "../../store/index";
 import Map from "../map/Map";
@@ -44,28 +47,35 @@ import MapMenu from "../map/MapMenu";
 
 export default {
   store,
-  // local variables
+
   data() {
     return {
-      destinationsMarkers: []
+      destinationMarkers: []
     };
   },
+
   props: {
-    destinations: Array
+    destinations: Array,
+    createDestinationCallback: Function,
+    editDestinationCallback: Function
   },
-  computed: {},
-  // child components
+
   components: {
     Map: Map,
     MapMenu
   },
+
   methods: {
     /**
      * Updates the markers if based on a list of destinations.
      * @param listDest
      */
     updateDestinationsMarkers(listDest) {
-      this.destinationsMarkers = listDest;
+      if (listDest) {
+        this.destinationMarkers = listDest.map((dest) => {
+          return {...dest, temp: false}
+        });
+      }
     }
   },
   created() {}

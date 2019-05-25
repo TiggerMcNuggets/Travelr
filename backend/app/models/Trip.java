@@ -1,13 +1,12 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import finders.TripFinder;
 import play.data.validation.Constraints;
+import javax.validation.constraints.NotNull;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 
@@ -23,10 +22,16 @@ public class Trip extends BaseModel {
     public User user;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     public List<TripDestination> destinations;
 
     @Constraints.Required
     public String name;
+
+    @NotNull
+    @JsonIgnore
+    @Column(columnDefinition = "boolean default 0")
+    public boolean deleted;
 
     public Trip(String name, User user) {
         this.name = name;
