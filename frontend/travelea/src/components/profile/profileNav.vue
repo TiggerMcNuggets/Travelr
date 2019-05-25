@@ -43,7 +43,22 @@
       <div class="field-section">
         <ul class="chip-list">
           <li v-for="type in nationalities" :value="type.value" :key="type.value">
-            <v-chip class="nationality">{{type.name}}</v-chip>
+            <div v-if="!type.old">
+              <v-chip class="nationality">{{type.name}}</v-chip>
+            </div>
+            <div v-else>
+              <v-chip color="amber lighten-3" class="nationality">
+                {{type.name}}
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-avatar v-on="on">
+                      <v-icon color="gray" right>info</v-icon>
+                    </v-avatar>
+                  </template>
+                  <span>Outdated Nationality</span>
+                </v-tooltip>
+              </v-chip>
+            </div>
           </li>
         </ul>
         <p class="caption font-weight-light field-title">NATIONALITIES</p>
