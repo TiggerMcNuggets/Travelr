@@ -91,32 +91,36 @@ public class PopulateController extends Controller {
         Destination dest1 = new Destination("Christchurch", -43.522, 172.581, "City", "Canterbury", "New Zealand", user1);
         dest1.setTravellerTypes(travellerTypes);
 
-        Destination dest2 = new Destination("Big River", -45.160, 168.291, "City", "district", "country", user1);
+        Destination dest2 = new Destination("Big River", -45.160, 168.291, "City", "Auckland", "country", user1);
         dest2.setTravellerTypes(travellerTypes);
 
-        Destination dest3 = new Destination("Nice Park", -25.777, 125.198, "City", "district", "country", user1);
+        Destination dest3 = new Destination("Nice Park", -25.777, 125.198, "City", "NSW", "Australia", user1);
         dest3.setTravellerTypes(travellerTypes);
 
-        Destination dest4 = new Destination("Slum", -14.152, -58.905, "City", "district", "country", user1);
+        Destination dest4 = new Destination("Slum", -14.152, -58.905, "City", "Alaska", "USA", user1);
         dest4.setTravellerTypes(travellerTypes);
 
-        Destination dest5 = new Destination("Nice View", 15.693, 9.764, "Mountain", "district", "country", user1);
+        Destination dest5 = new Destination("Nice View", 15.693, 9.764, "Mountain", "Mckenzie", "New Zealand", user1);
         dest5.setTravellerTypes(travellerTypes);
 
-        Destination dest6 = new Destination("Ski", 41.522, 13.287, "Mountain", "district", "country", user1);
+        Destination dest6 = new Destination("Ski", 41.522, 13.287, "Mountain", "Nigeria", "South Africa", user1);
         dest6.setTravellerTypes(travellerTypes);
 
-        Destination dest7 = new Destination("Boating Beach", 40.779, -98.072, "State", "district", "country", user1);
+        Destination dest7 = new Destination("Boating Beach", 40.779, -98.072, "River", "Slumville", "Brazil", user1);
         dest7.setTravellerTypes(travellerTypes);
+        dest7.isPublic = true;
 
-        Destination dest8 = new Destination("Big Mountain", 17.585, -98.688, "State", "district", "country", user1);
+        Destination dest8 = new Destination("Big Mountain", 17.585, -98.688, "Natural Wonder", "Texas", "America", user1);
         dest8.setTravellerTypes(travellerTypes);
+        dest8.isPublic = true;
 
-        Destination dest9 = new Destination("Westfield Riccarton", 50.958, -70.967, "State", "district", "country", user1);
+        Destination dest9 = new Destination("Westfield Riccarton", 50.958, -70.967, "Shopping Mall", "South Auckland", "Wukanda", user1);
         dest9.setTravellerTypes(travellerTypes);
+        dest9.isPublic = true;
 
-        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "State", "district", "country", user1);
+        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "City", "Wellington", "New Zealand", user1);
         dest10.setTravellerTypes(travellerTypes);
+        dest10.isPublic = true;
 
 
 
