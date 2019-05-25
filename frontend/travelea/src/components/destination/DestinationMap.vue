@@ -9,13 +9,16 @@
           :select-first-on-enter="true"
           @keydown.native.enter.prevent
         ></GmapAutocomplete>
-        <button class="destination-search-btn" @click="onSearch">
-          <i aria-hidden="true" class="v-icon material-icons">search</i>
-        </button>
+        <i aria-hidden="true" class="v-icon material-icons destination-search-btn">search</i>
       </v-label>
     </div>
+    <div class="destination-overlayed destination-darkmode-switch">
+      <v-btn flat icon
+             @click="toggleDarkMode"
+             color="grey"
+      ><v-icon >brightness_2</v-icon></v-btn>
+    </div>
     <v-flex class="map-flex">
-
       <GmapMap class="destination-main-map" :center="gMapOptions.center" ref="map" :options="gMapOptions" @click="onMapClick">
 
         <!-- Private destination markers -->
@@ -47,7 +50,6 @@
           :draggable="false"
           :clickable="true"
         />
-        <!--          @dragend="updateCoordinatesAfterDrag($event, focussedDestination)"-->
       </GmapMap>
     </v-flex>
 
@@ -71,11 +73,14 @@
   .destination-search-btn {
     margin-left: -32px;
     padding: 0;
-    cursor: pointer;
   }
   .destination-overlayed {
     position: absolute;
     z-index: 2;
+  }
+  .destination-darkmode-switch {
+    margin-left: 330px;
+    margin-top: 10px;
   }
   .destination-main-map {
     width: 100%;
@@ -89,18 +94,20 @@
   const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
 
   import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom"
-  import { GoogleMapStyle } from "../../assets/google-map-style"
+  import { GoogleMapLightStyle } from "../../assets/google-map-light-style"
+  import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style"
 
   export default {
     data() {
       return {
         gMapOptions: {
           mapTypeControl: false,
-          styles: GoogleMapStyle,
+          styles: GoogleMapLightStyle,
           maxZoom: 18,
           minZoom: 3,
           zoom: 3,
           streetViewControl: false,
+          fullscreenControl: false,
           mapTypeId: 'roadmap',
           center: {lat: 0, lng: 120},
           restriction: {
@@ -113,7 +120,7 @@
           open: false
         },
         publicMarker: blueMarker,
-        privateMarker: purpleMarker
+        privateMarker: pinkMarker
       };
     },
 
@@ -152,39 +159,13 @@
 
     methods: {
 
-      /**
-       * Determines whether the map marker should be pink or blue depending if it is public or private, or purple
-       * if privacy is undefined.
-       * @param marker
-       */
-      chooseIconForMarker(marker) {
-        if (marker.isPublic === true) {
-          return blueMarker;
-        } else if (marker.isPublic === false) {
-          return pinkMarker;
+      toggleDarkMode() {
+        if (this.darkModeOn) {
+          this.gMapOptions.styles = GoogleMapLightStyle;
         } else {
-          return purpleMarker;
+          this.gMapOptions.styles = GoogleMapDarkStyle;
         }
-      },
-
-      /**
-       * Opens up the small information window for the particular map icon which is clicked on.
-       * @param item The destination item being clicked on.
-       */
-      openInfoWindowTemplate(item) {
-        const xOffset = 0.01;
-        this.infoWindow.position = { lat: item.data.latitude + xOffset, lng: item.data.longitude };
-        this.infoWindow.open = true;
-        this.focussedDestination = item;
-      },
-
-      /**
-       * Closes the information window for the clicked destination.
-       */
-      closeInfoWindow() {
-        this.infoWindow.open = false;
-        this.infoWindow.editMode = false;
-        this.focussedDestination = null;
+        this.darkModeOn = !this.darkModeOn;
       },
 
       /*
@@ -204,7 +185,7 @@
             lat: coordinates.latitude,
             lng: coordinates.longitude
           });
-          zoomer.in(12);
+          zoomer.in(15);
         });
       },
 
@@ -255,11 +236,9 @@
             })[0].long_name);
           }
 
+          this.focussedDestination.data = destinationData;
           this.placeNewMarker(coordinates);
           this.panAndZoom(coordinates);
-
-          this.focussedDestination.data = destinationData;
-          this.focusDestination(this.focussedDestination);
         }
       },
 
