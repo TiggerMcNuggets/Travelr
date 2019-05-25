@@ -21,10 +21,10 @@
               </DestinationNav>
             </v-flex>
             <v-flex>
-              <DestinationMap :destinations="visableDestinations" :focussedDestination="{...focusedDestination}" :focusDestination="focusDestination"></DestinationMap>
+              <DestinationMap :destinations="visableDestinations" :focussedDestination="{...focussedDestination}" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
             <v-flex xs4 sm3 md2>
-              <DestinationDetails :destination="{...focusedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
+              <DestinationDetails :destination="{...focussedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
             </v-flex>
           </v-layout>
         </v-flex>
@@ -62,7 +62,7 @@ export default {
   data() {
     return {
       destinations: [],
-      focusedDestination: {},
+      focussedDestination: {},
       userId: store.getters.getUser.id,
       newDestination: false
     };
@@ -89,7 +89,7 @@ export default {
       console.log(showDest[0])
     },
     focusDestination(destination) {
-      this.focusDestination = destination;
+      this.focussedDestination = destination;
 
       console.log("Focused");
       console.log(this.focusDestination);
