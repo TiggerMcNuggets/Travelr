@@ -220,7 +220,6 @@ export default {
      */
     init() {
       this.traveller = store.getters.getUser;
-      console.log(this.traveller);
       this.checkIfProfileOwner();
       this.isAdminUser = store.getters.getIsUserAdmin;
     },
