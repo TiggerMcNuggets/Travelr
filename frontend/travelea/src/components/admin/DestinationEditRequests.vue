@@ -73,9 +73,7 @@
         data() {
             return {
                 userid: null,
-                editRequests: [],
-                oldTypes: ["NAME1", "NAME2", "NAME3", "NAME4"],
-                newTypes: ["NEWNAME1", "NEWNAME2", "NEWNAME3", "NEWNAME4"]
+                editRequests: []
             };
         },
         created: function(){
@@ -90,7 +88,7 @@
                 destinationRepository
                     .getEditRequests()
                     .then(response => {
-                        this.editRequests = response.data.request;
+                        this.editRequests = response.data.requests;
                     })
                     .catch(err => {
                         console.log(err);

@@ -32,16 +32,20 @@ public class DestinationEditRequestRepository {
         return supplyAsync(() -> {
             List<TravellerType> travellerTypes = new ArrayList<>();
 
-            for(Long id : request.travellerTypeIds) {
-                travellerTypes.add(TravellerType.find.byId(id));
+            if(request.travellerTypeIds != null) {
+                for (Long id : request.travellerTypeIds) {
+                    travellerTypes.add(TravellerType.find.byId(id));
+                }
             }
+
 
             Destination destination = Destination.find.byId(request.destinationId);
 
-            if(destination == null || travellerTypes.size() == 0 || user == null) {
+            if (destination == null || user == null) {
                 //TODO throw error from repository layer to controller
                 return 0L;
             }
+
 
             DestinationEditRequest destinationEditRequest = new DestinationEditRequest();
 
@@ -67,10 +71,11 @@ public class DestinationEditRequestRepository {
                 return false;
             }
 
-            Destination destination = req.getDestination();
+            if(req.getTravellerTypes() == null) {
+                req.setTravellerTypes(new ArrayList<>());
+            }
 
-            System.out.println(req.getTravellerTypes());
-            System.out.println(req.getDestination());
+            Destination destination = req.getDestination();
 
             destination.getTravellerTypes().clear();
 
