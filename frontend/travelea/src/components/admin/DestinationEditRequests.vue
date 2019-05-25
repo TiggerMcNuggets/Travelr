@@ -40,19 +40,19 @@
                         </v-flex>
                         <v-flex xs12 sm12 md3>
                             <v-select
-                                    :items="newTypes"
+                                    :items="getTravellerTypes(request.travellerTypes)"
                                     label="Sugguested Traveller Types"
                                     attach
                                     solo
                             ></v-select>
                         </v-flex>
                         <v-flex xs12 sm12 md3 offset-lg3 style="text-align: center;">
-                            <v-btn color="warning">
+                            <v-btn color="warning" v-on:click="denyRequest(request.id)">
                                 Deny
                             </v-btn>
                         </v-flex>
                         <v-flex xs12 sm12 md3 style="text-align: center;">
-                        <v-btn color="info">
+                        <v-btn color="info" v-on:click="acceptRequest(request.id)">
                             Accept
                         </v-btn>
                     </v-flex>
@@ -81,17 +81,42 @@
         created: function(){
             this.userid = store.getters.getUser.id;
             // Gets the edit requests
-            destinationRepository
-            .getEditRequests()
-                .then(response => {
-                    this.editRequests = response.data;
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+            this.init();
         },
 
         methods: {
+            init() {
+                // Gets the edit requests
+                destinationRepository
+                    .getEditRequests()
+                    .then(response => {
+                        this.editRequests = response.data.request;
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            denyRequest(requestId) {
+                destinationRepository
+                    .denyEditRequest(requestId)
+                    .then(() => {
+                        this.init();
+
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            acceptRequest(requestId) {
+                destinationRepository
+                    .acceptEditRequest(requestId)
+                    .then(() => {
+                        this.init();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
             getTravellerTypes(travellerTypes) {
                 if (travellerTypes !== null) {
                     let travellerTypeList = [];

@@ -31,5 +31,13 @@ export default {
 
   getEditRequests() {
     return Repository.get('/destinations/edit_requests');
+  },
+
+  denyEditRequest(requestId) {
+    return Repository.post(`/destinations/edit_requests/${requestId}/deny`);
+  },
+
+  acceptEditRequest(requestId) {
+    return Repository.post(`/destinations/edit_requests/${requestId}/accept`);
   }
 }
