@@ -123,17 +123,18 @@
             <MapDashboard
               :destinations="this.destinations"
               :createDestinationCallback="updateDestinationList"
+              :editDestinationCallback="updateDestinationList"
             />
           </v-card>
         </v-tab-item>
       </v-tabs>
 
-      <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="updateDestinationList"/>
+      <v-dialog v-model="dialog" width="550">
+        <destination-create :createDestinationCallback="updateDestinationList"/>>
       </v-dialog>
 
-      <v-dialog v-model="editDialog" width="800">
-        <destination-edit-fields :prefillData="prefillData"/>
+      <v-dialog v-model="editDialog" width="550">
+        <destination-edit :editDestinationCallback="updateDestinationList" :prefillData="{...prefillData}"/>
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -141,36 +142,29 @@
 </template>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 .outer-container {
   max-width: 100%;
   width: 100% !important;
 }
-
 ul {
   padding-left: 0px;
 }
-
 h2 {
   align-self: flex-end;
 }
-
 hr {
   margin-bottom: 25px;
 }
-
 .section {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
-
 .dest-name {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
-
 .dest-name div {
   text-align: start;
 }
@@ -178,56 +172,44 @@ hr {
   margin-bottom: 0px;
   color: grey;
 }
-
 .dest-name button {
   margin-right: 20px;
 }
-
 .outer-container {
   text-align: center;
   padding-bottom: 15px;
 }
-
 .horizontal-details {
   padding-top: 15px;
 }
-
 .pink-background {
   background-color: hotpink;
 }
-
 .side-border {
   width: 15px;
 }
-
 .destination-container {
   padding: 20px;
 }
-
 .hoverable:hover {
   cursor: pointer;
 }
-
 .row-container {
   display: flex;
   flex-direction: row;
   margin-top: 10px;
 }
-
 .top-destination-content span {
   padding: 10px 20px;
 }
-
 .top-destination-content a {
   font-family: "Karla", sans-serif;
   font-size: 15px;
   margin-left: 10px;
 }
-
 ul {
   list-style: none;
 }
-
 .destination-list-element {
   padding-top: 20px;
 }
@@ -242,16 +224,16 @@ import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import MapDashboard from "../map/MapDashboard";
 import DestinationCreate from "./DestinationCreate";
-import DestinationEditFields from "./DestinationEditFields";
+import DestinationEdit from "./DestinationEdit";
 
 export default {
   store,
   mixins: [RollbackMixin],
   components: {
-    DestinationEditFields,
     UndoRedoButtons,
     MapDashboard,
-    DestinationCreate
+    DestinationCreate,
+    DestinationEdit
   },
 
   data() {
@@ -286,7 +268,7 @@ export default {
             .toLowerCase()
             .search(this.searchValue.toLowerCase()) !== -1
       );
-      //Currently sorting trips by id, in future we will sort trips by creation time
+      // Note: Currently sorting trips by id, in future we will sort trips by creation time
       return filteredList.sort(function(a, b) {
         return a.id - b.id;
       });
@@ -295,7 +277,7 @@ export default {
 
   methods: {
     /**
-     * Initialises the application and checks if the user is displaying thier destinations or viewing someone elses.
+     * Initialises the application and checks if the user is displaying their destinations or viewing someone else's.
      * Gets the destination list information to display.
      */
 
@@ -309,14 +291,6 @@ export default {
      */
     clearAlerts() {
       this.undoRedoError = false;
-    },
-
-    /**
-     * Redirects the user to the destinations edit page.
-     * @param id The id of the destination to redirect to.
-     */
-    editDestination(id) {
-      this.$router.push("/user/" + this.user_id + "/destinations/edit/" + id);
     },
 
     /**
@@ -376,6 +350,7 @@ export default {
     updateDestinationList: function() {
       this.getDestinationList();
       this.dialog = false;
+      this.editDialog = false;
     },
 
     /**

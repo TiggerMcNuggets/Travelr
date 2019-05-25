@@ -52,7 +52,7 @@
             <destination-create :createDestinationCallback="createDestinationCallback" :prefillData="{...selectedDest}"/>
           </div>
           <v-flex v-if="infoWindow.editMode">
-            <destination-edit-fields :updateDestinationCallback="updateDestinationCallback" :prefillData="{...selectedDest}"/>
+            <destination-edit :editDestinationCallback="editDestinationCallback" :prefillData="{...selectedDest}"/>
           </v-flex>
         </div>
       </GmapInfoWindow>
@@ -92,131 +92,142 @@
 </style>
 
 <script>
-import DestinationCreate from "../destination/DestinationCreate";
-import DestinationEditFields from "../destination/DestinationEditFields";
+  const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
+  const blueMarker = require("../../assets/blue-google-maps-marker.svg");
+  const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
 
-const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
-const blueMarker = require("../../assets/blue-google-maps-marker.svg");
-const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
+  import DestinationCreate from "../destination/DestinationCreate";
+  import DestinationEdit from "../destination/DestinationEdit";
+  import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom"
 
-import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom"
+  export default {
+    data() {
+      return {
+        userId: this.$route.params.user_id
+          ? this.$route.params.user_id
+          : this.$route.params.id,
+        infoWindow: {
+          position: { lat: 0, lng: 0 },
+          open: false,
+          createMode: false,
+          editMode: false
+        },
+        selectedDest: null,
+        place: null
+      };
+    },
 
-export default {
-  data() {
-    return {
-      userId: this.$route.params.user_id
-        ? this.$route.params.user_id
-        : this.$route.params.id,
-      infoWindow: {
-        position: { lat: 0, lng: 0 },
-        open: false,
-        createMode: false,
-        editMode: false
+    props: {
+      destinationMarkers: Array,
+      createDestinationCallback: Function,
+      editDestinationCallback: Function,
+    },
+
+    components: {
+      DestinationCreate,
+      DestinationEdit
+    },
+
+    methods: {
+      /**
+       * Opens up the small information window for the particular map icon which is clicked on.
+       * @param item The destination item being clicked on.
+       */
+      openInfoWindowTemplate(item) {
+        const xOffset = 0.01;
+        this.infoWindow.position = { lat: item.latitude + xOffset, lng: item.longitude };
+        this.infoWindow.open = true;
+        this.selectedDest = item;
       },
-      selectedDest: null,
-      place: null
-    };
-  },
-  props: {
-    destinationMarkers: Array,
-    createDestinationCallback: Function,
-    updateDestinationCallback: Function,
-  },
-  watch: {},
-  components: {DestinationCreate, DestinationEditFields},
-  methods: {
 
-    /**
-     * Opens up the small information window for the particular map icon which is clicked on.
-     * @param item The destination item being clicked on.
-     */
-    openInfoWindowTemplate(item) {
-      const xOffset = 0.01;
-      this.infoWindow.position = { lat: item.latitude + xOffset, lng: item.longitude };
-      this.infoWindow.open = true;
-      this.selectedDest = item;
-    },
+      /**
+       * Closes the information window for the clicked destination.
+       */
+      closeInfoWindow() {
+        this.infoWindow.open = false;
+        this.infoWindow.editMode = false;
+        this.selectedDest = null;
+      },
 
-    /**
-     * Closes the information window for the clicked destination.
-     */
-    closeInfoWindow() {
-      this.infoWindow.open = false;
-      this.infoWindow.editMode = false;
-      this.selectedDest = null;
-    },
+      /**
+       * Logs the event to the window.
+       * @param evt The event to log.
+       */
+      log: function(evt) {
+        window.console.log(evt);
+      },
 
-    /**
-     * Logs the event to the window.
-     * @param evt The event to log.
-     */
-    log: function(evt) {
-      window.console.log(evt);
-    },
+      /***
+       * Redirects the user to the single destination page based on the destination which was clicked on.
+       * @param destId
+       */
+      navigateToDestination: function(destId) {
+        this.$router.push(`/user/${this.userId}/destinations/${destId}`);
+      },
 
-    /***
-     * Redirects the user to the single destination page based on the destination which was clicked on.
-     * @param destId
-     */
-    navigateToDestination: function(destId) {
-      this.$router.push(`/user/${this.userId}/destinations/${destId}`);
-    },
+      /**
+       * Determines whether the map marker should be pink or blue depending if it is public or private, or purple
+       * if privacy is undefined.
+       * @param marker
+       */
+      chooseIconForMarker(marker) {
+        if (marker.isPublic === true) {
+          return blueMarker;
+        } else if (marker.isPublic === false) {
+          return pinkMarker;
+        } else {
+          return purpleMarker;
+        }
+      },
 
-    /**
-     * Determines whether the map marker should be pink or blue depending if it is public or private, or purple
-     * if privacy is undefined.
-     * @param marker
-     */
-    chooseIconForMarker(marker) {
-      if (marker.isPublic === true) {
-        return blueMarker;
-      } else if (marker.isPublic === false) {
-        return pinkMarker;
-      } else {
-        return purpleMarker;
-      }
-    },
+      /*
+       * Gets the selected place from the Google Maps autocomplete and adds it to destinations. After this,
+       * it pans and zooms to the selected place's location
+       * @param place The currently selected place
+       */
+      usePlace(place) {
+        this.place = place;
 
-    /*
-     * Gets the selected place from the Google Maps autocomplete and adds it to destinations. After this,
-     * it pans and zooms to the selected place's location
-     * @param place The currently selected place
-     */
-    usePlace(place) {
-      const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
-      this.place = place;
-
-      if (!this.place.geometry) {
-        return;
-      }
-
-      if (this.place) {
-        let dataFormat = {
-          latitude: this.place.geometry.location.lat(),
-          longitude: this.place.geometry.location.lng(),
-          temp: true
-        };
-
-        if (this.place.name) {
-          dataFormat.name = this.place.name;
+        if (!this.place.geometry) {
+          return;
         }
 
-        if (this.place.address_components) {
-          dataFormat.country = (this.place.address_components.filter(x => {
-            return x.types.includes("country")
-          })[0].long_name);
+        if (this.place) {
+          let placeData = {
+            latitude: this.place.geometry.location.lat(),
+            longitude: this.place.geometry.location.lng(),
+            temp: true
+          };
 
-          dataFormat.district = (this.place.address_components.filter(x => {
-            if (x.types.includes("administrative_area_level_1")) {
-              return x.types.includes("administrative_area_level_1")
-            }
-          })[0].long_name);
+          if (this.place.name) {
+            placeData.name = this.place.name;
+          }
+
+          if (this.place.address_components) {
+            placeData.country = (this.place.address_components.filter(x => {
+              return x.types.includes("country")
+            })[0].long_name);
+
+            placeData.district = (this.place.address_components.filter(x => {
+              if (x.types.includes("administrative_area_level_1")) {
+                return x.types.includes("administrative_area_level_1")
+              }
+            })[0].long_name);
+          }
+
+          this.destinationMarkers.push(placeData);
+          this.panAndZoom();
         }
+      },
 
-        this.destinationMarkers.push(dataFormat);
+      /*
+       * Whenever a place is chosen, pan and zoom to it.
+       */
+      panAndZoom() {
+        const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
 
         // Zoom out -> Pan to marker -> Zoom in to marker
-        zoomer.out(10).then( () => {
+        zoomer.out(11).then( () => {
           this.$refs.map.$mapObject.panTo({
             lat: this.place.geometry.location.lat(),
             lng: this.place.geometry.location.lng()
@@ -228,33 +239,30 @@ export default {
           });
           zoomer.in(12);
         });
+      },
+
+      /*
+       * Updates the location of the currently selected marker after a user stops dragging it.
+       */
+      updateCoordinatesAfterDrag(location, destinationMarkerIndex) {
+        this.destinationMarkers[destinationMarkerIndex] = {
+          latitude: parseFloat(location.latLng.lat()), longitude: parseFloat(location.latLng.lng())
+        };
+      },
+
+      /*
+       * Perceives a click on the map and creates a destination at the click location
+       */
+      onMapClick(clickEvent) {
+        this.usePlace({
+          geometry: {
+            location: {
+              lat: clickEvent.latLng.lat,
+              lng: clickEvent.latLng.lng
+            }
+          },
+        });
       }
-    },
-
-    /*
-     * Updates the location of the currently selected marker after a user stops dragging it.
-     */
-    updateCoordinatesAfterDrag(location, destinationMarkerIndex) {
-      this.destinationMarkers[destinationMarkerIndex] = {
-        latitude: parseFloat(location.latLng.lat()), longitude: parseFloat(location.latLng.lng())
-      };
-    },
-
-    /*
-     * Perceives a click on the map and creates a destination at the click location
-     */
-    onMapClick(clickEvent) {
-      console.log(clickEvent);
-      this.usePlace({
-        geometry: {
-          location: {
-            lat: clickEvent.latLng.lat,
-            lng: clickEvent.latLng.lng
-          }
-        },
-      });
     }
-  },
-  created() {}
-};
+  };
 </script>
