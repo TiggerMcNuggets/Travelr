@@ -3,6 +3,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
@@ -12,6 +13,7 @@ import controllers.dto.trip.CreateTripRes;
 import controllers.dto.trip.GetTripRes;
 import io.ebean.Ebean;
 
+import models.Destination;
 import models.Trip;
 import models.TripDestination;
 import models.User;
@@ -321,5 +323,32 @@ public class TripController extends Controller {
             trip.destinations.clear();
             return tripRepository.updateTrip(req, trip).thenApplyAsync(tripId -> ok("Trip updated"));
         });
+    }
+
+    /**
+     * Soft Deletes a trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the destination
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> softDeleteTrip(Http.Request req, Long userId, Long tripId) {
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+
+        if (middlewareRes != null) return middlewareRes;
+        Trip trip = Trip.find.findByIdIncludeDeleted(tripId);
+
+        if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        return tripRepository.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode response = mapper.createObjectNode();
+
+            response.put("id", tripId);
+            response.put("deleted", deleted);
+
+            return ok(response.toString());
+        });
+
     }
 }

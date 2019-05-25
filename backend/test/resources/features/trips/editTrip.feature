@@ -32,7 +32,6 @@ Feature: EditTrip
     When I edit a trip
     Then I will receive a 400 response
 
-
   Scenario: Edit trip with valid name and 2 consecutive valid identical destination
     Given I provide the token "123"
     And I provide the trip id "1"
@@ -73,7 +72,6 @@ Feature: EditTrip
     And provide complete trip information
     When I edit a trip
     Then I will receive a 200 response
-
 
   Scenario: Edit trip with valid name and 2 valid destinations but invalid auth token
     Given I provide the token "kjkj123"

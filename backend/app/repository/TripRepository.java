@@ -100,6 +100,31 @@ public class TripRepository {
         }, context);
     }
 
+    /**
+     *
+     * Deletes a trip permanently from the database.
+     * @param tripId the id of the trip to delete
+     */
+    public void deleteTrip(Long tripId) {
+        Trip trip = tripFinder.findOne(tripId);
+        trip.delete();
+        trip.update();
+    }
+
+    /**
+     * Changes the user's trip deleted value to the opposite of its current value
+     * @param id the users id
+     * @return the users new deleted value
+     */
+    public CompletableFuture<Boolean> toggleTripDeleted(Long id) {
+        return supplyAsync(() -> {
+            Trip dest = Trip.find.findByIdIncludeDeleted(id);
+            dest.deleted = !dest.deleted;
+            dest.update();
+            return dest.deleted;
+        }, context);
+    }
+
 
 
 }
