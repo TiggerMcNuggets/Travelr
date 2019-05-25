@@ -3,10 +3,14 @@
         <!-- Main Nav -->
         <v-flex xs12> 
           <v-card>
-            <v-layout pa-2>
+            <v-layout pa-2 align-center>
               <h3>Destinations</h3>
               <v-spacer></v-spacer>
-              Undo/Redo Here
+              <v-layout justify-end align-center>
+                 Undo/Redo Here
+                 <v-btn>Create Destination</v-btn>
+              </v-layout>
+             
             </v-layout>            
           </v-card>          
         </v-flex>
@@ -23,8 +27,8 @@
             <v-flex>
               <DestinationMap :destinations="visableDestinations" :focussedDestination="{...focussedDestination}" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
-            <v-flex xs4 sm3 md2>
-              <DestinationDetails :destination="{...focussedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
+            <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
+              <DestinationDetails v-if="focussedDestination.data" :destination="{...focussedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
             </v-flex>
           </v-layout>
         </v-flex>
@@ -92,7 +96,7 @@ export default {
       this.focussedDestination = destination;
 
       console.log("Focused");
-      console.log(this.focusDestination);
+      console.log(this.focussedDestination);
 
     },
     submitDestination(destination) {
@@ -119,7 +123,7 @@ export default {
         response.data.forEach(data => {
           var destinationObject = {
             data: data,
-            isShowing: false
+            isShowing: true
           }
 
           this.destinations.push(destinationObject);
