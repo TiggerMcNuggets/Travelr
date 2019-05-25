@@ -299,10 +299,9 @@ export default {
      * adds a request to the destination to add/remove traveller types
      **/
     submitTravellerTypes() {
-      console.log(this.TravellerTypes);
       let destRequest = {
-        "dest_id": this.dest_id,
-        "travellerTypes": this.TravellerTypes
+        "destinationId": this.dest_id,
+        "travellerTypeIds": this.TravellerTypes
       };
       destinationRepository.addDestinationEditRequest(destRequest)
               .then(() => {
