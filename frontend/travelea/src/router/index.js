@@ -19,6 +19,8 @@ import Logout from "../components/logout/Logout.vue"
 import ViewTrip from "../components/trips/ViewTrip.vue";
 import Map from "../components/map/Map";
 import SingleDestination from "../components/destination/SingleDestination";
+import DestinationEditRequests from "../components/admin/DestinationEditRequests";
+
 
 const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
@@ -174,6 +176,15 @@ let router = new Router({
             path: "/admin_dash",
             name: 'admin_dash',
             component: AdminDashboard,
+            beforeEnter: authGuard,
+            meta: {
+                requiresAdmin: true
+            }
+        },
+        {
+            path: "/edit_requests",
+            name: 'edit_requests',
+            component: DestinationEditRequests,
             beforeEnter: authGuard,
             meta: {
                 requiresAdmin: true
