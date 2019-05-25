@@ -34,6 +34,7 @@
                 :focussedDestination="ballsDeep(focussedDestination)" 
                 :passBackDestination="submitDestination"
                 :focusDestination="focusDestination"
+                :cancelEdit="cancelEdit"
                 ></DestinationDetails>
             </v-flex>
           </v-layout>
@@ -106,18 +107,28 @@ export default {
 
     },
     submitDestination(destination) {
-      if(destination.id) {
-        DestinationRepository.updateDestination(this.userId, this.destination.id, this.destination).then(() => {
+      if(destination.data.id) {
+        
+        if(destination.data.travellerTypes.length != 0 && destination.data.travellerTypes[0].id != undefined) {
+          var newList = []
+          destination.data.travellerTypes.forEach(x => {
+            newList.push(x.id);
+          })
+
+          destination.data.travellerTypes = newList;
+        }
+
+        DestinationRepository.updateDestination(this.userId, destination.data.id, destination.data).then(() => {
             this.populateDestinations();
-            this.focusDestination = {};
+            this.focussedDestination = {};
         })
         .catch(err => {
           console.log(err);
         })
       } else {
-        DestinationRepository.createDestination(this.userId, destination).then(() => {
+        DestinationRepository.createDestination(this.userId, destination.data).then(() => {
             this.populateDestinations();
-            this.focusDestination = {};
+            this.focussedDestination = {};
         })
         .catch(err => {
           console.log(err);
@@ -125,6 +136,7 @@ export default {
       }
     },
     populateDestinations() { 
+      this.destinations = [];
       DestinationRepository.getDestinations(this.userId).then(response => {
         response.data.forEach(data => {
           var destinationObject = {
@@ -139,9 +151,12 @@ export default {
           console.log(err);
         })
     },
-      ballsDeep(object) {
-          return JSON.parse(JSON.stringify(object));
-      }
+    cancelEdit() {
+      this.focussedDestination = {};
+    },
+    ballsDeep(object) {
+        return JSON.parse(JSON.stringify(object));
+    }
   },
   computed: {
     visableDestinations() {
