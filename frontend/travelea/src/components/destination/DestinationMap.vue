@@ -4,12 +4,12 @@
       <v-label>
         <GmapAutocomplete
           placeholder="Search"
-          @place_changed="yeet"
+          @place_changed="onSearch"
           class="v-text-field destination-search-box"
           :select-first-on-enter="true"
           @keydown.native.enter.prevent
         ></GmapAutocomplete>
-        <button class="destination-search-btn" @click="yeet">
+        <button class="destination-search-btn" @click="onSearch">
           <i aria-hidden="true" class="v-icon material-icons">search</i>
         </button>
       </v-label>
@@ -124,10 +124,17 @@
     },
 
     computed: {
+
+      /*
+       *
+       */
       privateDestinations() {
         return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
       },
 
+      /*
+       *
+       */
       publicDestinations() {
         return this.destinations.filter(x => x.data.isPublic && x.data.id !== this.focussedId);
       },
@@ -181,21 +188,21 @@
       },
 
       /*
-       * Whenever a place is chosen, pan and zoom to it.
+       * Whenever coordinates are supplied, pan and zoom to them.
        */
-      panAndZoom() {
+      panAndZoom(coordinates) {
         const zoomer = new GoogleMapSmoothZoom(this.$refs.map.$mapObject);
 
         // Zoom out -> Pan to marker -> Zoom in to marker
         zoomer.out(11).then( () => {
           this.$refs.map.$mapObject.panTo({
-            lat: this.place.geometry.location.lat(),
-            lng: this.place.geometry.location.lng()
+            lat: coordinates.latitude,
+            lng: coordinates.longitude
           });
 
           this.$refs.map.$mapObject.panTo({
-            lat: this.place.geometry.location.lat(),
-            lng: this.place.geometry.location.lng()
+            lat: coordinates.latitude,
+            lng: coordinates.longitude
           });
           zoomer.in(12);
         });
@@ -210,46 +217,55 @@
         this.focusDestination(focussedDestination);
       },
 
-      yeet() {
-        console.log("yeeted")
-      },
+      /*
+       *
+       */
+      onSearch(searchData) {
+        if (searchData) {
 
-      onSearch(destination) {
-        console.log(destination)
-        this.focussedDestination.data = destination;
-
-        if (!this.place.geometry) {
-          return;
-        }
-
-        if (this.place) {
-          let placeData = {
-            latitude: this.place.geometry.location.lat(),
-            longitude: this.place.geometry.location.lng(),
-            temp: true
+          let destinationData = {
+            latitude: searchData.geometry.location.lat(),
+            longitude: searchData.geometry.location.lng(),
           };
+          let coordinates = {latitude: destinationData.latitude, longitude: destinationData.longitude};
 
-          if (this.place.name) {
-            placeData.name = this.place.name;
+          if (searchData.name) {
+            destinationData.name = searchData.name;
           }
 
-          if (this.place.address_components) {
-            placeData.country = (this.place.address_components.filter(x => {
+          if (searchData.types) {
+            let containsLocality = (searchData.types.filter(x => {
+              return x === "locality"
+            })[0]);
+
+            if (containsLocality) {
+              destinationData.type = "City"
+            } else {
+              destinationData.type = this.toTitleCase(searchData.types[0]);
+            }
+          }
+
+          if (searchData.address_components) {
+            destinationData.country = (searchData.address_components.filter(x => {
               return x.types.includes("country")
             })[0].long_name);
 
-            placeData.district = (this.place.address_components.filter(x => {
-              if (x.types.includes("administrative_area_level_1")) {
-                return x.types.includes("administrative_area_level_1")
-              }
+            destinationData.district = (searchData.address_components.filter(x => {
+              return x.types.includes("administrative_area_level_1")
             })[0].long_name);
           }
 
-          this.destinationMarkers.push(placeData);
-          this.panAndZoom();
+          this.placeNewMarker(coordinates);
+          this.panAndZoom(coordinates);
+
+          this.focussedDestination.data = destinationData;
+          this.focusDestination(this.focussedDestination);
         }
       },
 
+      /*
+       *
+       */
       placeNewMarker(coordinates) {
         if (!this.focussedDestination.data) {
           this.focussedDestination.data = {};
@@ -257,9 +273,22 @@
           this.focussedDestination.data = {};
         }
 
-        this.focussedDestination.data.latitude = coordinates.lat();
-        this.focussedDestination.data.longitude = coordinates.lng();
+        this.focussedDestination.data.latitude = coordinates.latitude;
+        this.focussedDestination.data.longitude = coordinates.longitude;
         this.focusDestination(this.focussedDestination);
+      },
+
+      /*
+       *
+       */
+      toTitleCase(s) {
+        return s
+          .replace(/([^A-Z])([A-Z])/g, '$1 $2') // split cameCase
+          .replace(/[_\-]+/g, ' ') // split snake_case and lisp-case
+          .toLowerCase()
+          .replace(/(^\w|\b\w)/g, function(m) { return m.toUpperCase(); }) // title case words
+          .replace(/\s+/g, ' ') // collapse repeated whitespace
+          .replace(/^\s+|\s+$/, ''); // remove leading/trailing whitespace
       },
 
       /*
@@ -267,8 +296,8 @@
        */
       onMapClick(clickEvent) {
         this.placeNewMarker({
-          lat: clickEvent.latLng.lat,
-          lng: clickEvent.latLng.lng
+          latitude: clickEvent.latLng.lat(),
+          longitude: clickEvent.latLng.lng()
         });
       }
     }
