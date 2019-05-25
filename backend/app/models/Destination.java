@@ -163,7 +163,7 @@ public class Destination extends BaseModel {
      * @param requestTravellerTypes list of numbers that reference traveller types from request
      * @return list of actual traveller types for destination
      */
-    public ArrayList<TravellerType> retrieveTravellerTypes(List<Integer> requestTravellerTypes) {
+    public ArrayList<TravellerType> retrieveTravellerTypes(List<Long> requestTravellerTypes) {
         ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
         if (requestTravellerTypes != null) {
             for (long i : requestTravellerTypes) {
