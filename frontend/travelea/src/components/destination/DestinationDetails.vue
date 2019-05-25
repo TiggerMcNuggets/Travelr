@@ -15,6 +15,7 @@
               label="Destination Name"
               required
               :rules="nameRules"
+              name="nameField"
             ></v-text-field>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
@@ -24,16 +25,17 @@
               :rules="nameRules"
               label="Destination Type"
               required
+              name="typeField"
             ></v-text-field>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
         <v-select
-                    label="Associated Traveller Types"
-                    :items="typeList"
-                    item-text="name"
-                    item-value="id"
-                    v-model="focussedDestination.data.travellerTypes"
-                    attach multiple>
+              label="Associated Traveller Types"
+              :items="typeList"
+              item-text="name"
+              item-value="id"
+              v-model="focussedDestination.data.travellerTypes"
+              attach multiple>
             </v-select>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
@@ -43,6 +45,7 @@
               :rules="nameRules"
               label="District"
               required
+              name="districtField"
             ></v-text-field>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
@@ -52,6 +55,7 @@
               label="Country"
               required
               :rules="nameRules"
+              name="countryField"
         ></v-text-field>
       </v-flex>
        <v-flex xs12 pb-1 px-3>  
@@ -78,18 +82,20 @@
       <v-flex xs12>
           <v-layout justify-center>
             <v-btn @click="cancelEdit">Cancel</v-btn>
-            <v-btn color="primary" @click="updateDestination">Update</v-btn>
+            <v-btn color="primary" v-if="editMode" @click="updateDestination">Update</v-btn>
+            <v-btn color="primary" v-else @click="updateDestination">Create</v-btn>
           </v-layout>
           
       </v-flex>
       </v-form>
     </v-layout>
-    <v-layout px-2 v-if="!createMode && !editMode">        
+    <v-layout row wrap px-2 v-if="!createMode && !editMode">        
         <v-flex xs12 pb-2 >
           <v-layout row justify-space-between align-center>
             <h3> {{ focussedDestination.data.name }} </h3>
             <v-btn @click="editMode = true">Edit</v-btn>
-        </v-layout>
+          </v-layout>
+        </v-flex>
         <v-flex xs12 pb-1 px-3>  
           {{ focussedDestination.data.type }}
         </v-flex>
@@ -111,8 +117,15 @@
               {{ travellerType.name }}
             </v-chip>
           </v-layout>
-        </v-flex>        
-      </v-flex>
+        </v-flex> 
+        <v-flex xs12>
+          <v-layout justify-center>
+           
+            <v-btn color="primary" @click="gotoDest">View Destination</v-btn>
+          </v-layout>
+        </v-flex>         
+
+      
     </v-layout>
   </v-card>   
 </template>
@@ -133,7 +146,6 @@ export default {
     return {
       editMode: false,
       destination: {
-
       },
       ...rules,
       typeList: [],
@@ -182,15 +194,26 @@ export default {
     /**
      * Updated long and lat on the map marker when fields are changed
      */
-   pushLongAndLat() {
-     this.focusDestination(this.focussedDestination);
-   },
-   updateDestination(){
-     if(this.$refs.form.validate()) {
-       this.passBackDestination(this.focussedDestination);
-       this.editMode = false;
-     }
-   },
+    pushLongAndLat() {
+      this.focusDestination(this.focussedDestination);
+    },
+    updateDestination(){
+      if(this.$refs.form.validate()) {
+
+        let tempData = {
+          name: document.querySelector("input[name=nameField]").value,
+          type: document.querySelector("input[name=typeField]").value,
+          district: document.querySelector("input[name=districtField]").value,
+          country: document.querySelector("input[name=countryField]").value,
+          latitude: this.focussedDestination.data.latitude,
+          longitude:this.focussedDestination.data.longitude
+        }
+
+        this.focussedDestination.data = tempData;
+        this.passBackDestination(this.focussedDestination);
+        this.editMode = false;
+      }
+    },
     /**
      * populated list of traveller types for user to select from
      **/
@@ -198,10 +221,14 @@ export default {
       const travellerTypes = await SelectDataRepository.travellerTypes();
       this.typeList = travellerTypes.data;
     },
+    gotoDest() {
+      var userId = this.$store.getters.getUser.id;
+      this.$router.push(`/user/${userId}/destinations/${this.focussedDestination.data.id}`);
+    }
   },
   mounted() {
-      this.populateSelects();
-    },
+    this.populateSelects();
+  },
 };
 </script>
 
