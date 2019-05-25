@@ -304,8 +304,13 @@ export default {
         "dest_id": this.dest_id,
         "travellerTypes": this.TravellerTypes
       };
-      store.dispatch("addRequest", destRequest);
-      console.log(store.getters.getRequests());
+      destinationRepository.addDestinationEditRequest(destRequest)
+              .then(() => {
+                this.showSuggestTravellerTypes = false;
+              })
+              .catch(err => {
+                console.log(err);
+              });
     },
 
     /**
