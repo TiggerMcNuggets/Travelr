@@ -71,9 +71,11 @@ export default {
      * @param listDest
      */
     updateDestinationsMarkers(listDest) {
-      this.destinationMarkers = listDest.map((dest) => {
-        return {...dest, temp: false}
-      });
+      if (listDest) {
+        this.destinationMarkers = listDest.map((dest) => {
+          return {...dest, temp: false}
+        });
+      }
     }
   },
   created() {}

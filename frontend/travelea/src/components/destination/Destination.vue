@@ -130,7 +130,7 @@
       </v-tabs>
 
       <v-dialog v-model="dialog" width="550">
-        <destination-create :createDestinationCallback="updateDestinationList"/>>
+        <destination-create :createDestinationCallback="updateDestinationList"/>
       </v-dialog>
 
       <v-dialog v-model="editDialog" width="550">

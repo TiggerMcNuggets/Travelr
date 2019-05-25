@@ -84,10 +84,7 @@
             <v-btn color="red" v-on:click="resetValues">RESET VALUES</v-btn>
             <v-btn v-on:click="createDestination">CREATE DESTINATION</v-btn>
         </v-layout>
-      <v-alert
-        :value="isError"
-        type="error"
-        >
+      <v-alert :value="isError" type="error">
         This destination is already available to you
       </v-alert>
       </v-container>
@@ -141,6 +138,7 @@
                   .then(() => {
                     this.$refs.form.reset();
                     this.isError = false;
+                    this.$emit('close-map-info-window');
                     this.createDestinationCallback();
                   })
                   .catch((err) => {

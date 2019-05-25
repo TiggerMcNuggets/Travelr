@@ -49,10 +49,10 @@
             </v-btn>
           </div>
           <div v-if="!selectedDest.hasOwnProperty('id') && !infoWindow.editMode">
-            <destination-create :createDestinationCallback="createDestinationCallback" :prefillData="{...selectedDest}"/>
+            <destination-create v-on:close-map-info-window="onUpdateSuccess(selectedDest)" :createDestinationCallback="createDestinationCallback" :prefillData="{...selectedDest}"/>
           </div>
           <v-flex v-if="infoWindow.editMode">
-            <destination-edit :editDestinationCallback="editDestinationCallback" :prefillData="{...selectedDest}"/>
+            <destination-edit v-on:close-map-info-window="onUpdateSuccess(selectedDest)" :editDestinationCallback="editDestinationCallback" :prefillData="{...selectedDest}"/>
           </v-flex>
         </div>
       </GmapInfoWindow>
@@ -147,6 +147,13 @@
         this.infoWindow.open = false;
         this.infoWindow.editMode = false;
         this.selectedDest = null;
+      },
+
+      /*
+       * When a destination has been created/edited successfully.
+       */
+      onUpdateSuccess() {
+        this.closeInfoWindow();
       },
 
       /**
@@ -254,6 +261,7 @@
        * Perceives a click on the map and creates a destination at the click location
        */
       onMapClick(clickEvent) {
+        this.closeInfoWindow();
         this.usePlace({
           geometry: {
             location: {

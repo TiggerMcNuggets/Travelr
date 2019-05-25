@@ -36,30 +36,28 @@
             ></v-text-field>
           </v-flex>
 
-          <v-layout>
-            <v-flex xs12 md12>
-              <v-select
-                label="Associated Traveller Types"
-                :items="typeList"
-                item-text="name"
-                item-value="id"
-                v-model="destination.travellerTypes"
-                attach multiple>
-              </v-select>
-            </v-flex>
-          </v-layout>
+          <v-flex xs12 md6>
+            <v-text-field
+              v-model="destination.country"
+              :rules="nameRules"
+              :counter="60"
+              label="Country"
+              required
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
 
-          <v-layout>
-            <v-flex xs12 md6>
-              <v-text-field
-                v-model="destination.district"
-                :rules="nameRules"
-                :counter="10"
-                label="Destination District"
-                required
-              ></v-text-field>
-            </v-flex>
-          </v-layout>
+        <v-layout>
+          <v-flex xs12 md12>
+            <v-select
+              label="Associated Traveller Types"
+              :items="typeList"
+              item-text="name"
+              item-value="id"
+              v-model="destination.travellerTypes"
+              attach multiple>
+            </v-select>
+          </v-flex>
         </v-layout>
 
         <v-layout>
@@ -95,8 +93,6 @@
 </template>
 
 <style>
-  @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-
   .outer-container {
     text-align: center;
   }
@@ -142,7 +138,7 @@ export default {
 
   watch: {
     /*
-     * Watches the prefillData object from destination edit which contains data about the destination being edited.
+     * Watches the prefillData object which contains data about the destination being edited.
      */
     prefillData: function(newPrefillData) {
       this.destination = newPrefillData;
@@ -164,13 +160,13 @@ export default {
      */
     setDestination: function() {
       destinationRepository
-              .getDestination(this.$route.params.id, this.$route.params.dest_id)
-              .then(result => {
-                this.destination = result.data;
+        .getDestination(this.$route.params.id, this.$route.params.dest_id)
+        .then(result => {
+          this.destination = result.data;
 
-                // This is set to later be pushed as a reaction to the rollback stack
-                this.rollbackSetPreviousBody(result.data);
-              });
+          // This is set to later be pushed as a reaction to the rollback stack
+          this.rollbackSetPreviousBody(result.data);
+        });
     },
 
      /**
@@ -180,7 +176,15 @@ export default {
     updateDestination: function() {
       if (this.$refs.form.validate()) {
         const userId = this.$route.params.id;
-        const destId = this.destination.id;
+        const destId = this.$route.params.dest_id ? this.$route.params.dest_id : this.destination.id;
+
+        var list = [];
+
+        this.destination.travellerTypes.forEach(dist => {
+          list.push(dist.id);
+        });
+
+        this.destination.travellerTypes = list;
 
         // Call the update request
         destinationRepository
@@ -188,6 +192,7 @@ export default {
           .then(() => {
             this.$refs.form.reset();
             this.isError = false;
+            this.$emit('close-map-info-window');
             this.editDestinationCallback();
           })
           .catch((err) => {
@@ -199,6 +204,7 @@ export default {
   },
 
   created() {
+    this.populateSelects();
     // If the destination edit window has been opened on the Map
     if (this.prefillData) {
       this.destination = this.prefillData;
