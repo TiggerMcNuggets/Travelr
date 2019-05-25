@@ -109,6 +109,15 @@ public class PopulateController extends Controller {
         Destination dest7 = new Destination("Boating Beach", 40.779, -98.072, "State", "district", "country", user1);
         dest7.setTravellerTypes(travellerTypes);
 
+        Destination dest8 = new Destination("Big Mountain", 17.585, -98.688, "State", "district", "country", user1);
+        dest8.setTravellerTypes(travellerTypes);
+
+        Destination dest9 = new Destination("Westfield Riccarton", 50.958, -70.967, "State", "district", "country", user1);
+        dest9.setTravellerTypes(travellerTypes);
+
+        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "State", "district", "country", user1);
+        dest10.setTravellerTypes(travellerTypes);
+
 
 
         dest1.insert();
@@ -116,6 +125,11 @@ public class PopulateController extends Controller {
         dest3.insert();
         dest4.insert();
         dest5.insert();
+        dest6.insert();
+        dest7.insert();
+        dest8.insert();
+        dest9.insert();
+        dest10.insert();
 
         Trip trip1 = new Trip("Backpacking 2018", user1);
         Trip trip2 = new Trip("New Trip", user2);

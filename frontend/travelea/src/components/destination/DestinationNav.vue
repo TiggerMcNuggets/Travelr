@@ -3,9 +3,12 @@
         <v-flex xs12> Title </v-flex>
         <v-flex xs12> 
             <v-layout row wrap> 
-                <v-card v-bind:key="index" v-for="(destination, index) in destinations">
-                  {{ destination.data.name }}
-                </v-card>
+                <v-flex xs12>
+                  <v-card v-bind:key="index" v-for="(destination, index) in destinations">
+                    {{ destination.data.name }}
+                  </v-card>
+                </v-flex>
+                
             </v-layout>
         </v-flex>
     </v-layout>
