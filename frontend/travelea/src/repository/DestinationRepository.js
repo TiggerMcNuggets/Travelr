@@ -27,5 +27,21 @@ export default {
 
   deleteDestination(userId, destinationId) {
     return Repository.put(`/users/${userId}/destinations/${destinationId}/toggle_deleted`);
+  },
+
+  getEditRequests() {
+    return Repository.get('/destinations/edit_requests');
+  },
+
+  denyEditRequest(requestId) {
+    return Repository.post(`/destinations/edit_requests/${requestId}/deny`);
+  },
+
+  acceptEditRequest(requestId) {
+    return Repository.post(`/destinations/edit_requests/${requestId}/accept`);
+  },
+
+  addDestinationEditRequest(payload) {
+    return Repository.post(`/destinations/edit_requests`, payload)
   }
 }

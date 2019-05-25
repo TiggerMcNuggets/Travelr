@@ -58,6 +58,7 @@ export default {
       }
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
         menuOptions.push({ name: "Admin Panel", icon: "lock_open", link: "/admin_dash" });
+        menuOptions.push({ name: "Edit Requests", icon: "lock_open", link: "/edit_requests" });
       }
 
       return menuOptions;

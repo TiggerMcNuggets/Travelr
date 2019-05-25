@@ -25,7 +25,7 @@ Feature: DeleteTrip
 
   Scenario: Undo soft delete trip and trip is present again
     Given I provide the trip id "1"
-    And The traveller id is 1
+    And The traveller id is 2
     And A trip with id "1" exists
     When I soft delete trip with id 1
     And I undo the deletion status on trip with id 1
