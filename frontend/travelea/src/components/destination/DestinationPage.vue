@@ -21,7 +21,7 @@
               </DestinationNav>
             </v-flex>
             <v-flex>
-              <DestinationMap :destinations="destinations" :focusDestination="focusDestination"></DestinationMap>
+              <DestinationMap :destinations="destinations" :focussedDestination="{...focusedDestination}" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
             <v-flex xs4 sm3 md2>
               <DestinationDetails :destination="{...focusedDestination}" :passBackDestination="submitDestination"></DestinationDetails>
