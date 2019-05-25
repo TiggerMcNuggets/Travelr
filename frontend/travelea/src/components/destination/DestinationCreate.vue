@@ -99,95 +99,63 @@
   import { rules } from "../form_rules";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
   let destinationRepository = RepositoryFactory.get("destination");
+  import SelectDataRepository from "../../repository/SelectDataRepository";
 
   export default {
     props: {
       createDestinationCallback: Function,
       prefillData: Object
     },
-import { rules } from "../form_rules";
-import { store } from "../../store/index";
-import SelectDataRepository from "../../repository/SelectDataRepository";
 
     data() {
       return {
+        travellerTypes: [],
         destination: {},
         userId: this.$route.params.id,
         isError: false,
+        typeList: [],
         ...rules
       };
     },
 
+    mounted() {
+      this.populateSelects();
+    },
+
     methods: {
+      /**
+       * populated list of traveller types for user to select from
+       **/
+      async populateSelects() {
+        const travellerTypes = await SelectDataRepository.travellerTypes();
+        this.typeList = travellerTypes.data;
+      },
+
       /**
        * Sends a request to the API to create a destination based on the data entered into the form.
        * Checks for an error and logs result if unsuccessful.
        */
-      createDestination: function() {
+      createDestination: function () {
         if (this.$refs.form.validate()) {
           destinationRepository.createDestination(this.userId, this.destination)
-          .then(() => {
-            this.$refs.form.reset();
-            this.isError = false;
-            this.createDestinationCallback();
-          })
-          .catch((err) => {
-            console.log(err);
-            this.isError = true;
-            console.log("error creating destination");
-          })
+                  .then(() => {
+                    this.$refs.form.reset();
+                    this.isError = false;
+                    this.createDestinationCallback();
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    this.isError = true;
+                    console.log("error creating destination");
+                  })
         }
       },
 
       /**
        * Resets the form values to blank.
        */
-      resetValues: function() {
+      resetValues: function () {
         this.$refs.form.reset();
-  mounted() {
-    this.populateSelects();
-  },
-
-
-  data() {
-    return {
-      travellerTypes: [],
-      destination: {},
-      userId: this.$route.params.id,
-      isError: false,
-      typeList: [],
-      ...rules
-    };
-  },
-
-  methods: {
-    /**
-     * populated list of traveller types for user to select from
-     **/
-    async populateSelects() {
-      const travellerTypes = await SelectDataRepository.travellerTypes();
-      this.typeList = travellerTypes.data;
-    },
-    /**
-     * Sends a request to the API to create a destination based on the data entered into the form.
-     * Checks for an error and logs result if unsuccessful.
-     */
-    createDestination: function() {
-      if (this.$refs.form.validate()) {
-        this.destination.travellerTypes = this.travellerTypes;
-        destinationRepository.createDestination(this.userId, this.destination)
-        .then((response) => {
-          this.$refs.form.reset();
-          this.isError = false;
-
-
-
-          this.createDestinationCallback(response.data.id);
-        })
-        .catch(() => {
-          this.isError = true;
-          console.log("error creating destination");
-        })
       }
     },
 

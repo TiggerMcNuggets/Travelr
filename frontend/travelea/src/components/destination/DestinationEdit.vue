@@ -39,12 +39,12 @@
           <v-layout>
             <v-flex xs12 md12>
               <v-select
-                      label="Associated Traveller Types"
-                      :items="typeList"
-                      item-text="name"
-                      item-value="id"
-                      v-model="destination.travellerTypes"
-                      attach multiple>
+                label="Associated Traveller Types"
+                :items="typeList"
+                item-text="name"
+                item-value="id"
+                v-model="destination.travellerTypes"
+                attach multiple>
               </v-select>
             </v-flex>
           </v-layout>
@@ -59,6 +59,8 @@
                 required
               ></v-text-field>
             </v-flex>
+          </v-layout>
+        </v-layout>
 
         <v-layout>
           <v-flex xs12 md6>
@@ -117,15 +119,18 @@ import { rules } from "../form_rules";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import SelectDataRepository from "../../repository/SelectDataRepository";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  import { rules } from "../form_rules";
-  let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   mixins: [RollbackMixin],
   components: {
     UndoRedoButtons: UndoRedoButtons
   },
+
+  props: {
+    editDestinationCallback: Function,
+    prefillData: Object
+  },
+
   data() {
     return {
       destination: {},
@@ -134,12 +139,17 @@ export default {
       ...rules
     };
   },
+
+  watch: {
+    /*
+     * Watches the prefillData object from destination edit which contains data about the destination being edited.
+     */
+    prefillData: function(newPrefillData) {
+      this.destination = newPrefillData;
+    }
+  },
+
   methods: {
-  export default {
-    props: {
-      editDestinationCallback: Function,
-      prefillData: Object
-    },
 
     /**
      * populated list of traveller types for user to select from
@@ -154,69 +164,45 @@ export default {
      */
     setDestination: function() {
       destinationRepository
-        .getDestination(this.$route.params.id, this.$route.params.dest_id)
-        .then(result => {
-          this.destination = result.data;
+              .getDestination(this.$route.params.id, this.$route.params.dest_id)
+              .then(result => {
+                this.destination = result.data;
 
-          // This is set to later be pushed as a reaction to the rollback stack
-          this.rollbackSetPreviousBody(result.data);
-        });
-    data() {
-      return {
-        destination: {},
-        isError: false,
-        ...rules
-      };
+                // This is set to later be pushed as a reaction to the rollback stack
+                this.rollbackSetPreviousBody(result.data);
+              });
     },
 
-    watch: {
-      /*
-       * Watches the prefillData object from destination edit which contains data about the destination being edited.
-       */
-      prefillData: function(newPrefillData) {
-        this.destination = newPrefillData;
-      }
-    },
+     /**
+     * Updates a destination by through a request to the API based on the updated data in the form.
+     * This function will first check if the data is valid and only submit successfully if it is.
+     */
+    updateDestination: function() {
+      if (this.$refs.form.validate()) {
+        const userId = this.$route.params.id;
+        const destId = this.destination.id;
 
-    methods: {
-       /**
-       * Updates a destination by through a request to the API based on the updated data in the form.
-       * This function will first check if the data is valid and only submit successfully if it is.
-       */
-      updateDestination: function() {
-        if (this.$refs.form.validate()) {
-          const userId = this.$route.params.id;
-          const destId = this.destination.id;
-
-          // Call the update request
-          destinationRepository
-            .updateDestination(userId, destId, this.destination)
-            .then(() => {
-              this.$refs.form.reset();
-              this.isError = false;
-              this.editDestinationCallback();
-            })
-            .catch((err) => {
-              console.log(err);
-              this.isError = true;
-            });
-        }
+        // Call the update request
+        destinationRepository
+          .updateDestination(userId, destId, this.destination)
+          .then(() => {
+            this.$refs.form.reset();
+            this.isError = false;
+            this.editDestinationCallback();
+          })
+          .catch((err) => {
+            console.log(err);
+            this.isError = true;
+          });
       }
-    },
-    created() {
-      // If the destination edit window has been opened on the Map
-      if (this.prefillData) {
-        this.destination = this.prefillData;
-      }
-    }
+     }
   },
 
-  /**
-   * Gets the current destination data to display in the form to update on component creation.
-   */
-  created: function() {
-    this.populateSelects();
+  created() {
+    // If the destination edit window has been opened on the Map
+    if (this.prefillData) {
+      this.destination = this.prefillData;
+    }
   }
 };
-    this.setDestination();
 </script>

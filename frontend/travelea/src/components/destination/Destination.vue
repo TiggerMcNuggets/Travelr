@@ -250,8 +250,7 @@ export default {
       filteredList: [],
       searchValue: "",
       searchActive: false,
-      undoRedoError: false,
-      prefillData: null
+      prefillData: null,
       undoRedoError: false,
       setPrivateError: false
     };
