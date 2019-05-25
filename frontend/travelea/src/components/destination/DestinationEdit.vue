@@ -51,6 +51,19 @@
           </v-layout>
 
           <v-layout>
+            <v-flex xs12 md12>
+              <v-select
+                      label="Associated Traveller Types"
+                      :items="typeList"
+                      item-text="name"
+                      item-value="id"
+                      v-model="destination.travellerTypes"
+                      attach multiple>
+              </v-select>
+            </v-flex>
+          </v-layout>
+
+          <v-layout>
             <v-flex xs12 md6>
               <v-text-field
                 v-model="destination.district"
@@ -127,6 +140,7 @@ let destinationRepository = RepositoryFactory.get("destination");
 import { rules } from "../form_rules";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+import SelectDataRepository from "../../repository/SelectDataRepository";
 
 export default {
   mixins: [RollbackMixin],
@@ -137,10 +151,19 @@ export default {
     return {
       destination: {},
       isError: false,
+      typeList: [],
       ...rules
     };
   },
   methods: {
+
+    /**
+     * populated list of traveller types for user to select from
+     **/
+    async populateSelects() {
+      const travellerTypes = await SelectDataRepository.travellerTypes();
+      this.typeList = travellerTypes.data;
+    },
 
     /**
      * Requests a destination and sets destination property to it
@@ -228,6 +251,7 @@ export default {
    * Gets the current destination data to display in the form to update on component creation.
    */
   created: function() {
+    this.populateSelects();
     this.setDestination();
   }
 };

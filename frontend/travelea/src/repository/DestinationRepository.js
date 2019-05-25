@@ -39,5 +39,9 @@ export default {
 
   acceptEditRequest(requestId) {
     return Repository.post(`/destinations/edit_requests/${requestId}/accept`);
+  },
+
+  addDestinationEditRequest(payload) {
+    return Repository.post(`/destinations/edit_requests`, payload)
   }
 }
