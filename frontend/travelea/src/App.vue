@@ -52,21 +52,22 @@ export default {
   computed: {
     menuOptions() {
       let menuOptions = [
-        { name: "Sign Up", icon: "lock_open", link: "/signup" },
+        { name: "Sign Up", icon: "assignment_ind", link: "/signup" },
         { name: "Log In", icon: "lock_open", link: "/login" }
       ];
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
-          { name: "Profile", icon: "lock_open", link: "/user/"+store.getters.getUser.id },
-          { name: "Users", icon: "lock_open", link: "/users" },
-          { name: "My Destinations", icon: "lock_open", link: "/user/"+store.getters.getUser.id+"/destinations" },
-          { name: "My Trips", icon: "lock_open", link: "/user/"+store.getters.getUser.id+"/trips" },         
+          { name: "Profile", icon: "account_circle", link: "/user/"+store.getters.getUser.id },
+          { name: "Users", icon: "supervised_user_circle", link: "/users" },
+          { name: "Destination Map", icon: "map", link: "/destinations" },
+          { name: "Destination List", icon: "list", link: "/user/"+store.getters.getUser.id+"/destinations" },
+          { name: "My Trips", icon: "flight", link: "/user/"+store.getters.getUser.id+"/trips" },
         ];
       }
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
-        menuOptions.push({ name: "Admin Panel", icon: "lock_open", link: "/admin_dash" });
-        menuOptions.push({ name: "Edit Requests", icon: "lock_open", link: "/edit_requests" });
+        menuOptions.push({ name: "Admin Panel", icon: "playlist_add_check", link: "/admin_dash" });
+        menuOptions.push({ name: "Edit Requests", icon: "done_all", link: "/edit_requests" });
       }
 
       return menuOptions;

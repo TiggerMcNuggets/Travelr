@@ -10,7 +10,7 @@
       <v-btn class="login-button" large round v-on:click="login" color="primary">Login</v-btn>
       <p>
         Don't have an account?
-        <router-link to="/signup">Click here</router-link>to sign up
+        <router-link to="/signup">Click here </router-link>to sign up
       </p>
       <v-alert :value="loginAlert" color="error">Incorrect email and/or password</v-alert>
     </div>
