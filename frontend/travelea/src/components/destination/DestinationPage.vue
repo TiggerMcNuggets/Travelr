@@ -7,8 +7,13 @@
               <h3>Destinations</h3>
               <v-spacer></v-spacer>
               <v-layout justify-end align-center>
-                 Undo/Redo Here
-                 <v-btn @click="createDestination">Create Destination</v-btn>
+                  <div v-if="focussedDestination.data && focussedDestination.data.id">
+                      <UndoRedoButtons
+                              :canRedo="rollbackCanRedo()"
+                              :canUndo="rollbackCanUndo()"
+                              :undo="undo"
+                              :redo="redo"></UndoRedoButtons>
+                  </div>
               </v-layout>
              
             </v-layout>            
@@ -101,6 +106,17 @@ export default {
     },
     focusDestination(destination) {
       this.focussedDestination = this.ballsDeep(destination);
+      console.log('balls deep destination', destination.data);
+      const deep = this.ballsDeep(destination);
+    if(deep.data.travellerTypes.length != 0 && deep.data.travellerTypes[0].id != undefined) {
+        var newList = []
+        deep.data.travellerTypes.forEach(x => {
+            newList.push(x.id);
+        });
+        deep.data.travellerTypes = newList;
+    }
+
+      this.rollbackSetPreviousBody(deep.data);
 
       console.log("Focused");
       console.log(this.focussedDestination);
@@ -113,14 +129,29 @@ export default {
           var newList = []
           destination.data.travellerTypes.forEach(x => {
             newList.push(x.id);
-          })
+          });
 
           destination.data.travellerTypes = newList;
         }
 
         DestinationRepository.updateDestination(this.userId, destination.data.id, destination.data).then(() => {
+            const url = `/users/${this.userId}/destinations/${destination.data.id}`;
+            this.rollbackCheckpoint(
+                'PUT',
+                {
+                    url: url,
+                    body: destination.data
+                },
+                {
+                    url: url,
+                    body: this.rollbackPreviousBody
+                }
+             );
+            this.rollbackPreviousBody = destination.data;
+            console.log('previous body', this.rollbackPreviousBody);
+            console.log(this.rollbackCanUndo());
             this.populateDestinations();
-            this.focussedDestination = {};
+            // this.focussedDestination = {};
         })
         .catch(err => {
           console.log(err);
@@ -142,7 +173,7 @@ export default {
           var destinationObject = {
             data: data,
             isShowing: true
-          }
+          };
 
           this.destinations.push(destinationObject);
         })        
@@ -156,6 +187,23 @@ export default {
     },
     ballsDeep(object) {
         return JSON.parse(JSON.stringify(object));
+    },
+    undo() {
+        const actions = [];// fill];
+        try {
+            this.rollbackUndo(actions);
+        } catch (err) {
+            console.error(err);
+        }
+    },
+    redo() {
+        const actions = [];// fill];
+        try {
+            this.rollbackRedo(actions);
+        } catch (err) {
+            console.error(err);
+
+        }
     }
   },
   computed: {

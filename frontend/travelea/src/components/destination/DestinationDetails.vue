@@ -5,7 +5,7 @@
       <v-flex xs12 pb-2 >
           <v-layout>
             <h3 v-if="createMode">Create a Destination </h3>
-            <h3 v-if="editMode">Edit Destination </h3>
+            <h3 v-if="editMode && !createMode">Edit Destination </h3>
           </v-layout>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
@@ -35,6 +35,8 @@
               item-text="name"
               item-value="id"
               v-model="focussedDestination.data.travellerTypes"
+              name="travellerTypeField"
+
               attach multiple>
             </v-select>
       </v-flex>
@@ -144,7 +146,7 @@ import { rules } from "../form_rules";
 export default {  
   data() {
     return {
-      editMode: false,
+      editMode: true,
       destination: {
       },
       ...rules,
@@ -182,7 +184,7 @@ export default {
     focussedDestination: {
       handler: function(newValue, oldValue) {
         if(oldValue.data.id !== newValue.data.id) {
-          this.editMode = false;
+          // this.editMode = false;
         } else {
 
         }
@@ -205,13 +207,21 @@ export default {
           type: document.querySelector("input[name=typeField]").value,
           district: document.querySelector("input[name=districtField]").value,
           country: document.querySelector("input[name=countryField]").value,
-          latitude: this.focussedDestination.data.latitude,
-          longitude:this.focussedDestination.data.longitude
-        }
+            id: this.focussedDestination.data.id,
+        travellerTypes: [1],
+            isPublic: false,
 
+          latitude: this.focussedDestination.data.latitude,
+          longitude:this.focussedDestination.data.longitude,
+        }
         this.focussedDestination.data = tempData;
+
+
+
+
         this.passBackDestination(this.focussedDestination);
-        this.editMode = false;
+
+        // this.editMode = false;
       }
     },
     /**
