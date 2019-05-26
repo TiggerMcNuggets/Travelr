@@ -134,6 +134,7 @@
        */
       createDestination: function () {
         if (this.$refs.form.validate()) {
+            this.destination.travellerTypes = this.travellerTypes;
           destinationRepository.createDestination(this.userId, this.destination)
                   .then(() => {
                     this.$refs.form.reset();
