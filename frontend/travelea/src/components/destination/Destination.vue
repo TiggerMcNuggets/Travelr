@@ -86,14 +86,14 @@
               </div>
               <div>
                 <v-btn
-                        v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                        v-if="(isMyProfile || isAdminUser) && item.ownerId === userId"
                         icon
                         @click="deleteDestination(item.id)"
                 >
                   <v-icon color="red lighten-1">delete</v-icon>
                 </v-btn>
                 <v-btn
-                        v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                        v-if="(isMyProfile || isAdminUser) && item.ownerId === userId"
                         icon
                         @click="editDestination(item.id)"
                 >
@@ -103,7 +103,7 @@
                   <v-icon color="blue lighten-1">lock</v-icon>
                 </v-btn>
                 <v-btn
-                        v-if="item.isPublic"
+                        v-if="item.isPublic && item.ownerId === userId"
                         color="#FF69B4"
                         flat
                         icon
@@ -243,7 +243,7 @@
         showEditDestination: false,
         destinations: [],
         isMyProfile: false,
-        user_id: null,
+        ownerId: null,
         active: null,
         showTooltip: false,
         filteredList: [],
@@ -300,7 +300,7 @@
        * @param id The id of the destination to redirect to.
        */
       editDestination(id) {
-        this.$router.push("/user/" + this.user_id + "/destinations/edit/" + id);
+        this.$router.push("/user/" + this.userId + "/destinations/edit/" + id);
       },
 
       /**
@@ -308,7 +308,7 @@
        * @param id The id of the single destination which was clicked.
        */
       viewDestination(id) {
-        this.$router.push("/user/" + this.user_id + "/destinations/" + id);
+        this.$router.push("/user/" + this.userId + "/destinations/" + id);
       },
 
       /**
@@ -331,8 +331,8 @@
        */
       deleteDestination: function(destId) {
         this.clearAlerts();
-        destinationRepository.deleteDestination(this.user_id, destId).then(() => {
-          const url = `/users/${this.user_id}/destinations/${destId}/toggle_deleted`;
+        destinationRepository.deleteDestination(this.userId, destId).then(() => {
+          const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
           this.rollbackCheckpoint(
                   'DELETE',
                   {
@@ -351,7 +351,7 @@
        */
       updateDestinationList: function(destId) {
         this.clearAlerts();
-        const url = `/users/${this.user_id}/destinations/${destId}/toggle_deleted`;
+        const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
         this.rollbackCheckpoint(
                 'POST',
                 {
@@ -370,7 +370,7 @@
        */
       getDestinationList: function() {
         destinationRepository
-                .getDestinations(this.user_id)
+                .getDestinations(this.userId)
                 .then(response => {
                   this.destinations = response.data;
                 })
@@ -436,7 +436,7 @@
        */
       checkIfProfileOwner() {
         let id = this.$route.params.id;
-        this.user_id = id;
+        this.userId = id;
         this.isMyProfile = store.getters.getUser.id;
       },
 
