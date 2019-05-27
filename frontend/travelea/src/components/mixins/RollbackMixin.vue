@@ -70,6 +70,10 @@ export default {
          */
         rollbackCanRedo: function() {
             return this.rollbackManager.canRedo();
+        },
+
+        rollbackFlush: function() {
+            return this.rollbackManager.flush();
         }
     }
 }

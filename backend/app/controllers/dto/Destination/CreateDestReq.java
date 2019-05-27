@@ -19,8 +19,6 @@ public class CreateDestReq {
     public String country;
     @Constraints.Required
     public boolean isPublic;
-    @Constraints.Required
-    public boolean isDeleted;
 
     public List<Long> travellerTypes;
 
@@ -78,13 +76,5 @@ public class CreateDestReq {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
     }
 }
