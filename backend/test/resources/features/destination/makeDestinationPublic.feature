@@ -28,3 +28,12 @@ Feature: Make Destination Public
     And I create a trip
     Then the owner of the destination with id 1 is 1
 
+  Scenario: Deletion after merging destinations
+    Given I provide the token "123"
+    And I create a destination for user id 2
+    And I provide the token "abc"
+    And I create a destination for user id 3
+    When I make the destination public
+    Then My first destination should be deleted
+
+
