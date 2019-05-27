@@ -8,11 +8,13 @@ let travellerFormHelper = {};
 travellerFormHelper.convertToNationalitiesReq = (natList, passList) => {
   let nationalities = [];
   for (let nat of natList) {
-    let nation = { id: nat.id, hasPassport: false };
-    if (passList.includes(nat.id)) {
-      nation.hasPassport = true;
-    }
-    nationalities.push(nation);
+      if (!nat.old) {
+          let nation = {id: nat.id, hasPassport: false};
+          if (passList.includes(nat.id)) {
+              nation.hasPassport = true;
+          }
+          nationalities.push(nation);
+      }
   }
   return nationalities;
 };
@@ -26,13 +28,13 @@ travellerFormHelper.convertFromNationalitiesRes = (natList) => {
   let nationalities = [];
   let passports = [];
   for (let nat of natList) {
-    nationalities.push({id: nat.id, name: nat.name});
+    nationalities.push({id: nat.id, name: nat.name, old: nat.old});
     if (nat.hasPassport) {
       passports.push({id: nat.id, name: nat.name});
     }
   }
   return [nationalities, passports];
-}
+};
 
 /**
  * Takes in a list of traveller type objects and returns a list of ids numbers

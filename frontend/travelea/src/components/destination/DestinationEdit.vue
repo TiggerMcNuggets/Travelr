@@ -178,14 +178,6 @@ export default {
         const userId = this.$route.params.id;
         const destId = this.$route.params.dest_id ? this.$route.params.dest_id : this.destination.id;
 
-        var list = [];
-
-        this.destination.travellerTypes.forEach(dist => {
-          list.push(dist.id);
-        });
-
-        this.destination.travellerTypes = list;
-
         // Call the update request
         destinationRepository
           .updateDestination(userId, destId, this.destination)
