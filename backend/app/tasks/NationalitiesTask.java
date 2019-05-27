@@ -62,6 +62,8 @@ public class NationalitiesTask implements WSBodyReadables, WSBodyWritables {
                         Duration.ofSeconds(SCHEDULED_DELAY_SECONDS), // delay
                         Duration.ofSeconds(SCHEDULED_REPETITION_SECONDS), // interval
                         () -> {
+                            System.out.println("NATIONALITY_TASK STARTED");
+                            Date startTime = new Date();
                             WSRequest request = ws.url(NATIONALITIES_API_URL);
 
                             request.get().thenComposeAsync((res) -> {
@@ -105,6 +107,9 @@ public class NationalitiesTask implements WSBodyReadables, WSBodyWritables {
                                     nat.save();
                                 }
 
+                                Date endTime = new Date();
+                                long completionSeconds = (endTime.getTime() - startTime.getTime()) / 1000;
+                                System.out.println("NATIONALITY_TASK DONE IN " + completionSeconds + " seconds");
                                 return CompletableFuture.completedFuture(Results.ok("ok"));
                             });
                         },

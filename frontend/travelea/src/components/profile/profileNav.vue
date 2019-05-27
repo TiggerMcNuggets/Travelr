@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card class="profile-sidebar">
     <div class="profile-top">
       <!-- <v-avatar size="100%" class="profile-photo"> -->
@@ -49,7 +49,7 @@
             <div v-else>
               <v-chip color="amber lighten-3" class="nationality">
                 {{type.name}}
-                <v-tooltip bottom>
+                <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-avatar v-on="on">
                       <v-icon color="gray" right>info</v-icon>
