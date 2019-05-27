@@ -254,14 +254,13 @@ public class DestinationController extends Controller {
     }
 
     /**
-     * Shallow deletes a destination
-     * This allows users to keep seeing the destination on the trips but not on their current destinations page
+     * Toggles a destination's deletion status
      * @param req the http request
      * @param userId the id of the user
      * @param destId the id of the destination
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> shallowDeleteDestination(Http.Request req, Long userId, Long destId) {
+    public CompletionStage<Result> toggleDestinationDeleted(Http.Request req, Long userId, Long destId) {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
         if (middlewareRes != null) return middlewareRes;
