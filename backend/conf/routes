@@ -52,7 +52,7 @@ GET         /api/users/:user_id/destinations/:dest_id                controllers
 PUT         /api/users/:userId/destinations/:destId                  controllers.DestinationController.updateUserDestinationGivenUser(request: Request, userId: Long, destId: Long)
 PUT        /api/destinations/:id/make_public                        controllers.DestinationController.makeDestinationPublic(id: Long)
 PUT        /api/destinations/:id/make_private                       controllers.DestinationController.makeDestinationPrivate(request: Request, id: Long)
-PUT         /api/users/:user_id/destinations/:dest_id/toggle_deleted controllers.DestinationController.shallowDeleteDestination(request: Request, user_id: Long, dest_id: Long)
+PUT         /api/users/:user_id/destinations/:dest_id/toggle_deleted controllers.DestinationController.toggleDestinationDeleted(request: Request, user_id: Long, dest_id: Long)
 
 
 GET         /api/destinations/edit_requests                          controllers.DestinationEditRequestController.getAllRequests(request: Request)

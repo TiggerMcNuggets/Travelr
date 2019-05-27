@@ -145,19 +145,28 @@ public class DestinationRepository {
             tripDestinations.addAll(TripDestination.find.getAllByDestinationId(sameDestination.getId()));
         }
 
+        // Transfer destination in trips
         boolean destinationTaken = false;
         for (TripDestination tripDestination : tripDestinations) {
             tripDestination.setDestination(destination);
             destinationTaken = true;
             tripDestination.save();
         }
-        if (destinationTaken) {
-            Destination.find.transferToAdmin(destination.id);
-        }
 
+        // Transfer destination photos
         for (DestinationPhoto destinationPhoto : destinationPhotos) {
             destinationPhoto.setDestination(destination);
             destinationPhoto.save();
+        }
+
+        // Delete destination
+        if (destinationTaken) {
+            Destination.find.transferToAdmin(destination.id);
+            for (Destination sameDestination : sameDestinations) {
+                if (sameDestination.id != destination.id) {
+                    sameDestination.delete();
+                }
+            }
         }
 
     }
