@@ -98,7 +98,7 @@
       <v-flex xs12 pb-2>
         <v-layout row justify-space-between align-center>
           <h3>{{ focussedDestination.data.name }}</h3>
-          <v-btn @click="editMode = true">
+          <v-btn @click="editMode = true" v-if="allowedToEdit">
             <v-icon>edit</v-icon>
           </v-btn>
         </v-layout>

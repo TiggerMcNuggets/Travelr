@@ -331,3 +331,5 @@ yarn-error.log
 backend/\.idea/
 
 public/
+
+frontend/package-lock\.json
