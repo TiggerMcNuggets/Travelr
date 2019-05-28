@@ -7,7 +7,6 @@ import cucumber.api.java.en.When;
 import finders.DestinationFinder;
 import javaSteps.models.StateSingleton;
 import models.Destination;
-import models.User;
 import org.junit.Assert;
 import play.libs.Json;
 import play.mvc.Http;
