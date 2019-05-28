@@ -13,7 +13,6 @@ import controllers.dto.trip.CreateTripRes;
 import controllers.dto.trip.GetTripRes;
 import io.ebean.Ebean;
 
-import models.Destination;
 import models.Trip;
 import models.TripDestination;
 import models.User;

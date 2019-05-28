@@ -1,17 +1,14 @@
 package javaSteps.steps.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.typesafe.config.ConfigException;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
 import play.libs.Json;
 import play.mvc.Http;
-import play.mvc.Result;
 import play.test.Helpers;
 
-import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.route;
 

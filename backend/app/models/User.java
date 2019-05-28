@@ -202,7 +202,6 @@ public class User extends BaseModel {
         return this.token;
     }
 
-    // TODO: delete this
     public String setToken(String token) {
         this.token = token;
         return token;

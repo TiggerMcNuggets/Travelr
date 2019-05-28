@@ -2,7 +2,6 @@ package javaSteps.steps.trips;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;

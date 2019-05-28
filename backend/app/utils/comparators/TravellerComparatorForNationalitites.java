@@ -22,8 +22,6 @@ public class TravellerComparatorForNationalitites implements Comparator<User> {
         List<UserNationality> nationalities2 = t2.nationalities;
         Collections.sort(nationalities1, new NationalityComparator());
         Collections.sort(nationalities2, new NationalityComparator());
-        //t1.setNationalities(nationalities1);
-        //t2.setNationalities(nationalities2);
         return nationalities1.get(0).nationality.name.compareTo(nationalities2.get(0).nationality.name);
     }
 }

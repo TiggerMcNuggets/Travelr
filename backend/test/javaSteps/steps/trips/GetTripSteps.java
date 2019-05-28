@@ -1,11 +1,9 @@
 package javaSteps.steps.trips;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
-import play.libs.Json;
 import play.mvc.Http;
 import play.test.Helpers;
 

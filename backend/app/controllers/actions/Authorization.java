@@ -22,7 +22,6 @@ public class Authorization {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     public @interface RequireAuth {
-        // boolean value() default true;
     }
 
     /**
@@ -51,7 +50,6 @@ public class Authorization {
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
     public @interface RequireAdminAuth {
-        //boolean value() default true;
     }
 
     /**
