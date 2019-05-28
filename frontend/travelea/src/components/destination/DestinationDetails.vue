@@ -10,22 +10,24 @@
       </v-flex>
       <v-flex xs12 pb-1 px-3>
         <v-text-field
-              v-model="focussedDestination.data.name"
+              v-model="destination.data.name"
               :counter="60"
               label="Destination Name"
               required
               :rules="nameRules"
               name="nameField"
+              @change="pushDestination"
             ></v-text-field>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
           <v-text-field
-              v-model="focussedDestination.data.type"
+              v-model="destination.data.type"
               :counter="60"
               :rules="nameRules"
               label="Destination Type"
               required
               name="typeField"
+              @change="pushDestination"
             ></v-text-field>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
@@ -33,47 +35,50 @@
               label="Associated Traveller Types"
               :items="typeList"
               item-text="name"
-              v-model="focussedDestination.data.travellerTypes"
+              v-model="destination.data.travellerTypes"
               return-object
               name="travellerTypeField"
+              @change="pushDestination"
               attach multiple>
             </v-select>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
         <v-text-field
-              v-model="focussedDestination.data.district"
+              v-model="destination.data.district"
               :counter="60"
               :rules="nameRules"
               label="District"
               required
               name="districtField"
+              @change="pushDestination"
             ></v-text-field>
       </v-flex>
       <v-flex xs12 pb-1 px-3>
         <v-text-field
-              v-model="focussedDestination.data.country"
+              v-model="destination.data.country"
               :counter="60"
               label="Country"
               required
               :rules="nameRules"
               name="countryField"
+              @change="pushDestination"
         ></v-text-field>
       </v-flex>
        <v-flex xs12 pb-1 px-3>  
           <v-text-field
-            v-model.number="focussedDestination.data.latitude"
+            v-model.number="destination.data.latitude"
             type="number"
             :rules="numberRules"
             label="Latitude"
-            @change="pushLongAndLat"
+            @change="pushDestination"
             required
           ></v-text-field>
 
       </v-flex>
        <v-flex xs12 pb-1 px-3>
         <v-text-field
-              v-model.number="focussedDestination.data.longitude"
-              @change="pushLongAndLat"
+              v-model.number="destination.data.longitude"
+              @change="pushDestination"
               type="number"
               :rules="numberRules"
               label="Longitude"
@@ -141,12 +146,15 @@ import { rules } from "../form_rules";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
   let destinationRepository = RepositoryFactory.get("destination");
   import SelectDataRepository from "../../repository/SelectDataRepository";
+  import { stringify } from "../../tools/deepCopy" 
 
 export default {  
   data() {
     return {
       editMode: true,
       destination: {
+        data: {
+        }
       },
       ...rules,
       typeList: [],
@@ -183,9 +191,15 @@ export default {
     focussedDestination: {
       handler: function(newValue, oldValue) {
         if(oldValue.data.id !== newValue.data.id) {
-          // this.editMode = false;
-        } else {
+        } 
+        console.log("vvvvvvvvvvvvvvvv")
+        console.log(newValue.data)
+        console.log("^^^^^^^^^^^^^^^^^^")
+        console.log(this.destination.data)
 
+        if (newValue.data !== this.destination.data) {
+          console.log("Here")
+          this.destination = this.focussedDestination;
         }
       }, 
       deep: true
@@ -195,8 +209,8 @@ export default {
     /**
      * Updated long and lat on the map marker when fields are changed
      */
-    pushLongAndLat() {
-      this.focusDestination(this.focussedDestination);
+    pushDestination() {
+      this.focusDestination(this.destination);
     },
     updateDestination(){
       if(this.$refs.form.validate()) {
@@ -236,6 +250,7 @@ export default {
   },
   mounted() {
     this.populateSelects();
+    this.destination = this.focussedDestination;
   },
 };
 </script>

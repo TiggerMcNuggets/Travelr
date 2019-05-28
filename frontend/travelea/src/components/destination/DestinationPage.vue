@@ -85,6 +85,17 @@ export default {
   },
 
   watch: {
+    /**
+     * Reset back to viewing mode on destination change
+     */
+    focussedDestination: {
+      handler: function(newValue, oldValue) {
+        if(oldValue.data.id !== newValue.data.id) {
+          this.rollbackFlush();
+        }
+      }, 
+      deep: true
+    }
   },
 
   methods: {
@@ -106,17 +117,14 @@ export default {
         showDest[0].isShowing = !showDest[0].isShowing;
       }
 
-      console.log("Toggled");
-      console.log(showDest[0])
     },
     focusDestination(destination) {
       this.focussedDestination = this.deepCopy(destination); 
-    
-      this.rollbackSetPreviousBody(this.focussedDestination.data);
-
-      console.log("Focused");
-      console.log(this.focussedDestination);
-
+      if (this.focussedDestination.data && this.focussedDestination.data.id) {
+        const newDest = this.destinations.filter((dest) => dest.data.id === this.focussedDestination.data.id)[0];
+        console.log(newDest);
+        this.rollbackSetPreviousBody(newDest.data);
+      }
     },
     submitDestination(destination) {
       if(destination.data.id) {    
@@ -134,13 +142,10 @@ export default {
                 }
              );
             this.rollbackPreviousBody = destination.data;
-            console.log('previous body', this.rollbackPreviousBody);
-            console.log(this.rollbackCanUndo());
             this.populateDestinations();
-            // this.focussedDestination = {};
         })
         .catch(err => {
-          console.log(err);
+          console.error(err);
         })
       } else {
         DestinationRepository.createDestination(this.userId, destination.data).then(() => {
@@ -148,31 +153,37 @@ export default {
             this.focussedDestination = {};
         })
         .catch(err => {
-          console.log(err);
+          console.error(err);
         })
       }
     },
-    populateDestinations() { 
+    async populateDestinations() { 
       this.destinations = [];
-      DestinationRepository.getDestinations(this.userId).then(response => {
+      try {
+        const response = await DestinationRepository.getDestinations(this.userId);
         response.data.forEach(data => {
           var destinationObject = {
             data: data,
             isShowing: true
           };
-
           this.destinations.push(destinationObject);
         })        
-      })
-      .catch(err => {
-          console.log(err);
-        })
+      } catch(err) {
+          console.error(err);
+        }
     },
     cancelEdit() {
       this.focussedDestination = {};
     },
+    async fetchAfterRollback() {
+      let id = this.focussedDestination.data.id;
+      console.log(id);
+      await this.populateDestinations();
+      this.focussedDestination = this.destinations.filter((dest) => dest.data.id === id)[0];
+      console.log(this.focussedDestination);
+    },
     undo() {
-        const actions = [];// fill];
+        const actions = [this.fetchAfterRollback];// fill;
         try {
             this.rollbackUndo(actions);
         } catch (err) {
@@ -180,7 +191,7 @@ export default {
         }
     },
     redo() {
-        const actions = [];// fill];
+        const actions = [this.fetchAfterRollback];// fill;
         try {
             this.rollbackRedo(actions);
         } catch (err) {
