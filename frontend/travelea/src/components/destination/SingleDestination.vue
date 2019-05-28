@@ -186,9 +186,9 @@
                     label="Associated Traveller Types"
                     :items="typeList"
                     item-text="name"
-                    item-value="id"
                     v-model="TravellerTypes"
-                    attach multiple>
+                    attach multiple
+                    return-object>
             </v-select>
           </v-flex>
           <v-flex xs12 md11 style="text-align: center">
