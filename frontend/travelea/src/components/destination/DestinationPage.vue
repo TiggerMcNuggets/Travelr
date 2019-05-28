@@ -30,13 +30,13 @@
               </DestinationNav>
             </v-flex>
             <v-flex>
-              <DestinationMap :destinations="visableDestinations" :focussedDestination="ballsDeep(focussedDestination)" :focusDestination="focusDestination"></DestinationMap>
+              <DestinationMap :destinations="visableDestinations" :focussedDestination="deepCopy(focussedDestination)" :focusDestination="focusDestination"></DestinationMap>
             </v-flex>
 
             <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
               <DestinationDetails 
                 v-if="focussedDestination.data" 
-                :focussedDestination="ballsDeep(focussedDestination)" 
+                :focussedDestination="deepCopy(focussedDestination)" 
                 :passBackDestination="submitDestination"
                 :focusDestination="focusDestination"
                 :cancelEdit="cancelEdit"
@@ -63,6 +63,7 @@ import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import DestinationNav from "./DestinationNav"
 import DestinationMap from "./DestinationMap"
 import DestinationDetails from "./DestinationDetails"
+import {deepCopy} from "../../tools/deepCopy"
 
 
 export default {
@@ -87,6 +88,10 @@ export default {
   },
 
   methods: {
+
+    deepCopy(value) {
+      return deepCopy(value);
+    },
     createDestination() {
       this.focussedDestination = {
         data: {
@@ -105,35 +110,16 @@ export default {
       console.log(showDest[0])
     },
     focusDestination(destination) {
-      this.focussedDestination = this.ballsDeep(destination);
-      console.log('balls deep destination', destination.data);
-      const deep = this.ballsDeep(destination);
-    if(deep.data.travellerTypes.length != 0 && deep.data.travellerTypes[0].id != undefined) {
-        var newList = []
-        deep.data.travellerTypes.forEach(x => {
-            newList.push(x.id);
-        });
-        deep.data.travellerTypes = newList;
-    }
-
-      this.rollbackSetPreviousBody(deep.data);
+      this.focussedDestination = this.deepCopy(destination); 
+    
+      this.rollbackSetPreviousBody(this.focussedDestination.data);
 
       console.log("Focused");
       console.log(this.focussedDestination);
 
     },
     submitDestination(destination) {
-      if(destination.data.id) {
-        
-        if(destination.data.travellerTypes.length != 0 && destination.data.travellerTypes[0].id != undefined) {
-          var newList = []
-          destination.data.travellerTypes.forEach(x => {
-            newList.push(x.id);
-          });
-
-          destination.data.travellerTypes = newList;
-        }
-
+      if(destination.data.id) {    
         DestinationRepository.updateDestination(this.userId, destination.data.id, destination.data).then(() => {
             const url = `/users/${this.userId}/destinations/${destination.data.id}`;
             this.rollbackCheckpoint(
@@ -184,9 +170,6 @@ export default {
     },
     cancelEdit() {
       this.focussedDestination = {};
-    },
-    ballsDeep(object) {
-        return JSON.parse(JSON.stringify(object));
     },
     undo() {
         const actions = [];// fill];

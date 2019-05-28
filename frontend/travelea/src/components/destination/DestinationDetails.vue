@@ -33,10 +33,9 @@
               label="Associated Traveller Types"
               :items="typeList"
               item-text="name"
-              item-value="id"
               v-model="focussedDestination.data.travellerTypes"
+              return-object
               name="travellerTypeField"
-
               attach multiple>
             </v-select>
       </v-flex>
@@ -207,10 +206,9 @@ export default {
           type: document.querySelector("input[name=typeField]").value,
           district: document.querySelector("input[name=districtField]").value,
           country: document.querySelector("input[name=countryField]").value,
-            id: this.focussedDestination.data.id,
-        travellerTypes: [1],
-            isPublic: false,
-
+          id: this.focussedDestination.data.id,
+          travellerTypes: this.focussedDestination.data.travellerTypes,
+          isPublic: false,
           latitude: this.focussedDestination.data.latitude,
           longitude:this.focussedDestination.data.longitude,
         }
