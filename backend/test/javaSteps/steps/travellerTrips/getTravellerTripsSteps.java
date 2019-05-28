@@ -1,12 +1,9 @@
 package javaSteps.steps.travellerTrips;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
-import play.libs.Json;
 import play.mvc.Http;
 import play.test.Helpers;
 
@@ -15,7 +12,6 @@ public class getTravellerTripsSteps {
 
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
-    private JsonNode tripData;
 
     @When("I get all trips for traveller")
     public void i_get_all_trips_for_traveller()  {

@@ -7,7 +7,6 @@ import cucumber.api.java.en.When;
 import finders.DestinationFinder;
 import javaSteps.models.StateSingleton;
 import models.Destination;
-import models.User;
 import org.junit.Assert;
 import play.libs.Json;
 import play.mvc.Http;
@@ -72,7 +71,6 @@ public class MakeDestinationPublicSteps {
 
             JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
             destinationId = responseBody.get("id").asInt();
-            System.out.println(destinationId);
 
             if (firstCreatedId == null) {
                 firstCreatedId = destinationId;

@@ -1,7 +1,6 @@
 package repository;
 
 import controllers.dto.Destination.CreateDestinationEditReq;
-import cucumber.api.java.hu.De;
 import models.Destination;
 import models.DestinationEditRequest;
 import models.TravellerType;
@@ -23,9 +22,7 @@ public class DestinationEditRequestRepository {
 
 
     public  CompletableFuture<List<DestinationEditRequest>> getAllEditRequests() {
-        return supplyAsync(() -> {
-            return DestinationEditRequest.find.all();
-        }, context);
+        return supplyAsync(() -> DestinationEditRequest.find.all(), context);
     }
 
     public CompletableFuture<Long> createRequest(CreateDestinationEditReq request, User user) {

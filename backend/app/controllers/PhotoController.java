@@ -63,7 +63,7 @@ public class PhotoController extends Controller {
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        return personalPhotoRepository.list(id, user.id == id || isAdmin).thenApplyAsync((photos) -> {
+        return personalPhotoRepository.list(id, user.id == id || isAdmin).thenApplyAsync(photos -> {
             PathProperties pathProperties = PathProperties.parse("id, photo_filename, is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
@@ -87,7 +87,7 @@ public class PhotoController extends Controller {
             Files.TemporaryFile file = picture.getRef();
             fh.makeDirectory(this.personalPhotosFilepath);
             file.copyTo(Paths.get(this.personalPhotosFilepath + fileName), true);
-            return personalPhotoRepository.add(id, fileName).thenApplyAsync((photo_id) -> {
+            return personalPhotoRepository.add(id, fileName).thenApplyAsync(photo_id -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
                 } else if (photo_id == null) {
@@ -215,7 +215,7 @@ public class PhotoController extends Controller {
      * @return 200 http response code if successful, else 404
      */
     public CompletionStage<Result> getProfilePic(long id) {
-        return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync((fileName) -> {
+        return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync(fileName -> {
             try {
                 File file = new File(this.profilePhotosFilepath + fileName);
                 return ok(file);
