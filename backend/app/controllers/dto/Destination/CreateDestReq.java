@@ -79,14 +79,6 @@ public class CreateDestReq {
         isPublic = aPublic;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
     public List<CreateTravellerTypeReq> getTravellerTypes() {
         return travellerTypes;
     }
