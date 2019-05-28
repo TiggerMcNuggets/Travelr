@@ -38,7 +38,7 @@ public class DestinationPhotoController extends Controller {
     FormFactory formFactory;
 
     @Inject
-    public DestinationPhotoController( Config config,
+    public DestinationPhotoController(Config config,
             DestinationPhotoRepository destinationPhotoRepository
     ) {
         String rootPath = System.getProperty("user.home");

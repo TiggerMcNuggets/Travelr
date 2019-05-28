@@ -60,9 +60,6 @@
   width: 50%;
 }
 
-.destination-side-nav {
-  width: 200px;
-}
 
 .destination-nav-item {
   cursor: pointer;
@@ -99,12 +96,6 @@ export default {
     },
     publicDestinations() {
       return this.destinations.filter(x => x.data.isPublic);
-    },
-    privateDestinationCount() {
-      this.privateDestinations.length;
-    },
-    publicDestinationCount() {
-      this.publicDestinations.length;
     }
   }
 };
