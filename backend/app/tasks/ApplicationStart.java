@@ -28,9 +28,7 @@ public class ApplicationStart {
 
 
         // Shut-down hook
-        lifecycle.addStopHook( () -> {
-            return CompletableFuture.completedFuture(null);
-        } );
+        lifecycle.addStopHook( () -> CompletableFuture.completedFuture(null));
 
 
     }

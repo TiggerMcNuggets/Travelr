@@ -60,7 +60,7 @@ public class DestinationPhotoController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
-        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync((photos) -> {
+        return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync(photos -> {
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));
         });
@@ -100,7 +100,7 @@ public class DestinationPhotoController extends Controller {
             FileHelper fh = new FileHelper();
             fh.makeDirectory(this.destinationPhotoFilepath);
             file.copyTo(Paths.get(this.destinationPhotoFilepath + fileName), true);
-            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync((photo_id) -> {
+            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync(photo_id -> {
                 if (photo_id != null) {
                     return ok("File uploaded with Photo ID " + photo_id);
                 } else {
@@ -135,7 +135,7 @@ public class DestinationPhotoController extends Controller {
             System.err.println("Destination image already exists in directory");
         }
 
-        return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync((photo_id) -> {
+        return destinationPhotoRepository.add(id, dest_id, fileName).thenApplyAsync(photo_id -> {
             if (photo_id != null) {
                 return ok("File added with Photo ID " + photo_id);
             } else if (photo_id == null) {

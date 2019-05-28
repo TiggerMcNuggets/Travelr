@@ -66,7 +66,7 @@ public class NationalitiesTask implements WSBodyReadables, WSBodyWritables {
                             Date startTime = new Date();
                             WSRequest request = ws.url(NATIONALITIES_API_URL);
 
-                            request.get().thenComposeAsync((res) -> {
+                            request.get().thenComposeAsync(res -> {
 
                                 // new nationalities
                                 JsonNode node = res.getBody(json());

@@ -22,9 +22,7 @@ public class DestinationEditRequestRepository {
 
 
     public  CompletableFuture<List<DestinationEditRequest>> getAllEditRequests() {
-        return supplyAsync(() -> {
-            return DestinationEditRequest.find.all();
-        }, context);
+        return supplyAsync(() -> DestinationEditRequest.find.all(), context);
     }
 
     public CompletableFuture<Long> createRequest(CreateDestinationEditReq request, User user) {
