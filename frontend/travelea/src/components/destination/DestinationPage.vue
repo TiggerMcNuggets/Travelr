@@ -7,7 +7,7 @@
               <h3>Destinations</h3>
               <v-spacer></v-spacer>
               <v-layout justify-end align-center>
-                  <div v-if="focussedDestination.data && focussedDestination.data.id">
+                  <div v-if="focussedDestination.data && focussedDestination.data.id && isAllowedToEdit">
                       <UndoRedoButtons
                               :canRedo="rollbackCanRedo()"
                               :canUndo="rollbackCanUndo()"
@@ -40,6 +40,7 @@
                 :passBackDestination="submitDestination"
                 :focusDestination="focusDestination"
                 :cancelEdit="cancelEdit"
+                :allowedToEdit="isAllowedToEdit"
                 ></DestinationDetails>
             </v-flex>
           </v-layout>
@@ -80,6 +81,9 @@ export default {
     return {
       destinations: [],
       focussedDestination: {},
+
+      // priviledges data
+      isAdminUser: false,
       userId: store.getters.getUser.id,
     };
   },
@@ -201,6 +205,9 @@ export default {
     }
   },
   computed: {
+    isAllowedToEdit() {
+      return this.isAdminUser || (this.focussedDestination.data.ownerId === this.userId);
+    },
     visableDestinations() {
       return this.destinations.filter(x => x.isShowing);
     }
@@ -208,6 +215,8 @@ export default {
 
   created() {
     this.populateDestinations();
+    this.isAdminUser = store.getters.getIsUserAdmin;
+    this.userId = store.getters.getUser.id;
   }
 };
 </script>

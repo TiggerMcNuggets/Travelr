@@ -87,7 +87,7 @@
       </v-flex>
       <v-flex xs12>
           <v-layout justify-center>
-            <v-btn @click="cancelEdit">Cancel</v-btn>
+            <v-btn @click="goToViewDestination">Cancel</v-btn>
             <v-btn color="primary" v-if="editMode" @click="updateDestination">Update</v-btn>
             <v-btn color="primary" v-else @click="updateDestination">Create</v-btn>
           </v-layout>
@@ -99,7 +99,11 @@
         <v-flex xs12 pb-2 >
           <v-layout row justify-space-between align-center>
             <h3> {{ focussedDestination.data.name }} </h3>
-            <v-btn @click="editMode = true">Edit</v-btn>
+            <v-btn 
+              @click="editMode = true"
+              v-if="allowedToEdit">
+              Edit
+            </v-btn>
           </v-layout>
         </v-flex>
         <v-flex xs12 pb-1 px-3>  
@@ -151,7 +155,7 @@ import { rules } from "../form_rules";
 export default {  
   data() {
     return {
-      editMode: true,
+      editMode: false,
       destination: {
         data: {
         }
@@ -170,9 +174,10 @@ export default {
     focussedDestination: Object,
     passBackDestination: Function,
     focusDestination: Function,
-    cancelEdit: Function
+    allowedToEdit: Boolean
   },
   computed: {
+
     /**
      * Is it in create mode or viewing/edit mode
      */
@@ -191,14 +196,9 @@ export default {
     focussedDestination: {
       handler: function(newValue, oldValue) {
         if(oldValue.data.id !== newValue.data.id) {
+          this.goToViewDestination();
         } 
-        console.log("vvvvvvvvvvvvvvvv")
-        console.log(newValue.data)
-        console.log("^^^^^^^^^^^^^^^^^^")
-        console.log(this.destination.data)
-
         if (newValue.data !== this.destination.data) {
-          console.log("Here")
           this.destination = this.focussedDestination;
         }
       }, 
@@ -207,6 +207,12 @@ export default {
   },
   methods: {
     /**
+     * 
+     */
+    goToViewDestination() {
+      this.editMode = false;
+    },
+    /**
      * Updated long and lat on the map marker when fields are changed
      */
     pushDestination() {
@@ -214,26 +220,8 @@ export default {
     },
     updateDestination(){
       if(this.$refs.form.validate()) {
-
-        let tempData = {
-          name: document.querySelector("input[name=nameField]").value,
-          type: document.querySelector("input[name=typeField]").value,
-          district: document.querySelector("input[name=districtField]").value,
-          country: document.querySelector("input[name=countryField]").value,
-          id: this.focussedDestination.data.id,
-          travellerTypes: this.focussedDestination.data.travellerTypes,
-          isPublic: false,
-          latitude: this.focussedDestination.data.latitude,
-          longitude:this.focussedDestination.data.longitude,
-        }
-        this.focussedDestination.data = tempData;
-
-
-
-
-        this.passBackDestination(this.focussedDestination);
-
-        // this.editMode = false;
+        this.passBackDestination(this.destination);
+        this.goToViewDestination();
       }
     },
     /**
