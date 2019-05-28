@@ -28,7 +28,7 @@ def runOnCommandline(script: String)(implicit dir: File): Int = {
   if(isWindows){ Process("cmd /c " + script, dir) } else { Process(script, dir) } }!
 
 // Check of node_modules directory exist in given directory.
-def isNodeModulesInstalled(implicit dir: File): Boolean = (dir / "../frontend/travelea/node_modules").exists()
+def isNodeModulesInstalled(implicit dir: File): Boolean = (dir / "frontend/node_modules").exists()
 
 // Execute `npm install` command to install all node module dependencies. Return Success if already installed.
 def runNpmInstall(implicit dir: File): Int =
@@ -51,14 +51,14 @@ def executeProdBuild(implicit dir: File): Int = ifNodeModulesInstalled(runOnComm
 lazy val `ui-test` = TaskKey[Unit]("run UI tests when testing application.")
 
 `ui-test` := {
-  implicit val userInterfaceRoot = baseDirectory.value / "../frontend/travelea"
+  implicit val userInterfaceRoot = baseDirectory.value / "frontend"
   if (executeUiTests != Success) throw new Exception("ui tests failed!")
 }
 
 lazy val `ui-prod-build` = TaskKey[Unit]("run UI build when packaging the application.")
 
 `ui-prod-build` := {
-  implicit val userInterfaceRoot = baseDirectory.value / "../frontend/travelea"
+  implicit val userInterfaceRoot = baseDirectory.value / "frontend"
   if (executeProdBuild != Success) throw new Exception("oops! UI Build crashed.")
 }
 
