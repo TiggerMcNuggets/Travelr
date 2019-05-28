@@ -1,7 +1,7 @@
 package repository;
 
 import controllers.dto.Destination.CreateDestinationEditReq;
-import cucumber.api.java.hu.De;
+import controllers.dto.TravellerType.CreateTravellerTypeReq;
 import models.Destination;
 import models.DestinationEditRequest;
 import models.TravellerType;
@@ -33,8 +33,8 @@ public class DestinationEditRequestRepository {
             List<TravellerType> travellerTypes = new ArrayList<>();
 
             if(request.travellerTypeIds != null) {
-                for (Long id : request.travellerTypeIds) {
-                    travellerTypes.add(TravellerType.find.byId(id));
+                for (CreateTravellerTypeReq createTravellerTypeReq : request.travellerTypeIds) {
+                    travellerTypes.add(TravellerType.find.byId(createTravellerTypeReq.id));
                 }
             }
 
