@@ -31,16 +31,7 @@
             >
               <v-icon dark>card_travel</v-icon>
             </v-btn>
-            <v-btn
-                    v-if="destination.isPublic"
-                    class="upload-toggle-button"
-                    fab
-                    small
-                    dark
-                    color="indigo"
-            >
-              <v-icon dark>lock_open</v-icon>
-            </v-btn>
+
             <v-btn v-else class="upload-toggle-button" fab small dark color="indigo">
               <v-icon dark>lock</v-icon>
             </v-btn>
@@ -50,7 +41,7 @@
                     small
                     dark
                     color="indigo"
-                    v-if="((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id))"
+                    v-if="(isMyProfile || isAdminUser) && destination.ownerId === parseInt(userId)"
                     @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
@@ -64,7 +55,7 @@
                     v-if="isMyProfile || isAdminUser"
                     @click="toggleShowUploadPhoto"
             >
-              <v-icon dark>add</v-icon>
+              <v-icon dark>insert_photo</v-icon>
             </v-btn>
           </div>
         </div>
@@ -280,11 +271,11 @@
         dialog: false,
         publicPhotoSwitch: false,
         showUploadSection: false,
-        id: null,
+        userId: null,
         isMyProfile: false,
         isAdminUser: false,
         destination: {},
-        dest_id: null,
+        destId: null,
         uploadError: false,
         chooseExistingDialog: false,
         uploadSuccessful: false,
@@ -300,7 +291,7 @@
        **/
       submitTravellerTypes() {
         let destRequest = {
-          "destinationId": this.dest_id,
+          "destinationId": this.destId,
           "travellerTypeIds": this.TravellerTypes
         };
         destinationRepository.addDestinationEditRequest(destRequest)
@@ -325,7 +316,7 @@
        */
       editDestination() {
         this.$router.push(
-                "/user/" + this.id + "/destinations/edit/" + this.dest_id
+                "/user/" + this.userId + "/destinations/edit/" + this.destId
         );
       },
 
@@ -337,10 +328,10 @@
        */
       setDestinationImages(selectedImages) {
         for (let i = 0; i < selectedImages.length; i++) {
-          addExistingPhoto(this.id, this.dest_id, {
+          addExistingPhoto(this.userId, this.destId, {
             photo_filename: selectedImages[i].photo_filename
           }).then(() => {
-            getImages(this.id, this.dest_id).then(result => {
+            getImages(this.userId, this.destId).then(result => {
               this.files = this.groupImages(result.data);
             });
           });
@@ -399,9 +390,9 @@
         let formData = new FormData();
         formData.append("picture", this.file);
 
-        storeDestinationImage(this.id, this.dest_id, formData)
+        storeDestinationImage(this.userId, this.destId, formData)
                 .then(() => {
-                  getImages(this.id, this.dest_id).then(result => {
+                  getImages(this.userId, this.destId).then(result => {
                     this.uploadExisting = true;
                     this.files = this.groupImages(result.data);
                   });
@@ -480,24 +471,24 @@
      */
     created: function() {
       this.populateSelects();
-      this.id = this.$route.params.id;
-      this.dest_id = this.$route.params.dest_id;
+      this.userId = this.$route.params.id;
+      this.destId = this.$route.params.dest_id;
 
-      if (!this.id) {
-        this.id = store.getters.getUser.id;
+      if (!this.userId) {
+        this.userId = store.getters.getUser.id;
       }
 
-      this.isMyProfile = store.getters.getUser.id == this.id;
+      this.isMyProfile = store.getters.getUser.id == this.userId;
       this.isAdminUser = store.getters.getIsUserAdmin;
 
       // Gets all the images to display on the page.
-      getImages(this.id, this.dest_id).then(result => {
+      getImages(this.userId, this.destId).then(result => {
         this.files = this.groupImages(result.data);
       });
 
       // Gets the information relating to selected destination.
       destinationRepository
-              .getDestination(this.id, this.dest_id)
+              .getDestination(this.userId, this.destId)
               .then(response => {
                 this.destination = response.data;
               })
