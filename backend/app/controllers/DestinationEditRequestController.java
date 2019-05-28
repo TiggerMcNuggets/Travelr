@@ -64,7 +64,7 @@ public class DestinationEditRequestController extends Controller {
 
         return destinationEditRequestRepository
                 .getAllEditRequests()
-                .thenApplyAsync((requests) -> {
+                .thenApplyAsync(requests -> {
                     DestinationEditRequestResponse res = new DestinationEditRequestResponse(requests);
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(res);
@@ -77,7 +77,7 @@ public class DestinationEditRequestController extends Controller {
 
         return destinationEditRequestRepository
                 .acceptRequest(id)
-                .thenApplyAsync((output) -> {
+                .thenApplyAsync(output -> {
                     if(output) {
                         return ok();
                     }
@@ -91,7 +91,7 @@ public class DestinationEditRequestController extends Controller {
     public CompletionStage<Result> denyRequest(Http.Request request, Long id) {
         return destinationEditRequestRepository
                 .deleteRequest(id)
-                .thenApplyAsync((output) -> {
+                .thenApplyAsync(output -> {
                     if(output) {
                         return ok();
                     }

@@ -24,9 +24,7 @@ public class NationalityController extends Controller {
      * @return 200 with list of all nationalities if all ok
      */
     public CompletionStage<Result> getNationalities() {
-        return nationalityRepository.getNationalities().thenApplyAsync(nationalities -> {
-            return ok(Json.toJson(nationalities));
-        });
+        return nationalityRepository.getNationalities().thenApplyAsync(nationalities -> ok(Json.toJson(nationalities)));
     }
 
     public Result test() {

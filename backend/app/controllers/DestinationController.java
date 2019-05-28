@@ -186,8 +186,6 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
-        User user = request.attrs().get(Attrs.USER);
-
         if(updateDestinationForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }

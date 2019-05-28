@@ -1,7 +1,6 @@
 package javaSteps.steps.trips;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
@@ -30,7 +29,6 @@ public class DeleteTripsSteps {
             state.setResult(route(state.getApplication(), deleteTrip));
 
             JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
-            System.out.println(responseBody);
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
@@ -49,7 +47,6 @@ public class DeleteTripsSteps {
             state.setResult(route(state.getApplication(), deleteTrip));
 
             JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
-            System.out.println(responseBody);
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);

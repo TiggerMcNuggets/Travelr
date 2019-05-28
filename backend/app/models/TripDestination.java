@@ -1,7 +1,6 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import finders.TripDestinationFinder;
 import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;

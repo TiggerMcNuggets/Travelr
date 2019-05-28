@@ -57,7 +57,7 @@ public class UserRepository {
     @Transactional
     public CompletionStage<List<User>> getFilteredUsers(String fname, String lname, String gender, Integer minAge, Integer maxAge, List<String> nationalities, List<String> traveller_types, String orderBy) {
         return supplyAsync(() -> userFinder.findUsersByParams(fname, lname, gender, minAge, maxAge, nationalities, traveller_types, orderBy), context);
-    };
+    }
 
 
     /**
