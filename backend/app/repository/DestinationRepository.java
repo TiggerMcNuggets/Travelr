@@ -1,6 +1,7 @@
 package repository;
 
-import controllers.dto.destination.CreateDestReq;
+import controllers.dto.Destination.CreateDestReq;
+import controllers.dto.TravellerType.CreateTravellerTypeReq;
 import models.Destination;
 import models.TravellerType;
 import models.DestinationPhoto;
@@ -50,10 +51,21 @@ public class DestinationRepository {
     public CompletableFuture<Long> add(CreateDestReq request, Long userId) {
         return supplyAsync(() -> {
 
-
-
             Destination destination = new Destination(request, User.find.byId(userId));
+
+            ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
+            if (request.travellerTypes != null) {
+                for (CreateTravellerTypeReq travellerTypeReq : request.travellerTypes) {
+                    travellerTypes.add(TravellerType.find.byId(travellerTypeReq.id));
+                }
+            }
+
+            destination.getTravellerTypes().clear();
+            destination.getTravellerTypes().addAll(travellerTypes);
+
             List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
+
+
 
             if (sameDestinations.size() > 0) {
                 return null;
@@ -83,8 +95,8 @@ public class DestinationRepository {
 
             destination.travellerTypes = new ArrayList<TravellerType>();
             if(request.travellerTypes != null) {
-                for (long i : request.travellerTypes) {
-                    destination.travellerTypes.add(TravellerType.find.byId(i));
+                for (CreateTravellerTypeReq createTravellerTypeReq : request.travellerTypes) {
+                    destination.travellerTypes.add(TravellerType.find.byId(createTravellerTypeReq.id));
                 }
             }
             List<Destination> sameDestinations = Destination.find.getSameDestinationsAvailable(destination, userId);
@@ -195,5 +207,6 @@ public class DestinationRepository {
             return dest.deleted;
         }, context);
     }
+
 
 }
