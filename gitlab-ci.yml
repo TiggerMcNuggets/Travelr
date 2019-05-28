@@ -8,7 +8,6 @@ tag_checker:
 junit:
   stage: test
   script:
-    - cd ./backend
     - sbt test
 
 
@@ -16,11 +15,10 @@ junit:
 recent-artifacts:
   stage: deploy
   script:
-    - cd ./backend
-    - sbt dist 
+    - sbt dist
   artifacts:
     paths:
-      - backend/target/universal/*.zip
+      - target/universal/*.zip
     expire_in: 1 week
   except:
     - tags
@@ -29,7 +27,6 @@ recent-artifacts:
 release-artifacts:
  stage: deploy
  script:
-    - cd ./backend
     - sbt dist
     - sudo systemctl stop Prod.service
     - cd ./target/universal
@@ -39,7 +36,7 @@ release-artifacts:
     - sudo systemctl start Prod.service
  artifacts:
     paths:
-    - backend/target/universal/*.zip
+    - target/universal/*.zip
  only:
     - tags
 
@@ -47,7 +44,6 @@ release-artifacts:
 deploy-dev:
   stage: deploy
   script:
-    - cd ./backend
     - sbt dist
     - sudo systemctl stop Dev.service
     - cd ./target/universal
@@ -60,11 +56,10 @@ deploy-dev:
   except:
     - tags
 
-# Run sonar scanner on master commits 
+# Run sonar scanner on master commits
 update-sonar:
     stage: deploy
     script:
-        - cd ./backend
         - sbt dist
         - ls -la
         - cd ../
