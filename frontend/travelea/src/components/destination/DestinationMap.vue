@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <div class="destination-overlayed">
-      <v-label>
+      <v-label d-flex align-center>
         <GmapAutocomplete
           placeholder="Search"
           @place_changed="onSearch"

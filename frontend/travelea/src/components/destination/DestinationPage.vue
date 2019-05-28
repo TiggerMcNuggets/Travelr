@@ -1,7 +1,7 @@
 <template>
-    <v-layout row wrap>
-        <!-- Main Nav -->
-        <v-flex xs12> 
+  <v-layout row wrap>
+    <!-- Main Nav -->
+    <v-flex xs12> 
           <v-card>
             <v-layout pa-2 align-center>
               <h3>Destinations</h3>
@@ -18,36 +18,50 @@
              
             </v-layout>            
           </v-card>          
-        </v-flex>
-        <!-- Destinations Body -->
-        <v-flex xs12> 
-          <v-layout row>
-            <v-flex xs4 sm3 md2>
-              <DestinationNav :destinations="destinations" 
-                              :focusDestination="focusDestination"
-                              :toggleDestination="toggleDestination"
-                              >
-              </DestinationNav>
-            </v-flex>
-            <v-flex>
-              <DestinationMap :destinations="visableDestinations" :focussedDestination="ballsDeep(focussedDestination)" :focusDestination="focusDestination"></DestinationMap>
-            </v-flex>
+    </v-flex>
 
-            <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
-              <DestinationDetails 
-                v-if="focussedDestination.data" 
-                :focussedDestination="ballsDeep(focussedDestination)" 
-                :passBackDestination="submitDestination"
-                :focusDestination="focusDestination"
-                :cancelEdit="cancelEdit"
-                ></DestinationDetails>
-            </v-flex>
-          </v-layout>
+    <v-flex xs12>
+      <v-layout row>
+        <v-card v-if="!browseActive">
+          <v-flex pa-3 class="menu-icon">
+            <v-icon @click="browseActive = true">view_list</v-icon>
+          </v-flex>
+        </v-card>
+        <v-flex v-else xs4 sm3 md2>
+          <DestinationNav
+            :destinations="destinations"
+            :focusDestination="focusDestination"
+            :toggleDestination="toggleDestination"
+            :closeDestinationNav="() => { browseActive = false}"
+          ></DestinationNav>
         </v-flex>
-    </v-layout>
+        <v-flex>
+          <DestinationMap
+            :destinations="visableDestinations"
+            :focussedDestination="ballsDeep(focussedDestination)"
+            :focusDestination="focusDestination"
+          ></DestinationMap>
+        </v-flex>
+
+        <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
+          <DestinationDetails
+            v-if="focussedDestination.data"
+            :focussedDestination="ballsDeep(focussedDestination)"
+            :passBackDestination="submitDestination"
+            :focusDestination="focusDestination"
+            :cancelEdit="cancelEdit"
+          ></DestinationDetails>
+        </v-flex>
+      </v-layout>
+    </v-flex>
+  </v-layout>
 </template>
 
 <style>
+.menu-item:hover {
+  background-color: rgba(0, 0, 0, 0.87);
+}
+
 .destination-side-nav {
   width: 200px;
 }
@@ -60,10 +74,9 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let DestinationRepository = RepositoryFactory.get("destination");
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-import DestinationNav from "./DestinationNav"
-import DestinationMap from "./DestinationMap"
-import DestinationDetails from "./DestinationDetails"
-
+import DestinationNav from "./DestinationNav";
+import DestinationMap from "./DestinationMap";
+import DestinationDetails from "./DestinationDetails";
 
 export default {
   store,
@@ -79,54 +92,58 @@ export default {
     return {
       destinations: [],
       focussedDestination: {},
-      userId: store.getters.getUser.id,
+      browseActive: false,
+      userId: store.getters.getUser.id
     };
   },
 
-  watch: {
-  },
+  watch: {},
 
   methods: {
     createDestination() {
       this.focussedDestination = {
-        data: {
-        }
-      }
+        data: {}
+      };
     },
     toggleDestination(destination) {
+      var showDest = this.destinations.filter(
+        x => x.data.id === destination.data.id
+      );
 
-      var showDest = this.destinations.filter(x => x.data.id === destination.data.id)
-      
-      if(showDest[0]) {
+      if (showDest[0]) {
         showDest[0].isShowing = !showDest[0].isShowing;
       }
 
       console.log("Toggled");
-      console.log(showDest[0])
+      console.log(showDest[0]);
     },
     focusDestination(destination) {
       this.focussedDestination = this.ballsDeep(destination);
-      console.log('balls deep destination', destination.data);
+      console.log("balls deep destination", destination.data);
       const deep = this.ballsDeep(destination);
-    if(deep.data.travellerTypes.length != 0 && deep.data.travellerTypes[0].id != undefined) {
-        var newList = []
+      if (
+        deep.data.travellerTypes.length != 0 &&
+        deep.data.travellerTypes[0].id != undefined
+      ) {
+        var newList = [];
         deep.data.travellerTypes.forEach(x => {
-            newList.push(x.id);
+          newList.push(x.id);
         });
         deep.data.travellerTypes = newList;
-    }
+      }
 
       this.rollbackSetPreviousBody(deep.data);
 
       console.log("Focused");
       console.log(this.focussedDestination);
-
     },
     submitDestination(destination) {
-      if(destination.data.id) {
-        
-        if(destination.data.travellerTypes.length != 0 && destination.data.travellerTypes[0].id != undefined) {
-          var newList = []
+      if (destination.data.id) {
+        if (
+          destination.data.travellerTypes.length != 0 &&
+          destination.data.travellerTypes[0].id != undefined
+        ) {
+          var newList = [];
           destination.data.travellerTypes.forEach(x => {
             newList.push(x.id);
           });
@@ -134,76 +151,84 @@ export default {
           destination.data.travellerTypes = newList;
         }
 
-        DestinationRepository.updateDestination(this.userId, destination.data.id, destination.data).then(() => {
-            const url = `/users/${this.userId}/destinations/${destination.data.id}`;
+        DestinationRepository.updateDestination(
+          this.userId,
+          destination.data.id,
+          destination.data
+        )
+          .then(() => {
+            const url = `/users/${this.userId}/destinations/${
+              destination.data.id
+            }`;
             this.rollbackCheckpoint(
-                'PUT',
-                {
-                    url: url,
-                    body: destination.data
-                },
-                {
-                    url: url,
-                    body: this.rollbackPreviousBody
-                }
-             );
+              "PUT",
+              {
+                url: url,
+                body: destination.data
+              },
+              {
+                url: url,
+                body: this.rollbackPreviousBody
+              }
+            );
             this.rollbackPreviousBody = destination.data;
-            console.log('previous body', this.rollbackPreviousBody);
+            console.log("previous body", this.rollbackPreviousBody);
             console.log(this.rollbackCanUndo());
             this.populateDestinations();
             // this.focussedDestination = {};
-        })
-        .catch(err => {
-          console.log(err);
-        })
+          })
+          .catch(err => {
+            console.log(err);
+          });
       } else {
-        DestinationRepository.createDestination(this.userId, destination.data).then(() => {
+        DestinationRepository.createDestination(this.userId, destination.data)
+          .then(() => {
             this.populateDestinations();
             this.focussedDestination = {};
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    },
+    populateDestinations() {
+      this.destinations = [];
+      DestinationRepository.getDestinations(this.userId)
+        .then(response => {
+          response.data.forEach(data => {
+            var destinationObject = {
+              data: data,
+              isShowing: true
+            };
+
+            this.destinations.push(destinationObject);
+          });
         })
         .catch(err => {
           console.log(err);
-        })
-      }
-    },
-    populateDestinations() { 
-      this.destinations = [];
-      DestinationRepository.getDestinations(this.userId).then(response => {
-        response.data.forEach(data => {
-          var destinationObject = {
-            data: data,
-            isShowing: true
-          };
-
-          this.destinations.push(destinationObject);
-        })        
-      })
-      .catch(err => {
-          console.log(err);
-        })
+        });
     },
     cancelEdit() {
       this.focussedDestination = {};
     },
     ballsDeep(object) {
-        return JSON.parse(JSON.stringify(object));
+      return JSON.parse(JSON.stringify(object));
     },
     undo() {
-        const actions = [];// fill];
-        try {
-            this.rollbackUndo(actions);
-        } catch (err) {
-            console.error(err);
-        }
+      const actions = []; // fill];
+      try {
+        this.rollbackUndo(actions);
+      } catch (err) {
+        console.error(err);
+      }
     },
     redo() {
-        const actions = [];// fill];
-        try {
-            this.rollbackRedo(actions);
-        } catch (err) {
-            console.error(err);
-
-        }
+      const actions = []; // fill];
+      try {
+        this.rollbackRedo(actions);
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
   computed: {
