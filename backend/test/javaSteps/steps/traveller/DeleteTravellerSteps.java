@@ -1,12 +1,8 @@
 package javaSteps.steps.traveller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
-import play.libs.Json;
 import play.mvc.Http;
 import play.test.Helpers;
 

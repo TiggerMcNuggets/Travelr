@@ -6,7 +6,6 @@ import io.ebean.annotation.SoftDelete;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
 
 @MappedSuperclass
 public class BaseModel extends Model {

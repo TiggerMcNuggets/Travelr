@@ -1,7 +1,6 @@
 package repository;
 
 import controllers.dto.Destination.CreateDestinationEditReq;
-import cucumber.api.java.hu.De;
 import models.Destination;
 import models.DestinationEditRequest;
 import models.TravellerType;

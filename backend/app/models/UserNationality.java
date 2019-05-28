@@ -11,7 +11,6 @@ public class UserNationality extends BaseModel {
 
     public static final Finder<Long, UserNationality> find = new Finder<>(UserNationality.class);
 
-    //public static final UserNationalityFinder find = new UserNationalityFinder();
 
     @JsonIgnore
     @ManyToOne
