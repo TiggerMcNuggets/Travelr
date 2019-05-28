@@ -87,20 +87,40 @@ public class PopulateController extends Controller {
             new UserNationality(admin, nationality, true).insert();
         }
 
-        Destination dest1 = new Destination("River", 1.0, 1.0, "123", "123", "123", user1);
+        Destination dest1 = new Destination("Christchurch", -43.522, 172.581, "City", "Canterbury", "New Zealand", user1);
         dest1.setTravellerTypes(travellerTypes);
 
-        Destination dest2 = new Destination("Mountain", 2.0, 2.0, "123", "123", "123", user1);
+        Destination dest2 = new Destination("Big River", -45.160, 168.291, "City", "Auckland", "country", user1);
         dest2.setTravellerTypes(travellerTypes);
 
-        Destination dest3 = new Destination("City", 3.0, 3.0, "123", "123", "123", user2);
+        Destination dest3 = new Destination("Nice Park", -25.777, 125.198, "City", "NSW", "Australia", user1);
         dest3.setTravellerTypes(travellerTypes);
 
-        Destination dest4 = new Destination("Beach", 4.0, 4.0, "123", "123", "123", user2);
+        Destination dest4 = new Destination("Slum", -14.152, -58.905, "City", "Alaska", "USA", user1);
         dest4.setTravellerTypes(travellerTypes);
 
-        Destination dest5 = new Destination("Ski", 5.0, 5.0, "123", "123", "123", user3);
+        Destination dest5 = new Destination("Nice View", 15.693, 9.764, "Mountain", "Mckenzie", "New Zealand", user1);
         dest5.setTravellerTypes(travellerTypes);
+
+        Destination dest6 = new Destination("Ski", 41.522, 13.287, "Mountain", "Nigeria", "South Africa", user1);
+        dest6.setTravellerTypes(travellerTypes);
+
+        Destination dest7 = new Destination("Boating Beach", 40.779, -98.072, "River", "Slumville", "Brazil", user1);
+        dest7.setTravellerTypes(travellerTypes);
+        dest7.isPublic = true;
+
+        Destination dest8 = new Destination("Big Mountain", 17.585, -98.688, "Natural Wonder", "Texas", "America", user1);
+        dest8.setTravellerTypes(travellerTypes);
+        dest8.isPublic = true;
+
+        Destination dest9 = new Destination("Westfield Riccarton", 50.958, -70.967, "Shopping Mall", "South Auckland", "Wukanda", user1);
+        dest9.setTravellerTypes(travellerTypes);
+        dest9.isPublic = true;
+
+        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "City", "Wellington", "New Zealand", user2);
+        dest10.setTravellerTypes(travellerTypes);
+        dest10.isPublic = true;
+
 
 
         dest1.insert();
@@ -108,6 +128,11 @@ public class PopulateController extends Controller {
         dest3.insert();
         dest4.insert();
         dest5.insert();
+        dest6.insert();
+        dest7.insert();
+        dest8.insert();
+        dest9.insert();
+        dest10.insert();
 
         Trip trip1 = new Trip("Backpacking 2018", user1);
         Trip trip2 = new Trip("New Trip", user2);

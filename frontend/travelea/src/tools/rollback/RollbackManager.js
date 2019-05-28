@@ -78,4 +78,8 @@ export default class RollbackManager {
     canRedo() {
         return this.stack.canRedo();
     }
+
+    flush() {
+        return this.stack.flush();
+    }
 }

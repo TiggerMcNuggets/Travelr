@@ -1,7 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import controllers.dto.user.CreateUserReq;
+import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
 import io.ebean.annotation.NotNull;
 import play.data.validation.Constraints;

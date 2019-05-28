@@ -21,13 +21,21 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <router-link to="/" class="white--text"><v-toolbar-title>Travelr</v-toolbar-title></router-link>
     </v-toolbar>
-    <v-content>
-      <v-container fluid pa-0 ma-0>
+    <v-content class="main-content">
+      <v-container class="main-container" fluid pa-0 ma-0>
         <router-view></router-view>
       </v-container>
     </v-content>
   </v-app>
 </template>
+
+<style>
+.main-content {
+  padding-left: 0px !important;
+  margin-left: 0px !important;
+}
+
+</style>
 
 <script>
 
@@ -44,21 +52,22 @@ export default {
   computed: {
     menuOptions() {
       let menuOptions = [
-        { name: "Sign Up", icon: "lock_open", link: "/signup" },
+        { name: "Sign Up", icon: "assignment_ind", link: "/signup" },
         { name: "Log In", icon: "lock_open", link: "/login" }
       ];
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
-          { name: "Profile", icon: "lock_open", link: "/user/"+store.getters.getUser.id },
-          { name: "Users", icon: "lock_open", link: "/users" },
-          { name: "My Destinations", icon: "lock_open", link: "/user/"+store.getters.getUser.id+"/destinations" },
-          { name: "My Trips", icon: "lock_open", link: "/user/"+store.getters.getUser.id+"/trips" },         
+          { name: "Profile", icon: "account_circle", link: "/user/"+store.getters.getUser.id },
+          { name: "Users", icon: "supervised_user_circle", link: "/users" },
+          { name: "Destination Map", icon: "map", link: "/destinations" },
+          { name: "Destination List", icon: "list", link: "/user/"+store.getters.getUser.id+"/destinations" },
+          { name: "My Trips", icon: "flight", link: "/user/"+store.getters.getUser.id+"/trips" },
         ];
       }
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
-        menuOptions.push({ name: "Admin Panel", icon: "lock_open", link: "/admin_dash" });
-        menuOptions.push({ name: "Edit Requests", icon: "lock_open", link: "/edit_requests" });
+        menuOptions.push({ name: "Admin Panel", icon: "playlist_add_check", link: "/admin_dash" });
+        menuOptions.push({ name: "Edit Requests", icon: "done_all", link: "/edit_requests" });
       }
 
       return menuOptions;

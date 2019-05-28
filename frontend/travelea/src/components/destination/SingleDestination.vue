@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 <template>
   <v-card>
     <div class="outer-container">
@@ -5,12 +7,12 @@
         <div class="section">
           <div class="dest-name">
             <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              @click="$router.go(-1)"
+                    class="upload-toggle-button"
+                    fab
+                    small
+                    dark
+                    color="indigo"
+                    @click="$router.go(-1)"
             >
               <v-icon dark>keyboard_arrow_left</v-icon>
             </v-btn>
@@ -19,50 +21,41 @@
           </div>
           <div>
             <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              v-if="destination.isPublic"
-              @click="toggleShowSuggestTravellerTypes"
+                    class="upload-toggle-button"
+                    fab
+                    small
+                    dark
+                    color="indigo"
+                    v-if="destination.isPublic"
+                    @click="toggleShowSuggestTravellerTypes"
             >
               <v-icon dark>card_travel</v-icon>
             </v-btn>
-            <v-btn
-              v-if="destination.isPublic"
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-            >
-              <v-icon dark>lock_open</v-icon>
-            </v-btn>
+
             <v-btn v-else class="upload-toggle-button" fab small dark color="indigo">
               <v-icon dark>lock</v-icon>
             </v-btn>
             <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              v-if="(((isMyProfile  && !destination.isPublic) || isAdminUser || parseInt(destination.ownerId) === parseInt(id)) && false)"
-              @click="editDestination"
+                    class="upload-toggle-button"
+                    fab
+                    small
+                    dark
+                    color="indigo"
+                    v-if="(isMyProfile || isAdminUser) && destination.ownerId === parseInt(userId)"
+                    @click="editDestination"
             >
               <v-icon dark>edit</v-icon>
             </v-btn>
             <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              v-if="isMyProfile || isAdminUser"
-              @click="toggleShowUploadPhoto"
+                    class="upload-toggle-button"
+                    fab
+                    small
+                    dark
+                    color="indigo"
+                    v-if="isMyProfile || isAdminUser"
+                    @click="toggleShowUploadPhoto"
             >
-              <v-icon dark>add</v-icon>
+              <v-icon dark>insert_photo</v-icon>
             </v-btn>
           </div>
         </div>
@@ -104,11 +97,11 @@
           <div class="upload-section section">
             <label>
               <input
-                class="choose-file-button"
-                type="file"
-                id="file"
-                ref="file"
-                v-on:change="handleFileUpload()"
+                      class="choose-file-button"
+                      type="file"
+                      id="file"
+                      ref="file"
+                      v-on:change="handleFileUpload()"
               >
             </label>
             <div>
@@ -125,10 +118,10 @@
           <li v-for="row in files" :value="row.value" :key="row.value">
             <div class="personal-photo-row">
               <div
-                v-for="item in row"
-                :value="item.value"
-                :key="item.value"
-                class="image-container"
+                      v-for="item in row"
+                      :value="item.value"
+                      :key="item.value"
+                      class="image-container"
               >
                 <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
                 <v-icon v-else class="lock-icon" left>lock</v-icon>
@@ -137,10 +130,10 @@
                 <div v-else class="triangle"></div>
 
                 <v-img
-                  @click.stop="dialog = true"
-                  v-on:click="setDialogueContent(item)"
-                  class="personal-photo-element"
-                  :src="getImgUrl(item)"
+                        @click.stop="dialog = true"
+                        v-on:click="setDialogueContent(item)"
+                        class="personal-photo-element"
+                        :src="getImgUrl(item)"
                 ></v-img>
               </div>
             </div>
@@ -163,10 +156,10 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-switch
-                v-if="clickedImage.is_public"
-                disabled
-                v-model="publicPhotoSwitch"
-                :label="`Public Photo`"
+                      v-if="clickedImage.is_public"
+                      disabled
+                      v-model="publicPhotoSwitch"
+                      :label="`Public Photo`"
               ></v-switch>
               <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
               <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
@@ -190,12 +183,12 @@
           </v-flex>
           <v-flex xs12 md11>
             <v-select
-              label="Associated Traveller Types"
-              :items="typeList"
-              item-text="name"
-              item-value="id"
-              v-model="TravellerTypes"
-              attach multiple>
+                    label="Associated Traveller Types"
+                    :items="typeList"
+                    item-text="name"
+                    v-model="TravellerTypes"
+                    attach multiple
+                    return-object>
             </v-select>
           </v-flex>
           <v-flex xs12 md11 style="text-align: center">
@@ -219,14 +212,17 @@
     border-radius: 50%;
     display: inline-block;
   }
+
   .dest-name {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
   }
+
   .dest-name div {
     text-align: start;
   }
+
   .dest-sub-info {
     display: flex;
     justify-content: flex-start;
@@ -237,10 +233,12 @@
     margin-bottom: 0px;
     color: grey;
   }
+
   .dest-name button {
     margin-right: 20px;
   }
 </style>
+
 
 <script>
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
@@ -273,11 +271,11 @@
         dialog: false,
         publicPhotoSwitch: false,
         showUploadSection: false,
-        id: null,
+        userId: null,
         isMyProfile: false,
         isAdminUser: false,
         destination: {},
-        dest_id: null,
+        destId: null,
         uploadError: false,
         chooseExistingDialog: false,
         uploadSuccessful: false,
@@ -293,16 +291,16 @@
        **/
       submitTravellerTypes() {
         let destRequest = {
-          "destinationId": this.dest_id,
+          "destinationId": this.destId,
           "travellerTypeIds": this.TravellerTypes
         };
         destinationRepository.addDestinationEditRequest(destRequest)
-          .then(() => {
-            this.showSuggestTravellerTypes = false;
-          })
-          .catch(err => {
-            console.log(err);
-          });
+                .then(() => {
+                  this.showSuggestTravellerTypes = false;
+                })
+                .catch(err => {
+                  console.log(err);
+                });
       },
 
       /**
@@ -318,7 +316,7 @@
        */
       editDestination() {
         this.$router.push(
-                "/user/" + this.id + "/destinations/edit/" + this.dest_id
+                "/user/" + this.userId + "/destinations/edit/" + this.destId
         );
       },
 
@@ -330,10 +328,10 @@
        */
       setDestinationImages(selectedImages) {
         for (let i = 0; i < selectedImages.length; i++) {
-          addExistingPhoto(this.id, this.dest_id, {
+          addExistingPhoto(this.userId, this.destId, {
             photo_filename: selectedImages[i].photo_filename
           }).then(() => {
-            getImages(this.id, this.dest_id).then(result => {
+            getImages(this.userId, this.destId).then(result => {
               this.files = this.groupImages(result.data);
             });
           });
@@ -392,9 +390,9 @@
         let formData = new FormData();
         formData.append("picture", this.file);
 
-        storeDestinationImage(this.id, this.dest_id, formData)
+        storeDestinationImage(this.userId, this.destId, formData)
                 .then(() => {
-                  getImages(this.id, this.dest_id).then(result => {
+                  getImages(this.userId, this.destId).then(result => {
                     this.uploadExisting = true;
                     this.files = this.groupImages(result.data);
                   });
@@ -473,24 +471,24 @@
      */
     created: function() {
       this.populateSelects();
-      this.id = this.$route.params.id;
-      this.dest_id = this.$route.params.dest_id;
+      this.userId = this.$route.params.id;
+      this.destId = this.$route.params.dest_id;
 
-      if (!this.id) {
-        this.id = store.getters.getUser.id;
+      if (!this.userId) {
+        this.userId = store.getters.getUser.id;
       }
 
-      this.isMyProfile = store.getters.getUser.id === this.id;
+      this.isMyProfile = store.getters.getUser.id == this.userId;
       this.isAdminUser = store.getters.getIsUserAdmin;
 
       // Gets all the images to display on the page.
-      getImages(this.id, this.dest_id).then(result => {
+      getImages(this.userId, this.destId).then(result => {
         this.files = this.groupImages(result.data);
       });
 
       // Gets the information relating to selected destination.
       destinationRepository
-              .getDestination(this.id, this.dest_id)
+              .getDestination(this.userId, this.destId)
               .then(response => {
                 this.destination = response.data;
               })

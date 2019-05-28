@@ -1,4 +1,4 @@
-package controllers.dto.destination;
+package controllers.dto.Destination;
 
 public class CreateDestRes {
     private Long id;

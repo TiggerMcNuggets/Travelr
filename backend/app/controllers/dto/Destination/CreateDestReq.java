@@ -1,5 +1,6 @@
-package controllers.dto.destination;
+package controllers.dto.Destination;
 
+import controllers.dto.TravellerType.CreateTravellerTypeReq;
 import play.data.validation.Constraints;
 
 import java.util.List;
@@ -19,10 +20,8 @@ public class CreateDestReq {
     public String country;
     @Constraints.Required
     public boolean isPublic;
-    @Constraints.Required
-    public boolean isDeleted;
 
-    public List<Long> travellerTypes;
+    public List<CreateTravellerTypeReq> travellerTypes;
 
     public String getName() {
         return name;
@@ -80,11 +79,11 @@ public class CreateDestReq {
         isPublic = aPublic;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
+    public List<CreateTravellerTypeReq> getTravellerTypes() {
+        return travellerTypes;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setTravellerTypes(List<CreateTravellerTypeReq> travellerTypes) {
+        this.travellerTypes = travellerTypes;
     }
 }

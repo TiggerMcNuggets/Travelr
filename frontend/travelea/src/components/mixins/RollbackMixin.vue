@@ -53,14 +53,14 @@ export default {
     rollbackRedo: async function(actions) {
       await this.rollbackManager.redo();
       for (let action of actions) action();
-    },
+    }, 
 
     /**
      * Calls the rollback manager canUndo method to return whether there is something to undo in the stack
      * @return {boolean} true if there is an action to be undone, false if not
      */
     rollbackCanUndo: function() {
-      return this.rollbackManager.canUndo();
+        return this.rollbackManager.canUndo();
     },
 
     /**
@@ -68,7 +68,11 @@ export default {
      * @return {boolean} true if there is an action to be redone, false if not
      */
     rollbackCanRedo: function() {
-      return this.rollbackManager.canRedo();
+        return this.rollbackManager.canRedo();
+    },
+
+    rollbackFlush: function() {
+        return this.rollbackManager.flush();
     }
   }
 };
