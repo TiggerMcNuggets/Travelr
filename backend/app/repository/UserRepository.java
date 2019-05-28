@@ -1,8 +1,8 @@
 package repository;
 
-import controllers.dto.user.CreateUserReq;
-import controllers.dto.user.NationalityReq;
-import controllers.dto.user.UpdateUserReq;
+import controllers.dto.User.CreateUserReq;
+import controllers.dto.User.NationalityReq;
+import controllers.dto.User.UpdateUserReq;
 import finders.UserFinder;
 import models.Nationality;
 import models.TravellerType;

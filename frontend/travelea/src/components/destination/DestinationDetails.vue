@@ -7,80 +7,85 @@
             <h3 v-if="createMode">Create a Destination</h3>
             <h3 v-if="editMode && !createMode">Edit Destination</h3>
           </v-layout>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
+      </v-flex>
+      <v-flex xs12 pb-1 px-3>
+        <v-text-field
+              v-model="destination.data.name"
+              :counter="60"
+              label="Destination Name"
+              required
+              :rules="nameRules"
+              name="nameField"
+              @change="pushDestination"
+            ></v-text-field>
+      </v-flex>
+      <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model="focussedDestination.data.name"
-            :counter="60"
-            label="Destination Name"
-            required
-            :rules="nameRules"
-            name="nameField"
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
+              v-model="destination.data.type"
+              :counter="60"
+              :rules="nameRules"
+              label="Destination Type"
+              required
+              name="typeField"
+              @change="pushDestination"
+            ></v-text-field>
+      </v-flex>
+      <v-flex xs12 pb-1 px-3>
+        <v-select
+              label="Associated Traveller Types"
+              :items="typeList"
+              item-text="name"
+              v-model="destination.data.travellerTypes"
+              return-object
+              name="travellerTypeField"
+              @change="pushDestination"
+              attach multiple>
+            </v-select>
+      </v-flex>
+      <v-flex xs12 pb-1 px-3>
+        <v-text-field
+              v-model="destination.data.district"
+              :counter="60"
+              :rules="nameRules"
+              label="District"
+              required
+              name="districtField"
+              @change="pushDestination"
+            ></v-text-field>
+      </v-flex>
+      <v-flex xs12 pb-1 px-3>
+        <v-text-field
+              v-model="destination.data.country"
+              :counter="60"
+              label="Country"
+              required
+              :rules="nameRules"
+              name="countryField"
+              @change="pushDestination"
+        ></v-text-field>
+      </v-flex>
+       <v-flex xs12 pb-1 px-3>  
           <v-text-field
-            v-model="focussedDestination.data.type"
-            :counter="60"
-            :rules="nameRules"
-            label="Destination Type"
-            required
-            name="typeField"
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
-          <v-select
-            label="Associated Traveller Types"
-            :items="typeList"
-            item-text="name"
-            item-value="id"
-            v-model="focussedDestination.data.travellerTypes"
-            name="travellerTypeField"
-            attach
-            multiple
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
-          <v-text-field
-            v-model="focussedDestination.data.district"
-            :counter="60"
-            :rules="nameRules"
-            label="District"
-            required
-            name="districtField"
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
-          <v-text-field
-            v-model="focussedDestination.data.country"
-            :counter="60"
-            label="Country"
-            required
-            :rules="nameRules"
-            name="countryField"
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
-          <v-text-field
-            v-model.number="focussedDestination.data.latitude"
+            v-model.number="destination.data.latitude"
             type="number"
             :rules="numberRules"
             label="Latitude"
-            @change="pushLongAndLat"
+            @change="pushDestination"
             required
           ></v-text-field>
-        </v-flex>
-        <v-flex xs12 pb-1 px-3>
-          <v-text-field
-            v-model.number="focussedDestination.data.longitude"
-            @change="pushLongAndLat"
-            type="number"
-            :rules="numberRules"
-            label="Longitude"
-            required
-          ></v-text-field>
-        </v-flex>
-        <v-flex xs12>
+
+      </v-flex>
+       <v-flex xs12 pb-1 px-3>
+        <v-text-field
+              v-model.number="destination.data.longitude"
+              @change="pushDestination"
+              type="number"
+              :rules="numberRules"
+              label="Longitude"
+              required
+            ></v-text-field>
+      </v-flex>
+      <v-flex xs12>
           <v-layout justify-center>
             <v-btn @click="cancelEdit">Cancel</v-btn>
             <v-btn color="primary" v-if="editMode" @click="updateDestination">Update</v-btn>
@@ -126,15 +131,19 @@
 
 <script>
 import { rules } from "../form_rules";
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let destinationRepository = RepositoryFactory.get("destination");
-import SelectDataRepository from "../../repository/SelectDataRepository";
+  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  let destinationRepository = RepositoryFactory.get("destination");
+  import SelectDataRepository from "../../repository/SelectDataRepository";
+  import { stringify } from "../../tools/deepCopy" 
 
 export default {
   data() {
     return {
-      editMode: false,
-      destination: {},
+      editMode: true,
+      destination: {
+        data: {
+        }
+      },
       ...rules,
       typeList: [],
       travellerTypes: []
@@ -169,9 +178,16 @@ export default {
      */
     focussedDestination: {
       handler: function(newValue, oldValue) {
-        if (oldValue.data.id !== newValue.data.id) {
-          // this.editMode = false;
-        } else {
+        if(oldValue.data.id !== newValue.data.id) {
+        } 
+        console.log("vvvvvvvvvvvvvvvv")
+        console.log(newValue.data)
+        console.log("^^^^^^^^^^^^^^^^^^")
+        console.log(this.destination.data)
+
+        if (newValue.data !== this.destination.data) {
+          console.log("Here")
+          this.destination = this.focussedDestination;
         }
       },
       deep: true
@@ -181,8 +197,8 @@ export default {
     /**
      * Updated long and lat on the map marker when fields are changed
      */
-    pushLongAndLat() {
-      this.focusDestination(this.focussedDestination);
+    pushDestination() {
+      this.focusDestination(this.destination);
     },
     updateDestination() {
       if (this.$refs.form.validate()) {
@@ -192,9 +208,8 @@ export default {
           district: document.querySelector("input[name=districtField]").value,
           country: document.querySelector("input[name=countryField]").value,
           id: this.focussedDestination.data.id,
-          travellerTypes: [1],
+          travellerTypes: this.focussedDestination.data.travellerTypes,
           isPublic: false,
-
           latitude: this.focussedDestination.data.latitude,
           longitude: this.focussedDestination.data.longitude
         };
@@ -221,7 +236,8 @@ export default {
   },
   mounted() {
     this.populateSelects();
-  }
+    this.destination = this.focussedDestination;
+  },
 };
 </script>
 

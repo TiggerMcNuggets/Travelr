@@ -35,8 +35,8 @@ Feature: EditDestinations
   # Consider checking the following => Given Another traveller with id 2 has created a destination with id 4
   # This works currently due to the population method which has user 2 create destination 4.
   Scenario: Editing a destination which does not belong to the signed in user.
-    Given I provide the token "123"
-    And The traveller id is 1
+    Given I provide the token "abc"
+    And The traveller id is 2
     And I provide valid destination edit values
     And The destination id is 4
     When I edit the destination

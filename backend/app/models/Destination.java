@@ -1,7 +1,8 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import controllers.dto.destination.CreateDestReq;
+import controllers.dto.Destination.CreateDestReq;
+import controllers.dto.TravellerType.CreateTravellerTypeReq;
 import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import finders.DestinationFinder;
@@ -64,8 +65,6 @@ public class Destination extends BaseModel {
         this.country = request.country;
         this.user = user;
         this.isPublic = request.isPublic;
-        this.travellerTypes = retrieveTravellerTypes(request.travellerTypes);
-        this.deleted = false;
     }
 
     // USED IN TEST DATA
@@ -78,7 +77,6 @@ public class Destination extends BaseModel {
         this.country = country;
         this.user = user;
         this.isPublic = false;
-        this.deleted = false;
     }
 
 
@@ -148,29 +146,6 @@ public class Destination extends BaseModel {
     public void setUser(models.User user) {
         this.user = user;
     }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    /**
-     * attaches numbers to actual traveller types from list when creating traveller
-     * types for new destination
-     * @param requestTravellerTypes list of numbers that reference traveller types from request
-     * @return list of actual traveller types for destination
-     */
-    public ArrayList<TravellerType> retrieveTravellerTypes(List<Long> requestTravellerTypes) {
-        ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
-        if (requestTravellerTypes != null) {
-            for (long i : requestTravellerTypes) {
-                travellerTypes.add(TravellerType.find.byId(i));
-            }
-        }
-        return travellerTypes;
-    }
+    
 }
 

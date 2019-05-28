@@ -118,7 +118,7 @@ public class PopulateController extends Controller {
         dest9.setTravellerTypes(travellerTypes);
         dest9.isPublic = true;
 
-        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "City", "Wellington", "New Zealand", user1);
+        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "City", "Wellington", "New Zealand", user2);
         dest10.setTravellerTypes(travellerTypes);
         dest10.isPublic = true;
 

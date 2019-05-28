@@ -31,9 +31,9 @@
                     label="Associated Traveller Types"
                     :items="typeList"
                     item-text="name"
-                    item-value="id"
-                    v-model="travellerTypes"
-                    attach multiple>
+                    v-model="destination.travellerTypes"
+                    attach multiple
+                    return-object>
             </v-select>
           </v-flex>
         </v-layout>
@@ -106,7 +106,6 @@
 
     data() {
       return {
-        travellerTypes: [],
         destination: {},
         userId: this.$route.params.id,
         isError: false,
@@ -134,7 +133,6 @@
        */
       createDestination: function () {
         if (this.$refs.form.validate()) {
-            this.destination.travellerTypes = this.travellerTypes;
           destinationRepository.createDestination(this.userId, this.destination)
                   .then(() => {
                     this.$refs.form.reset();

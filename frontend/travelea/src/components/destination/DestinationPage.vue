@@ -32,25 +32,23 @@
             :destinations="destinations"
             :focusDestination="focusDestination"
             :toggleDestination="toggleDestination"
-            :closeDestinationNav="() => { browseActive = false}"
+            :closeDestinationNav="() => { browseActive = false }"
           ></DestinationNav>
         </v-flex>
-        <v-flex>
-          <DestinationMap
-            :destinations="visableDestinations"
-            :focussedDestination="ballsDeep(focussedDestination)"
-            :focusDestination="focusDestination"
-          ></DestinationMap>
-        </v-flex>
+            <v-flex>
+              <DestinationMap :destinations="visableDestinations" :focussedDestination="deepCopy(focussedDestination)" :focusDestination="focusDestination"></DestinationMap>
+            </v-flex>
 
-        <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
-          <DestinationDetails
-            v-if="focussedDestination.data"
-            :focussedDestination="ballsDeep(focussedDestination)"
-            :passBackDestination="submitDestination"
-            :focusDestination="focusDestination"
-            :cancelEdit="cancelEdit"
-          ></DestinationDetails>
+            <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
+              <DestinationDetails 
+                v-if="focussedDestination.data" 
+                :focussedDestination="deepCopy(focussedDestination)" 
+                :passBackDestination="submitDestination"
+                :focusDestination="focusDestination"
+                :cancelEdit="cancelEdit"
+                ></DestinationDetails>
+            </v-flex>
+          </v-layout>
         </v-flex>
       </v-layout>
     </v-flex>
@@ -74,9 +72,10 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let DestinationRepository = RepositoryFactory.get("destination");
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-import DestinationNav from "./DestinationNav";
-import DestinationMap from "./DestinationMap";
-import DestinationDetails from "./DestinationDetails";
+import DestinationNav from "./DestinationNav"
+import DestinationMap from "./DestinationMap"
+import DestinationDetails from "./DestinationDetails"
+import {deepCopy} from "../../tools/deepCopy"
 
 export default {
   store,
@@ -97,9 +96,25 @@ export default {
     };
   },
 
-  watch: {},
+  watch: {
+    /**
+     * Reset back to viewing mode on destination change
+     */
+    focussedDestination: {
+      handler: function(newValue, oldValue) {
+        if(oldValue.data.id !== newValue.data.id) {
+          this.rollbackFlush();
+        }
+      }, 
+      deep: true
+    }
+  },
 
   methods: {
+
+    deepCopy(value) {
+      return deepCopy(value);
+    },
     createDestination() {
       this.focussedDestination = {
         data: {}
@@ -114,52 +129,19 @@ export default {
         showDest[0].isShowing = !showDest[0].isShowing;
       }
 
-      console.log("Toggled");
-      console.log(showDest[0]);
     },
     focusDestination(destination) {
-      this.focussedDestination = this.ballsDeep(destination);
-      console.log("balls deep destination", destination.data);
-      const deep = this.ballsDeep(destination);
-      if (
-        deep.data.travellerTypes.length != 0 &&
-        deep.data.travellerTypes[0].id != undefined
-      ) {
-        var newList = [];
-        deep.data.travellerTypes.forEach(x => {
-          newList.push(x.id);
-        });
-        deep.data.travellerTypes = newList;
+      this.focussedDestination = this.deepCopy(destination); 
+      if (this.focussedDestination.data && this.focussedDestination.data.id) {
+        const newDest = this.destinations.filter((dest) => dest.data.id === this.focussedDestination.data.id)[0];
+        console.log(newDest);
+        this.rollbackSetPreviousBody(newDest.data);
       }
-
-      this.rollbackSetPreviousBody(deep.data);
-
-      console.log("Focused");
-      console.log(this.focussedDestination);
     },
     submitDestination(destination) {
-      if (destination.data.id) {
-        if (
-          destination.data.travellerTypes.length != 0 &&
-          destination.data.travellerTypes[0].id != undefined
-        ) {
-          var newList = [];
-          destination.data.travellerTypes.forEach(x => {
-            newList.push(x.id);
-          });
-
-          destination.data.travellerTypes = newList;
-        }
-
-        DestinationRepository.updateDestination(
-          this.userId,
-          destination.data.id,
-          destination.data
-        )
-          .then(() => {
-            const url = `/users/${this.userId}/destinations/${
-              destination.data.id
-            }`;
+      if(destination.data.id) {    
+        DestinationRepository.updateDestination(this.userId, destination.data.id, destination.data).then(() => {
+            const url = `/users/${this.userId}/destinations/${destination.data.id}`;
             this.rollbackCheckpoint(
               "PUT",
               {
@@ -172,63 +154,63 @@ export default {
               }
             );
             this.rollbackPreviousBody = destination.data;
-            console.log("previous body", this.rollbackPreviousBody);
-            console.log(this.rollbackCanUndo());
             this.populateDestinations();
-            // this.focussedDestination = {};
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        })
+        .catch(err => {
+          console.error(err);
+        })
       } else {
         DestinationRepository.createDestination(this.userId, destination.data)
           .then(() => {
             this.populateDestinations();
             this.focussedDestination = {};
-          })
-          .catch(err => {
-            console.log(err);
-          });
-      }
-    },
-    populateDestinations() {
-      this.destinations = [];
-      DestinationRepository.getDestinations(this.userId)
-        .then(response => {
-          response.data.forEach(data => {
-            var destinationObject = {
-              data: data,
-              isShowing: true
-            };
-
-            this.destinations.push(destinationObject);
-          });
         })
         .catch(err => {
-          console.log(err);
-        });
+          console.error(err);
+        })
+      }
+    },
+    async populateDestinations() { 
+      this.destinations = [];
+      try {
+        const response = await DestinationRepository.getDestinations(this.userId);
+        response.data.forEach(data => {
+          var destinationObject = {
+            data: data,
+            isShowing: true
+          };
+          this.destinations.push(destinationObject);
+        })        
+      } catch(err) {
+          console.error(err);
+        }
     },
     cancelEdit() {
       this.focussedDestination = {};
     },
-    ballsDeep(object) {
-      return JSON.parse(JSON.stringify(object));
+    async fetchAfterRollback() {
+      let id = this.focussedDestination.data.id;
+      console.log(id);
+      await this.populateDestinations();
+      this.focussedDestination = this.destinations.filter((dest) => dest.data.id === id)[0];
+      console.log(this.focussedDestination);
     },
     undo() {
-      const actions = []; // fill];
-      try {
-        this.rollbackUndo(actions);
-      } catch (err) {
-        console.error(err);
-      }
+        const actions = [this.fetchAfterRollback];// fill;
+        try {
+            this.rollbackUndo(actions);
+        } catch (err) {
+            console.error(err);
+        }
     },
     redo() {
-      const actions = []; // fill];
-      try {
-        this.rollbackRedo(actions);
-      } catch (err) {
-        console.error(err);
-      }
+        const actions = [this.fetchAfterRollback];// fill;
+        try {
+            this.rollbackRedo(actions);
+        } catch (err) {
+            console.error(err);
+
+        }
     }
   },
   computed: {

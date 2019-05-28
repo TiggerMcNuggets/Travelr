@@ -133,14 +133,14 @@
     computed: {
 
       /*
-       *
+       * Returns the list of private destinations
        */
       privateDestinations() {
         return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
       },
 
       /*
-       *
+       * Returns the list of public destinations
        */
       publicDestinations() {
         return this.destinations.filter(x => x.data.isPublic && x.data.id !== this.focussedId);
@@ -159,6 +159,9 @@
 
     methods: {
 
+      /*
+      * Toggles the map to have a dark theme
+      */
       toggleDarkMode() {
         if (this.darkModeOn) {
           this.gMapOptions.styles = GoogleMapLightStyle;
@@ -199,7 +202,7 @@
       },
 
       /*
-       *
+       * Updates the selected destination details in the info panel with autocomplete search details
        */
       onSearch(searchData) {
         if (searchData) {
@@ -243,7 +246,7 @@
       },
 
       /*
-       *
+       * Places a new marker on the map and updates the parameters on the destination info panel
        */
       placeNewMarker(coordinates) {
         if (!this.focussedDestination.data) {
@@ -258,7 +261,7 @@
       },
 
       /*
-       *
+       * Turns google maps values into readable values
        */
       toTitleCase(s) {
         return s

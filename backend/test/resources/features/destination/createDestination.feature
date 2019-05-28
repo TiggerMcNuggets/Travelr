@@ -11,7 +11,7 @@ Feature: CreateDestination
     And I provide complete destination information
     When I create a destination for user with id 1
     Then I will receive a 201 response
-    And I will receive the id 6
+    And I will receive the id 11
 
   Scenario: Create a destination successfully
     Given I provide the token "123"

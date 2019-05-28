@@ -32,7 +32,7 @@
               <v-text-field
                       v-model="destination.name"
                       :rules="nameRules"
-                      :counter="10"
+                      :counter="60"
                       label="Destination Name"
                       required
               ></v-text-field>
@@ -42,7 +42,7 @@
               <v-text-field
                       v-model="destination.type"
                       :rules="nameRules"
-                      :counter="10"
+                      :counter="60"
                       label="Destination Type"
                       required
               ></v-text-field>
@@ -55,9 +55,9 @@
                       label="Associated Traveller Types"
                       :items="typeList"
                       item-text="name"
-                      item-value="id"
                       v-model="destination.travellerTypes"
-                      attach multiple>
+                      attach multiple
+                      return-object>
               </v-select>
             </v-flex>
           </v-layout>
@@ -67,7 +67,7 @@
               <v-text-field
                       v-model="destination.district"
                       :rules="nameRules"
-                      :counter="10"
+                      :counter="60"
                       label="Destination District"
                       required
               ></v-text-field>
@@ -77,7 +77,7 @@
               <v-text-field
                       v-model="destination.country"
                       :rules="nameRules"
-                      :counter="10"
+                      :counter="60"
                       label="Country"
                       required
               ></v-text-field>

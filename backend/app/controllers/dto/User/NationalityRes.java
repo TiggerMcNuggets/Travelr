@@ -1,4 +1,4 @@
-package controllers.dto.user;
+package controllers.dto.User;
 
 import models.UserNationality;
 

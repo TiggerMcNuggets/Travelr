@@ -86,14 +86,14 @@
               </div>
               <div>
                 <v-btn
-                        v-if="(isMyProfile || isAdminUser) && item.ownerId === userId"
+                        v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
                         icon
                         @click="deleteDestination(item.id)"
                 >
                   <v-icon color="red lighten-1">delete</v-icon>
                 </v-btn>
                 <v-btn
-                        v-if="(isMyProfile || isAdminUser) && item.ownerId === userId"
+                        v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
                         icon
                         @click="editDestination(item.id)"
                 >
@@ -103,7 +103,7 @@
                   <v-icon color="blue lighten-1">lock</v-icon>
                 </v-btn>
                 <v-btn
-                        v-if="item.isPublic && item.ownerId === userId"
+                        v-if="item.isPublic && item.ownerId === parseInt(userId)"
                         color="#FF69B4"
                         flat
                         icon

@@ -1,4 +1,4 @@
-package controllers.dto.destination;
+package controllers.dto.Destination;
 
 import models.Destination;
 import models.TravellerType;
