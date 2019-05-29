@@ -24,17 +24,17 @@ http://csse-s302g3.canterbury.ac.nz:8443/
 To run the project for **production**:
 1. Navigate to the eng-git repository located [here](https://eng-git.canterbury.ac.nz/seng302-2019/team-300) 
 2. Ensure that the Master branch is selected and download the latest artifact
-3. Navigate to: `backend/target/universal`
+3. Navigate to: `target/universal`
 4. Unzip: `team300-travelea-1.0.0-SNAPSHOT.zip`
 5. Navigate to: `team300-travelea-1.0.0-SNAPSHOT/bin`
 6. From here, you can run the command: `bash team300-travelea`.
 7. Navigate to: `localhost:9000`
-8. Login with email: *admin@admin.com*, password: *admin*
+8. Login with email: *admin@admin.com*, password: *adminadmin123*
 
 To run the project for **development**:
 1. Clone the version you'd like to run from the eng-git repository
 2. Navigate to the project's root directory
-3. To run the **backend**, navigate to `/backend` and run the command: `sbt dist`
+3. To run the **backend**, run the command: `sbt run`
 4. Once the backend is built and running, navigate to: `localhost:9000`
-5. To run the **frontend**, navigate to `/frontend/travelea` and run the commands: `npm install` and `npm run serve`
+5. To run the **frontend**, navigate to `/frontend` and run the commands: `npm install` and `npm run serve`
 6. Navigate to: `localhost:8080` OR whatever the console states when running the previous command
