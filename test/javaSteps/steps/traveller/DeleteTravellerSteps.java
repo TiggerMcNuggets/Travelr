@@ -1,8 +1,12 @@
 package javaSteps.steps.traveller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
+import play.libs.Json;
 import play.mvc.Http;
 import play.test.Helpers;
 
@@ -33,4 +37,10 @@ public class DeleteTravellerSteps {
             Assert.assertTrue(false);
         }
     }
+
+    @When("I undo the deletion status on the user with id {int}")
+    public void i_undo_the_deletion_status_on_the_user_with_id(Integer traveller_id) {
+        iDeleteTheTraveller();
+    }
+
 }

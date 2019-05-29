@@ -34,3 +34,19 @@ Feature: DeleteTravellers
     And I provide the token "123"
     When I delete the traveller
     Then I will receive a 404 response
+
+  Scenario: Admin tries to delete a user and the user is no longer available.
+    Given The traveller id is 4
+    And I provide the token "123"
+    When I delete the traveller
+    And I get traveller information
+    Then I will receive a 404 response
+
+  Scenario: Undo admin deleting a user and the user is now available.
+    Given The traveller id is 3
+    And I provide the token "123"
+    When I delete the traveller
+    And I undo the deletion status on the user with id 3
+    And I get traveller information
+    Then I will receive a 200 response
+
