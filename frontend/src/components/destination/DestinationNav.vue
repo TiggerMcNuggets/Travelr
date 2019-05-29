@@ -56,7 +56,6 @@
   width: 50%;
 }
 
-
 .destination-nav-item {
   cursor: pointer;
 }
@@ -92,6 +91,13 @@ export default {
     },
     publicDestinations() {
       return this.destinations.filter(x => x.data.isPublic);
+    },
+    underlineColor() {
+      if (this.tab === 1) {
+        return "accent";
+      } else {
+        return "rgb(255, 105, 180)";
+      }
     }
   }
 };

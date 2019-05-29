@@ -138,28 +138,6 @@ import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style";
       };
     },
 
-    props: {
-      destinations: Array,
-      focusDestination: Function,
-      focussedDestination: Object
-    },
-
-    computed: {
-
-      /*
-       * Returns the list of private destinations
-       */
-      privateDestinations() {
-        return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
-      },
-      infoWindow: {
-        position: { lat: 0, lng: 0 },
-        open: false
-      },
-      publicMarker: blueMarker,
-      privateMarker: pinkMarker
-    },
-
   props: {
     destinations: Array,
     focusDestination: Function,
@@ -168,15 +146,12 @@ import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style";
   },
 
   computed: {
-    /*
-     * Returns the list of private destinations
-     */
-    privateDestinations() {
-      return this.destinations.filter(
-        x => !x.data.isPublic && x.data.id !== this.focussedId
-      );
-    },
-
+         /*
+       * Returns the list of private destinations
+       */
+      privateDestinations() {
+        return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
+      },
     /*
      * Returns the list of public destinations
      */
