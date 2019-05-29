@@ -56,9 +56,6 @@
   width: 50%;
 }
 
-.destination-side-nav {
-  width: 200px;
-}
 
 .destination-nav-item {
   cursor: pointer;
@@ -95,19 +92,6 @@ export default {
     },
     publicDestinations() {
       return this.destinations.filter(x => x.data.isPublic);
-    },
-    privateDestinationCount() {
-      this.privateDestinations.length;
-    },
-    publicDestinationCount() {
-      this.publicDestinations.length;
-    },
-    underlineColor() {
-      if (this.tab === 1) {
-        return "accent";
-      } else {
-        return "rgb(255, 105, 180)";
-      }
     }
   }
 };

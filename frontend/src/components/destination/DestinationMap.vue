@@ -100,31 +100,57 @@
 </style>
 
 <script>
-const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
-const blueMarker = require("../../assets/blue-google-maps-marker.svg");
-const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
 
 import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom";
 import { GoogleMapLightStyle } from "../../assets/google-map-light-style";
 import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style";
 
-export default {
-  data() {
-    return {
-      gMapOptions: {
-        mapTypeControl: false,
-        styles: GoogleMapLightStyle,
-        maxZoom: 18,
-        minZoom: 3,
-        zoom: 3,
-        streetViewControl: false,
-        fullscreenControl: false,
-        mapTypeId: "roadmap",
-        center: { lat: 0, lng: 120 },
-        restriction: {
-          latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
-          strictBounds: true
-        }
+  import {toTitleCase} from "../../tools/google_maps/googleMapsUtils";
+
+  // resources
+  import pinkMarker from "../../assets/pink-google-maps-marker.svg";
+  import blueMarker from "../../assets/blue-google-maps-marker.svg";
+
+  export default {
+    data() {
+      return {
+        gMapOptions: {
+          mapTypeControl: false,
+          styles: GoogleMapLightStyle,
+          maxZoom: 18,
+          minZoom: 3,
+          zoom: 3,
+          streetViewControl: false,
+          fullscreenControl: false,
+          mapTypeId: 'roadmap',
+          center: {lat: 0, lng: 120},
+          restriction: {
+            latLngBounds: {north: 85, south: -85, west: -180, east: 180},
+            strictBounds: true
+          },
+        },
+        infoWindow: {
+          position: { lat: 0, lng: 0 },
+          open: false
+        },
+        publicMarker: blueMarker,
+        privateMarker: pinkMarker
+      };
+    },
+
+    props: {
+      destinations: Array,
+      focusDestination: Function,
+      focussedDestination: Object
+    },
+
+    computed: {
+
+      /*
+       * Returns the list of private destinations
+       */
+      privateDestinations() {
+        return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
       },
       infoWindow: {
         position: { lat: 0, lng: 0 },
@@ -132,8 +158,7 @@ export default {
       },
       publicMarker: blueMarker,
       privateMarker: pinkMarker
-    };
-  },
+    },
 
   props: {
     destinations: Array,
@@ -238,10 +263,11 @@ export default {
             return x === "locality";
           })[0];
 
-          if (containsLocality) {
-            destinationData.type = "City";
-          } else {
-            destinationData.type = this.toTitleCase(searchData.types[0]);
+            if (containsLocality) {
+              destinationData.type = "City"
+            } else {
+              destinationData.type = toTitleCase(searchData.types[0]);
+            }
           }
         }
 
@@ -273,11 +299,8 @@ export default {
       ) {
         this.focussedDestination.data = {};
       }
-
-      this.focussedDestination.data.latitude = coordinates.latitude;
-      this.focussedDestination.data.longitude = coordinates.longitude;
-      this.focusDestination(this.focussedDestination);
     },
+
 
     /*
      * Turns google maps values into readable values
@@ -303,6 +326,5 @@ export default {
         longitude: clickEvent.latLng.lng()
       });
     }
-  }
-};
+  };
 </script>

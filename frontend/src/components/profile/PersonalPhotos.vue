@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 
 <template>
   <div class="outer-container">

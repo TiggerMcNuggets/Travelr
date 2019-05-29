@@ -31,8 +31,8 @@
 
 <style>
 .main-content {
-  padding-left: 0px !important;
-  margin-left: 0px !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
 }
 
 </style>

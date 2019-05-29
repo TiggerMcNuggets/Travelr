@@ -45,9 +45,9 @@
             :allowedToEdit="isAllowedToEdit"
           ></DestinationDetails>
         </v-flex>
-      </v-layout>
+    </v-layout>
     </v-flex>
-  </v-layout>
+       </v-layout>
 </template>
 
 <style>
@@ -62,10 +62,6 @@
 
 .menu-item:hover {
   background-color: rgba(0, 0, 0, 0.87);
-}
-
-.destination-side-nav {
-  width: 200px;
 }
 </style>
 

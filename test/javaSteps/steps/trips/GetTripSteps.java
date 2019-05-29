@@ -1,6 +1,7 @@
 package javaSteps.steps.trips;
 
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import org.junit.Assert;
@@ -13,13 +14,12 @@ public class GetTripSteps {
 
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
-    private String tripId;
 
 
 
     @Given("I provide a tripId of {string}")
     public void i_provide_a_tripId_of(String string) {
-        tripId = string;
+        state.setTripId(string);
     }
 
     @When("I get a trip without an auth token")
@@ -28,7 +28,7 @@ public class GetTripSteps {
             // Create request object
             Http.RequestBuilder getTrip = Helpers.fakeRequest()
                     .method("GET")
-                    .uri("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + tripId);
+                    .uri("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + state.getTripId());
 
             // Send request
             state.setResult(route(state.getApplication(), getTrip));
@@ -45,8 +45,7 @@ public class GetTripSteps {
             Http.RequestBuilder getTrip = Helpers.fakeRequest()
                     .method("GET")
                     .header("X-Authorization", state.getToken())
-                    .uri("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + tripId);
-            System.out.println("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + tripId);
+                    .uri("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + state.getTripId());
             // Send request
             state.setResult(route(state.getApplication(), getTrip));
         } catch (Exception e) {
@@ -55,6 +54,5 @@ public class GetTripSteps {
         }
 
     }
-
 
 }
