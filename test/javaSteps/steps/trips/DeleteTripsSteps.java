@@ -66,11 +66,11 @@ public class DeleteTripsSteps {
     }
 
     @Then("in the list of trips the trip with id {int} will be present")
-    public void in_the_list_of_trips_the_trip_with_id_will_be_present(Integer int1) {
+    public void in_the_list_of_trips_the_trip_with_id_will_be_present(Integer tripId) {
         JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
         boolean isFound = false;
         for (JsonNode trip : responseBody) {
-            if (trip.get("id").asInt() == int1) {
+            if (trip.get("id").asInt() == tripId) {
                 isFound = true;
             }
         }
