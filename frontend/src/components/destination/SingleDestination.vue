@@ -20,7 +20,7 @@
           </div>
           <div>
             <suggest-traveller-types
-                    v-if="destination.isPublic"
+                    v-if="destination.isPublic && destination.ownerId !== parseInt(userId)"
                     class="upload-toggle-button"
                     :destinationId="destId"
                     :userTravellerTypes="destination.travellerTypes"/>
