@@ -4,11 +4,7 @@
       <v-flex xs12>
         <v-layout row>
           <v-flex col xs12>
-            <v-flex mt-2 mb-2 pa-3 class="collapse-menu" @click="closeDestinationNav">
-              <v-icon>arrow_back_ios</v-icon>Collapse Browse
-            </v-flex>
-
-            <v-tabs v-model="tab">
+            <v-tabs v-model="tab" :slider-color="underlineColor">
               <v-tab :key="1" class="dest-list-tabs">Private</v-tab>
               <v-tab :key="2" class="dest-list-tabs">Public</v-tab>
               <v-tab-item mt-2 :key="1">
@@ -23,7 +19,7 @@
                   />
                 </v-flex>
               </v-tab-item>
-              <v-tab-item mt-2 :key="2">
+              <v-tab-item mt-3 :key="2">
                 <v-flex mt-3>
                   <DestinationNavItem
                     v-bind:key="index"
@@ -60,7 +56,6 @@
   width: 50%;
 }
 
-
 .destination-nav-item {
   cursor: pointer;
 }
@@ -96,6 +91,13 @@ export default {
     },
     publicDestinations() {
       return this.destinations.filter(x => x.data.isPublic);
+    },
+    underlineColor() {
+      if (this.tab === 1) {
+        return "accent";
+      } else {
+        return "rgb(255, 105, 180)";
+      }
     }
   }
 };

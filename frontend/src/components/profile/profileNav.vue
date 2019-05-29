@@ -25,13 +25,13 @@
         <h3 class="headline font-weight-light traveller-name">{{fname}}</h3>
         <p class="caption font-weight-light">{{email}}</p>
       </div>
-      <v-divider></v-divider>
 
       <div class="field-section duel-section">
         <div class="field-section">
           <p class="body-1 font-weight-normal">{{dob}}</p>
           <p class="caption font-weight-light field-title">DOB</p>
         </div>
+           <v-divider></v-divider>
         <div class="field-section">
           <p class="body-1 font-weight-normal">{{gender}}</p>
           <p class="caption font-weight-light field-title">GENDER</p>

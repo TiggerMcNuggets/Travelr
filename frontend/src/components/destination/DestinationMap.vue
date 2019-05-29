@@ -1,7 +1,17 @@
 <template>
   <v-layout>
     <div class="destination-overlayed">
-      <v-label d-flex align-center>
+      <div>
+        <v-btn small fab>
+          <v-icon @click="openDestinationNav">view_list</v-icon>
+        </v-btn>
+      </div>
+      <div>
+        <v-btn fab small @click="toggleDarkMode">
+          <v-icon>brightness_2</v-icon>
+        </v-btn>
+      </div>
+      <div>
         <GmapAutocomplete
           placeholder="Search"
           @place_changed="onSearch"
@@ -10,17 +20,16 @@
           @keydown.native.enter.prevent
         ></GmapAutocomplete>
         <i aria-hidden="true" class="v-icon material-icons destination-search-btn">search</i>
-      </v-label>
-    </div>
-    <div class="destination-overlayed destination-darkmode-switch">
-      <v-btn flat icon
-             @click="toggleDarkMode"
-             color="grey"
-      ><v-icon >brightness_2</v-icon></v-btn>
+      </div>
     </div>
     <v-flex class="map-flex">
-      <GmapMap class="destination-main-map" :center="gMapOptions.center" ref="map" :options="gMapOptions" @click="onMapClick">
-
+      <GmapMap
+        class="destination-main-map"
+        :center="gMapOptions.center"
+        ref="map"
+        :options="gMapOptions"
+        @click="onMapClick"
+      >
         <!-- Private destination markers -->
         <GmapMarker
           v-for="destination in privateDestinations"
@@ -52,38 +61,42 @@
         />
       </GmapMap>
     </v-flex>
-
   </v-layout>
 </template>
 
 <style>
-
-  .destination-search-box {
-    margin-left: 15px;
-    margin-top: 15px;
-    padding: 12px;
-    padding-right: 40px;
-    background-color: whitesmoke;
-    border-radius: 4px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-    width: 300px;
-  }
-  .destination-search-btn {
-    margin-left: -32px;
-    padding: 0;
-  }
-  .destination-overlayed {
-    position: absolute;
-    z-index: 2;
-  }
-  .destination-darkmode-switch {
-    margin-left: 330px;
-    margin-top: 10px;
-  }
-  .destination-main-map {
-    width: 100%;
-    height: 830px;
-  }
+.destination-side-nav {
+  width: 200px;
+}
+.destination-search-box {
+  margin-left: 15px;
+  margin-top: 15px;
+  padding: 12px;
+  padding-right: 40px;
+  background-color: whitesmoke;
+  border-radius: 4px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  width: 300px;
+}
+.destination-search-btn {
+  margin-left: -32px;
+  padding: 0;
+}
+.destination-overlayed {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.destination-darkmode-switch {
+  margin-left: 330px;
+  margin-top: 10px;
+}
+.destination-main-map {
+  width: 100%;
+  height: 830px;
+}
 </style>
 
 <script>
@@ -128,7 +141,8 @@
     props: {
       destinations: Array,
       focusDestination: Function,
-      focussedDestination: Object
+      focussedDestination: Object,
+      openDestinationNav: Function
     },
 
     computed: {
