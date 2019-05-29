@@ -53,6 +53,7 @@ export default {
           });
       });
     },
+
     // eslint-disable-next-line
     async signupOtherUser({ commit }, signupData) {
       return await new Promise((resolve, reject) => {
@@ -79,6 +80,7 @@ export default {
           });
       });
     },
+
     // eslint-disable-next-line
     fetchMe({ commit, state }) {
       return new Promise((resolve, reject) => {

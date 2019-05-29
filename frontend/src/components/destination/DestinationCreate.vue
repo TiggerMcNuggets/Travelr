@@ -134,11 +134,11 @@
       createDestination: function () {
         if (this.$refs.form.validate()) {
           destinationRepository.createDestination(this.userId, this.destination)
-                  .then(() => {
+                  .then(res => {
                     this.$refs.form.reset();
                     this.isError = false;
                     this.$emit('close-map-info-window');
-                    this.createDestinationCallback();
+                    this.createDestinationCallback(res.data.id);
                   })
                   .catch((err) => {
                     console.log(err);

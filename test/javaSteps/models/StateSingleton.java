@@ -22,6 +22,7 @@ public class StateSingleton {
     private String token;
     private JsonNode requestData;
     private Result result;
+    private String tripId;
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
@@ -86,5 +87,13 @@ public class StateSingleton {
 
     public void setResult(Result result) {
         this.result = result;
+    }
+
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
     }
 }

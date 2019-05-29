@@ -1,8 +1,8 @@
-/* eslint-disable */
+
 
 <template>
   <v-card>
-    <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
+    <v-container class="outer-container" height="100%" style="margin-left: 0; margin-top: -20px;">
       <div class="section">
         <div class="dest-name">
           <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
@@ -114,7 +114,6 @@
               </div>
             </v-card>
           </li>
-          </ul>
         </v-tab-item>
       </v-tabs>
 
@@ -387,7 +386,7 @@
         this.clearAlerts();
         destinationRepository
                 .makePublic(destId)
-                .then(res => {
+                .then(() => {
 
                   this.rollbackCheckpoint(
                           'POST',
@@ -413,7 +412,7 @@
         this.clearAlerts();
         destinationRepository
                 .makePrivate(destId)
-                .then(res => {
+                .then(() => {
                   this.rollbackCheckpoint(
                           'POST',
                           {

@@ -83,10 +83,12 @@ class GoogleMapSmoothZoom {
             return;
         }
 
-        var z = google.maps.event.addListener( this.map, 'zoom_changed', event => {
+        // eslint-disable-next-line
+        let z = google.maps.event.addListener( this.map, 'zoom_changed', () => {
+            // eslint-disable-next-line
             google.maps.event.removeListener( z );
             this._zoomIn( level, cnt + 0.5 );
-        } )
+        });
 
         this._doZoom( cnt );
     }
@@ -108,10 +110,12 @@ class GoogleMapSmoothZoom {
             return;
         }
 
-        var z = google.maps.event.addListener( this.map, 'zoom_changed', event => {
+        // eslint-disable-next-line
+        let z = google.maps.event.addListener( this.map, 'zoom_changed', () => {
+            // eslint-disable-next-line
             google.maps.event.removeListener( z );
             this._zoomOut( level, cnt - 0.5 );
-        } )
+        });
 
         this._doZoom( cnt );
     }

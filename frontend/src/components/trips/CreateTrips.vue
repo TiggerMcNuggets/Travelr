@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="create-trip-container">
@@ -6,6 +6,7 @@
       <div class="add-trip-form">
         <h3>{{this.dialogName}}</h3>
         <UndoRedoButtons
+              v-if="passedTrip"
               :canRedo="rollbackCanRedo()"
               :canUndo="rollbackCanUndo()"
               :undo="undo"
@@ -204,7 +205,8 @@ export default {
     toggleShowCreateTrip: Function,
     regetTrips: Function,
     passedTrip: String,
-    updateViewTripPage: Function
+    updateViewTripPage: Function,
+    checkpointCreateTrip: Function
   },
   data() {
     return {
@@ -344,7 +346,8 @@ export default {
         if (this.isAdminUser) {
           tripRepository
             .createTripForUser(trip, this.id)
-            .then(() => {
+            .then(res => {
+              this.checkpointCreateTrip(res.data.id)
               this.regetTrips();
             })
             .catch(e => {
@@ -353,7 +356,8 @@ export default {
         } else {
           tripRepository
             .createTrip(trip)
-            .then(() => {
+            .then(res => {
+              this.checkpointCreateTrip(res.data.id)
               this.regetTrips();
             })
             .catch(e => {
@@ -444,6 +448,7 @@ export default {
             const destToAdd = {};
             const currentDest = tripById.destinations[i];
             destToAdd.title = currentDest.name;
+            console.log("current dest arrival date", currentDest.arrivalDate);
             destToAdd.arrivalDate =
                 currentDest.arrivalDate === null
                     ? null

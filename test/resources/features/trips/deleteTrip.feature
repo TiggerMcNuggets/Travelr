@@ -32,6 +32,3 @@ Feature: DeleteTrip
     And I get all trips for traveller
     Then I will receive a 200 response
     And in the list of trips the trip with id 1 will be present
-
-    
-

@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 
 <template>
   <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
@@ -40,38 +40,20 @@
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
-    <!-- <div v-if="this.isMyProfile || this.isAdmin">
-      <div v-if="!showCreateTrip && (this.isMyProfile || this.isAdmin)">
-        <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
-          <v-icon dark left>keyboard_arrow_right</v-icon>Add new trip
-        </v-btn>
-        <create-trip
-          v-if="showCreateTrip"
-          v-bind:toggleShowCreateTrip="toggleShowCreateTrip"
-        />
-    </div>-->
+
     <div v-if="showCreateTrip">
-      <!-- <v-btn class="button-min-width" flat @click="toggleShowCreateTrip">
-          <v-icon dark left>keyboard_arrow_down</v-icon>Hide menu
-      </v-btn>-->
+
       <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
         :regetTrips="regetTrips"
         :passedTrip="null"
         :updateViewTripPage="() => getUserTrips"
+        :checkpointCreateTrip="checkpointCreateTrip"
       />
     </div>
-    <!-- </div> -->
 
     <ul>
-      <!-- <div class="input-field-right-margin">
-        <v-text-field
-                v-model="searchValue"
-                label="Trip name"
-                prepend-icon="search"
-        ></v-text-field>
-      </div>-->
       <li
         class="trips-list-element"
         v-for="item in tripsFiltered"
@@ -290,9 +272,25 @@ export default {
      * Checks if the profile the user is on is theres
      * if it is sets isMyProfile to true
      */
-    checkIfProfileOwner() {
+    checkIfProfileOwner: function() {
       let id = this.$route.params.id;
       this.isMyProfile = store.getters.getUser.id == id;
+    },
+
+    /**
+     * Adds a checkpoint when creating a trip
+     */
+    checkpointCreateTrip: function(tripId) {
+      const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
+      this.rollbackCheckpoint(
+        'POST',
+        {
+            url: url,
+        },
+        {
+            url: url,
+        }
+        );
     },
 
 
