@@ -77,7 +77,4 @@ public class DeleteTripsSteps {
         Assert.assertTrue(isFound);
     }
 
-
-
-
 }
