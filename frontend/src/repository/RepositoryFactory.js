@@ -6,6 +6,7 @@ import PersonalPhotoRepository from "./PersonalPhotosRepository"
 import UserRepository from "./UserRepository";
 import NationalityRepository from "./NationalityRepository";
 import TravellerTypesRepository from "./TravellerTypesRepository";
+import SelectDataRepository from "./SelectDataRepository";
 
 // Add all repositories here to access from anywhere
 const repositories = {
@@ -16,7 +17,8 @@ const repositories = {
     personalPhoto: PersonalPhotoRepository,
     user: UserRepository,
     nationality: NationalityRepository,
-    travellerType: TravellerTypesRepository
+    travellerType: TravellerTypesRepository,
+    selectData: SelectDataRepository
 };
 
 
