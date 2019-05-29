@@ -130,102 +130,99 @@
 
 
 <script>
-import { rules } from "../form_rules";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  let destinationRepository = RepositoryFactory.get("destination");
+  import { rules } from "../form_rules";
   import SelectDataRepository from "../../repository/SelectDataRepository";
-  import { stringify } from "../../tools/deepCopy" 
 
-export default {
-  data() {
-    return {
-      editMode: false,
-      destination: {
-        data: {
+  export default {
+    data() {
+      return {
+        editMode: false,
+        destination: {
+          data: {
+          }
+        },
+        ...rules,
+        typeList: [],
+        travellerTypes: []
+      };
+    },
+    /**
+     * focussedDestination: Clicked on / selected point
+     * passBackDestination: What todo when save/create is clicked
+     * focusDestination: Send a update focused destination to the DestinationPage
+     */
+    props: {
+      focussedDestination: Object,
+      passBackDestination: Function,
+      focusDestination: Function,
+      allowedToEdit: Boolean
+    },
+    computed: {
+
+      /**
+       * Is it in create mode or viewing/edit mode
+       */
+      createMode() {
+        if (this.focussedDestination.data && !this.focussedDestination.data.id) {
+          return true;
+        } else {
+          return false;
         }
-      },
-      ...rules,
-      typeList: [],
-      travellerTypes: []
-    };
-  },
-  /**
-   * focussedDestination: Clicked on / selected point
-   * passBackDestination: What todo when save/create is clicked
-   * focusDestination: Send a update focused destination to the DestinationPage
-   */
-  props: {
-    focussedDestination: Object,
-    passBackDestination: Function,
-    focusDestination: Function,
-    allowedToEdit: Boolean
-  },
-  computed: {
-
-    /**
-     * Is it in create mode or viewing/edit mode
-     */
-    createMode() {
-      if (this.focussedDestination.data && !this.focussedDestination.data.id) {
-        return true;
-      } else {
-        return false;
       }
-    }
-  },
-  watch: {
-    /**
-     * Reset back to viewing mode on destination change
-     */
-    focussedDestination: {
-      handler: function(newValue, oldValue) {
-        if(oldValue.data.id !== newValue.data.id) {
+    },
+    watch: {
+      /**
+       * Reset back to viewing mode on destination change
+       */
+      focussedDestination: {
+        handler: function(newValue, oldValue) {
+          if(oldValue.data.id !== newValue.data.id) {
+            this.goToViewDestination();
+          }
+          if (newValue.data !== this.destination.data) {
+            this.destination = this.focussedDestination;
+          }
+        },
+        deep: true
+      }
+    },
+    methods: {
+      /**
+       *
+       */
+      goToViewDestination() {
+        this.editMode = false;
+      },
+      /**
+       * Updated long and lat on the map marker when fields are changed
+       */
+      pushDestination() {
+        this.focusDestination(this.destination);
+      },
+      updateDestination(){
+        if(this.$refs.form.validate()) {
+          this.passBackDestination(this.destination);
           this.goToViewDestination();
-        } 
-        if (newValue.data !== this.destination.data) {
-          this.destination = this.focussedDestination;
         }
       },
-      deep: true
-    }
-  },
-  methods: {
-    /**
-     * 
-     */
-    goToViewDestination() {
-      this.editMode = false;
-    },
-    /**
-     * Updated long and lat on the map marker when fields are changed
-     */
-    pushDestination() {
-      this.focusDestination(this.destination);
-    },
-    updateDestination(){
-      if(this.$refs.form.validate()) {
-        this.passBackDestination(this.destination);
-        this.goToViewDestination();
+      /**
+       * populated list of traveller types for user to select from
+       **/
+      async populateSelects() {
+        const travellerTypes = await SelectDataRepository.travellerTypes();
+        this.typeList = travellerTypes.data;
+      },
+      gotoDest() {
+        var userId = this.$store.getters.getUser.id;
+        this.$router.push(
+          `/user/${userId}/destinations/${this.focussedDestination.data.id}`
+        );
       }
     },
-    /**
-     * populated list of traveller types for user to select from
-     **/
-    async populateSelects() {
-      const travellerTypes = await SelectDataRepository.travellerTypes();
-      this.typeList = travellerTypes.data;
+    mounted() {
+      this.populateSelects();
+      this.destination = this.focussedDestination;
     },
-    gotoDest() {
-      var userId = this.$store.getters.getUser.id;
-      this.$router.push(
-        `/user/${userId}/destinations/${this.focussedDestination.data.id}`
-      );
-    }
-  },
-  mounted() {
-    this.populateSelects();
-    this.destination = this.focussedDestination;
-  },
-};
+  };
 </script>
 
