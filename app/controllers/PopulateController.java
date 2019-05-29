@@ -140,10 +140,10 @@ public class PopulateController extends Controller {
         trip1.insert();
         trip2.insert();
 
-        new TripDestination(1, 2, 0, trip1, dest1).insert();
-        new TripDestination(3, 4, 1, trip1, dest2).insert();
-        new TripDestination(1, 2, 0, trip2, dest3).insert();
-        new TripDestination(3, 4, 1, trip2, dest4).insert();
+        new TripDestination(1549085549, 1559085549, 0, trip1, dest1).insert();
+        new TripDestination(1547085549, 1558085549, 1, trip1, dest2).insert();
+        new TripDestination(1546085549, 1555085549, 0, trip2, dest7).insert();
+        new TripDestination(1541085549, 1546085549, 1, trip2, dest8).insert();
 
         return ok("Populated");
     }
