@@ -2,69 +2,69 @@
   <v-card height="830px" flat>
     <v-layout row wrap pl-2 v-if="createMode || editMode">
       <v-form ref="form" lazy-validation>
-        <v-flex xs12 pb-2>
-          <v-layout>
-            <h3 v-if="createMode">Create a Destination</h3>
-            <h3 v-if="editMode && !createMode">Edit Destination</h3>
-          </v-layout>
-      </v-flex>
-      <v-flex xs12 pb-1 px-3>
-        <v-text-field
-              v-model="destination.data.name"
-              :counter="60"
-              label="Destination Name"
-              required
-              :rules="nameRules"
-              name="nameField"
-              @change="pushDestination"
-            ></v-text-field>
-      </v-flex>
-      <v-flex xs12 pb-1 px-3>
+        <v-flex xs12 mt-3 pb-2 px-3>
+          <p v-if="createMode" class="font-weight-bold dest-heading">Create Destination</p>
+          <p v-if="editMode && !createMode" class="font-weight-bold dest-heading">Edit Destination</p>
+     
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
           <v-text-field
-              v-model="destination.data.type"
-              :counter="60"
-              :rules="nameRules"
-              label="Destination Type"
-              required
-              name="typeField"
-              @change="pushDestination"
-            ></v-text-field>
-      </v-flex>
-      <v-flex xs12 pb-1 px-3>
-        <v-select
-              label="Associated Traveller Types"
-              :items="typeList"
-              item-text="name"
-              v-model="destination.data.travellerTypes"
-              return-object
-              name="travellerTypeField"
-              @change="pushDestination"
-              attach multiple>
-            </v-select>
-      </v-flex>
-      <v-flex xs12 pb-1 px-3>
-        <v-text-field
-              v-model="destination.data.district"
-              :counter="60"
-              :rules="nameRules"
-              label="District"
-              required
-              name="districtField"
-              @change="pushDestination"
-            ></v-text-field>
-      </v-flex>
-      <v-flex xs12 pb-1 px-3>
-        <v-text-field
-              v-model="destination.data.country"
-              :counter="60"
-              label="Country"
-              required
-              :rules="nameRules"
-              name="countryField"
-              @change="pushDestination"
-        ></v-text-field>
-      </v-flex>
-       <v-flex xs12 pb-1 px-3>  
+            v-model="destination.data.name"
+            :counter="60"
+            label="Destination Name"
+            required
+            :rules="nameRules"
+            name="nameField"
+            @change="pushDestination"
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
+          <v-text-field
+            v-model="destination.data.type"
+            :counter="60"
+            :rules="nameRules"
+            label="Destination Type"
+            required
+            name="typeField"
+            @change="pushDestination"
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
+          <v-select
+            label="Associated Traveller Types"
+            :items="typeList"
+            item-text="name"
+            v-model="destination.data.travellerTypes"
+            return-object
+            name="travellerTypeField"
+            @change="pushDestination"
+            attach
+            multiple
+          ></v-select>
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
+          <v-text-field
+            v-model="destination.data.district"
+            :counter="60"
+            :rules="nameRules"
+            label="District"
+            required
+            name="districtField"
+            @change="pushDestination"
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
+          <v-text-field
+            v-model="destination.data.country"
+            :counter="60"
+            label="Country"
+            required
+            :rules="nameRules"
+            name="countryField"
+            @change="pushDestination"
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
           <v-text-field
             v-model.number="destination.data.latitude"
             type="number"
@@ -73,20 +73,19 @@
             @change="pushDestination"
             required
           ></v-text-field>
-
-      </v-flex>
-       <v-flex xs12 pb-1 px-3>
-        <v-text-field
-              v-model.number="destination.data.longitude"
-              @change="pushDestination"
-              type="number"
-              :rules="numberRules"
-              label="Longitude"
-              required
-            ></v-text-field>
-      </v-flex>
-      <v-flex xs12>
-          <v-layout justify-center>
+        </v-flex>
+        <v-flex xs12 pb-1 px-3>
+          <v-text-field
+            v-model.number="destination.data.longitude"
+            @change="pushDestination"
+            type="number"
+            :rules="numberRules"
+            label="Longitude"
+            required
+          ></v-text-field>
+        </v-flex>
+        <v-flex xs12>
+          <v-layout justify-start>
             <v-btn @click="goToViewDestination">Cancel</v-btn>
             <v-btn color="primary" v-if="editMode" @click="updateDestination">Update</v-btn>
             <v-btn color="primary" v-else @click="updateDestination">Create</v-btn>
@@ -95,20 +94,43 @@
       </v-form>
     </v-layout>
     <v-layout row wrap px-2 v-if="!createMode && !editMode">
-      <v-flex xs12 pb-2>
-        <v-layout row justify-space-between align-center>
-          <h3>{{ focussedDestination.data.name }}</h3>
-          <v-btn @click="editMode = true" v-if="allowedToEdit">
+      <v-flex pb-2 px-2>
+        <v-layout row justify-space-between align-start>
+          <!-- <h3>{{ focussedDestination.data.name }}</h3> -->
+          <div>
+            <h4 class="headline font-weight-normal">{{ focussedDestination.data.name }}</h4>
+            <p
+              class="body-2 font-weight-light no-margin"
+            >{{ focussedDestination.data.district }}, {{ focussedDestination.data.country }}</p>
+            <p
+              class="body-3 font-weight-light no-margin"
+            >{{ focussedDestination.data.latitude }}, {{ focussedDestination.data.longitude }}</p>
+          </div>
+          <v-btn fab flat small color="primary" @click="editMode = true" v-if="allowedToEdit">
             <v-icon>edit</v-icon>
           </v-btn>
         </v-layout>
       </v-flex>
-      <v-flex xs12 pb-1 px-3>{{ focussedDestination.data.type }}</v-flex>
-      <v-flex xs12 pb-1 px-3>{{ focussedDestination.data.district }}</v-flex>
-      <v-flex xs12 pb-1 px-3>{{ focussedDestination.data.country }}</v-flex>
-      <v-flex xs12 pb-1 px-3>Long: {{ focussedDestination.data.longitude }}</v-flex>
-      <v-flex xs12 pb-1 px-3>Lat: {{ focussedDestination.data.latitude }}</v-flex>
-      <v-flex xs12 pb-1 px-3>
+      <v-flex xs12>
+        <!-- <v-img src="https://picsum.photos/510/300?random" aspect-ratio="1.7"></v-img> -->
+        <v-img
+          src="https://perkinsdesigns.files.wordpress.com/2015/11/jan15_mountains_galore3.png"
+          aspect-ratio="1.7"
+        ></v-img>
+      </v-flex>
+      <!-- <img  src="https://perkinsdesigns.files.wordpress.com/2015/11/jan15_mountains_galore3.png" /> -->
+
+      <v-flex xs12 mt-3 px-2>
+        <p class="caption font-weight-light no-margin">TYPE</p>
+        <v-divider class="no-margin"></v-divider>
+        <p class="body-1 font-weight-normal no-margin">{{ focussedDestination.data.type }}</p>
+      </v-flex>
+      <v-flex xs12 mt-3 mb-2 px-2>
+        <p class="caption font-weight-light no-margin">ASSOCIATED TRAVELLER TYPES</p>
+        <v-divider class="no-margin"></v-divider>
+      </v-flex>
+
+      <v-flex xs12 pb-1 px-2>
         <v-layout row wrap>
           <v-chip
             :key="index"
@@ -116,9 +138,9 @@
           >{{ travellerType.name }}</v-chip>
         </v-layout>
       </v-flex>
-      <v-flex xs12>
-        <v-layout justify-center>
-          <v-btn color="primary" @click="gotoDest">View Destination</v-btn>
+      <v-flex>
+        <v-layout justify-start mt-2 px-2>
+          <v-btn color="primary" outline @click="gotoDest">View Destination</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -126,23 +148,29 @@
 </template>
 
 <style>
+.dest-heading {
+  font-size: 20px;
+}
+
+.no-margin {
+  margin: 0px;
+}
 </style>
 
 
 <script>
 import { rules } from "../form_rules";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  let destinationRepository = RepositoryFactory.get("destination");
-  import SelectDataRepository from "../../repository/SelectDataRepository";
-  import { stringify } from "../../tools/deepCopy" 
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let destinationRepository = RepositoryFactory.get("destination");
+import SelectDataRepository from "../../repository/SelectDataRepository";
+import { stringify } from "../../tools/deepCopy";
 
 export default {
   data() {
     return {
       editMode: false,
       destination: {
-        data: {
-        }
+        data: {}
       },
       ...rules,
       typeList: [],
@@ -161,7 +189,6 @@ export default {
     allowedToEdit: Boolean
   },
   computed: {
-
     /**
      * Is it in create mode or viewing/edit mode
      */
@@ -179,9 +206,9 @@ export default {
      */
     focussedDestination: {
       handler: function(newValue, oldValue) {
-        if(oldValue.data.id !== newValue.data.id) {
+        if (oldValue.data.id !== newValue.data.id) {
           this.goToViewDestination();
-        } 
+        }
         if (newValue.data !== this.destination.data) {
           this.destination = this.focussedDestination;
         }
@@ -191,7 +218,7 @@ export default {
   },
   methods: {
     /**
-     * 
+     *
      */
     goToViewDestination() {
       this.editMode = false;
@@ -202,8 +229,8 @@ export default {
     pushDestination() {
       this.focusDestination(this.destination);
     },
-    updateDestination(){
-      if(this.$refs.form.validate()) {
+    updateDestination() {
+      if (this.$refs.form.validate()) {
         this.passBackDestination(this.destination);
         this.goToViewDestination();
       }
@@ -225,7 +252,7 @@ export default {
   mounted() {
     this.populateSelects();
     this.destination = this.focussedDestination;
-  },
+  }
 };
 </script>
 
