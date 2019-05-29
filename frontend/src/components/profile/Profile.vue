@@ -1,4 +1,3 @@
-/* eslint-disable */
 
 <template>
   <div class="profile-outer-container">

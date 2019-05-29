@@ -87,7 +87,7 @@ export default {
                 }
                 commit('setUsers', filtered_data);
             } catch (e) {
-                return;
+                console.error(e);
             }
         },
         async getAllTravellerTypes({ commit }) {
@@ -108,7 +108,7 @@ export default {
             try {
                 const response = await UserRepository.getNationalities();
                 let nationalities = [];
-                //Go throught each object and return only a list of strings
+                //Go through each object and return only a list of strings
                 for (let i = 0; i < response['data'].length; i++) {
                     nationalities.push(response['data'][i]['name']);
                 }

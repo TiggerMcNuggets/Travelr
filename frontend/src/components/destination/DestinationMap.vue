@@ -57,9 +57,7 @@
 </template>
 
 <style>
-  .destination-side-nav {
-    width: 200px;
-  }
+
   .destination-search-box {
     margin-left: 15px;
     margin-top: 15px;
@@ -89,13 +87,16 @@
 </style>
 
 <script>
-  const pinkMarker = require("../../assets/pink-google-maps-marker.svg");
-  const blueMarker = require("../../assets/blue-google-maps-marker.svg");
-  const purpleMarker = require("../../assets/purple-google-maps-marker.svg");
 
   import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom"
   import { GoogleMapLightStyle } from "../../assets/google-map-light-style"
   import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style"
+
+  import {toTitleCase} from "../../tools/google_maps/googleMapsUtils";
+
+  // resources
+  import pinkMarker from "../../assets/pink-google-maps-marker.svg";
+  import blueMarker from "../../assets/blue-google-maps-marker.svg";
 
   export default {
     data() {
@@ -225,7 +226,7 @@
             if (containsLocality) {
               destinationData.type = "City"
             } else {
-              destinationData.type = this.toTitleCase(searchData.types[0]);
+              destinationData.type = toTitleCase(searchData.types[0]);
             }
           }
 
@@ -260,18 +261,6 @@
         this.focusDestination(this.focussedDestination);
       },
 
-      /*
-       * Turns google maps values into readable values
-       */
-      toTitleCase(s) {
-        return s
-          .replace(/([^A-Z])([A-Z])/g, '$1 $2') // split cameCase
-          .replace(/[_\-]+/g, ' ') // split snake_case and lisp-case
-          .toLowerCase()
-          .replace(/(^\w|\b\w)/g, function(m) { return m.toUpperCase(); }) // title case words
-          .replace(/\s+/g, ' ') // collapse repeated whitespace
-          .replace(/^\s+|\s+$/, ''); // remove leading/trailing whitespace
-      },
 
       /*
        * Perceives a click on the map and creates a destination at the click location
