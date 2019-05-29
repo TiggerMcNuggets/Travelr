@@ -171,13 +171,15 @@ public class DestinationRepository {
             destinationPhoto.save();
         }
 
-        // Delete destination
+
         if (destinationTaken) {
             Destination.find.transferToAdmin(destination.id);
-            for (Destination sameDestination : sameDestinations) {
-                if (sameDestination.id != destination.id) {
-                    sameDestination.delete();
-                }
+        }
+
+        // Delete destination
+        for (Destination sameDestination : sameDestinations) {
+            if (sameDestination.id != destination.id) {
+                sameDestination.delete();
             }
         }
 

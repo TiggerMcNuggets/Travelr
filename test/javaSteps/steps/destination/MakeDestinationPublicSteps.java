@@ -86,6 +86,6 @@ public class MakeDestinationPublicSteps {
     @Then("My first destination should be deleted")
     public void myFirstDestinationShouldBeDeleted() {
         Destination destination = Destination.find.findById(firstCreatedId.longValue());
-        Assert.assertEquals(destination.deleted, false);
+        Assert.assertNull(destination);
     }
 }
