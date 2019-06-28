@@ -187,7 +187,7 @@ export default {
           this.userId
         );
         response.data.forEach(data => {
-          var destinationObject = {
+          const destinationObject = {
             data: data,
             isShowing: true
           };
