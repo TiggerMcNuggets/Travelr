@@ -17,24 +17,24 @@ export default {
          * @param {Function} commit Allows to commit mutations
          * @param {number} userId The id of the user
          */
-        async getDestinations({ commit }, userId) {
-            const destinations = await DestinationRepository.getDestinations(userId);
+        async getDestinations({ commit }, payload) {
+            const destinations = await DestinationRepository.getDestinations(payload.userId);
             commit("setDestinations", destinations)
         },
 
-        async postDestination({ dispatch }, userId, destination) {
-            await DestinationRepository.createDestination(userId, destination);
-            await dispatch("getDestinations", userId);
+        async postDestination({ dispatch }, payload) {
+            await DestinationRepository.createDestination(payload.userId, payload.destination);
+            await dispatch("getDestinations", payload.userId);
         },
 
-        async putDestination({ dispatch }, userId, destinationId, destination) {
-            await DestinationRepository.updateDestination(userId, destinationId, destination);
-            await dispatch("getDestinations", userId);
+        async putDestination({ dispatch }, payload) {
+            await DestinationRepository.updateDestination(payload.userId, payload.destinationId, payload.destination);
+            await dispatch("getDestinations", payload.userId);
         },
 
-        async deleteDestination({ dispatch }, userId, destinationId) {
-            await DestinationRepository.deleteDestination(userId, destinationId);
-            await dispatch("getDestinations", userId);
+        async deleteDestination({ dispatch }, payload) {
+            await DestinationRepository.deleteDestination(payload.userId, payload.destinationId);
+            await dispatch("getDestinations", payload.userId);
         },
     },
 

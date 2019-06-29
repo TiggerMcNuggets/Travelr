@@ -1,4 +1,4 @@
-
+ 
 <script>
     import { store } from '../../store/index';
 

@@ -76,10 +76,11 @@ import DestinationNav from "./DestinationNav";
 import DestinationMap from "./DestinationMap";
 import DestinationDetails from "./DestinationDetails";
 import { deepCopy } from "../../tools/deepCopy";
+import StoreDestinationsMixinVue from '../mixins/StoreDestinationsMixin.vue';
 
 export default {
   store,
-  mixins: [RollbackMixin],
+  mixins: [RollbackMixin, StoreDestinationsMixinVue],
   components: {
     UndoRedoButtons,
     DestinationNav,
@@ -93,7 +94,7 @@ export default {
       focussedDestination: {},
       browseActive: false,
 
-      // priviledges data
+      // privileges data
       isAdminUser: false,
       userId: store.getters.getUser.id
     };
