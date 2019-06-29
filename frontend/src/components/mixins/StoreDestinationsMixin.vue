@@ -10,19 +10,23 @@
         store,
         data() {
             return {
+                userId: this.$route.params.user_id,
             };
         },
 
         computed: {
-        /**
-         * @returns the destinations of a user
-         */
-          destinations() {
-              return this.$store.getters.getDestinations;
-          }
+
+            /**
+             * @returns the destinations of a user
+             */
+              destinations() {
+                  return this.$store.getters.getDestinations;
+              }
         },
 
         created() {
+            console.log('Created in dest mixin is called and userId =', this.userId);
+            this.getDestinations(this.userId);
         },
         methods: {
 
