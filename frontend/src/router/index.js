@@ -4,7 +4,7 @@ import { store } from "../store/index";
 
 // Components
 import Home from "../components/home/Home.vue"
-import Profile from "../components/profile/Profile"
+import Dashboard from "../components/profile/Profile"
 import ProfilePhotos from "../components/profile/ProfilePhotos"
 import ProfileTrips from "../components/profile/ProfileTrips"
 import userSearch from "../components/userSearch/userSearch"
@@ -20,6 +20,8 @@ import ViewTrip from "../components/trips/ViewTrip.vue";
 import SingleDestination from "../components/destination/SingleDestination";
 import DestinationEditRequests from "../components/admin/DestinationEditRequests";
 import DestinationPage from "../components/destination/DestinationPage";
+
+import Profile from "../views/Profile2"
 
 
 const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
@@ -106,8 +108,15 @@ let router = new Router({
         },
 
         {
-            path: '/user/:id',
+            path: '/profile',
+            name: 'profile',
             component: Profile,
+            beforeEnter: authGuard,
+        },
+
+        {
+            path: '/user/:id',
+            component: Dashboard,
             beforeEnter: authGuard,
             children: [
                 {
