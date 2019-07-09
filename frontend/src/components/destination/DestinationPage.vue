@@ -6,9 +6,11 @@
         <v-flex v-if="browseActive" xs4 sm3 md2>
           <DestinationNav
             :destinations="destinations"
+            :isDestinationShowing="isDestinationShowing"
             :focusDestination="focusDestination"
             :toggleDestination="toggleDestination"
             :closeDestinationNav="() => { browseActive = false }"
+            @checkbox-changed="({id, value}) => setIsShowing(id, value)"
           ></DestinationNav>
         </v-flex>
         <v-flex>
@@ -20,9 +22,9 @@
           ></DestinationMap>
         </v-flex>
 
-        <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
+        <v-flex xs4 sm3 md2 v-if="focussedDestination">
           <v-flex
-            v-if="focussedDestination.data && focussedDestination.data.id && isAllowedToEdit"
+            v-if="focussedDestination && focussedDestination.id && isAllowedToEdit"
             d-flex
             align-start
             pb-1
@@ -37,13 +39,14 @@
             ></UndoRedoButtons>
           </v-flex>
           <DestinationDetails
-            v-if="focussedDestination.data"
+            v-if="focussedDestination"
             :focussedDestination="deepCopy(focussedDestination)"
             :passBackDestination="submitDestination"
             :focusDestination="focusDestination"
             :cancelEdit="cancelEdit"
             :allowedToEdit="isAllowedToEdit"
           ></DestinationDetails>
+          <v-btn @click="populateIsShowing">Is Showing</v-btn>
         </v-flex>
     </v-layout>
     </v-flex>
@@ -90,7 +93,6 @@ export default {
 
   data() {
     return {
-      destinations: [],
       focussedDestination: {},
       browseActive: false,
 
@@ -106,7 +108,7 @@ export default {
      */
     focussedDestination: {
       handler: function(newValue, oldValue) {
-        if (oldValue.data.id !== newValue.data.id) {
+        if (oldValue.id !== newValue.id) {
           this.rollbackFlush();
         }
       },
@@ -118,62 +120,70 @@ export default {
     deepCopy(value) {
       return deepCopy(value);
     },
+
     createDestination() {
       this.focussedDestination = {
         data: {}
       };
     },
-    toggleDestination(destination) {
-      var showDest = this.destinations.filter(
-        x => x.data.id === destination.data.id
-      );
 
-      if (showDest[0]) {
-        showDest[0].isShowing = !showDest[0].isShowing;
-      }
+    isDestinationShowing(destinationId) {
+      return this.isShowing.find(x => x.id === destinationId).isShowing;
     },
+
+    setIsShowing(id, value) {
+      const index = this.destinations.findIndex(x => x.id === id);
+      this.isShowing[index].isShowing = value;
+    },
+
+    toggleDestination(destination) {
+      const index = this.isShowing.findIndex(x => x.id == destination.id);
+      this.isShowing[index].isShowing = !this.isShowing[index].isShowing;
+    },
+
     focusDestination(destination) {
       this.focussedDestination = this.deepCopy(destination);
-      if (this.focussedDestination.data && this.focussedDestination.data.id) {
+      if (this.focussedDestination && this.focussedDestination.id) {
         const newDest = this.destinations.filter(
-          dest => dest.data.id === this.focussedDestination.data.id
+          dest => dest.id === this.focussedDestination.id
         )[0];
         console.log(newDest);
-        this.rollbackSetPreviousBody(newDest.data);
+        this.rollbackSetPreviousBody(newDest);
       }
     },
+
     submitDestination(destination) {
-      if (destination.data.id) {
+      if (destination.id) {
         DestinationRepository.updateDestination(
           this.userId,
-          destination.data.id,
-          destination.data
+          destination.id,
+          destination
         )
           .then(() => {
             const url = `/users/${this.userId}/destinations/${
-              destination.data.id
+              destination.id
             }`;
             this.rollbackCheckpoint(
               "PUT",
               {
                 url: url,
-                body: destination.data
+                body: destination
               },
               {
                 url: url,
                 body: this.rollbackPreviousBody
               }
             );
-            this.rollbackPreviousBody = destination.data;
-            this.populateDestinations();
+            this.rollbackPreviousBody = destination;
+            this.getDestinations(this.userId);
           })
           .catch(err => {
             console.error(err);
           });
       } else {
-        DestinationRepository.createDestination(this.userId, destination.data)
+        DestinationRepository.createDestination(this.userId, destination)
           .then(() => {
-            this.populateDestinations();
+            this.getDestinations();
             this.focussedDestination = {};
           })
           .catch(err => {
@@ -181,34 +191,27 @@ export default {
           });
       }
     },
-    async populateDestinations() {
-      this.destinations = [];
-      try {
-        const response = await DestinationRepository.getDestinations(
-          this.userId
-        );
-        response.data.forEach(data => {
-          const destinationObject = {
-            data: data,
-            isShowing: true
-          };
-          this.destinations.push(destinationObject);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    },
+
     cancelEdit() {
       this.focussedDestination = {};
     },
+
     async fetchAfterRollback() {
-      let id = this.focussedDestination.data.id;
-      console.log(id);
-      await this.populateDestinations();
+      let id = this.focussedDestination.id;
+      await this.getDestinations(this.userId);
       this.focussedDestination = this.destinations.filter(
-        dest => dest.data.id === id
+        dest => dest.id === id
       )[0];
       console.log(this.focussedDestination);
+    },
+
+    populateIsShowing() {
+      return this.destinations.map(destination => {
+        return {
+          id: destination.id,
+          isShowing: true,
+        }
+      });
     },
     undo() {
       const actions = [this.fetchAfterRollback]; // fill;
@@ -231,19 +234,23 @@ export default {
     isAllowedToEdit() {
       return (
         this.isAdminUser ||
-        this.focussedDestination.data.ownerId === this.userId
+        this.focussedDestination.ownerId === this.userId
       );
     },
     visableDestinations() {
-      return this.destinations.filter(x => x.isShowing);
+      console.log(this.destinations);
+      return this.destinations.filter(x => this.isShowing.find(y => y.id === x.id));
+    },
+    isShowing() {
+      return this.populateIsShowing();
     }
   },
 
-  created() {
-    this.populateDestinations();
+
+  mounted() {
     this.isAdminUser = store.getters.getIsUserAdmin;
     this.userId = store.getters.getUser.id;
-  }
+  },
 };
 </script>
 

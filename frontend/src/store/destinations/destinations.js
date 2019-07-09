@@ -19,7 +19,7 @@ export default {
          */
         async getDestinations({ commit }, payload) {
             const destinations = await DestinationRepository.getDestinations(payload.userId);
-            commit("setDestinations", destinations)
+            commit("setDestinations", destinations.data)
         },
 
         async postDestination({ dispatch }, payload) {
@@ -39,6 +39,9 @@ export default {
     },
 
     getters: {
-        getDestinations: state => state.destinations,
+        getDestinations: state => {
+            console.log("here", state.destinations); 
+            return state.destinations;
+        },
     },
 }

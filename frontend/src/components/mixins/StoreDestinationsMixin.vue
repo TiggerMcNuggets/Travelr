@@ -6,7 +6,6 @@
      * Mixin to be included anywhere there is need for destinations for a specific user
      */
     export default {
-        el: "#store_destinations_mixin",
         store,
         data() {
             return {
@@ -24,10 +23,6 @@
               }
         },
 
-        created() {
-            console.log('Created in dest mixin is called and userId =', this.userId);
-            this.getDestinations(this.userId);
-        },
         methods: {
 
             getDestinations: async function(userId) {
@@ -65,6 +60,12 @@
             getDestinationById: function(destId) {
                 return this.destinations[destId];
             }
-        }
+
+
+        },
+        async mounted() {
+            console.log('Created in dest mixin is called and userId =', this.userId);
+            await this.getDestinations(this.userId);
+        },
     };
 </script>

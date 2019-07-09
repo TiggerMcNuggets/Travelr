@@ -14,8 +14,10 @@
                     v-bind:key="index"
                     v-for="(destination, index) in privateDestinations"
                     :destination="destination"
+                    :isDestinationShowing="isDestinationShowing"
                     @click.native="toggleDestination(destination)"
                     @dblclick="focusDestination(destination)"
+                    @checkbox-changed="(value) => checkboxChanged(destination.id, value)"
                   />
                 </v-flex>
               </v-tab-item>
@@ -24,7 +26,7 @@
                   <DestinationNavItem
                     v-bind:key="index"
                     v-for="(destination, index) in publicDestinations"
-                    v-bind:class="{showing: destination.isShowing}"
+                    v-bind:class="{showing: isDestinationShowing(destination.id)}"
                     :destination="destination"
                     @click.native="toggleDestination(destination)"
                     @dblclick="focusDestination(destination)"
@@ -75,10 +77,15 @@ export default {
       browseActive: false
     };
   },
-  methods: {},
+  methods: {
+    checkboxChanged(id, value) {
+      this.$emit('checkbox-changed', {id, value})
+    }
+  },
 
   props: {
     destinations: Array,
+    isDestinationShowing: Function,
     focusDestination: Function,
     toggleDestination: Function,
     closeDestinationNav: Function
@@ -87,10 +94,11 @@ export default {
 
   computed: {
     privateDestinations() {
-      return this.destinations.filter(x => !x.data.isPublic);
+      console.log(this.destinations);
+      return this.destinations.filter(x => !x.isPublic);
     },
     publicDestinations() {
-      return this.destinations.filter(x => x.data.isPublic);
+      return this.destinations.filter(x => x.isPublic);
     },
     underlineColor() {
       if (this.tab === 1) {

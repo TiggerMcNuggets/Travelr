@@ -9,7 +9,7 @@
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model="destination.data.name"
+            v-model="destination.name"
             :counter="60"
             label="Destination Name"
             required
@@ -20,7 +20,7 @@
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model="destination.data.type"
+            v-model="destination.type"
             :counter="60"
             :rules="nameRules"
             label="Destination Type"
@@ -34,7 +34,7 @@
             label="Associated Traveller Types"
             :items="typeList"
             item-text="name"
-            v-model="destination.data.travellerTypes"
+            v-model="destination.travellerTypes"
             return-object
             name="travellerTypeField"
             @change="pushDestination"
@@ -44,7 +44,7 @@
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model="destination.data.district"
+            v-model="destination.district"
             :counter="60"
             :rules="nameRules"
             label="District"
@@ -55,7 +55,7 @@
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model="destination.data.country"
+            v-model="destination.country"
             :counter="60"
             label="Country"
             required
@@ -66,7 +66,7 @@
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model.number="destination.data.latitude"
+            v-model.number="destination.latitude"
             type="number"
             :rules="numberRules"
             label="Latitude"
@@ -76,7 +76,7 @@
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
-            v-model.number="destination.data.longitude"
+            v-model.number="destination.longitude"
             @change="pushDestination"
             type="number"
             :rules="numberRules"
@@ -96,15 +96,15 @@
     <v-layout row wrap px-2 v-if="!createMode && !editMode">
       <v-flex pb-2 px-2>
         <v-layout row justify-space-between align-start>
-          <!-- <h3>{{ focussedDestination.data.name }}</h3> -->
+          <!-- <h3>{{ focussedDestination.name }}</h3> -->
           <div>
-            <h4 class="headline font-weight-normal">{{ focussedDestination.data.name }}</h4>
+            <h4 class="headline font-weight-normal">{{ focussedDestination.name }}</h4>
             <p
               class="body-2 font-weight-light no-margin"
-            >{{ focussedDestination.data.district }}, {{ focussedDestination.data.country }}</p>
+            >{{ focussedDestination.district }}, {{ focussedDestination.country }}</p>
             <p
               class="body-3 font-weight-light no-margin"
-            >{{ focussedDestination.data.latitude }}, {{ focussedDestination.data.longitude }}</p>
+            >{{ focussedDestination.latitude }}, {{ focussedDestination.longitude }}</p>
           </div>
           <v-btn fab flat small color="primary" @click="editMode = true" v-if="allowedToEdit">
             <v-icon>edit</v-icon>
@@ -123,7 +123,7 @@
       <v-flex xs12 mt-3 px-2>
         <p class="caption font-weight-light no-margin">TYPE</p>
         <v-divider class="no-margin"></v-divider>
-        <p class="body-1 font-weight-normal no-margin">{{ focussedDestination.data.type }}</p>
+        <p class="body-1 font-weight-normal no-margin">{{ focussedDestination.type }}</p>
       </v-flex>
       <v-flex xs12 mt-3 mb-2 px-2>
         <p class="caption font-weight-light no-margin">ASSOCIATED TRAVELLER TYPES</p>
@@ -134,7 +134,7 @@
         <v-layout row wrap>
           <v-chip
             :key="index"
-            v-for="(travellerType, index) in focussedDestination.data.travellerTypes"
+            v-for="(travellerType, index) in focussedDestination.travellerTypes"
           >{{ travellerType.name }}</v-chip>
         </v-layout>
       </v-flex>
@@ -192,7 +192,7 @@
        * Is it in create mode or viewing/edit mode
        */
       createMode() {
-        if (this.focussedDestination.data && !this.focussedDestination.data.id) {
+        if (this.focussedDestination && !this.focussedDestination.id) {
           return true;
         } else {
           return false;
@@ -205,10 +205,10 @@
        */
       focussedDestination: {
         handler: function(newValue, oldValue) {
-          if(oldValue.data.id !== newValue.data.id) {
+          if(oldValue.id !== newValue.id) {
             this.goToViewDestination();
           }
-          if (newValue.data !== this.destination.data) {
+          if (newValue !== this.destination) {
             this.destination = this.focussedDestination;
           }
         },
@@ -240,11 +240,12 @@
       async populateSelects() {
         const travellerTypes = await SelectDataRepository.travellerTypes();
         this.typeList = travellerTypes.data;
+
       },
       gotoDest() {
-        var userId = this.$store.getters.getUser.id;
+        const userId = this.$store.getters.getUser.id;
         this.$router.push(
-          `/user/${userId}/destinations/${this.focussedDestination.data.id}`
+          `/user/${userId}/destinations/${this.focussedDestination.id}`
         );
       }
     },
