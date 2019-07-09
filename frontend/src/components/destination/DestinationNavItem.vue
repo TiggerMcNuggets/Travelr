@@ -1,7 +1,7 @@
 <template>
   <v-flex xs12>
     <v-card flat>
-      <v-layout v-bind:class="{showing: destination.isShowing}">
+      <v-layout v-bind:class="{showing: isDestinationShowing(destination.id)}">
         <div class="dest-element">
           <div class="dest-element-details" d-flex justify-start align-center>
             <div>
@@ -13,14 +13,14 @@
               </div>
             </div>
             <div>
-              <strong>{{ destination.data.name }}</strong>
+              <strong>{{ destination.name }}</strong>
               <br>
-              <span class="caption">{{ destination.data.district}}, {{ destination.data.country }}</span>
+              <span class="caption">{{ destination.district}}, {{ destination.country }}</span>
             </div>
           </div>
 
           <div>
-            <v-checkbox disabled v-model="destination.isShowing"></v-checkbox>
+            <v-checkbox disabled v-on:change="$emit('checkbox-changed', $event.target.isShowing)"></v-checkbox>
           </div>
         </div>
       </v-layout>
@@ -67,7 +67,9 @@ export default {
     };
   },
   props: {
-    destination: Object
+    destination: Object,
+    isShowing: Boolean,
+    isDestinationShowing: Function
   },
   methods: {}
 };

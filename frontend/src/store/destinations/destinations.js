@@ -9,12 +9,17 @@ export default {
         setDestinations(state, destinations) {
             state.destinations = destinations
         }
-    },
+    }, 
 
     actions: {
+        /**
+         * Sends a request to get destinations and updates store with this list
+         * @param {Function} commit Allows to commit mutations
+         * @param {number} userId The id of the user
+         */
         async getDestinations({ commit }, payload) {
             const destinations = await DestinationRepository.getDestinations(payload.userId);
-            commit("setDestinations", destinations)
+            commit("setDestinations", destinations.data)
         },
 
         async postDestination({ dispatch }, payload) {
@@ -34,6 +39,9 @@ export default {
     },
 
     getters: {
-        getDestinations: state => state.destinations,
+        getDestinations: state => {
+            console.log("here", state.destinations); 
+            return state.destinations;
+        },
     },
 }

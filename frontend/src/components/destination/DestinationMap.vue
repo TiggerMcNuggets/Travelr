@@ -33,8 +33,8 @@
         <!-- Private destination markers -->
         <GmapMarker
           v-for="destination in privateDestinations"
-          :key="destination.data.id"
-          :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
+          :key="destination.id"
+          :position="{lat: destination.latitude, lng: destination.longitude}"
           :draggable="false"
           :clickable="true"
           @click="focusDestination(destination)"
@@ -44,8 +44,8 @@
         <!-- Public destination markers -->
         <GmapMarker
           v-for="destination in publicDestinations"
-          :key="destination.data.id"
-          :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
+          :key="destination.id"
+          :position="{lat: destination.latitude, lng: destination.longitude}"
           :draggable="false"
           :clickable="true"
           @click="focusDestination(destination)"
@@ -54,8 +54,8 @@
 
         <!-- Focussed destination marker -->
         <GmapMarker
-          v-if="focussedDestination.data"
-          :position="{lat: focussedDestination.data.latitude, lng: focussedDestination.data.longitude}"
+          v-if="focussedDestination"
+          :position="{lat: focussedDestination.latitude, lng: focussedDestination.longitude}"
           :draggable="false"
           :clickable="true"
         />
@@ -151,22 +151,22 @@
        * Returns the list of private destinations
        */
       privateDestinations() {
-        return this.destinations.filter(x => !x.data.isPublic && x.data.id !== this.focussedId);
+        return this.destinations.filter(x => !x.isPublic && x.id !== this.focussedId);
       },
 
       /*
        * Returns the list of public destinations
        */
       publicDestinations() {
-        return this.destinations.filter(x => x.data.isPublic && x.data.id !== this.focussedId);
+        return this.destinations.filter(x => x.isPublic && x.id !== this.focussedId);
       },
 
       /*
        * Returns -1 to avoid indexing an undefined object.
        */
       focussedId() {
-        if (this.focussedDestination.data != null) {
-          return this.focussedDestination.data.id;
+        if (this.focussedDestination != null) {
+          return this.focussedDestination.id;
         }
         return -1;
       },
@@ -211,8 +211,8 @@
        * Updates the location of the currently selected marker after a user stops dragging it.
        */
       updateCoordinatesAfterDrag(location, focussedDestination) {
-        this.focussedDestination.data.latitude = location.latLng.lat();
-        this.focussedDestination.data.longitude = location.latLng.lng();
+        this.focussedDestination.latitude = location.latLng.lat();
+        this.focussedDestination.longitude = location.latLng.lng();
         this.focusDestination(focussedDestination);
       },
 
@@ -254,7 +254,7 @@
             })[0].long_name);
           }
 
-          this.focussedDestination.data = destinationData;
+          this.focussedDestination = destinationData;
           this.placeNewMarker(coordinates);
           this.panAndZoom(coordinates);
         }
@@ -264,14 +264,14 @@
        * Places a new marker on the map and updates the parameters on the destination info panel
        */
       placeNewMarker(coordinates) {
-        if (!this.focussedDestination.data) {
-          this.focussedDestination.data = {};
-        } else if (this.focussedDestination.data && this.focussedDestination.data.id) {
-          this.focussedDestination.data = {};
+        if (!this.focussedDestination) {
+          this.focussedDestination = {};
+        } else if (this.focussedDestination && this.focussedDestination.id) {
+          this.focussedDestination = {};
         }
 
-        this.focussedDestination.data.latitude = coordinates.latitude;
-        this.focussedDestination.data.longitude = coordinates.longitude;
+        this.focussedDestination.latitude = coordinates.latitude;
+        this.focussedDestination.longitude = coordinates.longitude;
         this.focusDestination(this.focussedDestination);
       },
 
