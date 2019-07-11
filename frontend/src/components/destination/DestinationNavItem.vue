@@ -20,8 +20,7 @@
           </div>
 
           <div>
-            <v-checkbox v-bind:value="isShowing" v-on:change="updateIsShowing()"></v-checkbox>
-            {{isShowing}}
+            <v-checkbox v-bind:checked="isShowing" v-on:change="updateIsShowing()"></v-checkbox>
           </div>
         </div>
       </v-layout>

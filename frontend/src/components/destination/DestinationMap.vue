@@ -2,8 +2,8 @@
   <v-layout>
     <div class="destination-overlayed">
       <div>
-        <v-btn small fab>
-          <v-icon @click="openDestinationNav">view_list</v-icon>
+        <v-btn @click="openDestinationNav" small fab>
+          <v-icon>view_list</v-icon>
         </v-btn>
       </div>
       <div>
