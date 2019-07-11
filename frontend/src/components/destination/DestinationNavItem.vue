@@ -1,7 +1,7 @@
 <template>
   <v-flex xs12>
     <v-card flat>
-      <v-layout v-bind:class="{showing: isDestinationShowing(destination.id)}">
+      <v-layout>
         <div class="dest-element">
           <div class="dest-element-details" d-flex justify-start align-center>
             <div>
@@ -20,7 +20,8 @@
           </div>
 
           <div>
-            <v-checkbox disabled v-on:change="$emit('checkbox-changed', $event.target.isShowing)"></v-checkbox>
+            <v-checkbox v-bind:value="isShowing" v-on:change="updateIsShowing()"></v-checkbox>
+            {{isShowing}}
           </div>
         </div>
       </v-layout>
@@ -62,16 +63,19 @@
 <script>
 export default {
   data() {
-    return {
-      checkbox: false
-    };
+    return {};
   },
   props: {
     destination: Object,
     isShowing: Boolean,
-    isDestinationShowing: Function
+    setIsShowing: Function
   },
-  methods: {}
+  methods: {
+    updateIsShowing() {
+      this.setIsShowing(this.isShowing);
+    }
+  },
+
 };
 </script>
 

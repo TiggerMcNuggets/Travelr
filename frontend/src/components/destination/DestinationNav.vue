@@ -14,10 +14,10 @@
                     v-bind:key="index"
                     v-for="(destination, index) in privateDestinations"
                     :destination="destination"
-                    :isDestinationShowing="isDestinationShowing"
+                    :isShowing="isDestinationShowing(destination.id)"
                     @click.native="toggleDestination(destination)"
-                    @dblclick="focusDestination(destination)"
-                    @checkbox-changed="(value) => checkboxChanged(destination.id, value)"
+                    @dblclick.native="focusDestination(destination)"
+                    :setIsShowing="function(val) { setIsShowing(destination.id, val) }"
                   />
                 </v-flex>
               </v-tab-item>
@@ -26,10 +26,11 @@
                   <DestinationNavItem
                     v-bind:key="index"
                     v-for="(destination, index) in publicDestinations"
-                    v-bind:class="{showing: isDestinationShowing(destination.id)}"
+                    :isShowing="isDestinationShowing(destination.id)"
                     :destination="destination"
                     @click.native="toggleDestination(destination)"
-                    @dblclick="focusDestination(destination)"
+                    @dblclick.native="focusDestination(destination)"
+                    :setIsShowing="function(val) { setIsShowing(destination.id, val) }"
                   />
                 </v-flex>
               </v-tab-item>
@@ -78,9 +79,6 @@ export default {
     };
   },
   methods: {
-    checkboxChanged(id, value) {
-      this.$emit('checkbox-changed', {id, value})
-    }
   },
 
   props: {
@@ -88,13 +86,13 @@ export default {
     isDestinationShowing: Function,
     focusDestination: Function,
     toggleDestination: Function,
-    closeDestinationNav: Function
+    closeDestinationNav: Function,
+    setIsShowing: Function
   },
   watch: {},
 
   computed: {
     privateDestinations() {
-      console.log(this.destinations);
       return this.destinations.filter(x => !x.isPublic);
     },
     publicDestinations() {

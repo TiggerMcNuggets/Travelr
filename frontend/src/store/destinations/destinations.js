@@ -40,7 +40,6 @@ export default {
 
     getters: {
         getDestinations: state => {
-            console.log("here", state.destinations); 
             return state.destinations;
         },
     },

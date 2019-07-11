@@ -10,12 +10,12 @@
             :focusDestination="focusDestination"
             :toggleDestination="toggleDestination"
             :closeDestinationNav="() => { browseActive = false }"
-            @checkbox-changed="({id, value}) => setIsShowing(id, value)"
+            :setIsShowing="setIsShowing"
           ></DestinationNav>
         </v-flex>
         <v-flex>
           <DestinationMap
-            :destinations="visableDestinations"
+            :destinations="visibleDestinations"
             :focussedDestination="deepCopy(focussedDestination)"
             :focusDestination="focusDestination"
             :openDestinationNav="() => { browseActive = !browseActive }"
@@ -95,6 +95,8 @@ export default {
     return {
       focussedDestination: {},
       browseActive: false,
+      isShowing: [],
+      visibleDestinations: [],
 
       // privileges data
       isAdminUser: false,
@@ -113,7 +115,15 @@ export default {
         }
       },
       deep: true
+    },
+
+    destinations: {
+      handler: function(newDestination, oldDestination) {
+        this.isShowing = this.populateIsShowing();
+        this.updateVisibleDestinations();
+      }
     }
+
   },
 
   methods: {
@@ -134,14 +144,23 @@ export default {
     setIsShowing(id, value) {
       const index = this.destinations.findIndex(x => x.id === id);
       this.isShowing[index].isShowing = value;
+      this.updateVisibleDestinations();
+    },
+
+    updateVisibleDestinations() {
+      this.visibleDestinations = this.destinations.filter(x => this.isShowing.find(y => y.id === x.id).isShowing);
+      console.log("isShowing", this.isShowing);
+      console.log("visibleDestinations", this.visibleDestinations);
     },
 
     toggleDestination(destination) {
+      console.log("here");
       const index = this.isShowing.findIndex(x => x.id == destination.id);
       this.isShowing[index].isShowing = !this.isShowing[index].isShowing;
     },
 
     focusDestination(destination) {
+      console.log("focus");
       this.focussedDestination = this.deepCopy(destination);
       if (this.focussedDestination && this.focussedDestination.id) {
         const newDest = this.destinations.filter(
@@ -206,13 +225,16 @@ export default {
     },
 
     populateIsShowing() {
-      return this.destinations.map(destination => {
-        return {
-          id: destination.id,
-          isShowing: true,
+      return [...this.isShowing, ...this.destinations.map(dest => {
+        if (!this.isShowing.map(destShow => destShow.id).includes(dest.id)) {
+          return {
+            id: dest.id,
+            isShowing: true,
+          }
         }
-      });
+      })]
     },
+    
     undo() {
       const actions = [this.fetchAfterRollback]; // fill;
       try {
@@ -237,19 +259,13 @@ export default {
         this.focussedDestination.ownerId === this.userId
       );
     },
-    visableDestinations() {
-      console.log(this.destinations);
-      return this.destinations.filter(x => this.isShowing.find(y => y.id === x.id));
-    },
-    isShowing() {
-      return this.populateIsShowing();
-    }
   },
 
 
   mounted() {
     this.isAdminUser = store.getters.getIsUserAdmin;
     this.userId = store.getters.getUser.id;
+
   },
 };
 </script>
