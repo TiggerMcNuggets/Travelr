@@ -21,9 +21,9 @@
           ></DestinationMap>
         </v-flex>
 
-        <v-flex xs4 sm3 md2 v-if="focussedDestination">
+        <v-flex xs4 sm3 md2 v-if="focussedDestination.id">
           <v-flex
-            v-if="focussedDestination && focussedDestination.id && isAllowedToEdit"
+            v-if="focussedDestination.id && isAllowedToEdit"
             d-flex
             align-start
             pb-1
