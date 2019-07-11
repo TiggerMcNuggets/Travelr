@@ -45,7 +45,6 @@
             :cancelEdit="cancelEdit"
             :allowedToEdit="isAllowedToEdit"
           ></DestinationDetails>
-          <v-btn @click="populateIsShowing">Is Showing</v-btn>
         </v-flex>
     </v-layout>
     </v-flex>
