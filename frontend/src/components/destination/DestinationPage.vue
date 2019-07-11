@@ -38,7 +38,7 @@
             ></UndoRedoButtons>
           </v-flex>
           <DestinationDetails
-            v-if="focussedDestination"
+            v-if="focussedDestination.latitude && focussedDestination.longitude"
             :focussedDestination="deepCopy(focussedDestination)"
             :passBackDestination="submitDestination"
             :focusDestination="focusDestination"
