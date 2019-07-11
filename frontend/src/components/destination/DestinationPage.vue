@@ -10,7 +10,6 @@
             :focusDestination="focusDestination"
             :toggleDestination="toggleDestination"
             :closeDestinationNav="() => { browseActive = false }"
-            :setIsShowing="setIsShowing"
           ></DestinationNav>
         </v-flex>
         <v-flex>
@@ -96,7 +95,6 @@ export default {
       focussedDestination: {},
       browseActive: false,
       isShowing: [],
-      visibleDestinations: [],
 
       // privileges data
       isAdminUser: false,
@@ -120,7 +118,6 @@ export default {
     destinations: {
       handler: function(newDestination, oldDestination) {
         this.isShowing = this.populateIsShowing();
-        this.updateVisibleDestinations();
       }
     }
 
@@ -141,32 +138,17 @@ export default {
       return this.isShowing.find(x => x.id === destinationId).isShowing;
     },
 
-    setIsShowing(id, value) {
-      const index = this.destinations.findIndex(x => x.id === id);
-      this.isShowing[index].isShowing = value;
-      this.updateVisibleDestinations();
-    },
-
-    updateVisibleDestinations() {
-      this.visibleDestinations = this.destinations.filter(x => this.isShowing.find(y => y.id === x.id).isShowing);
-      console.log("isShowing", this.isShowing);
-      console.log("visibleDestinations", this.visibleDestinations);
-    },
-
     toggleDestination(destination) {
-      console.log("here");
       const index = this.isShowing.findIndex(x => x.id == destination.id);
       this.isShowing[index].isShowing = !this.isShowing[index].isShowing;
     },
 
     focusDestination(destination) {
-      console.log("focus");
       this.focussedDestination = this.deepCopy(destination);
       if (this.focussedDestination && this.focussedDestination.id) {
         const newDest = this.destinations.filter(
           dest => dest.id === this.focussedDestination.id
         )[0];
-        console.log(newDest);
         this.rollbackSetPreviousBody(newDest);
       }
     },
@@ -221,7 +203,6 @@ export default {
       this.focussedDestination = this.destinations.filter(
         dest => dest.id === id
       )[0];
-      console.log(this.focussedDestination);
     },
 
     populateIsShowing() {
@@ -259,13 +240,15 @@ export default {
         this.focussedDestination.ownerId === this.userId
       );
     },
+
+    visibleDestinations() {
+      return this.destinations.filter(x => this.isShowing.find(y => y.id === x.id).isShowing);
+    }
   },
 
-
-  mounted() {
+  async mounted() {
     this.isAdminUser = store.getters.getIsUserAdmin;
     this.userId = store.getters.getUser.id;
-
   },
 };
 </script>

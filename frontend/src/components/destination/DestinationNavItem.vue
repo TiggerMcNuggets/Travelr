@@ -20,7 +20,7 @@
           </div>
 
           <div>
-            <v-checkbox v-bind:checked="isShowing" v-on:change="updateIsShowing()"></v-checkbox>
+            <v-checkbox disabled v-model="isShowing"></v-checkbox>
           </div>
         </div>
       </v-layout>
@@ -67,13 +67,8 @@ export default {
   props: {
     destination: Object,
     isShowing: Boolean,
-    setIsShowing: Function
   },
-  methods: {
-    updateIsShowing() {
-      this.setIsShowing(this.isShowing);
-    }
-  },
+  methods: {},
 
 };
 </script>

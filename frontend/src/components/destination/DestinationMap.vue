@@ -54,7 +54,7 @@
 
         <!-- Focussed destination marker -->
         <GmapMarker
-          v-if="focussedDestination"
+          v-if="focussedDestination.latitude && focussedDestination.longitude"
           :position="{lat: focussedDestination.latitude, lng: focussedDestination.longitude}"
           :draggable="false"
           :clickable="true"
@@ -285,6 +285,6 @@
           longitude: clickEvent.latLng.lng()
         });
       }
-    }
+    },
   };
 </script>

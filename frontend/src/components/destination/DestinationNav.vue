@@ -17,7 +17,6 @@
                     :isShowing="isDestinationShowing(destination.id)"
                     @click.native="toggleDestination(destination)"
                     @dblclick.native="focusDestination(destination)"
-                    :setIsShowing="function(val) { setIsShowing(destination.id, val) }"
                   />
                 </v-flex>
               </v-tab-item>
@@ -30,7 +29,6 @@
                     :destination="destination"
                     @click.native="toggleDestination(destination)"
                     @dblclick.native="focusDestination(destination)"
-                    :setIsShowing="function(val) { setIsShowing(destination.id, val) }"
                   />
                 </v-flex>
               </v-tab-item>
@@ -87,7 +85,6 @@ export default {
     focusDestination: Function,
     toggleDestination: Function,
     closeDestinationNav: Function,
-    setIsShowing: Function
   },
   watch: {},
 
