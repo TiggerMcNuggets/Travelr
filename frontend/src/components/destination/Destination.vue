@@ -53,6 +53,7 @@
         <v-tab :key="1" ripple>Browse</v-tab>
 
         <v-tab-item :key="1">
+        <div class="scrollable list-height">
           <li
                   class="destination-list-element"
                   v-for="item in destinationsFiltered"
@@ -114,11 +115,12 @@
               </div>
             </v-card>
           </li>
+        </div>
         </v-tab-item>
       </v-tabs>
 
       <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="updateDestinationList"/>
+        <destination-create :createDestinationCallback="createDestionationCallback"/>
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -182,6 +184,10 @@
     background-color: hotpink;
   }
 
+  .blue-background {
+    background-color: rgb(63,81,181);
+  }
+
   .side-border {
     width: 15px;
   }
@@ -217,6 +223,11 @@
   .destination-list-element {
     padding-top: 20px;
   }
+
+  .list-height {
+    max-height: 800px;
+    min-height: 500px;
+  }
 </style>
 
 
@@ -224,13 +235,19 @@
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
   let destinationRepository = RepositoryFactory.get("destination");
-  import RollbackMixin from "../mixins/RollbackMixin.vue";
   import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
   import DestinationCreate from "./DestinationCreate";
 
+  // mixins
+  import RollbackMixin from "../mixins/RollbackMixin.vue";
+  import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
+
   export default {
     store,
-    mixins: [RollbackMixin],
+    mixins: [
+            RollbackMixin,
+            StoreDestinationsMixin
+    ],
     components: {
       UndoRedoButtons,
       DestinationCreate
@@ -238,9 +255,10 @@
 
     data() {
       return {
+        userId: this.$route.params.id,
         dialog: false,
         showEditDestination: false,
-        destinations: [],
+        // destinations: [],
         isMyProfile: false,
         ownerId: null,
         active: null,
@@ -262,6 +280,7 @@
 
     computed: {
       destinationsFiltered() {
+        console.log("des", this.destinations);
         const filteredList = this.destinations.filter(
                 destination =>
                         destination.name
@@ -283,7 +302,8 @@
 
       init() {
         this.checkIfProfileOwner();
-        this.getDestinationList();
+        this._getDestinations(this.userId);
+        // this.getDestinationList();
       },
 
       /**
@@ -330,7 +350,8 @@
        */
       deleteDestination: function(destId) {
         this.clearAlerts();
-        destinationRepository.deleteDestination(this.userId, destId).then(() => {
+
+        this._deleteDestination(this.userId, destId).then(() => {
           const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
           this.rollbackCheckpoint(
                   'DELETE',
@@ -341,14 +362,15 @@
                     url: url,
                   }
           );
-          this.getDestinationList();
         });
       },
 
       /**
-       * Refreshes the destination list
+       * Callback for creating a new destination
+       * Allows the main list of destinations to undo the creation of the new one
+       * and closes the dialog
        */
-      updateDestinationList: function(destId) {
+      createDestionationCallback: function(destId) {
         this.clearAlerts();
         const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
         this.rollbackCheckpoint(
@@ -360,22 +382,7 @@
                   url: url,
                 }
         );
-        this.getDestinationList();
         this.dialog = false;
-      },
-
-      /**
-       * Sets the list of destinations by request to the API
-       */
-      getDestinationList: function() {
-        destinationRepository
-                .getDestinations(this.userId)
-                .then(response => {
-                  this.destinations = response.data;
-                })
-                .catch(err => {
-                  console.log(err);
-                });
       },
 
       /**
@@ -451,7 +458,7 @@
        * Undoes the last action and gets destinations afterwards
        */
       undo: function() {
-        const actions = [this.getDestinationList, this.clearAlerts];
+        const actions = [() => this._getDestinations(this.userId), this.clearAlerts];
         try {
           this.rollbackUndo(actions);
         } catch (err) {
@@ -463,7 +470,7 @@
        * Redoes the last action and gets destinations afterwards
        */
       redo: function() {
-        const actions = [this.getDestinationList, this.clearAlerts];
+        const actions = [() => this._getDestinations(this.userId), this.clearAlerts];
         try {
           this.rollbackRedo(actions);
         } catch (err) {

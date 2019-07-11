@@ -23,18 +23,19 @@ export default {
         },
 
         async postDestination({ dispatch }, payload) {
-            await DestinationRepository.createDestination(payload.userId, payload.destination);
-            await dispatch("getDestinations", payload.userId);
+            const res = await DestinationRepository.createDestination(payload.userId, payload.destination);
+            await dispatch("getDestinations", {userId: payload.userId});
+            return res;
         },
 
         async putDestination({ dispatch }, payload) {
             await DestinationRepository.updateDestination(payload.userId, payload.destinationId, payload.destination);
-            await dispatch("getDestinations", payload.userId);
+            await dispatch("getDestinations", {userId: payload.userId});
         },
 
         async deleteDestination({ dispatch }, payload) {
             await DestinationRepository.deleteDestination(payload.userId, payload.destinationId);
-            await dispatch("getDestinations", payload.userId);
+            await dispatch("getDestinations", {userId: payload.userId});
         },
     },
 
