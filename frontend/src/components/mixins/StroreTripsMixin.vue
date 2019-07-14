@@ -43,7 +43,7 @@
 
             _putTrip: async function(userId, tripId, trip) {
                 try {
-                    await this.$store.dispatch('putDestination', {userId, tripId, trip});
+                    await this.$store.dispatch('putTrip', {userId, tripId, trip});
                 } catch (e) {
                     print(e);
                 }
@@ -51,7 +51,7 @@
 
             _deleteTrip: async function(userId, tripId) {
                 try {
-                    await this.$store.dispatch('deleteDestination',{userId, tripId});
+                    await this.$store.dispatch('deleteTrip',{userId, tripId});
                 } catch (e) {
                     print(e);
                 }

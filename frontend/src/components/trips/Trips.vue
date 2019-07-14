@@ -46,7 +46,6 @@
       <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
-        :regetTrips="regetTrips"
         :passedTrip="null"
         :updateViewTripPage="() => getUserTrips"
         :checkpointCreateTrip="checkpointCreateTrip"
@@ -142,7 +141,6 @@ export default {
     return {
       showCreateTrip: false,
       searchValue: "",
-      // trips: [],
       isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
       isAdminUser: false,
@@ -229,18 +227,18 @@ export default {
       });
     },
 
-    /**
-     * Calls the function toggleShowCreateTrip
-     * then gets the trips the current profile the user is on
-     */
-    regetTrips: function() {
-      this.toggleShowCreateTrip();
-      if (this.isMyProfile) {
-        this.getTrips();
-      } else {
-        this.getUserTrips();
-      }
-    },
+    // /**
+    //  * Calls the function toggleShowCreateTrip
+    //  * then gets the trips the current profile the user is on
+    //  */
+    // regetTrips: function() {
+    //   this.toggleShowCreateTrip();
+    //   if (this.isMyProfile) {
+    //     this.getTrips();
+    //   } else {
+    //     this.getUserTrips();
+    //   }
+    // },
 
     /**
      * Checks if the profile the user is on is theres
