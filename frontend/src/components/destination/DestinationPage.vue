@@ -242,7 +242,10 @@ export default {
     },
 
     visibleDestinations() {
-      return this.destinations.filter(x => this.isShowing.find(y => y.id === x.id).isShowing);
+      return this.isShowing ? this.destinations.filter(x => {
+        const isShowing = this.isShowing.find(y => y.id === x.id)
+        return isShowing ? isShowing.isShowing : false
+      }) : this.destinations;
     }
   },
 
