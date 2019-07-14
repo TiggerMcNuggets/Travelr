@@ -140,9 +140,10 @@
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
   import SelectDataRepository from "../../repository/SelectDataRepository";
+  import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
 
   export default {
-    mixins: [RollbackMixin],
+    mixins: [RollbackMixin, StoreDestinationsMixin],
     components: {
       UndoRedoButtons: UndoRedoButtons
     },
@@ -189,8 +190,7 @@
           const destId = this.$route.params.dest_id;
 
           // Call the update request
-          destinationRepository
-                  .updateDestination(
+          this._putDestination(
                           userId,
                           destId,
                           this.destination

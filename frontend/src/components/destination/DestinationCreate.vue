@@ -94,11 +94,11 @@
 
 <script>
   import { rules } from "../form_rules";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  let destinationRepository = RepositoryFactory.get("destination");
   import SelectDataRepository from "../../repository/SelectDataRepository";
+  import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
 
   export default {
+    mixins: [StoreDestinationsMixin],
     props: {
       createDestinationCallback: Function,
       prefillData: Object
@@ -133,7 +133,7 @@
        */
       createDestination: function () {
         if (this.$refs.form.validate()) {
-          destinationRepository.createDestination(this.userId, this.destination)
+          this._postDestination(this.userId, this.destination)
                   .then(res => {
                     this.$refs.form.reset();
                     this.isError = false;
