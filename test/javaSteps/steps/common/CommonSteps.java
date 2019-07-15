@@ -4,10 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import javaSteps.models.StateSingleton;
+import models.TravellerType;
+import models.User;
 import org.junit.Assert;
 import play.libs.Json;
 import play.mvc.Http;
 import play.test.Helpers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.route;
@@ -103,5 +108,19 @@ public class CommonSteps  {
         } finally {
             Assert.assertTrue(noEmail);
         }
+    }
+
+    @Given("I am an authenticated user")
+    public void i_am_an_authenticated_user() {
+        User testUser = new User("Test", "User", "test.user@testuser.com", 1);
+        List<TravellerType> userTravellerTypes = new ArrayList<>();
+        // finds first traveller type
+        userTravellerTypes.add(TravellerType.find.byId(1L));
+        testUser.setTravellerTypes(userTravellerTypes);
+        testUser.setPassword("test");
+        testUser.setToken("test");
+        testUser.insert();
+
+
     }
 }

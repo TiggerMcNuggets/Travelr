@@ -1,17 +1,25 @@
 Feature: CreateDestination
   Description: The purpose of this feature is to test the api endpoint related to creating a destination
 
-  Background: The database is populated
-    Given I populate the database
-    And The traveller id is 1
-    Then I will receive a 200 response
+#  Background: The database is populated
+#    Given I populate the database
+#    And The traveller id is 1
+#    Then I will receive a 200 response
 
   Scenario: Create a destination successfully
-    Given I provide the token "123"
-    And I provide complete destination information
-    When I create a destination for user with id 1
+    Given I am an authenticated user
+    And I create the destination
+    | name         | latitude | longitude | type     | district | country |
+    | Eiffel Tower | 5        | 5         | Landmark | Paris    | France  |
     Then I will receive a 201 response
-    And I will receive the id 11
+    And I will receive the id 1
+#
+#  Scenario: Create a destination successfully
+#    Given I provide the token "123"
+#    And I provide complete destination information
+#    When I create a destination for user with id 1
+#    Then I will receive a 201 response
+#    And I will receive the id 11
 
   Scenario: Create a destination successfully
     Given I provide the token "123"

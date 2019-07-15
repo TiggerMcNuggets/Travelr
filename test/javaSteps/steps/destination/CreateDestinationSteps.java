@@ -9,6 +9,9 @@ import play.libs.Json;
 import play.mvc.Http;
 import play.test.Helpers;
 
+import java.util.List;
+import java.util.Map;
+
 import static play.test.Helpers.route;
 
 public class CreateDestinationSteps {
@@ -48,6 +51,21 @@ public class CreateDestinationSteps {
     @Given("I provide incomplete destination information")
     public void iProvideIncompleteDestinationInformation() {
         destinationData = Json.parse("{}");
+    }
+
+
+
+    @Given("I create the destination")
+    public void i_create_the_destination(List<Map<String,String>> dataTable) {
+//        // Write code here that turns the phrase above into concrete actions
+//        // For automatic transformation, change DataTable to one of
+//        // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
+//        // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
+//        // Double, Byte, Short, Long, BigInteger or BigDecimal.
+//        //
+//        // For other transformations you can register a DataTableType.
+//        throw new cucumber.api.PendingException();
+        System.out.println(dataTable);
     }
 
 
