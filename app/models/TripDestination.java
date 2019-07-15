@@ -6,59 +6,51 @@ import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.validation.Constraint;
 
+/**
+ * Ebean entity model for the TripDestination table.
+ */
 @Entity
 public class TripDestination extends BaseModel {
 
     public static final TripDestinationFinder find = new TripDestinationFinder();
 
     @ManyToOne
-    @JsonIgnore
-    @JsonBackReference
     public Trip trip;
 
     @ManyToOne
-    public Destination destination ;
-
-    public Integer arrivalDate;
-
-    public Integer departureDate;
-
-    public String name;
-
     @Constraints.Required
+    public Destination destination;
+
+    @ManyToOne
+    public TripDestination parent;
+
+    // If ordinal is null then it is not part of the main trip. i.e it is still in the planning stage
     public int ordinal;
 
-    public Trip getTrip() {
-        return trip;
-    }
+    // Custom name for a trip destination eg. "Adam's Flat" instead of 100 Riccarton Road. Only seen within a trip
+    public String customName;
 
-    public void setTrip(Trip trip) {
+    public int arrivalDate;
+
+    public int departureDate;
+
+
+    public TripDestination(Trip trip, Destination destination) {
         this.trip = trip;
-    }
-
-    public Destination getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Destination destination) {
         this.destination = destination;
     }
 
-    public Integer getArrivalDate() {
-        return arrivalDate;
+
+    // GETTERS AND SETTERS
+
+    public TripDestination getParent() {
+        return parent;
     }
 
-    public void setArrivalDate(Integer arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-    public Integer getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(Integer departureDate) {
-        this.departureDate = departureDate;
+    public void setParent(TripDestination parent) {
+        this.parent = parent;
     }
 
     public int getOrdinal() {
@@ -69,12 +61,27 @@ public class TripDestination extends BaseModel {
         this.ordinal = ordinal;
     }
 
-    public TripDestination(Integer arrivalDate, Integer departureDate, int ordinal, Trip trip, Destination destination) {
+    public String getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
+    }
+
+    public int getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(int arrivalDate) {
         this.arrivalDate = arrivalDate;
+    }
+
+    public int getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(int departureDate) {
         this.departureDate = departureDate;
-        this.ordinal = ordinal;
-        this.trip = trip;
-        this.destination = destination;
-        this.name = destination.getName();
     }
 }
