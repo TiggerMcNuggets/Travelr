@@ -46,7 +46,6 @@
       <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
-        :regetTrips="regetTrips"
         :passedTrip="null"
         :updateViewTripPage="() => getUserTrips"
         :checkpointCreateTrip="checkpointCreateTrip"
@@ -123,15 +122,18 @@ ul {
 <script>
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
+// import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
+import StoreTripsMixin from "../mixins/StroreTripsMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-let tripRepository = RepositoryFactory.get("trip");
+// let tripRepository = RepositoryFactory.get("trip");
 
 export default {
   store,
 
-   mixins: [RollbackMixin],
+   mixins: [
+           RollbackMixin, StoreTripsMixin
+   ],
 
 
   // local variables
@@ -139,11 +141,10 @@ export default {
     return {
       showCreateTrip: false,
       searchValue: "",
-      trips: [],
       isAdmin: store.getters.getIsUserAdmin,
       isMyProfile: false,
       isAdminUser: false,
-      user_id: this.$route.params.id,
+      userId: this.$route.params.id,
       searchActive: false,
       undoRedoError: false
     };
@@ -164,33 +165,19 @@ export default {
       });
     }
   },
+
   // child components
   components: {
     UndoRedoButtons,
     CreateTrip: CreateTrips
   },
+
   methods: {
        /**
      * Sets all alert error visible fields to invisible
      */
     clearAlerts() {
       this.undoRedoError = false;
-    },
-
-
-
-    /**
-     * Gets trips from the API using using the user_id found in params
-     */
-    getTrips: function() {
-      tripRepository
-        .getUserTrips(this.user_id)
-        .then(res => {
-          this.trips = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
     },
 
     /**
@@ -201,28 +188,14 @@ export default {
     },
 
     /**
-     * Gets users trips from the API using using the user_id found in params
-     */
-    getUserTrips: function() {
-      tripRepository
-        .getUserTrips(this.user_id)
-        .then(res => {
-          this.trips = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-
-    /**
      * If the user is either admin or owns the profile
      * redirects the current page to the trip page
      * @param id the trip id
      */
     openTrip: function(id) {
-      let route = `/user/${this.user_id}/trips/`;
+      let route = `/user/${this.userId}/trips/`;
       if (this.isMyProfile || store.getters.getIsUserAdmin) {
-        route = `/user/${this.user_id}/trips/${id}`;
+        route = `/user/${this.userId}/trips/${id}`;
       }
       this.$router.push(route);
     },
@@ -240,8 +213,8 @@ export default {
      */
     deleteTrip: function(tripId) {
       this.clearAlerts();
-      tripRepository.deleteTrip(this.user_id, tripId).then(() => {
-        const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
+      this._deleteTrip(this.userId, tripId).then(() => {
+        const url = `/users/${this.userId}/trips/${tripId}/toggle_deleted`;
          this.rollbackCheckpoint(
         'DELETE',
         {
@@ -251,22 +224,21 @@ export default {
             url: url,
         }
         );
-        this.getUserTrips();
       });
     },
 
-    /**
-     * Calls the function toggleShowCreateTrip
-     * then gets the trips the current profile the user is on
-     */
-    regetTrips: function() {
-      this.toggleShowCreateTrip();
-      if (this.isMyProfile) {
-        this.getTrips();
-      } else {
-        this.getUserTrips();
-      }
-    },
+    // /**
+    //  * Calls the function toggleShowCreateTrip
+    //  * then gets the trips the current profile the user is on
+    //  */
+    // regetTrips: function() {
+    //   this.toggleShowCreateTrip();
+    //   if (this.isMyProfile) {
+    //     this.getTrips();
+    //   } else {
+    //     this.getUserTrips();
+    //   }
+    // },
 
     /**
      * Checks if the profile the user is on is theres
@@ -281,7 +253,7 @@ export default {
      * Adds a checkpoint when creating a trip
      */
     checkpointCreateTrip: function(tripId) {
-      const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
+      const url = `/users/${this.userId}/trips/${tripId}/toggle_deleted`;
       this.rollbackCheckpoint(
         'POST',
         {
@@ -298,7 +270,7 @@ export default {
     * Undoes the last action and gets destinations afterwards
     */
     undo: function() {
-      const actions = [this.getUserTrips, this.clearAlerts];
+      const actions = [() => this._getTrips(this.userId), this.clearAlerts];
       try {
         this.rollbackUndo(actions); 
       } catch (err) {
@@ -310,7 +282,7 @@ export default {
      * Redoes the last action and gets destinations afterwards
      */
     redo: function() {
-      const actions = [this.getUserTrips, this.clearAlerts];
+      const actions = [() => this._getTrips(this.userId), this.clearAlerts];
       try {
         this.rollbackRedo(actions);
       } catch (err) {
@@ -319,18 +291,11 @@ export default {
     }
   },
 
-    
-
-
 
   created: function() {
     this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;
-    if (this.isMyProfile) {
-      this.getTrips();
-    } else {
-      this.getUserTrips();
-    }
+    this._getTrips(this.userId)
   }
 };
 </script>

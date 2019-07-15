@@ -189,6 +189,8 @@ import {
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
 
+
+import StoreTripsMixin from '../mixins/StroreTripsMixin'
 import RollbackMixin from '../mixins/RollbackMixin';
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 let tripRepository = RepositoryFactory.get("trip");
@@ -196,14 +198,16 @@ let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
-  mixins: [RollbackMixin],
+  mixins: [
+          RollbackMixin,
+          StoreTripsMixin
+  ],
   components: {
     UndoRedoButtons,
     draggable: draggable
   },
   props: {
     toggleShowCreateTrip: Function,
-    regetTrips: Function,
     passedTrip: String,
     updateViewTripPage: Function,
     checkpointCreateTrip: Function
@@ -343,27 +347,14 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        if (this.isAdminUser) {
-          tripRepository
-            .createTripForUser(trip, this.id)
-            .then(res => {
-              this.checkpointCreateTrip(res.data.id)
-              this.regetTrips();
-            })
-            .catch(e => {
-              console.log(e);
-            });
-        } else {
-          tripRepository
-            .createTrip(trip)
-            .then(res => {
-              this.checkpointCreateTrip(res.data.id)
-              this.regetTrips();
-            })
-            .catch(e => {
-              console.log(e);
-            });
-        }
+        this._postTrip(this.id, trip)
+          .then(res => {
+            this.checkpointCreateTrip(res.data.id)
+            // this.regetTrips();
+          })
+          .catch(e => {
+            console.log(e);
+          });
       }
     },
 
@@ -374,8 +365,7 @@ export default {
     updateTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        tripRepository
-          .updateTrip(this.id, parseInt(this.passedTrip), trip)
+        this._putTrip(this.id, parseInt(this.passedTrip), trip)
           .then(() => {
               const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
               this.rollbackCheckpoint(
