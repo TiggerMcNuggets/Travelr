@@ -160,7 +160,7 @@ public class DestinationRepository {
         // Transfer destination in trips
         boolean destinationTaken = false;
         for (TripDestination tripDestination : tripDestinations) {
-            tripDestination.setDestination(destination);
+//            tripDestination.setDestination(destination);
             destinationTaken = true;
             tripDestination.save();
         }

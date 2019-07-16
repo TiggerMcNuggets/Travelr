@@ -15,7 +15,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
-import repository.TripRepository;
+
 
 import javax.inject.Inject;
 
@@ -32,12 +32,10 @@ public class UserController extends Controller {
 
     private UserRepository userRepository;
 
-    private TripRepository tripRepository;
 
     @Inject
-    public UserController(UserRepository userRepository, TripRepository tripRepository) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.tripRepository = tripRepository;
     }
 
     /**

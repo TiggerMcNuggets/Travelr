@@ -134,16 +134,6 @@ public class PopulateController extends Controller {
         dest9.insert();
         dest10.insert();
 
-        Trip trip1 = new Trip("Backpacking 2018", user1);
-        Trip trip2 = new Trip("New Trip", user2);
-
-        trip1.insert();
-        trip2.insert();
-
-        new TripDestination(1549085549, 1559085549, 0, trip1, dest1).insert();
-        new TripDestination(1547085549, 1558085549, 1, trip1, dest2).insert();
-        new TripDestination(1546085549, 1555085549, 0, trip2, dest7).insert();
-        new TripDestination(1541085549, 1546085549, 1, trip2, dest8).insert();
 
         return ok("Populated");
     }

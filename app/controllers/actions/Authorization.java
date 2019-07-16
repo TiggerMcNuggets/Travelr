@@ -105,15 +105,15 @@ public class Authorization {
         return CompletableFuture.completedFuture(Results.forbidden("Not admin and id from token does not match user id parameter"));
     }
 
-    /**
-     * @param tripId the trip id
-     * @return 404: no trip found, null: no errors
-     */
-    public static CompletionStage<Result> doesTripExist(Long tripId) {
-        Trip trip = Trip.find.findOne(tripId);
-        if (trip != null) return null;
-        return CompletableFuture.completedFuture(Results.notFound("No trip with given id found"));
-    }
+//    /**
+//     * @param tripId the trip id
+//     * @return 404: no trip found, null: no errors
+//     */
+//    public static CompletionStage<Result> doesTripExist(Long tripId) {
+////        Trip trip = Trip.find.findOne(tripId);
+////        if (trip != null) return null;
+////        return CompletableFuture.completedFuture(Results.notFound("No trip with given id found"));
+//    }
 
 
     /**

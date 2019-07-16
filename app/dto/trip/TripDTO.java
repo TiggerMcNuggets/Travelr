@@ -21,6 +21,8 @@ public class TripDTO {
 
     public List<TripDestinationDTO> destinations;
 
-    public List<TripDestinationDTO> unlinkedDestinations;
+    //public List<TripDestinationDTO> unlinkedDestinations;
+
+
 
 }

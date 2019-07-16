@@ -42,6 +42,27 @@ public class TripDestination extends BaseModel {
         this.destination = destination;
     }
 
+    // used in recursion
+    public TripDestination(TripDestination parent, int ordinal, String customName, int arrivalDate, int departureDate) {
+        this.parent = parent;
+        this.ordinal = ordinal;
+        this.customName = customName;
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
+    }
+
+    @Override
+    public String toString() {
+        return "TripDestination{" +
+                "trip=" + trip +
+                ", destination=" + destination +
+                ", parent=" + parent +
+                ", ordinal=" + ordinal +
+                ", customName='" + customName + '\'' +
+                ", arrivalDate=" + arrivalDate +
+                ", departureDate=" + departureDate +
+                '}';
+    }
 
     // GETTERS AND SETTERS
 
