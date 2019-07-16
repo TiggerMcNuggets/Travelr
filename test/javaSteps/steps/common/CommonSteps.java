@@ -113,13 +113,14 @@ public class CommonSteps  {
     @Given("I am an authenticated user")
     public void i_am_an_authenticated_user() {
         User testUser = new User("Test", "User", "test.user@testuser.com", 1);
+        testUser.insert();
         List<TravellerType> userTravellerTypes = new ArrayList<>();
         // finds first traveller type
         userTravellerTypes.add(TravellerType.find.byId(1L));
         testUser.setTravellerTypes(userTravellerTypes);
         testUser.setPassword("test");
-        testUser.setToken("test");
-        testUser.insert();
+        testUser.setToken();
+        testUser.save();
 
 
     }
