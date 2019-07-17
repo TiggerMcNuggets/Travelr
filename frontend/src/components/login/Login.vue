@@ -35,7 +35,7 @@
 .form-container {
   width: 50%;
   margin: 50px 0px;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 h1 {

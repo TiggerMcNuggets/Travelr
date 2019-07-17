@@ -1,8 +1,11 @@
 <template>
   <v-container fluid fill-height ma-0 pa-0>
     <v-layout row>
-      <v-flex col sm6>
-        <img class="home__logo" src="../assets/logo_dark.png" />
+      <v-flex col sm6 pa-5 ma-3 mt-5 ml-5 >
+        <div class="heading-container">
+        <img class="home__logo" src="../assets/logo2_dark.png" />
+        <h3 mt-2 class='home__tagline' >Taking the hassle out of your next business trip</h3>
+        </div>
         <Login class="home__login_area" />
       </v-flex>
       <v-flex col sm6>
@@ -13,9 +16,11 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap');
+
 .home__logo {
-  width: 30%;
-  padding: 40px 20px;
+  width: 60%;
+  /* padding: 40px 20px; */
 }
 
 .home__feature_img {
@@ -24,7 +29,19 @@
 
 .home__login_area {
   width: 80%;
-  padding: 20px;
+  /* padding: 20px; */
+}
+
+.home__tagline {
+    font-family: 'Roboto', sans-serif;
+    color: lightslategray;
+    font-weight: 300;
+    font-size: 20px;
+    margin-top: 15px;
+}
+
+.heading-container {
+    margin-bottom: 60px;
 }
 
 .overlay {

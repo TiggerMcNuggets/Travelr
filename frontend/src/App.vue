@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <v-app id="inspire">
+    <v-app v-if="this.$route.name == 'home'" id="inspire">
+      <router-view></router-view>
+    </v-app>
+    <v-app v-else >
       <v-toolbar fixed app clipped-right class="main-header">
         <router-link to="/" class="primary-logo">
           <v-toolbar-title class="fill-height toolbar">
