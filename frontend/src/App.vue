@@ -3,8 +3,8 @@
     <v-app id="inspire">
       <v-toolbar fixed app clipped-right class="main-header">
         <router-link to="/" class="primary-logo">
-          <v-toolbar-title class="fill-height">
-            <img class="fill-height" src="./assets/logo_white.png" />
+          <v-toolbar-title class="fill-height toolbar">
+            <img class="fill-height" src="./assets/logo2_white.png" />
           </v-toolbar-title>
         </router-link>
       </v-toolbar>
@@ -67,8 +67,14 @@
   height: 50%;
 }
 
+.v-toolbar__content {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .fill-height {
   height: 100%;
+  // align-self: right;
 }
 </style>
 
