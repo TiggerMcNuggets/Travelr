@@ -110,7 +110,7 @@ public class CommonSteps  {
         }
     }
 
-    @Given("I am an authenticated user")
+    @Given("I am an authenticated user who is logged in")
     public void i_am_an_authenticated_user() {
         User testUser = new User("Test", "User", "test.user@testuser.com", 1);
         testUser.insert();
@@ -121,7 +121,22 @@ public class CommonSteps  {
         testUser.setPassword("test");
         testUser.setToken();
         testUser.save();
+        // this traveller will have id 2L as we already have the master admin from the sql script
 
 
+    }
+
+    @Given("I am an authenticated user who is NOT logged in")
+    public void i_am_an_authenticated_user_who_is_NOT_logged_in() {
+        // this user will have not token set, therefore is not logged in
+        User testUser = new User("Test", "User", "test.user@testuser.com", 1);
+        testUser.insert();
+        List<TravellerType> userTravellerTypes = new ArrayList<>();
+        // finds first traveller type
+        userTravellerTypes.add(TravellerType.find.byId(1L));
+        testUser.setTravellerTypes(userTravellerTypes);
+        testUser.setPassword("test");
+        testUser.save();
+        // this traveller will have id 2L as we already have the master admin from the sql script
     }
 }
