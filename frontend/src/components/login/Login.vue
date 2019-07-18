@@ -1,38 +1,27 @@
 <template>
-  <div class="width-for-container">
-    <div class="form-container">
-      <h1>Login</h1>
+  <div>
+    <v-text-field
+      ref="email_input"
+      v-model="user.email"
+      v-on:keyup.enter="goToPasswordInput"
+      label="Email"
+    ></v-text-field>
 
-      <v-text-field 
-        ref="email_input" 
-        v-model="user.email" 
-        v-on:keyup.enter="goToPasswordInput" 
-        label="Email">
-      </v-text-field>
+    <v-text-field
+      ref="password_input"
+      v-model="user.password"
+      v-on:keyup.enter="login"
+      label="Password"
+      type="password"
+    ></v-text-field>
 
-      <v-text-field 
-        ref="password_input" 
-        v-model="user.password" 
-        v-on:keyup.enter="login" 
-        label="Password" 
-        type="password">
-      </v-text-field>
+    <v-btn class="login-button" large round v-on:click="login" color="primary">Login</v-btn>
 
-      <v-btn class="login-button" 
-        large 
-        round 
-        v-on:click="login" 
-        color="primary"
-        >
-        Login
-      </v-btn>
-      
-      <p>
-        Don't have an account?
-        <router-link to="/signup">Click here </router-link>to sign up
-      </p>
-      <v-alert :value="loginAlert" color="error">Incorrect email and/or password</v-alert>
-    </div>
+    <p>
+      Don't have an account?
+      <router-link to="/signup">Click here</router-link>to sign up
+    </p>
+    <v-alert :value="loginAlert" color="error">Incorrect email and/or password</v-alert>
   </div>
 </template>
 
@@ -46,7 +35,7 @@
 .form-container {
   width: 50%;
   margin: 50px 0px;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 h1 {
