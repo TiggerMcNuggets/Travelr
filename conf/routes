@@ -71,6 +71,7 @@ GET         /api/users/:id/trips                controllers.TripController.getTr
 
 
 GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
+GET         /api/users/:user_id/trips/:trip_id/iCal  controllers.TripController.getUserTripAsICalFile(user_id: Long, trip_id: Long)
 
 # Trips
 GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)

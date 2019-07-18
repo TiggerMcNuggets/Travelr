@@ -33,6 +33,11 @@ javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
 
 libraryDependencies += javaJdbc % Test
 
+// Dependecy for iCal4j
+// https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
+libraryDependencies += "org.mnode.ical4j" % "ical4j" % "3.0.0"
+
+
 // Dependencies for cucumber tests
 libraryDependencies ++= Seq (
   "io.cucumber" % "cucumber-core" % "4.2.0" % " test " ,

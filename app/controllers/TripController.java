@@ -16,6 +16,7 @@ import io.ebean.Ebean;
 import models.Trip;
 import models.TripDestination;
 import models.User;
+import net.fortuna.ical4j.model.Calendar;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -23,10 +24,13 @@ import play.mvc.Http;
 import play.mvc.Result;
 import repository.TripRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import utils.iCalCreator;
 
 
 public class TripController extends Controller {
@@ -349,5 +353,14 @@ public class TripController extends Controller {
             return ok(response.toString());
         });
 
+    }
+
+
+    public CompletionStage<Result> getUserTripAsICalFile(Long userId, Long tripId){
+        Trip trip = Trip.find.findOne(tripId);
+        iCalCreator creator = new iCalCreator();
+        Calendar iCalString = creator.createCalendarFromTrip(trip);
+        File file = new File(trip.name+".ics");
+        return CompletableFuture.completedFuture(ok(file));
     }
 }
