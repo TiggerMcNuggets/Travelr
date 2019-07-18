@@ -24,18 +24,35 @@ Feature: CreateDestination
     }
     """
 
-
   Scenario: Create a destination with incomplete destination information
-  Given I am an authenticated user who is logged in
-  When I create the destination
-    | name         | latitude | longitude | type     | district | country |
-    |              | 5        | 5         | Landmark | Paris    | France  |
-  Then I will receive a 400 response
-
+    Given I am authenticated
+    When I want to create a destination
+    And The body is
+    """
+    {
+      "name": "Eiffel Tower",
+      "latitude": 5.0,
+      "longitude": 5.0,
+      "type": "Landmark",
+      "district": "Paris"
+    }
+    """
+    And I send the request
+    Then I will receive the response code 400
 
   Scenario: Create a destination when I am not logged in
-    Given I am an authenticated user who is NOT logged in
-    When I create the destination
-      | name         | latitude | longitude | type     | district | country |
-      | Eiffel Tower | 5        | 5         | Landmark | Paris    | France  |
-    Then I will receive a 401 response
+    Given I am not authenticated
+    When I want to create a destination
+    And The body is
+    """
+    {
+      "name": "Eiffel Tower",
+      "latitude": 5.0,
+      "longitude": 5.0,
+      "type": "Landmark",
+      "district": "Paris",
+      "country": "France"
+    }
+    """
+    And I send the request
+    Then I will receive the response code 401

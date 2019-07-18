@@ -119,8 +119,9 @@ public class CommonSteps  {
     }
 
     @Given("I am not authenticated")
-    public void i_am_an_authenticated_user_who_is_NOT_logged_in() {
+    public void iAmNotAuthenticated() {
         createTestUser(); // User will have an id of 2l
+        state.getRequest().header("X-Authorization", "");
     }
 
     @When("The body is")
