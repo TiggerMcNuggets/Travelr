@@ -22,9 +22,6 @@ import DestinationEditRequests from "../components/admin/DestinationEditRequests
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
 
-import Profile from "../views/Profile2";
-import Media from "../views/Media";
-
 const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
 
@@ -109,20 +106,6 @@ let router = new Router({
       name: "home",
       component: Home,
       beforeEnter: unauthGuard
-    },
-
-    {
-      path: "/profile",
-      name: "profile",
-      component: Profile,
-      beforeEnter: authGuard
-    },
-
-    {
-      path: "/media",
-      name: "media",
-      component: Media,
-      beforeEnter: authGuard
     },
 
     {
