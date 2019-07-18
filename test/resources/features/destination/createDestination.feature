@@ -5,38 +5,38 @@ Feature: CreateDestination
     Given I am authenticated
     When I want to create a destination
     And The body is
-    """
-    {
-      "name": "Eiffel Tower",
-      "latitude": 5.0,
-      "longitude": 5.0,
-      "type": "Landmark",
-      "district": "Paris",
-      "country": "France"
-    }
-    """
+      """
+      {
+        "name": "Eiffel Tower",
+        "latitude": 5.0,
+        "longitude": 5.0,
+        "type": "Landmark",
+        "district": "Paris",
+        "country": "France"
+      }
+      """
     And I send the request
     Then I will receive the response code 201
     And I will receive the response body
-    """
-    {
-      "id": 1
-    }
-    """
+      """
+      {
+        "id": 1
+      }
+      """
 
   Scenario: Create a destination with incomplete destination information
     Given I am authenticated
     When I want to create a destination
     And The body is
-    """
-    {
-      "name": "Eiffel Tower",
-      "latitude": 5.0,
-      "longitude": 5.0,
-      "type": "Landmark",
-      "district": "Paris"
-    }
-    """
+      """
+      {
+        "name": "Eiffel Tower",
+        "latitude": 5.0,
+        "longitude": 5.0,
+        "type": "Landmark",
+        "district": "Paris"
+      }
+      """
     And I send the request
     Then I will receive the response code 400
 
@@ -44,15 +44,15 @@ Feature: CreateDestination
     Given I am not authenticated
     When I want to create a destination
     And The body is
-    """
-    {
-      "name": "Eiffel Tower",
-      "latitude": 5.0,
-      "longitude": 5.0,
-      "type": "Landmark",
-      "district": "Paris",
-      "country": "France"
-    }
-    """
+      """
+      {
+        "name": "Eiffel Tower",
+        "latitude": 5.0,
+        "longitude": 5.0,
+        "type": "Landmark",
+        "district": "Paris",
+        "country": "France"
+      }
+      """
     And I send the request
     Then I will receive the response code 401
