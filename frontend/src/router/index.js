@@ -3,7 +3,7 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
-import Home from "../components/home/Home.vue"
+import Home from "../views/Home.vue"
 import Dashboard from "../components/profile/Profile"
 import ProfilePhotos from "../components/profile/ProfilePhotos"
 import ProfileTrips from "../components/profile/ProfileTrips"
