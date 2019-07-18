@@ -24,7 +24,10 @@ import play.mvc.Http;
 import play.mvc.Result;
 import repository.TripRepository;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -360,7 +363,17 @@ public class TripController extends Controller {
         Trip trip = Trip.find.findOne(tripId);
         iCalCreator creator = new iCalCreator();
         Calendar iCalString = creator.createCalendarFromTrip(trip);
-        File file = new File(trip.name+".ics");
-        return CompletableFuture.completedFuture(ok(file));
+        //File file = new File(trip.name+".ics");
+        try {
+            File tempFile = File.createTempFile(trip.name, ".ics");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
+            bw.write(iCalString.toString());
+            bw.close();
+            return CompletableFuture.completedFuture(ok(tempFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CompletableFuture.completedFuture(ok());
+        }
+
     }
 }

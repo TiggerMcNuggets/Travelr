@@ -32,19 +32,19 @@ public class iCalCreator {
         calendar.getProperties().add(CalScale.GREGORIAN);
 
         for (TripDestination destination: trip.destinations) {
-            System.out.println(destination.getArrivalDate());
-            System.out.println(destination.getDepartureDate());
-            //LocalDateTime startDate = Instant.ofEpochMilli(destination.getArrivalDate()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            //LocalDateTime endDate = Instant.ofEpochMilli(destination.getDepartureDate()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-            DateTime start = new DateTime(new Date(destination.getArrivalDate() * 1000));
-            DateTime end = new DateTime(new Date(destination.getDepartureDate() * 1000));
+
+            Date start = new Date(new Date(destination.getArrivalDate() * 1000L));
+            Date end = new Date(new Date(destination.getDepartureDate() * 1000L));
+
             System.out.println(start);
-            System.out.println(end);
+
             VEvent dest = new VEvent(start, end, destination.getDestination().getName());
+
             calendar.getComponents().add(dest);
         }
         //System.out.println(calendar.toString());
         //return calendar.toString();
+        //calendar.validate();
         return calendar;
     }
 
