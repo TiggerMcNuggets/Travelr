@@ -6,9 +6,9 @@
     </v-flex>
     <v-layout row wrap>
 
-      <MediaFilter activeFilter="activeFilter" mediaCounts="mediaCounts"></MediaFilter>
+      <MediaFilter :activeFilter="activeFilter" :organisedMedia="organisedMedia"></MediaFilter>
 
-      <MediaGrid media="media"></MediaGrid>
+      <MediaGrid :organisedMedia="organisedMedia"></MediaGrid>
 
     </v-layout>
   </v-layout>
@@ -23,6 +23,7 @@
 <script>
   import MediaFilter from "../components/media/MediaFilter";
   import MediaGrid from "../components/media/MediaGrid";
+  import { temp } from "../components/media/temp";
 
   export default {
     name: "Media",
@@ -30,7 +31,8 @@
     data() {
       return {
         activeFilter: 0,
-        media: null
+        albums: temp,
+        mediaCounts: null
       }
     },
 
@@ -39,10 +41,37 @@
       MediaGrid
     },
 
+    computed: {
+      organisedMedia: function () {
+        let organisedMedia = {
+          "images": [],
+          "videos": []
+        };
+
+        this.albums.forEach(function (album) {
+          album.content.forEach(function (media) {
+
+            if (media.type === "image") {
+              organisedMedia.images.push(media);
+            } else if (media.type === "video") {
+              organisedMedia.videos.push(media);
+            }
+          });
+        });
+
+        return organisedMedia;
+      },
+
+      albumCount: function () {
+        return this.albums.length;
+      }
+    },
+
     methods: {
       changeFilter(num) {
         this.activeFilter = num;
       }
     }
+
   }
 </script>

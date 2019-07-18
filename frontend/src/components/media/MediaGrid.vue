@@ -2,7 +2,7 @@
   <v-flex xs9>
     <v-container v-bind="{ [`grid-list-lg`]: true }" fluid class="media-container">
       <v-layout row wrap>
-        <v-flex v-for="n in 15" :key="n" xs12 md4>
+        <v-flex v-for="n in 38" :key="n" xs12 md4>
           <v-card flat tile class="media-element">
             <!--
             <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
@@ -12,7 +12,7 @@
             <div v-else class="triangle pink-color"></div>
 -->
             <v-img
-                    src="https://www.canterbury.ac.nz/engineering/contact-us/people/1485116691697_Moffat-Mathews-low.jpg"
+                    :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
                     height="300px"
             ></v-img>
           </v-card>
@@ -41,7 +41,7 @@
     name: "MediaGrid",
 
     props: {
-      media: Array
+      organisedMedia: Object
     },
 
     data() {

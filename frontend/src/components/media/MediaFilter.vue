@@ -3,9 +3,8 @@
     <v-list class="list">
       <v-list-tile v-for="(item, i) in filterCategories" :key="i" @click="changeFilter(i)" class="tile">
         <v-list-tile-content>
-          <v-list-tile-title v-html="item.title" ></v-list-tile-title>
+          <v-list-tile-title v-html="item.title +  ` (` + item.count +`)`" ></v-list-tile-title>
         </v-list-tile-content>
-
       </v-list-tile>
     </v-list>
 
@@ -49,18 +48,24 @@ export default {
     return {
       filterCategories: [
         {
-          title: 'All <span class="grey--text text--lighten-1">(12)</span>',
+          title: 'All', count: 0
         },
         {
-          title: 'Albums <span class="grey--text text--lighten-1">(2)</span>',
+          title: 'Albums', count: 0
         },
         {
-          title: 'Photos <span class="grey--text text--lighten-1">(9)</span>',
+          title: 'Photos', count: 0
         },
         {
-          title: 'Videos <span class="grey--text text--lighten-1">(3)</span>',
+          title: 'Videos', count: 0
         }
       ]
+    }
+  },
+
+  computed: {
+    filterCategories: function () {
+
     }
   },
 
