@@ -4,11 +4,13 @@
   <v-card>
     <div class="outer-container">
       <div class="inner-container">
-        <v-card-title primary-title>
-          <h2 class="headline">Choose Existing Photo</h2>
+        <v-card-title primary-title class="headline indigo white--text">
+          <h2 class="font-weight-regular">Add Existing Photo</h2>
         </v-card-title>
 
         <v-divider></v-divider>
+
+        //need a chooser here
 
         <ul>
           <li v-for="row in files" :value="row.value" :key="row.value">
