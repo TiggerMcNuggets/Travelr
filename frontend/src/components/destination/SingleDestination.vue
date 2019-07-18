@@ -213,7 +213,7 @@
   import base_url from "../../repository/BaseUrl";
 
   // components
-  import PhotoSelect from "../photos/PhotoSelect";
+  import PhotoSelect from "../photos/PhotoUpload";
   import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
 
   let destinationRepository = RepositoryFactory.get("destination");
