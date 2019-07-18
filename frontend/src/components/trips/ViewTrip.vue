@@ -16,47 +16,62 @@
       </div>
 
     <v-divider class="photo-header-divider"></v-divider>
-      <v-timeline align-top >
       <v-dialog v-model="shouldDisplayDialog" max-width="100%">
-          <create-trip style="background-color: white;"
-                      v-if="true"
-                      :regetTrips="() => console.log('no need')"
-                      :passedTrip="tripId"
-                      :updateViewTripPage="this.updateViewTripPage"
+          <CreateTrips style="background-color: white;"
+                       v-if="true"
+                       :regetTrips="() => console.log('no need')"
+                       :passedTrip="tripId"
+                       :updateViewTripPage="this.updateViewTripPage"
           />
       </v-dialog>
-      <v-timeline-item
-        v-for="(destination, i) in trip.destinations"
-        :key="i"
-        color="red lighten-2"
-        fill-dot
-      >
-        <v-card
-          color="red lighten-2"
-          dark
-        >
-          <v-card-title class="title"> {{ destination.name }}</v-card-title>
-          <v-card-text class="white text--primary">
-            <p v-if="destination.arrivalDate != null">Arrival Date: {{ destination.arrivalDate }}</p>
-            <p v-if="destination.departureDate != null">Departure Date: {{ destination.departureDate }}</p>
-            <v-btn
-              color="red lighten-2"
-              class="mx-0"
-              outline
-              @click="viewDestination(destination.id)"
-            >
-              View Destination
-            </v-btn>
-          </v-card-text>
-        </v-card>
-      </v-timeline-item>
+      <v-timeline align-top dense>
+      <draggable
+              class="list-group"
+              tag="ul"
+              v-model="trip.destinations"
+              @start="drag = true"
+              @end="drag = false">
+          <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+
+              <v-timeline-item
+                v-for="(destination, i) in trip.destinations"
+                :key="i"
+                class="trip-timeline-item-width"
+                color="red lighten-2"
+                fill-dot
+              >
+                <v-card
+                    color="red lighten-2"
+                    dark
+                >
+                  <v-card-title class="title"> {{ destination.name }}</v-card-title>
+                  <v-card-text class="white text--primary">
+                    <p v-if="destination.arrivalDate != null">Arrival Date: {{ destination.arrivalDate }}</p>
+                    <p v-if="destination.departureDate != null">Departure Date: {{ destination.departureDate }}</p>
+                    <v-btn
+                      color="red lighten-2"
+                      class="mx-0"
+                      outline
+                      @click="viewDestination(destination.id)"
+                    >
+                      View Destination
+                    </v-btn>
+                  </v-card-text>
+                </v-card>
+              </v-timeline-item>
+          </transition-group>
+      </draggable>
     </v-timeline>
 </v-container>
 </v-card>
 
 </template>
 
-
+<style>
+    .trip-timeline-item-width {
+        width: 25%;
+    }
+</style>
 
 <script>
 import tripRepo from "../../repository/TripRepository";
@@ -64,12 +79,18 @@ import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
 import dateTime from "../common/dateTime/dateTime.js";
 
+import draggable from 'vuedraggable';
 
 export default {
   store,
+  components: {
+    draggable,
+    CreateTrips
+  },
   // local variables
   data() {
     return {
+        drag: false,
         isMyProfile: false,
         isAdmin: store.getters.getIsUserAdmin,
         tripId:  this.$route.params.trip_id,
@@ -119,9 +140,6 @@ export default {
           });
       }
   },
-    components: {
-        CreateTrip: CreateTrips
-    },
 
   created: function() {
       this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
