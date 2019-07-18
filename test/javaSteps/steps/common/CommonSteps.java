@@ -3,6 +3,7 @@ package javaSteps.steps.common;
 import com.fasterxml.jackson.databind.JsonNode;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import models.TravellerType;
 import models.User;
@@ -110,33 +111,51 @@ public class CommonSteps  {
         }
     }
 
-    @Given("I am an authenticated user who is logged in")
-    public void i_am_an_authenticated_user() {
-        User testUser = new User("Test", "User", "test.user@testuser.com", 1);
-        testUser.insert();
-        List<TravellerType> userTravellerTypes = new ArrayList<>();
-        // finds first traveller type
-        userTravellerTypes.add(TravellerType.find.byId(1L));
-        testUser.setTravellerTypes(userTravellerTypes);
-        testUser.setPassword("test");
+    @Given("I am authenticated")
+    public void iAmAuthenticated() {
+        User testUser = createTestUser(); // User will have an id of 2L
         testUser.setToken();
-        testUser.save();
-        // this traveller will have id 2L as we already have the master admin from the sql script
-
-
+        state.getRequest().header("X-Authorization", testUser.getToken());
     }
 
-    @Given("I am an authenticated user who is NOT logged in")
+    @Given("I am not authenticated")
     public void i_am_an_authenticated_user_who_is_NOT_logged_in() {
-        // this user will have not token set, therefore is not logged in
-        User testUser = new User("Test", "User", "test.user@testuser.com", 1);
-        testUser.insert();
+        createTestUser(); // User will have an id of 2l
+    }
+
+    @When("The body is")
+    public void theBodyIs(String reqBody) {
+        state.getRequest().bodyJson(Json.parse(reqBody));
+    }
+
+    @When("I send the request")
+    public void iSendTheRequest() {
+        state.setResult(route(state.getApplication(), state.getRequest()));
+    }
+
+    @Then("I will receive the response code {int}")
+    public void iWillReceiveTheResponseCode(int responseCode) {
+        Assert.assertEquals(responseCode, state.getResult().status());
+    }
+
+    @Then("I will receive the response body")
+    public void iWillReceiveTheResponseBody(String resBody) {
+        Assert.assertEquals(Json.parse(resBody), Json.parse(contentAsString(state.getResult())));
+    }
+
+    private User createTestUser() {
+        User user = new User("Test", "User", "test.user@testuser.com", 1);
+        user.insert();
+
         List<TravellerType> userTravellerTypes = new ArrayList<>();
-        // finds first traveller type
-        userTravellerTypes.add(TravellerType.find.byId(1L));
-        testUser.setTravellerTypes(userTravellerTypes);
-        testUser.setPassword("test");
-        testUser.save();
-        // this traveller will have id 2L as we already have the master admin from the sql script
+        userTravellerTypes.add(TravellerType.find.byId(1L));// finds first traveller type
+        user.setTravellerTypes(userTravellerTypes);
+
+        user.setPassword("test");
+        user.save();
+
+        state.setUser(user);
+        return user;
+
     }
 }
