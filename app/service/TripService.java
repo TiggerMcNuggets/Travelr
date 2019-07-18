@@ -1,5 +1,6 @@
 package service;
 
+import dto.trip.CreateTripDTO;
 import dto.trip.TripDTO;
 import dto.trip.TripDestinationDTO;
 import models.Trip;
@@ -24,48 +25,57 @@ public class TripService {
     @Inject
     public TripService(DatabaseExecutionContext context) { this.context = context; }
 
-    public CompletableFuture<Trip> createTrip(TripDTO tripDTO, User user) {
+    public CompletableFuture<Trip> updateTrip(TripDTO tripDTO, User user) {
 
         return supplyAsync(() -> {
             Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
 
             List<TripDestination> tripDestinationList = new ArrayList<>();
 
-            for(TripDestinationDTO dto : tripDTO.destinations) {
-                tripDestinationList.addAll(FetchAllTripDestinations(dto, null));
-            }
-
-            for(TripDestination td : tripDestinationList) {
-                System.out.println(td);
-            }
+            trip.setDestinations(tripDestinationList);
 
             return trip;
-        });
+        }, context);
     }
 
+    /**
+     * Creates a trip from a CreateTripDTO and sets the owner of the trip to user
+     * @param tripDTO
+     * @param user
+     * @return
+     */
+    public CompletableFuture<Long> createTrip(CreateTripDTO tripDTO, User user) {
+        return supplyAsync(() -> {
 
-    private List<TripDestination> FetchAllTripDestinations(TripDestinationDTO dto, TripDestination parent) {
+            Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
 
-        TripDestination td = new TripDestination(parent, dto.ordinal, dto.customName, dto.arrivalDate, dto.departureDate);
+            trip.save();
 
-        if(parent != null) {
-            td.parent = parent;
-        }
-
-        ArrayList<TripDestination> list  = new ArrayList<>();
-
-        list.add(td);
-
-
-
-        if (dto.children == null && dto.children.size() == 0) return list;
-
-        for(TripDestinationDTO child : dto.children) {
-            list.addAll(FetchAllTripDestinations(child, td));
-        }
-
-        return list;
+            return trip.id;
+        }, context);
     }
 
+    /**
+     * Get a trip by Id
+     * @param tripId
+     * @return
+     */
+    public CompletableFuture<Trip> getTripById(Long tripId) {
+        return supplyAsync(() -> {
 
+            return Trip.find.byId(tripId);
+
+        }, context);
+    }
+
+    /**
+     * Get all trips for a user
+     * @param userId
+     * @return
+     */
+    public CompletableFuture<List<Trip>> getTripsForUser(Long userId) {
+        return supplyAsync(() -> {
+            return Trip.find.query().where().eq("user.id", userId).findList();
+        }, context);
+    }
 }

@@ -23,8 +23,7 @@ public class TripDestination extends BaseModel {
     @Constraints.Required
     public Destination destination;
 
-    @ManyToOne
-    public TripDestination parent;
+    public int depth;
 
     // If ordinal is null then it is not part of the main trip. i.e it is still in the planning stage
     public int ordinal;
@@ -43,8 +42,7 @@ public class TripDestination extends BaseModel {
     }
 
     // used in recursion
-    public TripDestination(TripDestination parent, int ordinal, String customName, int arrivalDate, int departureDate) {
-        this.parent = parent;
+    public TripDestination(String customName, int ordinal, int depth, int arrivalDate, int departureDate) {
         this.ordinal = ordinal;
         this.customName = customName;
         this.arrivalDate = arrivalDate;
@@ -56,7 +54,7 @@ public class TripDestination extends BaseModel {
         return "TripDestination{" +
                 "trip=" + trip +
                 ", destination=" + destination +
-                ", parent=" + parent +
+                ", depth=" + depth +
                 ", ordinal=" + ordinal +
                 ", customName='" + customName + '\'' +
                 ", arrivalDate=" + arrivalDate +
@@ -66,13 +64,6 @@ public class TripDestination extends BaseModel {
 
     // GETTERS AND SETTERS
 
-    public TripDestination getParent() {
-        return parent;
-    }
-
-    public void setParent(TripDestination parent) {
-        this.parent = parent;
-    }
 
     public int getOrdinal() {
         return ordinal;
@@ -104,5 +95,29 @@ public class TripDestination extends BaseModel {
 
     public void setDepartureDate(int departureDate) {
         this.departureDate = departureDate;
+    }
+
+    public Trip getTrip() {
+        return trip;
+    }
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 }

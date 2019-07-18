@@ -61,7 +61,8 @@ POST        /api/destinations/edit_requests/:requestId/deny          controllers
 
 
 
-POST        /api/trips          controllers.TripController.createTrip(request: Request)
+POST        /api/users/:id/trips          controllers.TripController.createTrip(request: Request)
+PUT         /api/users/:id/trips            controllers.TripController.updateTrip(request: Request)
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE

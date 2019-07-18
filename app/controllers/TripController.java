@@ -1,11 +1,15 @@
 package controllers;
 
 
+import akka.dispatch.sysmsg.Create;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 
+import controllers.actions.Attrs;
+import controllers.actions.Authorization;
+import dto.trip.CreateTripDTO;
 import dto.trip.TripDTO;
 import io.ebean.Ebean;
 
@@ -14,12 +18,15 @@ import models.TripDestination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import play.mvc.StatusHeader;
 import service.TripService;
 
+import java.rmi.ServerException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -38,6 +45,83 @@ public class TripController extends Controller {
 
         this.tripService = tripService;
     }
+
+    /**
+     * Create a trip endpoint
+     * @param request
+     * @return
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> createTrip(Http.Request request) {
+
+        Form<CreateTripDTO> createTripForm = formFactory.form(CreateTripDTO.class).bindFromRequest(request);
+
+        if(createTripForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        User user = request.attrs().get(Attrs.USER);
+
+        CreateTripDTO dto = createTripForm.get();
+
+
+        return tripService.createTrip(dto, user).thenApplyAsync((tripId) -> created(Json.toJson(tripId)));
+    }
+
+    /**
+     * update trip endpoint
+     * @param request
+     * @return
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateTrip(Http.Request request) {
+
+        Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
+        TripDTO dto = createTripForm.get();
+
+        if(createTripForm.hasErrors()) {
+            System.out.println(createTripForm.errors());
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        User user = request.attrs().get(Attrs.USER);
+
+
+        return tripService.updateTrip(dto, user).thenApplyAsync((trip) -> ok(Json.toJson(new TripDTO(trip))));
+    }
+
+    /**
+     * Get all trips for a given user
+     * @param request
+     * @param userId
+     * @return
+     */
+    public CompletionStage<Result> getUserTrips(Http.Request request, Long userId) {
+    // TODO ADD ADMIN MIDDLEWARE
+        return tripService.getTripsForUser(userId).thenApplyAsync(trips -> {
+            ArrayList<TripDTO> tripDTOS = new ArrayList<>();
+
+            for(Trip trip : trips) {
+                tripDTOS.add(new TripDTO(trip));
+            }
+
+            return ok(Json.toJson(tripDTOS));
+        });
+
+    }
+
+    /**
+     * Get a trip by tripId
+     * @param request
+     * @param tripId
+     * @return
+     */
+    public CompletionStage<Result> getTripById(Http.Request request, Long tripId) {
+    // TODO ADD ADMIN MIDDLEWARE
+
+        return tripService.getTripById(tripId).thenApplyAsync(trip -> ok(Json.toJson(new TripDTO(trip))));
+    }
+
 
 //    /**
 //     * Gets a list of trips that belongs to a user
@@ -346,19 +430,5 @@ public class TripController extends Controller {
 //            return ok(response.toString());
 //        });
 //
-
-
-
-    public CompletionStage<Result> createTrip(Http.Request request) {
-
-        Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
-
-        TripDTO dto = createTripForm.get();
-
-        User user = new User("123", "123" , "123", 1);
-
-        return tripService.createTrip(dto, user).thenApplyAsync((trip) -> ok());
-
-    }
 
 }
