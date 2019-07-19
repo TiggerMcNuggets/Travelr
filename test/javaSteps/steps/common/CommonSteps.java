@@ -5,6 +5,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
+import models.Destination;
 import models.TravellerType;
 import models.User;
 import org.junit.Assert;
@@ -156,6 +157,7 @@ public class CommonSteps  {
         user.save();
 
         state.setUser(user);
+
         return user;
 
     }

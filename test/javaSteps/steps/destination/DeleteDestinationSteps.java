@@ -22,7 +22,7 @@ public class DeleteDestinationSteps {
 
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
-    private Long destinationId = 0L;
+    private Destination destination;
 
 //    @Given("I own a destination")
 //    public void i_own_a_destination() {
@@ -114,40 +114,40 @@ public class DeleteDestinationSteps {
     @When("I want to soft delete the destination")
     public void i_want_to_soft_delete_the_destination() {
         state.getRequest().method("PUT");
-        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/destinations/%s/toggle_deleted", state.getUser().getId(), destinationId));
+        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/destinations/%s/toggle_deleted", state.getUser().getId(), destination.getId()));
     }
 
     @Then("The destination does not exist")
     public void the_destination_does_not_exist() {
-        Assert.assertNull(Destination.find.findById(destinationId));
+        Assert.assertFalse(Destination.find.findByIdIncludeDeleted(destination.getId()).deleted);
     }
 
     @Then("The destination does exist")
     public void the_destination_does_exist() {
-        Assert.assertNotNull(Destination.find.findById(destinationId));
+        Assert.assertEquals(Destination.find.findById(destination.getId()), destination);
     }
 
     @Given("I do not own a destination")
     public void i_do_not_own_a_destination() {
-        destinationId = 0L;
+        createTestDestination(state.getUser());
+        destination.setId(10L);
+        // By not inserting, the destination does not exist
     }
 
     @Given("I own a destination")
     public void i_own_a_destination() {
-        Destination testDestination = createTestDestination(state.getUser());
-        destinationId = testDestination.getId();
+        createTestDestination(state.getUser());
+        destination.insert();
     }
 
     @Given("The global admin owns a destination")
     public void the_global_admin_owns_a_destination() {
-        Destination testDestination = createTestDestination(User.find.findById(1L));
-        destinationId = testDestination.getId();
+        createTestDestination(User.find.findById(1L));
+        destination.insert();
     }
 
-    private Destination createTestDestination(User user) {
-        Destination destination = new Destination("Eiffel Tower", 5.0, 5.0, "Landmark", "Paris", "France", user );
-        destination.insert();
-        return destination;
+    private void createTestDestination(User user) {
+        destination = new Destination("Eiffel Tower", 5.0, 5.0, "Landmark", "Paris", "France", user );
     }
 }
 

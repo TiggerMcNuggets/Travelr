@@ -9,6 +9,14 @@ Feature: DeleteDestination
     Then I will receive the response code 200
     And The destination does not exist
 
+  Scenario: Delete destination when unauthenticated
+    Given I am not authenticated
+    And I own a destination
+    When I want to soft delete the destination
+    And I send the request
+    Then I will receive the response code 401
+    And The destination does exist
+
   Scenario: Delete destination that is not mine
     Given I am authenticated
     And The global admin owns a destination
@@ -23,5 +31,4 @@ Feature: DeleteDestination
     When I want to soft delete the destination
     And I send the request
     Then I will receive the response code 404
-    And The destination does exist
 

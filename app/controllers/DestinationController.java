@@ -259,12 +259,17 @@ public class DestinationController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> toggleDestinationDeleted(Http.Request req, Long userId, Long destId) {
+
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
         if (middlewareRes != null) return middlewareRes;
         Destination destination = Destination.find.findByIdIncludeDeleted(destId);
 
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+
+        CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(req, userId, destination.user.id);
+        if (authorisedToView != null) return authorisedToView;
+
         return destinationRepository.toggleDestinationDeleted(destId).thenApplyAsync(deleted -> {
 
             ObjectMapper mapper = new ObjectMapper();
