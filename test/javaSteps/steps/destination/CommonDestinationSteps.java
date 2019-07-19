@@ -9,7 +9,6 @@ import org.junit.Assert;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class CommonDestinationSteps {
 
@@ -48,7 +47,6 @@ public class CommonDestinationSteps {
     public void myDestinationIs(List<Map<String, String>> dataTable) {
         // Refresh destination
 
-        Destination destination = Destination.find.findById(state.getDestination().getId());
         state.setDestination(Destination.find.findById(state.getDestination().getId()));
 
         Map<String, String> destInfo = dataTable.get(0);
