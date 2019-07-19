@@ -29,8 +29,8 @@
               class="list-group"
               tag="ul"
               v-model="trip.destinations"
-              @start="expandList()"
-              @end="drag = false">
+              @start="startDrag"
+              @end="endDrag">
           <transition-group type="transition" :name="!drag ? 'flip-list' : null">
 
               <v-timeline-item
@@ -188,6 +188,8 @@ import {
     arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
 
+import {setOrdinal, getChildrenCount} from "./trips_destinations_util"
+
 import draggable from 'vuedraggable';
 
 export default {
@@ -234,11 +236,18 @@ export default {
           console.log(this.trip.destinations);
       },
 
-      expandList() {
+      startDrag(event) {
+        console.log("START", event);
         this.drag = true;
+        console.log("CHILDREN", getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]));
         for (let d of this.trip.destinations) {
             d.hidden = false;
         }
+
+      },
+      endDrag(event) {
+          console.log(event);
+          this.trip.destinations = setOrdinal(this.trip.destinations);
       },
 
       toggleHiddenDestinations(index, parentDepth) {
