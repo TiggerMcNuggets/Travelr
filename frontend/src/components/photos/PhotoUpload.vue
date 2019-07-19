@@ -2,26 +2,29 @@
 
 <template>
   <v-card>
-    <div class="outer-container">
-      <div class="inner-container">
-        <v-card-title primary-title>
-          <h2 class="headline">Upload Photo</h2>
-        </v-card-title>
-        <v-divider></v-divider>
-        <div id="dropzone">Drag photos or click to open file explorer.</div>
-        <v-flex  mt-3 >
-        <MediaGrid :media="files" />
-        </v-flex>
-      </div>
-    </div>
+    <v-card-title primary-title>
+      <h2 class="headline">Upload Media</h2>
+    </v-card-title>
     <v-divider></v-divider>
-    <v-btn color="primary" flat @click="closeDialogue">Close</v-btn>
-    <v-btn color="primary" flat v-on:click="processSelected()">Add Photos to Destination</v-btn>
+
+    <v-card-text>
+      <div id="dropzone">Drag photos or click to open file explorer.</div>
+      <v-flex mt-3>
+        <MediaGrid :media="files" :deletePhoto="deleteImage" />
+      </v-flex>
+    </v-card-text>
+
+    <v-divider></v-divider>
+
+    <v-card-actions>
+      <v-btn ma-3 color="primary" flat v-on:click="processSelected()">Upload Photos</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 
 <style>
+
 #dropzone {
   background: white;
   border-radius: 5px;
@@ -30,21 +33,16 @@
   padding: 50px;
 }
 #dropzone.dragover {
-  background: rgba(0, 135, 247, 1);
+  background: rgba(0, 135, 247, 0.4);
 }
-
 
 </style>
 
 
 <script>
-import { store } from "../../store/index";
-import base_url from "../../repository/BaseUrl";
-import { getImages } from "../../repository/PersonalPhotosRepository";
 import MediaGrid from "../media/MediaGrid";
 
 export default {
-  store,
 
   components: {
     MediaGrid
@@ -54,89 +52,21 @@ export default {
   data() {
     return {
       files: [],
-      clickedImageURL: "",
-      id: null,
-      selectedImages: []
     };
   },
 
-  // props methods being passed in from parent.
-  props: ["closeDialogue", "setDestinationImages"],
-
   methods: {
-    /**
-     * Sets the user's profile photo as the selected
-     */
-    processSelected() {
-      this.setDestinationImages(this.selectedImages);
-    },
-
-    /**
-     * Gets the image url for the server to get the image.
-     * @param item The photo item
-     * @returns {string}
-     */
-    getImgUrl(item) {
-      return base_url + "/api/travellers/photo/" + item.photo_filename;
-    },
-
-    //
-    /**
-     * Checks if the photo is selected that is it is present in the selected images list.
-     * @param selectedImage The image that is been clicked to check
-     * @returns {boolean} Whether the image is selected or not.
-     */
-    imageIsSelected(selectedImage) {
-      for (let i = 0; i <= this.selectedImages.length; i++) {
-        if (selectedImage === this.selectedImages[i]) {
-          return true;
-        }
-      }
-      return false;
-    },
-
     /**
      * Deselects the image and removes from the list of selected images.
      * @param selectedImage The image to remove from the selected images.
      */
-    unselectImage(selectedImage) {
-      for (let i = 0; i <= this.selectedImages.length; i++) {
-        if (selectedImage === this.selectedImages[i]) {
-          this.selectedImages.splice(i, 1);
+    deleteImage(selectedImage) {
+      console.log(selectedImage)
+      for (let i = 0; i <= this.files.length; i++) {
+        if (selectedImage === this.files[i]) {
+          this.files.splice(i, 1);
         }
       }
-    },
-
-    /**
-     * Toggles if the image is selected and adding or removing from selected list.
-     * @param selectedImage The image which was clicked.
-     */
-    selectImage(selectedImage) {
-      this.imageIsSelected(selectedImage)
-        ? this.unselectImage(selectedImage)
-        : this.selectedImages.push(selectedImage);
-    },
-
-    /**
-     * Groups the images into rows with four columns.
-     * @param imageList The list of image data from the server.
-     * @returns {Array} A list of rows each with four images.
-     */
-    groupImages(imageList) {
-      let newImageList = [];
-      let row = [];
-      const num_cols = 4;
-      for (let i = 0; i < imageList.length; i++) {
-        if (i % num_cols === 0 && row.length !== 0) {
-          newImageList.unshift(row);
-          row = [];
-        }
-        row.push(imageList[i]);
-      }
-
-      newImageList.unshift(row);
-      newImageList.reverse();
-      return newImageList;
     },
 
     triggerCallback(e, callback) {
@@ -205,12 +135,10 @@ export default {
   },
 
   /**
-   * Initialises the component with the image data.
+   * Initialises the component with the`image data.
    */
   created: function() {
-    this.id = this.$route.params.id;
-
-    this.files = [];
+    this.files = []; // This should actually be done when upload is clicked!
   }
 };
 </script>
