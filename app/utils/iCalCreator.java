@@ -15,7 +15,9 @@ import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.model.parameter.Value;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.UidGenerator;
 
 import java.io.FileOutputStream;
 import java.time.Instant;
@@ -30,21 +32,33 @@ public class iCalCreator {
         calendar.getProperties().add(new ProdId(trip.getId().toString()));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
-
+        int UID = 0;
         for (TripDestination destination: trip.destinations) {
+            if (destination.getArrivalDate() != null && destination.getDepartureDate() != null) {
+                //Addition of 24*60*60 will add one day to the date which in turn will make it export to .ics file with correct dates.
+                Date start = new Date(new Date((destination.getArrivalDate() + 24*60*60) * 1000L));
+                Date end = new Date(new Date((destination.getDepartureDate() + 24*60*60) * 1000L));
 
-            Date start = new Date(new Date(destination.getArrivalDate() * 1000L));
-            Date end = new Date(new Date(destination.getDepartureDate() * 1000L));
+                VEvent dest = new VEvent(start, end, destination.getDestination().getName());
+                dest.getProperties().add(new Uid(Integer.toString(UID)));
 
-            System.out.println(start);
+                calendar.getComponents().add(dest);
+            } else if (destination.getArrivalDate() != null && destination.getDepartureDate() == null) {
+                Date start = new Date(new Date((destination.getArrivalDate() + 24*60*60) * 1000L));
 
-            VEvent dest = new VEvent(start, end, destination.getDestination().getName());
+                // Adding 2*(24*60*60) to force the event to start and end on the same day if there is no end date
+                Date end = new Date(new Date((destination.getArrivalDate() + 2*(24*60*60)) * 1000L));
 
-            calendar.getComponents().add(dest);
+                VEvent dest = new VEvent(start, end, destination.getDestination().getName());
+                dest.getProperties().add(new Uid(Integer.toString(UID)));
+
+                calendar.getComponents().add(dest);
+            }
+            //Manually generating UID - unsure what these are but an error occurs if one is not provided.
+            UID++;
         }
-        //System.out.println(calendar.toString());
-        //return calendar.toString();
-        //calendar.validate();
+
+        calendar.validate();
         return calendar;
     }
 

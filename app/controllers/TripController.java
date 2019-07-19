@@ -358,12 +358,25 @@ public class TripController extends Controller {
 
     }
 
+    /**
+     * Creates a .ics file to return to the user with the trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the trip
+     * @return The .ics file generated for the trip
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTripAsICalFile(Http.Request req, Long userId, Long tripId){
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
-    public CompletionStage<Result> getUserTripAsICalFile(Long userId, Long tripId){
+        if (middlewareRes != null) return middlewareRes;
+
         Trip trip = Trip.find.findOne(tripId);
+
+        if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+
         iCalCreator creator = new iCalCreator();
         Calendar iCalString = creator.createCalendarFromTrip(trip);
-        //File file = new File(trip.name+".ics");
         try {
             File tempFile = File.createTempFile(trip.name, ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
@@ -372,7 +385,7 @@ public class TripController extends Controller {
             return CompletableFuture.completedFuture(ok(tempFile));
         } catch (IOException e) {
             e.printStackTrace();
-            return CompletableFuture.completedFuture(ok());
+            return CompletableFuture.completedFuture(internalServerError());
         }
 
     }
