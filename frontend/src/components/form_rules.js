@@ -16,6 +16,7 @@ export const rules = {
 
 export const noSameDestinationNameConsecutiveRule = destinations => {
   let noConsecutiveSame = true;
+  console.log("destinations", destinations);
   for (let i = 0; i < destinations.length; i++) {
     if (i + 1 < destinations.length) {
       if (destinations[i].title === destinations[i + 1].title) {
@@ -29,6 +30,25 @@ export const noSameDestinationNameConsecutiveRule = destinations => {
     }
   }
   return [noConsecutiveSame || "Cannot have same destination consecutive"];
+};
+
+// TODO: need to make this standard
+export const noSameDestinationNameConsecutiveRule_name = destinations => {
+    let noConsecutiveSame = true;
+    console.log("destinations", destinations);
+    for (let i = 0; i < destinations.length; i++) {
+        if (i + 1 < destinations.length) {
+            if (destinations[i].name === destinations[i + 1].name) {
+                noConsecutiveSame = false;
+            }
+        }
+        if (i - 1 >= 0) {
+            if (destinations[i].name === destinations[i - 1].name) {
+                noConsecutiveSame = false;
+            }
+        }
+    }
+    return [noConsecutiveSame || "Cannot have same destination consecutive"];
 };
 
 export const arrivalBeforeDepartureAndDestinationsOneAfterTheOther = destinations => {
