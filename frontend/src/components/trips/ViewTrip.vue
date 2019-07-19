@@ -17,7 +17,7 @@
 
     <v-divider class="photo-header-divider"></v-divider>
     <TripMap
-      :destinations="destinations"
+      :destinations="trip.destinations"
     />
       <v-timeline align-top >
       <v-dialog v-model="shouldDisplayDialog" max-width="100%">
@@ -79,9 +79,8 @@ export default {
         tripId:  this.$route.params.trip_id,
         userId:  this.$route.params.id,
         is_inset: true,
-        trip: {},
-        shouldDisplayDialog: false,
-        destinations: []
+        trip: {destinations: []},
+        shouldDisplayDialog: false
     };
   },
   methods: {
@@ -121,7 +120,6 @@ export default {
                 }
               }
               this.trip = trip;
-              this.destinations = trip.destinations;
           });
       }
   },
@@ -129,6 +127,7 @@ export default {
         CreateTrip: CreateTrips,
         TripMap: TripMap
     },
+
 
   created: function() {
       this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
@@ -152,7 +151,7 @@ export default {
             }
           }
           this.trip = trip;
-          this.destinations = trip.destinations;
+          console.log(this.trip.destinations);
       });
   }
 };

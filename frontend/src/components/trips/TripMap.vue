@@ -9,14 +9,14 @@
       >
         <!-- Private destination markers -->
         <GmapMarker
-          v-for="destination in destinations"
-          :key="destination.data.id"
-          :position="{lat: destination.data.latitude, lng: destination.data.longitude}"
+          v-for="destination in path"
+          :key="destination.id"
+          :position="{lat: destination.lat, lng: destination.lng}"
           :draggable="false"
           :icon="privateMarker"
         />
         <GmapPolyline 
-          :path="destinations">
+          :path="path">
         </GmapPolyline>
       </GmapMap>
     </v-flex>
@@ -67,7 +67,6 @@
         publicMarker: blueMarker,
         privateMarker: pinkMarker,
         path: [
-            {lat: 100, lng: -40.7766924 },
             {lat: 55.9358131, lng: -4.7770143 },
             {lat: 55.9361256, lng: -4.7767353 },
             {lat: 55.9366784, lng: -4.7739458 }
@@ -80,7 +79,13 @@
     },
 
     created() {
-      console.log(this.destinations);
+      console.log("test" + this.destinations);
+    },
+
+    computed: {
+      updatedDestinations() {
+        return this.destinations;
+      }
     },
 
     methods: {
