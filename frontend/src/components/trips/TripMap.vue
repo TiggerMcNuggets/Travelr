@@ -31,12 +31,8 @@
 </style>
 
 <script>
-
-  import GoogleMapSmoothZoom from "../../plugins/google-map-smooth-zoom"
   import { GoogleMapLightStyle } from "../../assets/google-map-light-style"
   import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style"
-
-  import {toTitleCase} from "../../tools/google_maps/googleMapsUtils";
 
   // resources
   import pinkMarker from "../../assets/pink-google-maps-marker.svg";
