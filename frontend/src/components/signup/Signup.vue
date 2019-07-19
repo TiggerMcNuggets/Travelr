@@ -18,8 +18,17 @@
         :confirmPassword.sync="confirmPassword"
       />
 
-      <v-btn :disabled="!isValid" color="primary" @click="handleSignup" ma-0>Sign Up</v-btn>
       <v-alert class="email-alert" :value="emailAlert" color="error">Email already taken</v-alert>
+      <v-btn
+        :disabled="!isValid"
+        class="login-button"
+        large
+        @click="handleSignup"
+        color="error"
+      >Sign Up</v-btn>
+      <router-link to="/login">
+        <v-btn class="login-button" large outline v-on:click="login" color="error">Back</v-btn>
+      </router-link>
     </v-flex>
   </v-form>
 </template>
