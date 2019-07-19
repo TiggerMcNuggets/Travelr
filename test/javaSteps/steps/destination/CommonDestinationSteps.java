@@ -9,6 +9,7 @@ import org.junit.Assert;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CommonDestinationSteps {
 
@@ -33,8 +34,14 @@ public class CommonDestinationSteps {
         state.getDestination().insert();
     }
 
-    private void createTestDestination(User user) {
-        state.setDestination(new Destination("Eiffel Tower", 5.0, 5.0, "Landmark", "Paris", "France", user));
+    @Given("The destination is public")
+    public void theDestinationIsPublic() {
+        Destination destination = Destination.find.findById(state.getDestination().getId());
+
+        destination.setPublic(true);
+        destination.save();
+
+        state.setDestination(destination);
     }
 
     @Then("My destination is")
@@ -51,5 +58,9 @@ public class CommonDestinationSteps {
         Assert.assertEquals(destInfo.get("type"), state.getDestination().getType());
         Assert.assertEquals(destInfo.get("district"), state.getDestination().getDistrict());
         Assert.assertEquals(destInfo.get("country"), state.getDestination().getCountry());
+    }
+
+    private void createTestDestination(User user) {
+        state.setDestination(new Destination("Eiffel Tower", 5.0, 5.0, "Landmark", "Paris", "France", user));
     }
 }

@@ -75,18 +75,21 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
-        return destinationRepository.getOneDestination(destId).thenApplyAsync(destination -> {
-            // Not Found Check
-            if (destination == null) {
-                return notFound(APIResponses.DESTINATION_NOT_FOUND);
-            }
+        Destination destination = Destination.find.findByIdIncludeDeleted(destId);
+        if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
 
-            Object response;
-            response = new GetDestinationsRes(destination);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonResponse = mapper.valueToTree(response);
-            return ok(jsonResponse);
-        });
+        System.out.println("destination is public?: " + destination.isPublic);
+
+        if (!destination.isPublic || (destination.isPublic && destinationRepository.isDestinationUsed(destId))) {
+            CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, userId, destination.user.id);
+            if (authorisedToView != null) return authorisedToView;
+        }
+
+        Object response;
+        response = new GetDestinationsRes(destination);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonResponse = mapper.valueToTree(response);
+        return CompletableFuture.completedFuture(ok(jsonResponse));
     }
 
     /**
