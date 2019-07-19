@@ -16,6 +16,9 @@
       </div>
 
     <v-divider class="photo-header-divider"></v-divider>
+    <TripMap
+      :destinations="destinations"
+    />
       <v-timeline align-top >
       <v-dialog v-model="shouldDisplayDialog" max-width="100%">
           <create-trip style="background-color: white;"
@@ -62,6 +65,7 @@
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
+import TripMap from "./TripMap.vue";
 import dateTime from "../common/dateTime/dateTime.js";
 
 
@@ -76,7 +80,8 @@ export default {
         userId:  this.$route.params.id,
         is_inset: true,
         trip: {},
-        shouldDisplayDialog: false
+        shouldDisplayDialog: false,
+        destinations: []
     };
   },
   methods: {
@@ -116,11 +121,13 @@ export default {
                 }
               }
               this.trip = trip;
+              this.destinations = trip.destinations;
           });
       }
   },
     components: {
-        CreateTrip: CreateTrips
+        CreateTrip: CreateTrips,
+        TripMap: TripMap
     },
 
   created: function() {
@@ -145,6 +152,7 @@ export default {
             }
           }
           this.trip = trip;
+          this.destinations = trip.destinations;
       });
   }
 };
