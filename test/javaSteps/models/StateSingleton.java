@@ -2,6 +2,7 @@ package javaSteps.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import models.Destination;
 import models.User;
 import play.Application;
 import play.mvc.Http;
@@ -28,6 +29,7 @@ public class StateSingleton {
     private Http.RequestBuilder request;
 
     private User user;
+    private Destination destination;
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
@@ -116,5 +118,13 @@ public class StateSingleton {
 
     public void setRequest(Http.RequestBuilder request) {
         this.request = request;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 }

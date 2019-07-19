@@ -200,7 +200,7 @@ public class DestinationController extends Controller {
 
             Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
             Boolean isDestinationOwner = (destination.getUser().getId() == userId);
-            if(destination.isPublic && !isAdmin && !isDestinationOwner) {
+            if(!destination.isPublic && !isAdmin && !isDestinationOwner) {
                 return CompletableFuture.completedFuture(Results.forbidden(APIResponses.FORBIDDEN_DESTINATION_EDIT));
             }
 
@@ -213,9 +213,7 @@ public class DestinationController extends Controller {
 
                 return ok("Destination updated");
             });
-
         });
-
     }
 
     /**
@@ -233,21 +231,15 @@ public class DestinationController extends Controller {
         if(updateDestinationForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
+        Destination destination = Destination.find.findById(id);
+        if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+
+        CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, user.getId(), destination.user.id);
+        if (authorisedToView != null) return authorisedToView;
 
         CreateDestReq req = updateDestinationForm.get();
 
-        return destinationRepository.getOneDestination(id).thenComposeAsync(destination -> {
-            // Not Found Check
-            if (destination == null) {
-                return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
-            }
-            // Forbidden Check
-            if (destination.user.id != user.id) {
-                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-            }
-            return destinationRepository.update(req, id, user.getId()).thenApplyAsync(destId -> ok("Destination updated"));
-
-        });
+        return destinationRepository.update(req, id, user.getId()).thenApplyAsync(destId -> ok("Destination updated"));
 
     }
 

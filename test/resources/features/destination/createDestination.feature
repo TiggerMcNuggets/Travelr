@@ -23,6 +23,10 @@ Feature: CreateDestination
         "id": 1
       }
       """
+    When I check my destination
+    Then My destination is
+    | name         | latitude | longitude | type     | district | country |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris    | France  |
 
   Scenario: Create a destination with incomplete destination information
     Given I am authenticated
