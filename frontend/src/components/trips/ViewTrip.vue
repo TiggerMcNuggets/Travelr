@@ -29,22 +29,21 @@
               class="list-group"
               tag="ul"
               v-model="trip.destinations"
-              @start="drag = true"
+              @start="expandList()"
               @end="drag = false">
           <transition-group type="transition" :name="!drag ? 'flip-list' : null">
 
               <v-timeline-item
-                v-for="(destination, i) in trip.destinations"
+                v-for="(destination, i) in notHiddenTrips"
                 :key="i"
                 class="trip-timeline-item-width"
-                color="blue"
+                :color="timelineItemColor(destination.depth)"
                 small
               >
                 <v-form
                         v-if="destination.expanded">
                     <v-card
-                        color="blue"
-                        dark
+                        :color="timelineItemColor(destination.depth)"
                     >
                       <v-card-title>
                           <v-combobox
@@ -145,14 +144,16 @@
                         </div>
                     </v-card>
                 </v-form>
-                <v-card
-                        class="hoverable"
-                        v-on:click="toggleDeparted(i)"
-                        v-else>
-                    <v-card-title>
-                        <div>
+                <v-card v-else>
+                    <v-card-title class="justify-space-between">
+                        <div v-on:click="toggleDeparted(i)" class="hoverable">
                             {{destination.name}}
                         </div>
+                        <v-btn
+                                v-on:click="toggleHiddenDestinations(i, destination.depth)"
+                                fab flat small>
+                            <v-icon>view_headline</v-icon>
+                        </v-btn>
                     </v-card-title>
                 </v-card>
               </v-timeline-item>
@@ -204,7 +205,7 @@ export default {
         tripId:  this.$route.params.trip_id,
         userId:  this.$route.params.id,
         is_inset: true,
-        trip: {},
+        trip: {destinations:[]},
         userDestinations: [],
         shouldDisplayDialog: false
     };
@@ -218,6 +219,9 @@ export default {
             return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
                 this.trip.destinations
             );
+        },
+        notHiddenTrips() {
+            return this.trip.destinations.filter((d) => !d.hidden);
         }
     },
   methods: {
@@ -229,6 +233,33 @@ export default {
           this.trip.destinations[index].expanded = !this.trip.destinations[index].expanded;
           console.log(this.trip.destinations);
       },
+
+      expandList() {
+        this.drag = true;
+        for (let d of this.trip.destinations) {
+            d.hidden = false;
+        }
+      },
+
+      toggleHiddenDestinations(index, parentDepth) {
+          let i = index + 1;
+          const destsLength = this.trip.destinations.length;
+          console.log(i);
+          console.log(this.trip.destinations.length);
+          while (i < destsLength && this.trip.destinations[i].depth > parentDepth) {
+              console.log("here");
+              this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
+              i = i + 1;
+          }
+      },
+
+      timelineItemColor(depth) {
+          console.log(depth);
+          if (depth === 0) return "red";
+          if (depth === 1) return "blue";
+          return "green"
+      },
+
       /**
        * Redirects users page to the destination page of the provided destination id
        * @param dest_id the id of the destination
@@ -309,6 +340,11 @@ export default {
           // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
           for (let i = 0; i < trip.destinations.length; i++) {
             trip.destinations[i].expanded = false;
+            trip.destinations[i].hidden = false;
+
+            // TODO: deleted once done
+            trip.destinations[i].depth = 0;
+
             if (trip.destinations[i].arrivalDate != null) {
               trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
             }
@@ -316,7 +352,11 @@ export default {
               trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
             }
           }
-          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false}];
+          // TODO: delete once done
+          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false, depth: 1}];
+          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false, depth: 2}];
+          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false, depth: 0}];
+
           this.trip = trip;
       });
   }
