@@ -2,7 +2,10 @@ package javaSteps.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import models.Destination;
+import models.User;
 import play.Application;
+import play.mvc.Http;
 import play.mvc.Result;
 
 /**
@@ -17,12 +20,16 @@ public class StateSingleton {
     // Common data that needs to be shared
     @Inject
     private Application application;
-    private int travellerId;
+    private int travellerId; //Shouldn't need, delete when fully refactored
     private int destinationId;
-    private String token;
-    private JsonNode requestData;
+    private String token; //Shouldn't need, delete when fully refactored
+    private JsonNode requestData; //Shouldn't need, delete when fully refactored
     private Result result;
     private String tripId;
+    private Http.RequestBuilder request;
+
+    private User user;
+    private Destination destination;
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
@@ -95,5 +102,29 @@ public class StateSingleton {
 
     public void setTripId(String tripId) {
         this.tripId = tripId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Http.RequestBuilder getRequest() {
+        return request;
+    }
+
+    public void setRequest(Http.RequestBuilder request) {
+        this.request = request;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 }

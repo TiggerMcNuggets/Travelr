@@ -210,5 +210,12 @@ public class DestinationRepository {
         }, context);
     }
 
+    public Boolean isDestinationUsed(Long destinationId) {
+//        return supplyAsync(() -> {
+            List<TripDestination> tripDestinations = TripDestination.find.getAllByDestinationId(destinationId);
+            return tripDestinations.size() > 0;
+//        }, context);
+    }
+
 
 }

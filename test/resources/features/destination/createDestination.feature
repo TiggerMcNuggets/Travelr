@@ -1,44 +1,62 @@
 Feature: CreateDestination
   Description: The purpose of this feature is to test the api endpoint related to creating a destination
 
-  Background: The database is populated
-    Given I populate the database
-    And The traveller id is 1
-    Then I will receive a 200 response
-
   Scenario: Create a destination successfully
-    Given I provide the token "123"
-    And I provide complete destination information
-    When I create a destination for user with id 1
-    Then I will receive a 201 response
-    And I will receive the id 11
-
-  Scenario: Create a destination successfully
-    Given I provide the token "123"
-    And I provide complete destination information
-    When I create a destination for user with id 1
-    And I create a destination for user with id 1
-    Then I will receive a 400 response
+    Given I am authenticated
+    When I want to create a destination
+    And The body is
+      """
+      {
+        "name": "Eiffel Tower",
+        "latitude": 5.0,
+        "longitude": 5.0,
+        "type": "Landmark",
+        "district": "Paris",
+        "country": "France"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 201
+    And I will receive the response body
+      """
+      {
+        "id": 1
+      }
+      """
+    When I check my destination
+    Then My destination is
+    | name         | latitude | longitude | type     | district | country |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris    | France  |
 
   Scenario: Create a destination with incomplete destination information
-  Given I provide the token "123"
-  And I provide incomplete destination information
-  When I create a destination for user with id 1
-  Then I will receive a 400 response
-
-  Scenario: Create a destination when session is expired and destination is complete
-    Given I provide the token "expired token"
-    And I provide complete destination information
-    When I create a destination for user with id 1
-    Then I will receive a 401 response
-
-  Scenario: Create a destination when session is expired and destination is incomplete
-    Given I provide the token "expired token"
-    And I provide incomplete destination information
-    When I create a destination for user with id 1
-    Then I will receive a 401 response
+    Given I am authenticated
+    When I want to create a destination
+    And The body is
+      """
+      {
+        "name": "Eiffel Tower",
+        "latitude": 5.0,
+        "longitude": 5.0,
+        "type": "Landmark",
+        "district": "Paris"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 400
 
   Scenario: Create a destination when I am not logged in
-    And I provide complete destination information
-    When I create a destination for user with id 1
-    Then I will receive a 401 response
+    Given I am not authenticated
+    When I want to create a destination
+    And The body is
+      """
+      {
+        "name": "Eiffel Tower",
+        "latitude": 5.0,
+        "longitude": 5.0,
+        "type": "Landmark",
+        "district": "Paris",
+        "country": "France"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 401
