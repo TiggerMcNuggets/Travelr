@@ -116,7 +116,7 @@ export default {
     },
 
     destinations: {
-      handler: function(newDestination, oldDestination) {
+      handler: function() {
         this.isShowing = this.populateIsShowing();
       }
     }
