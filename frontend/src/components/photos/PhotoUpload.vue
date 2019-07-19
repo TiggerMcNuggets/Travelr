@@ -10,14 +10,14 @@
     <v-card-text>
       <div id="dropzone">Drag photos or click to open file explorer.</div>
       <v-flex mt-3>
-        <MediaGrid :media="files" :deletePhoto="deleteImage" />
+        <MediaGrid :media="files" :deletePhoto="deleteImage"/>
       </v-flex>
     </v-card-text>
 
     <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn ma-3 color="primary" flat v-on:click="processSelected()">Upload Photos</v-btn>
+      <v-btn ma-3 color="primary" flat v-on:click="uploadImages(rawFiles)">Upload Photos</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -48,10 +48,15 @@ export default {
     MediaGrid
   },
 
+  props: {
+    uploadImages: Function
+  },
+
   // local variables
   data() {
     return {
       files: [],
+      rawFiles: []
     };
   },
 
@@ -61,10 +66,10 @@ export default {
      * @param selectedImage The image to remove from the selected images.
      */
     deleteImage(selectedImage) {
-      console.log(selectedImage)
       for (let i = 0; i <= this.files.length; i++) {
         if (selectedImage === this.files[i]) {
           this.files.splice(i, 1);
+          this.rawFiles.splice(i, 1);
         }
       }
     },
@@ -119,6 +124,7 @@ export default {
     var dropzone = document.getElementById("dropzone");
 
     this.makeDroppable(dropzone, files => {
+      this.rawFiles = files;
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
 
