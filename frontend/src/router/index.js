@@ -43,7 +43,7 @@ const authGuard = (to, from, next) => {
 };
 
 const unauthGuard = (to, from, next) => {
-  if (!store.getters.getToken) return next();
+  if (!store.getters.getToken) { return next() };
   if (store.getters.getToken && !store.getters.getUser) {
     store
       .dispatch("fetchMe")
@@ -101,22 +101,29 @@ let router = new Router({
   mode: "history",
   routes: [
     {
+      path: "/",
+      beforeEnter: unauthGuard
+    },
+
+    {
       path: "",
       name: "home",
       component: Home,
       beforeEnter: unauthGuard,
       children: [
         {
-          path: "login",
+          path: "/login",
           name: "login",
           component: Login,
-          beforeEnter: unauthGuard
+          beforeEnter: unauthGuard,
+          beforeLeave: unauthGuard
         },
         {
           path: "/signup",
           name: "signup",
           component: Signup,
-          beforeEnter: unauthGuard
+          beforeEnter: unauthGuard,
+          beforeLeave: unauthGuard
         }
       ]
     },
