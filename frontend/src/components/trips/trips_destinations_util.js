@@ -16,3 +16,19 @@ export const getChildrenCount = (destinations, parent) => {
     }
     return i - parent.ordinal - 1;
 };
+
+export const getDepthData = (depth) => {
+    const moduloDepth = depth % 3;
+    const data = {large: false, number: depth + 1};
+    if (moduloDepth === 0) {
+        data.color = "#536DFE";
+        data.large = true;
+    }
+    else if (moduloDepth === 1) {
+        data.color = "#3D5AFE";
+    }
+    else {
+        data.color = "#304FFE";
+    }
+    return data;
+};

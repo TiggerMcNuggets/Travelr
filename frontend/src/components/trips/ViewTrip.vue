@@ -20,10 +20,8 @@
                        v-if="true"
                        :regetTrips="() => console.log('no need')"
                        :passedTrip="tripId"
-                       :updateViewTripPage="this.updateViewTripPage"
-          />
+                       :updateViewTripPage="this.updateViewTripPage" />
       </v-dialog>
-
       <v-timeline align-top dense>
       <draggable
               class="list-group"
@@ -36,14 +34,22 @@
               <v-timeline-item
                 v-for="(destination, i) in notHiddenTrips"
                 :key="i"
-                class="trip-timeline-item-width"
-                :color="timelineItemColor(destination.depth)"
-                small
+                class="trip-timeline-item-width white--text mb-5"
+                :color="getDepthData(destination.depth).color"
+                :large="getDepthData(destination.depth).large"
               >
+                  <template v-slot:icon>
+                      <span
+                              class="hoverable"
+                              v-on:click="toggleExpanded(i)">{{getDepthData(destination.depth).number}}</span>
+                  </template>
                 <v-form
+                        lazy-validation
+                        ref="form"
+                        v-model="isFormValid"
                         v-if="destination.expanded">
                     <v-card
-                        :color="timelineItemColor(destination.depth)"
+                        :color="getDepthData(destination.depth).color"
                     >
                       <v-card-title>
                           <v-combobox
@@ -122,7 +128,7 @@
                                 <template v-slot:activator="{ on }">
                                     <v-btn
                                             v-on="on"
-                                            v-on:click="toggleDeparted(i)"
+                                            v-on:click="toggleExpanded(i)"
                                             fab flat small dark>
                                         <v-icon>visibility_off</v-icon>
                                     </v-btn>
@@ -140,13 +146,12 @@
                                 </template>
                                 <span>View Destination</span>
                             </v-tooltip>
-
                         </div>
                     </v-card>
                 </v-form>
                 <v-card v-else>
                     <v-card-title class="justify-space-between">
-                        <div v-on:click="toggleDeparted(i)" class="hoverable">
+                        <div v-on:click="toggleExpanded(i)" class="hoverable">
                             {{destination.name}}
                         </div>
                         <v-btn
@@ -160,6 +165,20 @@
           </transition-group>
       </draggable>
     </v-timeline>
+      <v-layout flex>
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                  <v-btn
+                         v-on:click="validateForm"
+                         icon
+                         v-on="on">
+                      <v-icon color="primary lighten-1">check_circle</v-icon>
+                  </v-btn>
+              </template>
+              <span>Validate</span>
+          </v-tooltip>
+
+      </v-layout>
 </v-container>
 </v-card>
 
@@ -168,6 +187,7 @@
 <style>
     .trip-timeline-item-width {
         width: 25%;
+        padding: 0;
     }
 
     .date-margin {
@@ -179,18 +199,14 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import tripRepo from "../../repository/TripRepository";
-let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
-import dateTime from "../common/dateTime/dateTime.js";
-import {
-    noSameDestinationNameConsecutiveRule_name,
-    arrivalBeforeDepartureAndDestinationsOneAfterTheOther
-} from "../form_rules";
-
-import {setOrdinal, getChildrenCount} from "./trips_destinations_util"
-
 import draggable from 'vuedraggable';
+import dateTime from "../common/dateTime/dateTime.js";
+import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther} from "../form_rules";
+import {setOrdinal, getChildrenCount, getDepthData} from "./trips_destinations_util"
+
+let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
@@ -201,7 +217,12 @@ export default {
   // local variables
   data() {
     return {
+        // drag action
         drag: false,
+        draggedSublist: [],
+
+        isFormValid: true,
+
         isMyProfile: false,
         isAdmin: store.getters.getIsUserAdmin,
         tripId:  this.$route.params.trip_id,
@@ -209,7 +230,10 @@ export default {
         is_inset: true,
         trip: {destinations:[]},
         userDestinations: [],
-        shouldDisplayDialog: false
+        shouldDisplayDialog: false,
+
+        // define functions to make them visible to the script
+        getDepthData: getDepthData
     };
   },
 
@@ -227,47 +251,44 @@ export default {
         }
     },
   methods: {
-      /**
-       *
-       */
-      toggleDeparted(index) {
-          console.log("here");
+
+      toggleExpanded(index) {
           this.trip.destinations[index].expanded = !this.trip.destinations[index].expanded;
-          console.log(this.trip.destinations);
       },
 
       startDrag(event) {
-        console.log("START", event);
         this.drag = true;
-        console.log("CHILDREN", getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]));
+        const childrenCount = getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]);
+        if (childrenCount > 0) {
+            const subList = this.trip.destinations.splice(event.oldIndex + 1, event.oldIndex + childrenCount - 1);
+            this.draggedSublist = subList;
+        }
         for (let d of this.trip.destinations) {
             d.hidden = false;
         }
 
       },
+
+      validateForm() {
+          console.log(this.$refs);
+        if (!this.$refs.form.validate()) console.log('ciao');
+      },
+
       endDrag(event) {
-          console.log(event);
+          this.trip.destinations.splice(event.newIndex + 1, 0, ...this.draggedSublist);
+          this.draggedSublist = [];
           this.trip.destinations = setOrdinal(this.trip.destinations);
       },
 
       toggleHiddenDestinations(index, parentDepth) {
           let i = index + 1;
           const destsLength = this.trip.destinations.length;
-          console.log(i);
-          console.log(this.trip.destinations.length);
           while (i < destsLength && this.trip.destinations[i].depth > parentDepth) {
-              console.log("here");
               this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
               i = i + 1;
           }
       },
 
-      timelineItemColor(depth) {
-          console.log(depth);
-          if (depth === 0) return "red";
-          if (depth === 1) return "blue";
-          return "green"
-      },
 
       /**
        * Redirects users page to the destination page of the provided destination id
