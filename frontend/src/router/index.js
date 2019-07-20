@@ -3,7 +3,7 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
-import ProfilePhotos from "../components/profile/ProfilePhotos";
+// import ProfilePhotos from "../components/profile/ProfilePhotos";
 import ProfileTrips from "../components/profile/ProfileTrips";
 import userSearch from "../components/userSearch/userSearch";
 import Signup from "../components/signup/Signup.vue";
@@ -20,6 +20,7 @@ import SingleDestination from "../components/destination/SingleDestination";
 import DestinationEditRequests from "../components/admin/DestinationEditRequests";
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
+import Media from "../views/Media"
 
 const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
@@ -43,7 +44,7 @@ const authGuard = (to, from, next) => {
 };
 
 const unauthGuard = (to, from, next) => {
-  if (!store.getters.getToken) { return next() };
+  if (!store.getters.getToken) { return next() }
   if (store.getters.getToken && !store.getters.getUser) {
     store
       .dispatch("fetchMe")
@@ -163,7 +164,7 @@ let router = new Router({
         {
           path: "photos",
           name: "travellerProfilePhotos",
-          component: ProfilePhotos
+          component: Media
         },
         {
           path: "destinations",
