@@ -19,7 +19,7 @@
 
     <v-btn class="login-button" large v-on:click="login" color="error">Login</v-btn>
     <router-link to="/signup">
-      <v-btn class="login-button" large outline v-on:click="login" color="error">Sign up</v-btn>
+      <v-btn class="login-button" large outline color="error">Sign up</v-btn>
     </router-link>
   </div>
 </template>
