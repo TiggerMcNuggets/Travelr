@@ -8,10 +8,14 @@
       </v-list-tile>
     </v-list>
 
-    <v-btn class="upload-button" @click="" flat>
+    <v-btn class="upload-button" @click="() => uploadDialogActive = !uploadDialogActive" flat>
       <v-icon left dark>add</v-icon>
       Upload
     </v-btn>
+
+    <v-dialog v-model="uploadDialogActive" width="800">
+      <MediaUpload :uploadImages="uploadMedia" />
+    </v-dialog>
   </v-flex>
 </template>
 
@@ -36,6 +40,8 @@
 </style>
 
 <script>
+import MediaUpload from "../photos/PhotoUpload";
+
 export default {
   name: "MediaFilter",
 
@@ -44,8 +50,14 @@ export default {
     mediaCounts: Array
   },
 
+  components: {
+    MediaUpload
+  },
+
+ 
   data() {
     return {
+      uploadDialogActive: false,
       filterCategories: [
         {
           title: 'All', count: 0
@@ -63,14 +75,18 @@ export default {
     }
   },
 
-  computed: {
-    filterCategories: function () {
+   update() {
+    console.log(this.uploadDialogActive);
+  },
 
-    }
+
+  computed: {
   },
 
   methods: {
-
+    uploadMedia() {
+      this.uploadDialogActive = false;
+    }
   }
 }
 </script>
