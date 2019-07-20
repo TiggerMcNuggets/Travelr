@@ -3,7 +3,9 @@ Feature: DeleteDestination
 
   Scenario: Delete destination successfully
     Given I am authenticated
-    And I own a destination
+    And I own the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
     When I want to soft delete the destination
     And I send the request
     Then I will receive the response code 200
@@ -11,7 +13,9 @@ Feature: DeleteDestination
 
   Scenario: Delete destination when unauthenticated
     Given I am not authenticated
-    And I own a destination
+    And I own the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
     When I want to soft delete the destination
     And I send the request
     Then I will receive the response code 401
@@ -19,7 +23,9 @@ Feature: DeleteDestination
 
   Scenario: Delete destination that is not mine
     Given I am authenticated
-    And The global admin owns a destination
+    And The global admin owns the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
     When I want to soft delete the destination
     And I send the request
     Then I will receive the response code 403

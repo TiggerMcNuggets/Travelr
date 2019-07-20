@@ -16,21 +16,23 @@ public class CommonDestinationSteps {
 
     @Given("I do not own a destination")
     public void i_do_not_own_a_destination() {
-        createTestDestination(state.getUser());
+        state.setDestination(new Destination("test", 1.0, 1.0, "test", "test", "test", state.getUser()));
         state.getDestination().setId(10L);
         // By not inserting, the destination does not exist
+        // Destination needed to be created to pass id into request uri
     }
 
-    @Given("I own a destination")
-    public void i_own_a_destination() {
-        createTestDestination(state.getUser());
-        state.getDestination().insert();
+    @Given("I own the destination")
+    public void iOwnTheDestination(List<Map<String, String>> dataTable) {
+        Map<String, String> destInfo = dataTable.get(0);
+        createTestDestination(destInfo, state.getUser());
+
     }
 
-    @Given("The global admin owns a destination")
-    public void the_global_admin_owns_a_destination() {
-        createTestDestination(User.find.findById(1L));
-        state.getDestination().insert();
+    @Given("The global admin owns the destination")
+    public void theGlobalAdminOwnsTheDestination(List<Map<String, String>> dataTable) {
+        Map<String, String> destInfo = dataTable.get(0);
+        createTestDestination(destInfo, User.find.findById(1L));
     }
 
     @Given("The destination is public")
@@ -58,7 +60,16 @@ public class CommonDestinationSteps {
         Assert.assertEquals(destInfo.get("country"), state.getDestination().getCountry());
     }
 
-    private void createTestDestination(User user) {
-        state.setDestination(new Destination("Eiffel Tower", 5.0, 5.0, "Landmark", "Paris", "France", user));
+    private void createTestDestination(Map<String, String> destInfo, User user) {
+        state.setDestination(new Destination(
+                destInfo.get("name"),
+                Double.valueOf(destInfo.get("latitude")),
+                Double.valueOf(destInfo.get("longitude")),
+                destInfo.get("type"),
+                destInfo.get("district"),
+                destInfo.get("country"),
+                user)
+        );
+        state.getDestination().insert();
     }
 }
