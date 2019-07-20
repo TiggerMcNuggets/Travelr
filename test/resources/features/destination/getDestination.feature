@@ -1,4 +1,4 @@
-Feature: GetDestinations
+Feature: GetDestination
   Description: The purpose of this feature is to test the api endpoint related to getting a single destination
 
   Scenario: Get a destination successfully
