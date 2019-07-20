@@ -347,7 +347,7 @@
             });
           }
 
-          closeDialogue();
+          this.closeDialogue();
       },
 
       /**

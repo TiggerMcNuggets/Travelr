@@ -10,7 +10,7 @@
     <v-card-text>
       <div id="dropzone">Drag photos or click to open file explorer.</div>
       <v-flex mt-3>
-        <MediaGrid :media="files" :deletePhoto="deleteImage"/>
+        <MediaGridWithDelete :media="files" :deletePhoto="deleteImage"/>
       </v-flex>
     </v-card-text>
 
@@ -40,12 +40,12 @@
 
 
 <script>
-import MediaGrid from "../media/MediaGrid";
+import MediaGridWithDelete from "../media/MediaGridWIthDelete";
 
 export default {
 
   components: {
-    MediaGrid
+    MediaGridWithDelete
   },
 
   props: {
@@ -127,10 +127,7 @@ export default {
       this.rawFiles = files;
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
-
-        var image = new Image();
         var reader = new FileReader();
-        var vm = this;
 
         reader.onload = e => {
           this.files.push(e.target.result);

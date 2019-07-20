@@ -40,7 +40,7 @@
 
 <script>
 export default {
-  name: "MediaGrid",
+  name: "MediaGridWithDelete",
 
   props: {
     media: Array,
