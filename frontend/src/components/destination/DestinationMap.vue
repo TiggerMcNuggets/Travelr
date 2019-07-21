@@ -95,7 +95,6 @@
 }
 .destination-main-map {
   width: 100%;
-  height: 830px;
 }
 </style>
 
@@ -171,7 +170,7 @@ export default {
         return this.focussedDestination.data.id;
       }
       return -1;
-    }
+    },
   },
 
   methods: {
@@ -289,7 +288,21 @@ export default {
         latitude: clickEvent.latLng.lat(),
         longitude: clickEvent.latLng.lng()
       });
+    },
+
+    updateMapHeight() {
+      let height = window.innerHeight - 64;
+      this.$refs.map.$el.style.height = `${height}px`;
     }
+  },
+
+  mounted() {
+    this.$refs.map.$el.style.height = `${this.mapHeight}px`;
+    window.addEventListener("resize", this.updateMapHeight);
+  },
+
+  beforeDestroy: function() {
+    window.removeEventListener("resize", this.updateMapHeight);
   }
 };
 </script>
