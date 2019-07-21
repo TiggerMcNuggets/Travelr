@@ -2,36 +2,8 @@
 
 <template>
   <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
-    <div class="section">
-      <div class="dest-name">
-        <h2 class="headline">Trips</h2>
-        <undo-redo-buttons
-          :canRedo="rollbackCanRedo()"
-          :canUndo="rollbackCanUndo()"
-          :undo="undo"
-          :redo="redo"
-        ></undo-redo-buttons>
-      </div>
-      <div>
-        <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          v-if="isMyProfile || isAdminUser"
-          @click="toggleShowCreateTrip"
-        >
-          <v-icon dark>add</v-icon>
-        </v-btn>
+    <PageHeader title="Trips" :undo="undo" :redo="redo" :options="options"/>
 
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShowSearch">
-          <v-icon dark>search</v-icon>
-        </v-btn>
-      </div>
-    </div>
-
-    <v-divider class="photo-header-divider"></v-divider>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
@@ -119,6 +91,7 @@ import CreateTrips from "./CreateTrips.vue";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+import PageHeader from "../common/header/PageHeader";
 let tripRepository = RepositoryFactory.get("trip");
 
 export default {
@@ -142,6 +115,13 @@ export default {
   },
   // the place where you want to make the store values readable
   computed: {
+    options() {
+      return [
+        { action: this.toggleShowCreateTrip, icon: "add" },
+        { action: this.toggleShowSearch, icon: "search" }
+      ];
+    },
+
     /**
      * Filters the list of trips according to the search value
      */
@@ -159,7 +139,8 @@ export default {
   // child components
   components: {
     UndoRedoButtons,
-    CreateTrip: CreateTrips
+    CreateTrip: CreateTrips,
+    PageHeader
   },
   methods: {
     /**
