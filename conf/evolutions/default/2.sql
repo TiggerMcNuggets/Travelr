@@ -235,7 +235,8 @@ INSERT INTO traveller_type (name) values ('Frequent Weekender');
 INSERT INTO traveller_type (name) values ('Gap Year');
 
 
-INSERT INTO user (first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES ('Global', '', 'Admin', 0, 'Male', 'admin@admin.com', 'cecf42e9047e907a82379ad0e5bed03b3c565b1d707e199a14133950bf81c97f92e8e80ea8e466a3143c46229f79f377ed796cb17dc733c78b0ed1903a3c88ca', 1529196155, 2);
+-- INSERT INTO user (first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES ('Global', '', 'Admin', 0, 'Male', 'admin@admin.com', 'cecf42e9047e907a82379ad0e5bed03b3c565b1d707e199a14133950bf81c97f92e8e80ea8e466a3143c46229f79f377ed796cb17dc733c78b0ed1903a3c88ca', 1529196155, 2);
+INSERT INTO user (first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES ('Global', '', 'Admin', 0, 'Male', 'temp@temp.com', '777c534fd04b2cc000819eaf0a63bfa135a62b42777ea4650c2743ca297b3ac6d33c001c664485c7cb3cd3a08475cd80c434be670c01f16d61218f7f9fe0bde5', 1529196155, 2);
 
 
 -- !Downs
