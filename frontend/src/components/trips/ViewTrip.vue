@@ -1,21 +1,13 @@
 
 <template>
   <v-card>
-    <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
-      <div class="section">
-        <div></div>
-        <h2 class="headline">{{ trip.name }}</h2>
-        <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          @click="toggleShouldDisplayButton()"
-        >
-          <v-icon dark>edit</v-icon>
-        </v-btn>
-      </div>
+    <v-container fluid>
+      <PageHeader
+        :title="trip.name"
+        :options="[{action : toggleShouldDisplayButton, icon: 'edit'}]"
+        disableUndoRedo
+        enableBackButton
+      />
 
       <v-divider class="photo-header-divider"></v-divider>
       <v-timeline align-top>
@@ -62,6 +54,7 @@ import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
 import dateTime from "../common/dateTime/dateTime.js";
+import PageHeader from "../common/header/PageHeader";
 
 export default {
   store,
@@ -126,7 +119,8 @@ export default {
     }
   },
   components: {
-    CreateTrip: CreateTrips
+    CreateTrip: CreateTrips,
+    PageHeader
   },
 
   created: function() {
