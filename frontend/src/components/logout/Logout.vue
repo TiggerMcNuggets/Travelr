@@ -14,10 +14,13 @@ export default {
   data() {
     return {};
   },
+
   mounted() {
     this.logout();
   },
+  
   methods: {
+
     /**
      * Logs the user out and sets their auth token to null in the store. Redirects the user back to login.
      */
