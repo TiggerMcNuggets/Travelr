@@ -3,6 +3,7 @@
     <div class="section">
       <h2 class="headline">{{title}}</h2>
       <UndoRedoButtons
+        v-if="!disableUndoRedo"
         :canRedo="rollbackCanRedo()"
         :canUndo="rollbackCanUndo()"
         :undo="undo"
@@ -54,7 +55,8 @@ export default {
     title: String,
     options: Array,
     undo: Function,
-    redo: Function
+    redo: Function,
+    disableUndoRedo: Boolean
   }
 };
 </script>
