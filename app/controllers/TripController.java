@@ -51,7 +51,7 @@ public class TripController extends Controller {
      * @param request
      * @return
      */
-    @Authorization.RequireAuth
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> createTrip(Http.Request request) {
 
         Form<CreateTripDTO> createTripForm = formFactory.form(CreateTripDTO.class).bindFromRequest(request);
@@ -73,7 +73,7 @@ public class TripController extends Controller {
      * @param request
      * @return
      */
-    @Authorization.RequireAuth
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> updateTrip(Http.Request request) {
 
         Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
