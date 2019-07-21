@@ -1,50 +1,47 @@
 
 <template>
-  <v-card>
-    <v-container fluid>
-      <PageHeader
-        :title="trip.name"
-        :options="[{action : toggleShouldDisplayButton, icon: 'edit'}]"
-        disableUndoRedo
-        enableBackButton
-      />
+  <v-container fluid>
+    <PageHeader
+      :title="trip.name"
+      :options="[{action : toggleShouldDisplayButton, icon: 'edit'}]"
+      disableUndoRedo
+      enableBackButton
+    />
 
-      <v-divider class="photo-header-divider"></v-divider>
-      <v-timeline align-top>
-        <v-dialog v-model="shouldDisplayDialog" max-width="100%">
-          <create-trip
-            style="background-color: white;"
-            v-if="true"
-            :regetTrips="() => console.log('no need')"
-            :passedTrip="tripId"
-            :updateViewTripPage="this.updateViewTripPage"
-          />
-        </v-dialog>
-        <v-timeline-item
-          v-for="(destination, i) in trip.destinations"
-          :key="i"
-          color="red lighten-2"
-          fill-dot
-        >
-          <v-card color="red lighten-2" dark>
-            <v-card-title class="title">{{ destination.name }}</v-card-title>
-            <v-card-text class="white text--primary">
-              <p v-if="destination.arrivalDate != null">Arrival Date: {{ destination.arrivalDate }}</p>
-              <p
-                v-if="destination.departureDate != null"
-              >Departure Date: {{ destination.departureDate }}</p>
-              <v-btn
-                color="red lighten-2"
-                class="mx-0"
-                outline
-                @click="viewDestination(destination.id)"
-              >View Destination</v-btn>
-            </v-card-text>
-          </v-card>
-        </v-timeline-item>
-      </v-timeline>
-    </v-container>
-  </v-card>
+    <v-timeline align-top>
+      <v-dialog v-model="shouldDisplayDialog" max-width="100%">
+        <create-trip
+          style="background-color: white;"
+          v-if="true"
+          :regetTrips="() => console.log('no need')"
+          :passedTrip="tripId"
+          :updateViewTripPage="this.updateViewTripPage"
+        />
+      </v-dialog>
+      <v-timeline-item
+        v-for="(destination, i) in trip.destinations"
+        :key="i"
+        color="red lighten-2"
+        fill-dot
+      >
+        <v-card color="red lighten-2" dark>
+          <v-card-title class="title">{{ destination.name }}</v-card-title>
+          <v-card-text class="white text--primary">
+            <p v-if="destination.arrivalDate != null">Arrival Date: {{ destination.arrivalDate }}</p>
+            <p
+              v-if="destination.departureDate != null"
+            >Departure Date: {{ destination.departureDate }}</p>
+            <v-btn
+              color="red lighten-2"
+              class="mx-0"
+              outline
+              @click="viewDestination(destination.id)"
+            >View Destination</v-btn>
+          </v-card-text>
+        </v-card>
+      </v-timeline-item>
+    </v-timeline>
+  </v-container>
 </template>
 
 
