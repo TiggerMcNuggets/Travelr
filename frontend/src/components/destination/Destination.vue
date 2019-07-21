@@ -88,35 +88,6 @@
 
 <style>
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-.outer-container {
-  max-width: 100%;
-  width: 100% !important;
-}
-
-ul {
-  padding-left: 0px;
-}
-
-h2 {
-  align-self: flex-end;
-}
-
-hr {
-  margin-bottom: 25px;
-}
-
-.section {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.dest-name {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
 .dest-name div {
   text-align: start;
 }
@@ -125,13 +96,11 @@ hr {
   color: grey;
 }
 
-.dest-name button {
-  margin-right: 20px;
-}
-
 .outer-container {
   text-align: center;
   padding-bottom: 15px;
+  max-width: 100%;
+  width: 100% !important;
 }
 
 .horizontal-details {
