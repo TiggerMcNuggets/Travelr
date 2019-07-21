@@ -90,7 +90,6 @@ import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import PageHeader from "../common/header/PageHeader";
 let tripRepository = RepositoryFactory.get("trip");
 
@@ -138,7 +137,6 @@ export default {
   },
   // child components
   components: {
-    UndoRedoButtons,
     CreateTrip: CreateTrips,
     PageHeader
   },
