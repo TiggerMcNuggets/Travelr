@@ -5,12 +5,78 @@
     <div class="outer-container">
       <div class="inner-container">
         <v-card-title primary-title class="headline indigo white--text">
-          <h2 class="font-weight-regular">Add Existing Photo</h2>
+          <h5 class="font-weight-regular">Add Existing Photo</h5>
         </v-card-title>
 
-        <v-divider></v-divider>
+        <div>
+          <v-tabs
+                  v-model="active"
+                  light
+                  slider-color="indigo"
+          >
+            <v-tab
+                    class="button"
+                    :key="All"
+                    ripple
+            >
+              All
 
-        //need a chooser here
+            </v-tab>
+            <v-tab-item
+                    :key="All"
+            >
+              <v-card flat>
+                <v-card-text>All Media</v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab
+                    class="button"
+                    :key="Photos"
+                    ripple
+            >
+              Photos
+
+            </v-tab>
+            <v-tab-item
+                    :key="Photos"
+            >
+              <v-card flat>
+                <v-card-text>All Photos</v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab
+                    class="button"
+                    :key="Videos"
+                    ripple
+            >
+              Videos
+
+            </v-tab>
+            <v-tab-item
+                    :key="Videos"
+            >
+              <v-card flat>
+                <v-card-text>All Videos</v-card-text>
+              </v-card>
+            </v-tab-item>
+            <v-tab
+                    class="button"
+                    :key="Albums"
+                    ripple
+            >
+              Albums
+
+            </v-tab>
+            <v-tab-item
+                    :key="Albums"
+            >
+              <v-card flat>
+                <v-card-text>All Albums</v-card-text>
+              </v-card>
+            </v-tab-item>
+          </v-tabs>
+
+        </div>
 
         <ul>
           <li v-for="row in files" :value="row.value" :key="row.value">
@@ -36,13 +102,18 @@
       </div>
     </div>
     <v-divider></v-divider>
-    <v-btn color="primary" flat @click="closeDialogue">Close</v-btn>
-    <v-btn color="primary" flat v-on:click="processSelected()">Add Photos to Destination</v-btn>
+    <v-btn class="button" color="error" v-on:click="processSelected()">Add</v-btn>
+    <v-btn class="button" outline color="error" @click="closeDialogue">Cancel</v-btn>
   </v-card>
 </template>
 
 
 <style>
+
+.button {
+  text-transform: initial;
+}
+
 .image-selected {
   width: 0;
   height: 0;
