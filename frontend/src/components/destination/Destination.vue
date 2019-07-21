@@ -3,42 +3,8 @@
 <template>
   <v-card>
     <v-container class="outer-container" height="100%" style="margin-left: 0; margin-top: -20px;">
-      <div class="section">
-        <div class="dest-name">
-          <h2 class="headline">Destinations</h2>
-          <undo-redo-buttons
-            :canRedo="rollbackCanRedo()"
-            :canUndo="rollbackCanUndo()"
-            :undo="undo"
-            :redo="redo"
-          ></undo-redo-buttons>
-        </div>
-        <div>
-          <v-btn
-            class="upload-toggle-button"
-            fab
-            small
-            dark
-            color="indigo"
-            v-if="isMyProfile || isAdminUser"
-            @click="toggleShowCreateDestination"
-          >
-            <v-icon dark>add</v-icon>
-          </v-btn>
-          <v-btn
-            class="upload-toggle-button"
-            fab
-            small
-            dark
-            color="indigo"
-            @click="toggleShowSearch"
-          >
-            <v-icon dark>search</v-icon>
-          </v-btn>
-        </div>
-      </div>
+      <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options"/>
 
-      <v-divider class="photo-header-divider"></v-divider>
       <v-text-field
         v-if="searchActive"
         v-model="searchValue"
@@ -210,6 +176,7 @@ ul {
 
 .destination-list-element {
   padding-top: 20px;
+  list-style-type: none;
 }
 </style>
 
@@ -219,14 +186,14 @@ import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
 import RollbackMixin from "../mixins/RollbackMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import DestinationCreate from "./DestinationCreate";
+import PageHeader from "../common/header/PageHeader";
 
 export default {
   store,
   mixins: [RollbackMixin],
   components: {
-    UndoRedoButtons,
+    PageHeader,
     DestinationCreate
   },
 
@@ -254,6 +221,12 @@ export default {
   },
 
   computed: {
+    options() {
+      return [
+        { action: this.toggleShowCreateDestination, icon: "add" },
+        { action: this.toggleShowSearch, icon: "search" }
+      ];
+    },
     destinationsFiltered() {
       const filteredList = this.destinations.filter(
         destination =>
