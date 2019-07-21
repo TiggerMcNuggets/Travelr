@@ -1,7 +1,7 @@
 
 
 <template>
-  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
+  <v-container fluid>
     <PageHeader title="Trips" :undo="undo" :redo="redo" :options="options"/>
 
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
