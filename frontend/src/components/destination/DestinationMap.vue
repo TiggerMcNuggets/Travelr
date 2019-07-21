@@ -297,7 +297,7 @@ export default {
   },
 
   mounted() {
-    this.$refs.map.$el.style.height = `${this.mapHeight}px`;
+    this.updateMapHeight();
     window.addEventListener("resize", this.updateMapHeight);
   },
 
