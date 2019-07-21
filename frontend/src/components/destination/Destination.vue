@@ -2,7 +2,7 @@
 
 <template>
   <v-card>
-    <v-container class="outer-container" height="100%" style="margin-left: 0; margin-top: -20px;">
+    <v-container fluid>
       <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options"/>
 
       <v-text-field
