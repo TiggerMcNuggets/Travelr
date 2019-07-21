@@ -1,26 +1,27 @@
 <template>
+<v-app id="inspire">
   <v-container fluid fill-height ma-0 pa-0>
     <v-layout row>
-      <v-flex col sm6 pa-5 ma-3 mt-5 ml-5 >
+      <v-flex col sm6 pa-5 ma-3 mt-5 ml-5>
         <div class="heading-container">
-        <img class="home__logo" src="../assets/logo2_dark.png" />
-        <h3 mt-2 class='home__tagline' >Taking the hassle out of your next business trip</h3>
+          <img class="home__logo" src="../assets/logo2_dark.png">
+          <h3 mt-2 class="home__tagline">Taking the hassle out of your next business trip</h3>
         </div>
-        <Login class="home__login_area" />
+        <router-view class="home__login_area"></router-view>
       </v-flex>
       <v-flex col sm6>
-        <img class="home__feature_img" src="../assets/homepage_graphic.png" />
+        <img class="home__feature_img" src="../assets/homepage_graphic.png">
       </v-flex>
     </v-layout>
   </v-container>
+</v-app>
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap");
 
 .home__logo {
   width: 60%;
-  /* padding: 40px 20px; */
 }
 
 .home__feature_img {
@@ -33,15 +34,15 @@
 }
 
 .home__tagline {
-    font-family: 'Roboto', sans-serif;
-    color: lightslategray;
-    font-weight: 300;
-    font-size: 20px;
-    margin-top: 15px;
+  font-family: "Roboto", sans-serif;
+  color: lightslategray;
+  font-weight: 300;
+  font-size: 20px;
+  margin-top: 15px;
 }
 
 .heading-container {
-    margin-bottom: 60px;
+  margin-bottom: 60px;
 }
 
 .overlay {
@@ -58,14 +59,8 @@
 </style>
 
 <script>
-import Login from "../components/login/Login";
-
 export default {
   name: "Home",
-
-  components: {
-    Login
-  },
 
   data() {
     return {};

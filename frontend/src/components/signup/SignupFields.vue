@@ -1,42 +1,41 @@
 <template>
-    <v-container grid-list-md fluid ma-0>
-        <v-layout row wrap>
-            <v-flex md12>
-                <v-text-field 
-                    label="Email" 
-                    :value="email" 
-                    :rules="rules.emailCheck" 
-                    @input="$emit('update:email', $event)" 
-                    maxlength="50">
-                </v-text-field>
-            </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-            <v-flex md12>
-                <v-text-field 
-                    label="Password" 
-                    type="password" 
-                    :value="password" 
-                    :rules="rules.required" 
-                    @input="$emit('update:password', $event)" 
-                    maxlength="50">
-                </v-text-field>
-            </v-flex>
-        </v-layout>
-        <v-layout row wrap>
-            <v-flex md12>
-                <v-text-field 
-                    label="Confirm Password" 
-                    type="password" 
-                    :value="confirmPassword" 
-                    :rules="rules.confirmPassCheck" 
-                    @input="$emit('update:confirmPassword', $event)" 
-                    maxlength="50">
-                </v-text-field>
-            </v-flex>
-        </v-layout>
-    </v-container>
-
+  <v-container grid-list-md fluid ma-0 pa-0>
+    <v-layout row wrap>
+      <v-flex md12>
+        <v-text-field
+          label="Email"
+          :value="email"
+          :rules="rules.emailCheck"
+          @input="$emit('update:email', $event)"
+          maxlength="50"
+        ></v-text-field>
+      </v-flex>
+    </v-layout>
+    <v-layout row wrap>
+      <v-flex md12>
+        <v-text-field
+          label="Password"
+          type="password"
+          :value="password"
+          :rules="rules.required"
+          @input="$emit('update:password', $event)"
+          maxlength="50"
+        ></v-text-field>
+      </v-flex>
+    </v-layout>
+    <v-layout row wrap>
+      <v-flex md12>
+        <v-text-field
+          label="Confirm Password"
+          type="password"
+          :value="confirmPassword"
+          :rules="rules.confirmPassCheck"
+          @input="$emit('update:confirmPassword', $event)"
+          maxlength="50"
+        ></v-text-field>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <style>
@@ -56,12 +55,24 @@ export default {
   },
   methods: {
     addConfirmPassRule() {
-      this.$set(this.rules, "confirmPassCheck", this.rules.required.concat([() => this.password === this.confirmPassword || "Passwords must match"]));
+      this.$set(
+        this.rules,
+        "confirmPassCheck",
+        this.rules.required.concat([
+          () => this.password === this.confirmPassword || "Passwords must match"
+        ])
+      );
     },
     addEmailRule() {
       const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      this.$set(this.rules, "emailCheck", this.rules.required.concat([() => emailPattern.test(this.email) || "Must be in email format"]));
-    },
-  },
+      this.$set(
+        this.rules,
+        "emailCheck",
+        this.rules.required.concat([
+          () => emailPattern.test(this.email) || "Must be in email format"
+        ])
+      );
+    }
+  }
 };
 </script>
