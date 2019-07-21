@@ -1,13 +1,6 @@
 <template>
-  <v-container class="outer-container" height="100%" style="margin-top: 10px; padding-left: 22.5%;">
-    <v-card style="width: 70%;">
-      <div class="section">
-        <div class="dest-name">
-          <h2 class="headline">Destination Edit Requests</h2>
-        </div>
-      </div>
-
-      <v-divider class="photo-header-divider"></v-divider>
+  <v-flex pa-3>
+    <p v-if="editRequests.length === 0" >No Requests available</p>
       <li v-for="request in editRequests" :key="request.id" style="padding: 20px">
         <v-card>
           <v-layout row wrap s>
@@ -48,8 +41,8 @@
           </v-layout>
         </v-card>
       </li>
-    </v-card>
-  </v-container>
+    </p>
+  </v-flex>
 </template>
 
 <script>

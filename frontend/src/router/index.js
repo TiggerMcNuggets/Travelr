@@ -103,7 +103,7 @@ let router = new Router({
   mode: "history",
   routes: [
     {
-      path: "/",
+      path: "",
       beforeEnter: unauthGuard
     },
 
@@ -188,15 +188,6 @@ let router = new Router({
           path: "/admin_dash",
           name: "admin_dash",
           component: AdminDashboard,
-          beforeEnter: authGuard,
-          meta: {
-            requiresAdmin: true
-          }
-        },
-        {
-          path: "/edit_requests",
-          name: "edit_requests",
-          component: DestinationEditRequests,
           beforeEnter: authGuard,
           meta: {
             requiresAdmin: true

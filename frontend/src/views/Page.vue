@@ -121,11 +121,6 @@ export default {
           icon: "playlist_add_check",
           link: "/admin_dash"
         });
-        menuOptions.push({
-          name: "Edit Requests",
-          icon: "done_all",
-          link: "/edit_requests"
-        });
       }
 
       return menuOptions;
