@@ -1,47 +1,46 @@
 <template>
   <v-flex pa-3>
-    <p v-if="editRequests.length === 0" >No Requests available</p>
-      <li v-for="request in editRequests" :key="request.id" style="padding: 20px">
-        <v-card>
-          <v-layout row wrap s>
-            <v-flex xs12 sm12 md12 style="text-align: center;">
-              <h3>{{ request.destination.name }}</h3>
-              <v-divider/>
-            </v-flex>
-            <v-flex xs12 sm12 md2 style="text-align: center; padding-left: 20px">
-              <v-btn v-on:click="$router.push('/user/'+request.user.id)">View User</v-btn>
-            </v-flex>
-            <v-flex xs12 sm12 md2 style="text-align: center; padding-left: 20px">
-              <v-btn
-                v-on:click="$router.push('/user/' + userid + '/destinations/' + request.destination.id)"
-              >View Destination</v-btn>
-            </v-flex>
-            <v-flex xs12 sm12 md3 offset-lg1>
-              <v-select
-                :items="getTravellerTypes(request.destination.travellerTypes)"
-                label="Current Traveller Types"
-                attach
-                solo
-              ></v-select>
-            </v-flex>
-            <v-flex xs12 sm12 md3>
-              <v-select
-                :items="getTravellerTypes(request.travellerTypes)"
-                label="Sugguested Traveller Types"
-                attach
-                solo
-              ></v-select>
-            </v-flex>
-            <v-flex xs12 sm12 md3 offset-lg3 style="text-align: center;">
-              <v-btn color="warning" v-on:click="denyRequest(request.id)">Deny</v-btn>
-            </v-flex>
-            <v-flex xs12 sm12 md3 style="text-align: center;">
-              <v-btn color="info" v-on:click="acceptRequest(request.id)">Accept</v-btn>
-            </v-flex>
-          </v-layout>
-        </v-card>
-      </li>
-    </p>
+    <p v-if="editRequests.length === 0">No Requests available</p>
+    <li v-for="request in editRequests" :key="request.id" style="padding: 20px">
+      <v-card>
+        <v-layout row wrap s>
+          <v-flex xs12 sm12 md12 style="text-align: center;">
+            <h3>{{ request.destination.name }}</h3>
+            <v-divider/>
+          </v-flex>
+          <v-flex xs12 sm12 md2 style="text-align: center; padding-left: 20px">
+            <v-btn v-on:click="$router.push('/user/'+request.user.id)">View User</v-btn>
+          </v-flex>
+          <v-flex xs12 sm12 md2 style="text-align: center; padding-left: 20px">
+            <v-btn
+              v-on:click="$router.push('/user/' + userid + '/destinations/' + request.destination.id)"
+            >View Destination</v-btn>
+          </v-flex>
+          <v-flex xs12 sm12 md3 offset-lg1>
+            <v-select
+              :items="getTravellerTypes(request.destination.travellerTypes)"
+              label="Current Traveller Types"
+              attach
+              solo
+            ></v-select>
+          </v-flex>
+          <v-flex xs12 sm12 md3>
+            <v-select
+              :items="getTravellerTypes(request.travellerTypes)"
+              label="Sugguested Traveller Types"
+              attach
+              solo
+            ></v-select>
+          </v-flex>
+          <v-flex xs12 sm12 md3 offset-lg3 style="text-align: center;">
+            <v-btn color="warning" v-on:click="denyRequest(request.id)">Deny</v-btn>
+          </v-flex>
+          <v-flex xs12 sm12 md3 style="text-align: center;">
+            <v-btn color="info" v-on:click="acceptRequest(request.id)">Accept</v-btn>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </li>
   </v-flex>
 </template>
 
