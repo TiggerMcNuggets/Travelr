@@ -1,24 +1,70 @@
 Feature: CreateTraveller
   Description: The purpose of this feature is to test the api endpoint related to creating travellers
 
-  Background: The database is populated
-    Given I populate the database
-    Then I will receive a 200 response
-
   Scenario: Signs up successfully
-    Given I provide a complete traveller json
-    And I provide the email "new@email.com"
-    When I signup
-    Then I will receive a 201 response
-    And I will receive the id 7
+    When I want to sign up
+    And The body is
+    """
+    {
+      "firstName": "string",
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "string",
+      "email": "string@string.string",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
+    """
+    And I send the request
+    Then I will receive the response code 201
+    And I will receive the response body
+    """
+    {
+      "id": 2
+    }
+    """
 
   Scenario: Signs up with missing fields
-    Given I provide an incomplete traveller json
-    When I signup
-    Then I will receive a 400 response
+    When I want to sign up
+    And The body is
+    """
+    {}
+    """
+    And I send the request
+    Then I will receive the response code 400
 
-  Scenario: I provide a complete traveller json
-    Given I provide a complete traveller json
-    And I provide the email "admin@test.com"
-    When I signup
-    Then I will receive a 400 response
+  Scenario: The email exists
+    Given The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    When I want to sign up
+    And The body is
+    """
+    {
+      "firstName": "string",
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "string",
+      "email": "johnsmith@email.com",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
+    """
+    And I send the request
+    Then I will receive the response code 400

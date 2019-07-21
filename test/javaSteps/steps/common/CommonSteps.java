@@ -15,6 +15,7 @@ import play.test.Helpers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.route;
@@ -143,6 +144,19 @@ public class CommonSteps  {
     @Then("I will receive the response body")
     public void iWillReceiveTheResponseBody(String resBody) {
         Assert.assertEquals(Json.parse(resBody), Json.parse(contentAsString(state.getResult())));
+    }
+
+    @Given("The user exists")
+    public void theUserExists(List<Map<String, String>> dataTable) {
+        Map<String, String> userInfo = dataTable.get(0);
+        User user = new User(
+                userInfo.get("first"),
+                userInfo.get("last"),
+                userInfo.get("email"),
+                Integer.valueOf(userInfo.get("dob"))
+        );
+        user.insert();
+        state.setUser(user);
     }
 
     private User createTestUser() {

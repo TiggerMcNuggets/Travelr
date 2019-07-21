@@ -67,4 +67,10 @@ public class CreateTravellerSteps {
             Assert.assertTrue(false);
         }
     }
+
+    @When("I want to sign up")
+    public void iWantToSignUp() {
+        state.getRequest().method("POST");
+        state.getRequest().uri("https://localhost:9000/api/travellers");
+    }
 }
