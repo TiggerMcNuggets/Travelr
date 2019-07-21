@@ -1,7 +1,16 @@
 <template>
   <div>
     <div class="section">
-      <h2 class="headline">{{title}}</h2>
+      <div class="page__title_container">
+        <v-btn fab small dark color="indigo" @click="$router.go(-1)" v-if="enableBackButton">
+          <v-icon dark>keyboard_arrow_left</v-icon>
+        </v-btn>
+
+        <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
+      </div>
+
+      <v-spacer/>
+
       <UndoRedoButtons
         v-if="!disableUndoRedo"
         :canRedo="rollbackCanRedo()"
@@ -18,7 +27,7 @@
           fab
           small
           dark
-          color="error"
+          color="indigo"
           @click="option[1].action"
         >
           <v-icon dark>{{option[1].icon}}</v-icon>
@@ -30,13 +39,18 @@
   </div>
 </template>
 
-<style>
-.section {
+<style >
+.page__title_container {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.page__title_container .h1_space {
+  margin-left: 15px;
 }
 </style>
+
 
 <script>
 import RollbackMixin from "../../mixins/RollbackMixin.vue";
@@ -56,7 +70,8 @@ export default {
     options: Array,
     undo: Function,
     redo: Function,
-    disableUndoRedo: Boolean
+    disableUndoRedo: Boolean,
+    enableBackButton: Boolean
   }
 };
 </script>
