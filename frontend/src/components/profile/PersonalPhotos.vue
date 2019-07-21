@@ -5,9 +5,6 @@
     <div class="inner-container">
       <div class="section">
         <div class="dest-name">
-          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-            <v-icon dark>keyboard_arrow_left</v-icon>
-          </v-btn>
           <h2 class="headline">Personal Photos</h2>
         </div>
         <div>

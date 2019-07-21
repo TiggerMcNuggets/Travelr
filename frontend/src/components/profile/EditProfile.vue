@@ -2,14 +2,12 @@
   <v-form ref="form" v-model="isValid" lazy-validation>
     <v-flex text-xs-left>
       <v-card class="profile-card">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
         <UndoRedoButtons
-                :canRedo="rollbackCanRedo()"
-                :canUndo="rollbackCanUndo()"
-                :undo="undo"
-                :redo="redo"></UndoRedoButtons>
+          :canRedo="rollbackCanRedo()"
+          :canUndo="rollbackCanUndo()"
+          :undo="undo"
+          :redo="redo"
+        ></UndoRedoButtons>
 
         <TravellerForm
           :fname.sync="traveller.firstName"
@@ -36,12 +34,8 @@
           <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
-        <v-alert :value="editErrorAlert" type="error">
-          Cannot edit profile
-        </v-alert>
-        <v-alert :value="undoRedoErrorAlert" type="error">
-          Cannot undo or redo
-        </v-alert>
+        <v-alert :value="editErrorAlert" type="error">Cannot edit profile</v-alert>
+        <v-alert :value="undoRedoErrorAlert" type="error">Cannot undo or redo</v-alert>
       </v-card>
     </v-flex>
   </v-form>
@@ -93,7 +87,7 @@ import UndoRedoButtons from "../common/rollback/UndoRedoButtons";
 
 export default {
   name: "EditProfile",
-  components: {UndoRedoButtons, TravellerForm},
+  components: { UndoRedoButtons, TravellerForm },
 
   store,
   mixins: [RollbackMixin],
@@ -107,7 +101,7 @@ export default {
       travellerTypes: [],
       passports: [],
       editErrorAlert: false,
-      undoRedoErrorAlert: false,
+      undoRedoErrorAlert: false
     };
   },
   methods: {
@@ -149,8 +143,8 @@ export default {
 
         // This is set to later be pushed as a reaction to the rollback stack
         // The double set calls are needed to convert get response object into a put request object
-        let previousBody = this.setTravellerToFields({...result.data});
-        previousBody = this.setFieldsToTraveller(previousBody)
+        let previousBody = this.setTravellerToFields({ ...result.data });
+        previousBody = this.setFieldsToTraveller(previousBody);
         this.rollbackSetPreviousBody(previousBody);
 
         // Convert original object structure to one that will work with the selects
@@ -189,7 +183,7 @@ export default {
         this.dateOfBirth
       );
       traveller.travellerTypes = this.travellerTypes;
-      return traveller
+      return traveller;
     },
 
     /**
@@ -203,13 +197,13 @@ export default {
         store
           .dispatch("updateUser", this.traveller)
           .then(() => {
-            const url = `/travellers/${this.id}`
+            const url = `/travellers/${this.id}`;
 
             this.rollbackCheckpoint(
-              'PUT',
+              "PUT",
               {
                 url: url,
-                body: {...this.traveller}
+                body: { ...this.traveller }
               },
               {
                 url: url,
@@ -233,7 +227,7 @@ export default {
     undo: async function() {
       try {
         const actions = [this.resetAlerts, this.getTraveller];
-        await this.rollbackUndo(actions); 
+        await this.rollbackUndo(actions);
       } catch (err) {
         console.log(err);
         this.undoRedoErrorAlert = true;
@@ -244,15 +238,14 @@ export default {
      * Redoes the last action and calls getTraveller() afterwards
      */
     redo: async function() {
-      try {      
+      try {
         const actions = [this.resetAlerts, this.getTraveller];
         await this.rollbackRedo(actions);
       } catch (err) {
         console.log(err);
         this.undoRedoErrorAlert = true;
       }
-
-    },
+    }
   },
 
   /**

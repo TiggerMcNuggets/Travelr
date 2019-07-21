@@ -4,18 +4,13 @@
   <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
     <div class="section">
       <div class="dest-name">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
-
+        <h2 class="headline">Trips</h2>
         <undo-redo-buttons
           :canRedo="rollbackCanRedo()"
           :canUndo="rollbackCanUndo()"
           :undo="undo"
           :redo="redo"
         ></undo-redo-buttons>
-
-        <h2 class="headline">Trips</h2>
       </div>
       <div>
         <v-btn
@@ -40,9 +35,7 @@
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
-
     <div v-if="showCreateTrip">
-
       <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
@@ -131,8 +124,7 @@ let tripRepository = RepositoryFactory.get("trip");
 export default {
   store,
 
-   mixins: [RollbackMixin],
-
+  mixins: [RollbackMixin],
 
   // local variables
   data() {
@@ -170,14 +162,12 @@ export default {
     CreateTrip: CreateTrips
   },
   methods: {
-       /**
+    /**
      * Sets all alert error visible fields to invisible
      */
     clearAlerts() {
       this.undoRedoError = false;
     },
-
-
 
     /**
      * Gets trips from the API using using the user_id found in params
@@ -241,15 +231,15 @@ export default {
     deleteTrip: function(tripId) {
       this.clearAlerts();
       tripRepository.deleteTrip(this.user_id, tripId).then(() => {
-        const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
-         this.rollbackCheckpoint(
-        'DELETE',
-        {
-            url: url,
-        },
-        {
-            url: url,
-        }
+        const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`;
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
         );
         this.getUserTrips();
       });
@@ -281,26 +271,25 @@ export default {
      * Adds a checkpoint when creating a trip
      */
     checkpointCreateTrip: function(tripId) {
-      const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
+      const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`;
       this.rollbackCheckpoint(
-        'POST',
+        "POST",
         {
-            url: url,
+          url: url
         },
         {
-            url: url,
+          url: url
         }
-        );
+      );
     },
 
-
     /**
-    * Undoes the last action and gets destinations afterwards
-    */
+     * Undoes the last action and gets destinations afterwards
+     */
     undo: function() {
       const actions = [this.getUserTrips, this.clearAlerts];
       try {
-        this.rollbackUndo(actions); 
+        this.rollbackUndo(actions);
       } catch (err) {
         this.undoRedoError = true;
       }
@@ -318,10 +307,6 @@ export default {
       }
     }
   },
-
-    
-
-
 
   created: function() {
     this.checkIfProfileOwner();
