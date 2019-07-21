@@ -159,6 +159,14 @@ public class CommonSteps  {
         state.setUser(user);
     }
 
+    @Given("The user does not exist")
+    public void theUserDoesNotExist() {
+        state.setUser(new User("first", "last", "e@mail.com", 1));
+        state.getUser().setId(10L);
+        // By not inserting, the user does not exist
+        // User needed to be created to pass id into request uri through state
+    }
+
     private User createTestUser() {
         User user = new User("Test", "User", "test.user@testuser.com", 1);
         user.insert();

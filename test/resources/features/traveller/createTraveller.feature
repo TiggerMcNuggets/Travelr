@@ -10,7 +10,7 @@ Feature: CreateTraveller
       "middleName": "string",
       "lastName": "string",
       "dateOfBirth": 0,
-      "gender": "string",
+      "gender": "male",
       "email": "string@string.string",
       "password": "string",
       "nationalities": [
@@ -36,7 +36,22 @@ Feature: CreateTraveller
     When I want to sign up
     And The body is
     """
-    {}
+    {
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "male",
+      "email": "string@string.string",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
     """
     And I send the request
     Then I will receive the response code 400
@@ -53,7 +68,7 @@ Feature: CreateTraveller
       "middleName": "string",
       "lastName": "string",
       "dateOfBirth": 0,
-      "gender": "string",
+      "gender": "male",
       "email": "johnsmith@email.com",
       "password": "string",
       "nationalities": [
