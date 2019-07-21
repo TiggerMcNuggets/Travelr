@@ -43,7 +43,9 @@ const authGuard = (to, from, next) => {
 };
 
 const unauthGuard = (to, from, next) => {
-  if (!store.getters.getToken) { return next() };
+  if (!store.getters.getToken) {
+    return next();
+  }
   if (store.getters.getToken && !store.getters.getUser) {
     store
       .dispatch("fetchMe")
