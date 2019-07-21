@@ -83,6 +83,11 @@
 .trips-tile {
   height: 100%;
 }
+
+.dashboard {
+  margin: 20px;
+}
+
 .dashboard h5 {
   font-size: 2em;
   text-decoration: none !important;
