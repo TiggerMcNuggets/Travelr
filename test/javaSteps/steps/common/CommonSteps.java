@@ -1,6 +1,8 @@
 package javaSteps.steps.common;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -58,7 +60,19 @@ public class CommonSteps  {
 
     @Then("I will receive the response body")
     public void iWillReceiveTheResponseBody(String resBody) {
-        Assert.assertEquals(Json.parse(resBody), Json.parse(contentAsString(state.getResult())));
+
+        // Remove public field as it only shows up in CI and is a duplicate of isPublic
+        JsonNode res = Json.parse(resBody);
+        if (res.isArray()) {
+            for (int i = 0; i < res.size(); i++) {
+                ((ObjectNode)(res.get(i))).remove("public");
+            }
+
+        } else {
+            ((ObjectNode)res).remove("public");
+        }
+
+        Assert.assertEquals(res, Json.parse(contentAsString(state.getResult())));
     }
 
     @Given("The user exists")
