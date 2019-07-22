@@ -19,7 +19,7 @@
           v-for="path in pathList"
           :key = path.ordinal
           :path = path
-          :strokeColor = path.colour
+          :options="{strokeColor: path.strokeColor}"
           :strokeWeight = 1
           >
         </GmapPolyline>
@@ -70,8 +70,12 @@
         privateMarker: pinkMarker,
         trip: [
             {lat: -43.53205440000001, lng: 172.63622540000006, ordinal: 1, depth: 1},
-            {lat: -33.8688197, lng: 151.20929550000005, ordinal: 2, depth: 2},
-            {lat: 55.9366784, lng: -4.7739458, ordinal: 3, depth: 1}
+            {lat: -36.8484597, lng: 174.76333150000005, ordinal: 2, depth: 1},
+            {lat: -33.8688197, lng: 151.20929550000005, ordinal: 3, depth: 2},
+            {lat: 41.90278349999999, lng: 12.496365500000024, ordinal: 4, depth: 3},
+            {lat: -17.6509195, lng: -149.42604210000002, ordinal: 5, depth: 3},
+            {lat: -17.6509195, lng: -149.42604210000002, ordinal: 6, depth: 2},
+            {lat: 55.9366784, lng: -4.7739458, ordinal: 7, depth: 1}
 ],
       };
     },
@@ -94,18 +98,25 @@
         let tempPath = [];
         let currentDepth;
         for (let i = 0; i < this.trip.length; i++) {
+          console.log(i);
           let RGB = ["00", "00", "00"]
           currentDepth = this.trip[i].depth;
           if (i + 1 == this.trip.length) {
             tempPath.push(this.trip[i])
             RGB[(this.trip[i - 1].depth - 1)] = "FF";
-            tempPath.colour = "#" + RGB[0] + RGB[1] + RGB[2];
+            tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
             tempPaths.push(tempPath);
             break
-          }else if ((currentDepth < this.trip[i + 1].depth) || (currentDepth < this.trip[i - 1].depth)) {
+          } else if (i == 0) {
             tempPath.push(this.trip[i]);
-            RGB[(this.trip[i].depth - 1)] = "FF";
-            tempPath.colour = "#" + RGB[0] + RGB[1] + RGB[2];
+          } else if ((currentDepth < this.trip[i + 1].depth) || (currentDepth < this.trip[i - 1].depth)) {
+            tempPath.push(this.trip[i]);
+            if (currentDepth < this.trip[i - 1].depth) {
+              RGB[(this.trip[i - 1].depth - 1)] = "FF";
+            } else {
+              RGB[(this.trip[i].depth - 1)] = "FF";
+            }
+            tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
             tempPaths.push(tempPath)
             tempPath = [];
             tempPath.push(this.trip[i]);
