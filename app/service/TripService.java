@@ -26,9 +26,9 @@ public class TripService {
     @Inject
     public TripService(DatabaseExecutionContext context) { this.context = context; }
 
-    public CompletableFuture<Trip> updateTrip(TripDTO tripDTO, User user) {
+    public CompletableFuture<Trip> updateTrip(Long tripId, TripDTO tripDTO, User user) {
         return supplyAsync(() -> {
-            Trip trip = Trip.find.byId(tripDTO.id);
+            Trip trip = Trip.find.byId(tripId);
 
             if(trip == null) {
                 return null;

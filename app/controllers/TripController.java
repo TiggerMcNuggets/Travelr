@@ -87,7 +87,13 @@ public class TripController extends Controller {
         User user = request.attrs().get(Attrs.USER);
 
 
-        return tripService.updateTrip(dto, user).thenApplyAsync((trip) -> ok(Json.toJson(new TripDTO(trip))));
+        return tripService.updateTrip(tripId, dto, user).thenApplyAsync((trip) -> {
+            if(trip == null) {
+                return notFound();
+            }
+
+            return ok(Json.toJson(new TripDTO(trip)));
+        });
     }
 
     /**

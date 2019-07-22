@@ -30,6 +30,10 @@ public class DestinationDTO {
         this.country = destination.getCountry();
     }
 
+    public DestinationDTO() {
+
+    }
+
     public Long getId() {
         return id;
     }

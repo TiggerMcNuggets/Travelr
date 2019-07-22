@@ -31,6 +31,10 @@ public class TripDestinationDTO {
         this.depth = td.getDepth();
     }
 
+    public TripDestinationDTO() {
+
+    }
+
     public Long getId() {
         return id;
     }
