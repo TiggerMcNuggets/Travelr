@@ -196,6 +196,7 @@ public class UserController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> toggleUserDeleted(Http.Request request, Long userId) {
+        System.out.println("did i get here?");
         return userRepository.getUserIncludeDeleted(userId).thenComposeAsync(user -> {
 
             // Not Found Check

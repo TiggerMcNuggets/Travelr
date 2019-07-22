@@ -167,6 +167,12 @@ public class CommonSteps  {
         // User needed to be created to pass id into request uri through state
     }
 
+    @Given("I am an admin")
+    public void iAmAnAdmin() {
+        state.getUser().setAccountType(1);
+        state.getUser().update();
+    }
+
     private User createTestUser() {
         User user = new User("Test", "User", "test.user@testuser.com", 1);
         user.insert();
