@@ -118,7 +118,7 @@
           mapTypeControl: false,
           styles: GoogleMapLightStyle,
           maxZoom: 18,
-          minZoom: 3,AIzaSyDCyC_ON0GgSmJIfPlL7oke5PZgbR8TLbg
+          minZoom: 3,
           zoom: 3,
           streetViewControl: false,
           fullscreenControl: false,
