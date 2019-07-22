@@ -62,7 +62,7 @@ public class CommonSteps  {
     public void iWillReceiveTheResponseBody(String resBody) {
 
         // Remove public field as it only shows up in CI and is a duplicate of isPublic
-        JsonNode res = Json.parse(resBody);
+        JsonNode res = Json.parse(contentAsString(state.getResult()));
         if (res.isArray()) {
             for (int i = 0; i < res.size(); i++) {
                 ((ObjectNode)(res.get(i))).remove("public");
@@ -72,7 +72,7 @@ public class CommonSteps  {
             ((ObjectNode)res).remove("public");
         }
 
-        Assert.assertEquals(res, Json.parse(contentAsString(state.getResult())));
+        Assert.assertEquals(Json.parse(resBody), res);
     }
 
     @Given("The user exists")
