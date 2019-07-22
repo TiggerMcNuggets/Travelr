@@ -120,7 +120,12 @@ public class TripController extends Controller {
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> getTripById(Http.Request request, Long tripId, Long userId) {
         // TODO ADD AUTH CHECK
-        return tripService.getTripById(tripId).thenApplyAsync(trip -> ok(Json.toJson(new TripDTO(trip))));
+        return tripService.getTripById(tripId).thenApplyAsync(trip -> {
+            if(trip == null) {
+                return notFound();
+            }
+            return ok(Json.toJson(new TripDTO(trip)));
+        });
     }
 
 

@@ -46,6 +46,7 @@ public class TripDestination extends BaseModel {
         this.customName = customName;
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
+        this.destination = destination;
     }
 
     @Override
