@@ -37,12 +37,12 @@ public class MakeDestinationPublicSteps {
 
     @Then("The destination is now public")
     public void theDestinationIsNowPublic() {
-        Assert.assertTrue((Destination.find.findById(state.getDestination().getId())).isPublic);
+        Assert.assertTrue((Destination.find.findById(state.getDestination().getId())).getIsPublic());
     }
 
     @Then("The destination is now private")
     public void theDestinationIsNowPrivate() {
-        Assert.assertFalse((Destination.find.findById(state.getDestination().getId())).isPublic);
+        Assert.assertFalse((Destination.find.findById(state.getDestination().getId())).getIsPublic());
     }
 
 }

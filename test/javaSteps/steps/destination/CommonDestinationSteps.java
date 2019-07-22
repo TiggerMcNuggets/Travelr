@@ -39,7 +39,7 @@ public class CommonDestinationSteps {
     public void theDestinationIsPublic() {
         Destination destination = Destination.find.findById(state.getDestination().getId());
 
-        destination.setPublic(true);
+        destination.setIsPublic(true);
         destination.save();
 
         state.setDestination(destination);

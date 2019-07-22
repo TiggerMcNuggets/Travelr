@@ -136,7 +136,7 @@ public class DestinationRepository {
                 mergeDestinations(destination, sameDestinations);
             }
 
-            destination.setPublic(true);
+            destination.setIsPublic(true);
             destination.update();
 
             return destinationId;
