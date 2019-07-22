@@ -20,10 +20,10 @@ public class GetTravellerSteps {
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
 
-    @Given("My details are")
+    @Given("The profile details are")
     public void myDetailsAre(List<Map<String, String>> dataTable) {
         Map<String, String> details = dataTable.get(0);
-        User user = state.getUser();
+        User user = User.find.findById(state.getUser().getId());
 
         user.setFirstName(details.get("first"));
         user.setMiddleName(details.get("middle"));
@@ -34,9 +34,10 @@ public class GetTravellerSteps {
         user.setAccountType(Integer.valueOf(details.get("accountType")));
 
         user.update();
+        state.setUser(user);
     }
 
-    @Given("My nationalities are")
+    @Given("The nationalities are")
     public void myNationalitiesAre(List<Map<String, String>> nationalities) {
         for (Map<String, String> nationality: nationalities) {
             Nationality nat = Nationality.find.byId(Long.valueOf(nationality.get("id")));
@@ -45,7 +46,7 @@ public class GetTravellerSteps {
         }
     }
 
-    @Given("My traveller types are")
+    @Given("The traveller types are")
     public void myTravellerTypesAre(List<Map<String, String>> travellerTypes) {
         User user = User.find.findById(state.getUser().getId());
         List<TravellerType> tTypes = new ArrayList<TravellerType>();
@@ -57,8 +58,8 @@ public class GetTravellerSteps {
         user.update();
     }
 
-    @When("I want to get my profile")
-    public void iWantToGetMyProfile() {
+    @When("I want to get the profile")
+    public void iWantToGetTheProfile() {
         state.getRequest().uri((String.format("http://localhost:9000/api/travellers/%s", state.getUser().getId())));
         state.getRequest().method("GET");
     }
