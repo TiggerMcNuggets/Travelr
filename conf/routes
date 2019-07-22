@@ -60,12 +60,13 @@ POST        /api/destinations/edit_requests/:requestId/accept        controllers
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
 
-# Trips
+# Trips (trips within trips)
 
 POST        /api/users/:userId/trips            controllers.TripController.createTrip(request: Request, userId: Long)
-PUT         /api/users/:userId/trips/:tripId    controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
 GET         /api/users/:userId/trips            controllers.TripController.getUserTrips(request: Request, userId: Long)
-GET         /api/users/:userId/trips/:tripId    controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
+GET         /api/users/:userId/trips/:tripId    controllers.TripController.getTripById(request: Request, tripId: Long, userId: Long)
+PUT         /api/users/:userId/trips/:tripId    controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
+DELETE      /api/users/:userId/trips/:tripId     controllers.TripController.deleteTrip(request: Request, tripId: Long, userId: Long)
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE

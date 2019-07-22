@@ -106,9 +106,13 @@ public class Authorization {
 
                     // The id that the request is being sent for
                     Long userIdOfRequest = getIdFromPath(req.uri());
+                    User accessUser = User.find.byId(userIdOfRequest);
 
-                    if(userIdOfRequest == user.get().getId() || user.get().isAdmin()) {
-                        return delegate.call(req.addAttr(Attrs.USER, user.get()).addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0));
+                    if(accessUser != null && (accessUser.getId() == user.get().getId() || user.get().isAdmin())) {
+                        return delegate.call(req
+                                .addAttr(Attrs.USER, user.get())
+                                .addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0)
+                                .addAttr(Attrs.ACCESS_USER, accessUser));
                     }
                 }
             }
@@ -120,7 +124,7 @@ public class Authorization {
     private static Long getIdFromPath(String path) {
         String output;
 
-        output = path.substring(path.indexOf("/api/users/") + 1);
+        output = path.substring(path.indexOf("/api/users/") + 11);
         output = output.substring(0, output.indexOf("/"));
 
         try {

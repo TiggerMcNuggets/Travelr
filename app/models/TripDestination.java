@@ -41,8 +41,7 @@ public class TripDestination extends BaseModel {
         this.destination = destination;
     }
 
-    // used in recursion
-    public TripDestination(String customName, int ordinal, int depth, int arrivalDate, int departureDate) {
+    public TripDestination(String customName, int ordinal, int depth, int arrivalDate, int departureDate, Destination destination) {
         this.ordinal = ordinal;
         this.customName = customName;
         this.arrivalDate = arrivalDate;

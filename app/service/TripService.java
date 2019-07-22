@@ -3,6 +3,7 @@ package service;
 import dto.trip.CreateTripDTO;
 import dto.trip.TripDTO;
 import dto.trip.TripDestinationDTO;
+import models.Destination;
 import models.Trip;
 import models.TripDestination;
 import models.User;
@@ -27,11 +28,37 @@ public class TripService {
 
     public CompletableFuture<Trip> updateTrip(TripDTO tripDTO, User user) {
         return supplyAsync(() -> {
-            Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
+            Trip trip = Trip.find.byId(tripDTO.id);
 
-            List<TripDestination> tripDestinationList = new ArrayList<>();
+            if(trip == null) {
+                return null;
+            }
 
-            trip.setDestinations(tripDestinationList);
+            trip.setName(tripDTO.name);
+            trip.setDescription(tripDTO.description);
+
+
+            trip.getDestinations().clear();
+
+            ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
+
+            for(TripDestinationDTO destDTO : tripDTO.destinations) {
+                Destination destination = Destination.find.byId(destDTO.destination.id);
+
+                TripDestination tripDestination = new TripDestination(
+                        destDTO.customName,
+                        destDTO.ordinal,
+                        destDTO.depth,
+                        destDTO.arrivalDate,
+                        destDTO.departureDate,
+                        destination);
+
+                newTripDestinations.add(tripDestination);
+            }
+
+            trip.setDestinations(newTripDestinations);
+
+            trip.save();
 
             return trip;
         }, context);
@@ -76,5 +103,26 @@ public class TripService {
         return supplyAsync(() -> {
             return Trip.find.query().where().eq("user.id", userId).findList();
         }, context);
+    }
+
+
+    /**
+     * Deletes a trip given an Id
+     * @param tripId
+     * @return true if successful deletion, false if not
+     */
+    public CompletableFuture<Boolean> deleteTrip(Long tripId) {
+        return supplyAsync(() -> {
+            Trip trip = Trip.find.byId(tripId);
+            if(trip != null) {
+                trip.delete();
+
+                return true;
+            }
+
+            return false;
+        }, context);
+
+
     }
 }

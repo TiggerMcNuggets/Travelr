@@ -25,6 +25,7 @@ public class TripDTO {
 
 
     public UserSimpleDTO user;
+
     public List<TripDestinationDTO> destinations;
     public boolean published;
 
@@ -37,6 +38,7 @@ public class TripDTO {
         for (TripDestination dest: trip.getDestinations()) {
             this.destinations.add(new TripDestinationDTO(dest));
         }
+        this.user = new UserSimpleDTO(trip.user);
     }
 
     public long getId() {

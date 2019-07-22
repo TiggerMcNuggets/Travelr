@@ -52,7 +52,7 @@ public class TripController extends Controller {
      * @return
      */
     @Authorization.RequireAuthOrAdmin
-    public CompletionStage<Result> createTrip(Http.Request request) {
+    public CompletionStage<Result> createTrip(Http.Request request, Long userId) {
 
         Form<CreateTripDTO> createTripForm = formFactory.form(CreateTripDTO.class).bindFromRequest(request);
 
@@ -60,7 +60,7 @@ public class TripController extends Controller {
             return CompletableFuture.completedFuture(badRequest());
         }
 
-        User user = request.attrs().get(Attrs.USER);
+        User user = request.attrs().get(Attrs.ACCESS_USER);
 
         CreateTripDTO dto = createTripForm.get();
 
@@ -98,7 +98,7 @@ public class TripController extends Controller {
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> getUserTrips(Http.Request request, Long userId) {
-    // TODO ADD ADMIN MIDDLEWARE
+        // TODO ADD AUTH CHECK
         return tripService.getTripsForUser(userId).thenApplyAsync(trips -> {
             ArrayList<TripDTO> tripDTOS = new ArrayList<>();
 
@@ -118,10 +118,21 @@ public class TripController extends Controller {
      * @return
      */
     @Authorization.RequireAuthOrAdmin
-    public CompletionStage<Result> getTripById(Http.Request request, Long tripId) {
-    // TODO ADD ADMIN MIDDLEWARE
-
+    public CompletionStage<Result> getTripById(Http.Request request, Long tripId, Long userId) {
+        // TODO ADD AUTH CHECK
         return tripService.getTripById(tripId).thenApplyAsync(trip -> ok(Json.toJson(new TripDTO(trip))));
+    }
+
+
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> deleteTrip(Http.Request request, Long tripId, Long userId) {
+        return tripService.deleteTrip(tripId).thenApplyAsync(success -> {
+           if(success) {
+               return ok();
+           } else {
+               return badRequest();
+           }
+        });
     }
 
 
