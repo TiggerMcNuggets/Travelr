@@ -9,14 +9,19 @@
       >
         <!-- Private destination markers -->
         <GmapMarker
-          v-for="destination in path"
-          :key="destination.id"
-          :position="{lat: destination.lat, lng: destination.lng}"
+          v-for="path in pathList"
+          :key="path.ordinal"
+          :position="{lat: path.lat, lng: path.lng}"
           :draggable="false"
           :icon="privateMarker"
         />
-        <GmapPolyline 
-          :path="path">
+        <GmapPolyline
+          v-for="path in pathList"
+          :key = path.ordinal
+          :path = path
+          :strokeColor = path.colour
+          :strokeWeight = 1
+          >
         </GmapPolyline>
       </GmapMap>
     </v-flex>
@@ -55,6 +60,7 @@
             latLngBounds: {north: 85, south: -85, west: -180, east: 180},
             strictBounds: true
           },
+          strokeColor: '#0000FF'
         },
         infoWindow: {
           position: { lat: 0, lng: 0 },
@@ -62,10 +68,10 @@
         },
         publicMarker: blueMarker,
         privateMarker: pinkMarker,
-        path: [
-            {lat: 55.9358131, lng: -4.7770143 },
-            {lat: 55.9361256, lng: -4.7767353 },
-            {lat: 55.9366784, lng: -4.7739458 }
+        trip: [
+            {lat: -43.53205440000001, lng: 172.63622540000006, ordinal: 1, depth: 1},
+            {lat: -33.8688197, lng: 151.20929550000005, ordinal: 2, depth: 2},
+            {lat: 55.9366784, lng: -4.7739458, ordinal: 3, depth: 1}
 ],
       };
     },
@@ -79,8 +85,36 @@
     },
 
     computed: {
-      updatedDestinations() {
-        return this.destinations;
+      /*
+      * Creates an array of arrays containing latitude and longitude to represent different polylines.
+      * This is used to differentiate between different levels of nested trips.
+      */
+      pathList() {
+        let tempPaths = [];
+        let tempPath = [];
+        let currentDepth;
+        for (let i = 0; i < this.trip.length; i++) {
+          let RGB = ["00", "00", "00"]
+          currentDepth = this.trip[i].depth;
+          if (i + 1 == this.trip.length) {
+            tempPath.push(this.trip[i])
+            RGB[(this.trip[i - 1].depth - 1)] = "FF";
+            tempPath.colour = "#" + RGB[0] + RGB[1] + RGB[2];
+            tempPaths.push(tempPath);
+            break
+          }else if ((currentDepth < this.trip[i + 1].depth) || (currentDepth < this.trip[i - 1].depth)) {
+            tempPath.push(this.trip[i]);
+            RGB[(this.trip[i].depth - 1)] = "FF";
+            tempPath.colour = "#" + RGB[0] + RGB[1] + RGB[2];
+            tempPaths.push(tempPath)
+            tempPath = [];
+            tempPath.push(this.trip[i]);
+          } else {
+            tempPath.push(this.trip[i]);
+          }
+        }
+        console.log(tempPaths);
+        return tempPaths;
       }
     },
 
@@ -96,7 +130,7 @@
           this.gMapOptions.styles = GoogleMapDarkStyle;
         }
         this.darkModeOn = !this.darkModeOn;
-      }
+      },
     }
   };
 </script>
