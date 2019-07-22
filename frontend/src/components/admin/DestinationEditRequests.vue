@@ -13,7 +13,7 @@
           </v-flex>
           <v-flex xs12 sm12 md2 style="text-align: center; padding-left: 20px">
             <v-btn
-              v-on:click="$router.push('/user/' + userid + '/destinations/' + request.destination.id)"
+              v-on:click="$router.push('/user/' + userId + '/destinations/' + request.destination.id)"
             >View Destination</v-btn>
           </v-flex>
           <v-flex xs12 sm12 md3 offset-lg1>
@@ -52,12 +52,12 @@ export default {
   store,
   data() {
     return {
-      userid: null,
+      userId: null,
       editRequests: []
     };
   },
   created: function() {
-    this.userid = store.getters.getUser.id;
+    this.userId = store.getters.getUser.id;
     // Gets the edit requests
     this.init();
   },
