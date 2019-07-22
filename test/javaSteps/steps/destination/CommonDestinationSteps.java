@@ -22,17 +22,17 @@ public class CommonDestinationSteps {
         // Destination needed to be created to pass id into request uri
     }
 
+
     @Given("I own the destination")
     public void iOwnTheDestination(List<Map<String, String>> dataTable) {
         Map<String, String> destInfo = dataTable.get(0);
         createTestDestination(destInfo, state.getUser());
-
     }
 
-    @Given("The global admin owns the destination")
-    public void theGlobalAdminOwnsTheDestination(List<Map<String, String>> dataTable) {
+    @Given("They own the destination")
+    public void theyOwnTheDestination(List<Map<String, String>> dataTable) {
         Map<String, String> destInfo = dataTable.get(0);
-        createTestDestination(destInfo, User.find.findById(1L));
+        createTestDestination(destInfo, state.getUser());
     }
 
     @Given("The destination is public")
@@ -45,8 +45,8 @@ public class CommonDestinationSteps {
         state.setDestination(destination);
     }
 
-    @Then("My destination is")
-    public void myDestinationIs(List<Map<String, String>> dataTable) {
+    @Then("The destination is")
+    public void theDestinationIs(List<Map<String, String>> dataTable) {
         // Refresh destination
 
         state.setDestination(Destination.find.findById(state.getDestination().getId()));

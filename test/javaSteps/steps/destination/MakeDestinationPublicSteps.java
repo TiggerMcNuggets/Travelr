@@ -35,13 +35,13 @@ public class MakeDestinationPublicSteps {
         state.getRequest().uri(String.format("https://localhost:9000/api/destinations/%s/make_private", state.getDestination().getId()));
     }
 
-    @Then("My destination is public")
-    public void myDestinationIsPublic() {
+    @Then("The destination is now public")
+    public void theDestinationIsNowPublic() {
         Assert.assertTrue((Destination.find.findById(state.getDestination().getId())).isPublic);
     }
 
-    @Then("My destination is private")
-    public void myDestinationIsPrivate() {
+    @Then("The destination is now private")
+    public void theDestinationIsNowPrivate() {
         Assert.assertFalse((Destination.find.findById(state.getDestination().getId())).isPublic);
     }
 
