@@ -26,7 +26,6 @@ public class TripService {
     public TripService(DatabaseExecutionContext context) { this.context = context; }
 
     public CompletableFuture<Trip> updateTrip(TripDTO tripDTO, User user) {
-
         return supplyAsync(() -> {
             Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
 

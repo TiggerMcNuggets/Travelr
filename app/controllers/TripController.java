@@ -74,7 +74,7 @@ public class TripController extends Controller {
      * @return
      */
     @Authorization.RequireAuthOrAdmin
-    public CompletionStage<Result> updateTrip(Http.Request request) {
+    public CompletionStage<Result> updateTrip(Http.Request request, Long tripId, Long userId) {
 
         Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
         TripDTO dto = createTripForm.get();
@@ -96,6 +96,7 @@ public class TripController extends Controller {
      * @param userId
      * @return
      */
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> getUserTrips(Http.Request request, Long userId) {
     // TODO ADD ADMIN MIDDLEWARE
         return tripService.getTripsForUser(userId).thenApplyAsync(trips -> {
@@ -116,6 +117,7 @@ public class TripController extends Controller {
      * @param tripId
      * @return
      */
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> getTripById(Http.Request request, Long tripId) {
     // TODO ADD ADMIN MIDDLEWARE
 
