@@ -134,16 +134,28 @@ public class PopulateController extends Controller {
         dest9.insert();
         dest10.insert();
 
-        Trip trip1 = new Trip("Backpacking 2018", user1);
-        Trip trip2 = new Trip("New Trip", user2);
 
-        trip1.insert();
-        trip2.insert();
+        Trip trip = new Trip("John's Trip", "The trip I am taking to go around the world", user2);
 
-        new TripDestination(1549085549, 1559085549, 0, trip1, dest1).insert();
-        new TripDestination(1547085549, 1558085549, 1, trip1, dest2).insert();
-        new TripDestination(1546085549, 1555085549, 0, trip2, dest7).insert();
-        new TripDestination(1541085549, 1546085549, 1, trip2, dest8).insert();
+        TripDestination td1 = new TripDestination("My Home" , 0, 0, 1563334001, 1563835201, dest1);
+        TripDestination td2 = new TripDestination("My Home" , 1, 0, 1563434001, 1563835201, dest1);
+        TripDestination td3 = new TripDestination("My Home" , 2, 1, 1563534001, 1563835201, dest2);
+        TripDestination td4 = new TripDestination("My Home" , 3, 1, 1563634001, 1563835201, dest3);
+        TripDestination td5 = new TripDestination("My Home" , 4, 0, 1563734001, 1563835201, dest4);
+        TripDestination td6 = new TripDestination("My Home" , 5, 0, 1563834001, 1563835201, dest5);
+
+        ArrayList<TripDestination> tdList = new ArrayList<>();
+
+        tdList.add(td1);
+        tdList.add(td2);
+        tdList.add(td3);
+        tdList.add(td4);
+        tdList.add(td5);
+        tdList.add(td6);
+
+        trip.setDestinations(tdList);
+
+        trip.insert();
 
         return ok("Populated");
     }

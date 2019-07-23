@@ -4,8 +4,6 @@ version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.12.8"
 
-
-
 lazy val myProject = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 libraryDependencies += guice
@@ -41,6 +39,11 @@ libraryDependencies ++= Seq (
   "io.cucumber" % "cucumber-java" % "4.2.0",
   "org.xerial" % "sqlite-jdbc" % "3.25.2",
   javaWs
+)
+
+// Rest-Assured testing
+val appDependencies = Seq(
+  "com.jayway.restassured" % "rest-assured" % "1.7" % "test"
 )
 
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
