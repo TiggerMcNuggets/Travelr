@@ -17,38 +17,6 @@
   </v-container>
 </template>
 
-
-<style>
-/* .trips-tile {
-  margin-left: 20px;
-}
-
-.destinations-tile {
-  margin-top: 20px;
-  height: 290px;
-} */
-
-/* .photos-tile {
-  height: 300px;
-}
-
-aside {
-  width: 25%;
-  margin-right: 20px;
-}
-
-main {
-  margin-left: 20px;
-}
-
-.profile-main {
-  width: 100%;
-  margin: 0px;
-  text-align: left;
-} */
-</style>
-
-
 <script>
 import ProfileDetails from "./ProfileDetails";
 import dateTime from "../common/dateTime/dateTime.js";

@@ -68,45 +68,6 @@
   </v-layout>
 </template>
 
-<style lang="scss">
-$profile-image-size: 250px;
-
-.chip-list {
-  display: flex;
-}
-
-li {
-  list-style: none;
-}
-
-.traveller-name {
-  font-size: 36px;
-  padding-bottom: 5px;
-}
-
-.profile-heading-section {
-  margin: 30px 0px;
-}
-
-.field-title {
-  line-height: 0px;
-  color: grey;
-  margin-top: 40px;
-}
-
-.profile-image {
-  height: $profile-image-size !important;
-}
-
-.profile-container {
-  height: $profile-image-size !important;
-  width: $profile-image-size !important;
-  overflow: hidden !important;
-  border-radius: $profile-image-size !important;
-}
-</style>
-
-
 <script>
 import { store } from "../../store/index";
 import DefaultPic from "../../assets/defaultPic.png";

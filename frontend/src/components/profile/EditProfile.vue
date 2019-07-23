@@ -35,40 +35,6 @@
   </v-container>
 </template>
 
-<style>
-.upload-section {
-  padding: 30px 10px;
-}
-
-.choose-file-button {
-  background-color: #f5f5f5;
-  color: rgba(0, 0, 0, 0.87);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-
-  align-items: center;
-  border-radius: 2px;
-  display: inline-flex;
-  height: 36px;
-  flex: 0 0 auto;
-  font-size: 14px;
-  font-weight: 500;
-  justify-content: center;
-  margin: 6px 8px;
-  min-width: 88px;
-  outline: 0;
-  text-transform: uppercase;
-  text-decoration: none;
-  position: relative;
-  vertical-align: middle;
-}
-
-.profile-card {
-  margin-top: 20px;
-}
-</style>
-
 <script>
 import userRepo from "../../repository/UserRepository";
 import TravellerForm from "../common/travellerForm/TravellerForm";
