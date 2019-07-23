@@ -3,7 +3,7 @@
     <PageHeader title="Admin Dashboard" :options="[]" :disableUndoRedo="true"/>
     <v-tabs v-model="active" slider-color="blue">
       <v-tab :key="1" ripple>Add New User</v-tab>
-      <v-tab :key="1" ripple>Edit Requests</v-tab>
+      <v-tab :key="2" ripple>Edit Requests</v-tab>
 
       <v-tab-item :key="1">
         <AdminCreateProfile/>
