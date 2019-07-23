@@ -25,9 +25,9 @@
               v-on:change="handleFileUpload()"
             />
           </label>
-          <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
-        <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
+        <v-btn :disabled="!isValid" large color="error" @click="handleEdit">Save</v-btn>
+        <v-btn @click="submitFile" large outline color="error">Upload Photo</v-btn>
         <v-alert :value="editErrorAlert" type="error">Cannot edit profile</v-alert>
         <v-alert :value="undoRedoErrorAlert" type="error">Cannot undo or redo</v-alert>
       </v-flex>
@@ -51,7 +51,9 @@ export default {
   components: { PageHeader, TravellerForm },
 
   store,
+
   mixins: [RollbackMixin],
+
   data() {
     return {
       isValid: false,
@@ -66,7 +68,6 @@ export default {
     };
   },
   methods: {
-    // Sets the file property to the new file uploaded
 
     /**
      * Sets all visible alerts to invisible
