@@ -96,10 +96,15 @@ export default {
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
+           {
+            name: "Dashboard",
+            icon: "dashboard",
+            link: "/user/" + store.getters.getUser.id + "/"
+          },
           {
             name: "Profile",
             icon: "account_circle",
-            link: "/user/" + store.getters.getUser.id
+            link: "/user/" + store.getters.getUser.id + "/profile"
           },
           { name: "Users", icon: "supervised_user_circle", link: "/users" },
           { name: "Destination Map", icon: "map", link: "/destinations" },
