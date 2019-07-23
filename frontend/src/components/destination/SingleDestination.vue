@@ -164,7 +164,7 @@
         </v-dialog>
 
         <v-dialog v-model="chooseExistingDialog" width="800">
-          <PhotoSelect :uploadImages="uploadMedia" />
+          <PhotoSelect :uploadImages="setDestinationImages" :closeDialogue="closeDialogue"/>
         </v-dialog>
       </div>
     </div>
@@ -214,7 +214,7 @@
   import base_url from "../../repository/BaseUrl";
 
   // components
-  import PhotoSelect from "../photos/PhotoUpload";
+  import PhotoSelect from "../photos/PhotoSelect";
   import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
 
   let destinationRepository = RepositoryFactory.get("destination");
