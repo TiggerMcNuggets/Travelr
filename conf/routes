@@ -42,6 +42,11 @@ POST        /api/users/:user_id/destinations/:dest_id/photo     controllers.Dest
 PUT        /api/destinations/photo/:photo_id                    controllers.DestinationPhotoController.updateDestinationPhoto(request: Request, photo_id: Long)
 PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.DestinationPhotoController.addExistingPhotoToDestinationPhotos(request: Request, user_id: Long, dest_id: Long)
 
+# Media
+POST        /api/users/:id/album                              controllers.MediaController.createAlbumGivenUser(request: Request, id: Long)
+POST        /api/users/:id/media/:album_id                    controllers.MediaController.uploadMedia(request: Request, id: Long, album_id: Long)
+GET         /api/users/:id/media/:album_id                    controllers.MediaController.getAlbumContent(request: Request, id: Long, album_id: Long)
+
 # Destinations (Old)
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)
 
@@ -59,11 +64,6 @@ GET         /api/destinations/edit_requests                          controllers
 POST        /api/destinations/edit_requests                          controllers.DestinationEditRequestController.createRequest(request: Request)
 POST        /api/destinations/edit_requests/:requestId/accept        controllers.DestinationEditRequestController.acceptRequest(request: Request, requestId: Long)
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
-
-
-
-
-
 
 
 # Trips (Old)
