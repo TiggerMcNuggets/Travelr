@@ -1,5 +1,6 @@
 package repository;
 
+import controllers.dto.Media.UpdateMediaReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
@@ -78,5 +79,30 @@ public class MediaRepository {
             media.save();
             return album.id;
         }, executionContext);
+    }
+
+    /**
+     * Updates a media that belongs to a user, changes it from private to public
+     * @param request the request DTO
+     * @param mediaId the media id
+     * @return completable future of the new destination
+     */
+    public CompletableFuture<Long> update(UpdateMediaReq request, Long mediaId) {
+        return supplyAsync(() -> {
+            Media media = Media.find.findMediaById(mediaId);
+            media.is_public = request.is_public;
+            media.save();
+
+            return media.id;
+        });
+    }
+
+    /**
+     * Gets one media item that belongs to a user
+     * @param id the media id
+     * @return completable future of the photo
+     */
+    public CompletableFuture<Media> getOne(Long id) {
+        return supplyAsync(() -> Media.find.findMediaById(id), executionContext);
     }
 }

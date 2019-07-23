@@ -46,6 +46,9 @@ PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.Dest
 POST        /api/users/:id/album                              controllers.MediaController.createAlbumGivenUser(request: Request, id: Long)
 POST        /api/users/:id/media/:album_id                    controllers.MediaController.uploadMedia(request: Request, id: Long, album_id: Long)
 GET         /api/users/:id/media/:album_id                    controllers.MediaController.getAlbumContent(request: Request, id: Long, album_id: Long)
+POST        /api/users/:id/media/:media_id                    controllers.MediaController.updateUserMedia(request: Request, media_id: Long)
+PATCH       /api/users/:id/media/:album_id/media/:media_id    controllers.MediaController.addMediaToAlbum(request: Request, album_id: Long, media_id: Long)
+
 
 # Destinations (Old)
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)

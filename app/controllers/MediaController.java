@@ -6,9 +6,13 @@ import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.Media.UpdateMediaReq;
+import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.User;
+import play.data.Form;
+import play.data.FormFactory;
 import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -32,6 +36,9 @@ public class MediaController extends Controller {
     private final FileHelper fh = new FileHelper();
 
     private String MEDIA_FILEPATH;
+
+    @Inject
+    FormFactory formFactory;
 
     @Inject
     public MediaController(Config config, PersonalPhotoRepository personalPhotoRepository, MediaRepository mediaRepository, AlbumRepository albumRepository) {
@@ -121,6 +128,55 @@ public class MediaController extends Controller {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
             return created(jsonResponse);
+        });
+    }
+
+    /**
+     * Updates a media that belongs to a user
+     * @param request the http request
+     * @param media_id the id of the media item
+     * @return 200 with string if all ok
+     *
+     * this function may need added authorisation checks!!
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserMedia(Http.Request request, Long media_id) {
+        Form<UpdateMediaReq> updateMediaForm = formFactory.form(UpdateMediaReq.class).bindFromRequest(request);
+
+        if (updateMediaForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error updating media"));
+        }
+
+        UpdateMediaReq req = updateMediaForm.get();
+
+        return mediaRepository.getOne(media_id).thenComposeAsync(media -> {
+            // Not Found Check
+            if (media == null) {
+                return CompletableFuture.completedFuture(notFound("Media item not found"));
+            }
+            return mediaRepository.update(req, media_id).thenApplyAsync(destId -> ok("Media updated"));
+
+        });
+    }
+
+    /**
+     * adds an existing media item to an existing album
+     * @param request the http request
+     * @param album_id the id of the existing album
+     * @param media_id the id of the existing
+     * @return
+     *
+     * will need security measures added
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long album_id, Long media_id) {
+        return mediaRepository.addMediaToAlbum(album_id, media_id).thenApplyAsync(updated_album_id -> {
+            //not found check, repository checks that both album and media exist
+            if(updated_album_id != null) {
+                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
+
+            }
+            return ok("album updated successfully");
         });
     }
 }
