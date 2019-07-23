@@ -1,14 +1,18 @@
 package models;
 
+import finders.MediaFinder;
+import org.checkerframework.common.aliasing.qual.Unique;
 import play.data.validation.Constraints;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
-@MappedSuperclass
 @Entity
-public class Media extends BaseModel{
+public class Media extends BaseModel {
+
+    public static final MediaFinder find = new MediaFinder();
 
     /**
      * is the media public or not.
@@ -16,6 +20,22 @@ public class Media extends BaseModel{
     @NotNull
     @Column(columnDefinition = "boolean default 0")
     public Boolean is_public = false;
+
+    /**
+     * The photo filename.
+     */
+    @NotNull
+    @Constraints.Required
+    @Unique
+    public String uriString;
+
+
+    /**
+     * The photo filename.
+     */
+    @NotNull
+    @Constraints.Required
+    public String mediaType;
 
     /**
      * The user which the media belongs to
@@ -28,8 +48,31 @@ public class Media extends BaseModel{
     }
 
     @Constraints.Required
-    @ManyToMany(cascade= CascadeType.REMOVE)
-    public List<Album> albums;
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    public List<Album> albums = new ArrayList<>();
+
+
+    public Media(User user, String uriString) {
+        this.uriString = uriString;
+        this.user = user;
+        this.mediaType = "Photo";
+    }
+
+    public String getUriString() {
+        return uriString;
+    }
+
+    public void setUriString(String uriString) {
+        this.uriString = uriString;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
 
     public void setIs_public(Boolean is_public) {
         this.is_public = is_public;
@@ -42,4 +85,14 @@ public class Media extends BaseModel{
     public void setUser(User user) {
         this.user = user;
     }
+
+    public void addAlbum(Album album) {
+        this.albums.add(album);
+    }
+
+    public void removeAlbum(Album album) {
+        this.albums.remove(album);
+    }
+
+
 }

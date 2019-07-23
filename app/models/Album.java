@@ -1,16 +1,19 @@
 package models;
 
 import com.sun.javafx.UnmodifiableArrayList;
+import finders.AlbumFinder;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Album extends BaseModel {
+
+    public static final AlbumFinder find = new AlbumFinder();
+
 
     @ManyToMany(cascade= CascadeType.ALL)
     public List<Media> media;
