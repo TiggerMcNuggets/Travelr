@@ -3,7 +3,7 @@
     <v-toolbar fixed app clipped-right class="main-header">
       <router-link to="/" class="primary-logo">
         <v-toolbar-title class="fill-height toolbar toolbar-title">
-          <img class="fill-height" src="../assets/logo2_white.png">
+          <img class="fill-height" src="../assets/logo2_white.png" />
         </v-toolbar-title>
       </router-link>
     </v-toolbar>
@@ -12,7 +12,7 @@
         <v-list class="pa-0">
           <v-list-tile avatar>
             <v-list-tile-avatar>
-              <img src="https://randomuser.me/api/portraits/men/85.jpg">
+              <img src="https://randomuser.me/api/portraits/men/85.jpg" />
             </v-list-tile-avatar>
 
             <v-list-tile-content>

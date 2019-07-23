@@ -161,6 +161,10 @@ export default {
       this.rollbackRedo(actions);
     }
   },
+
+  /**
+   * Gets users on component creation and sets user administration status.
+   */
   created: async function() {
     await this.$store.dispatch("getUsers", false);
     if (this.$store.getters.getIsUserAdmin) {

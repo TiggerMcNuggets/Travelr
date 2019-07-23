@@ -29,7 +29,7 @@
               id="file"
               ref="file"
               v-on:change="handleFileUpload()"
-            >
+            />
           </label>
           <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
@@ -69,6 +69,7 @@
   position: relative;
   vertical-align: middle;
 }
+
 .profile-card {
   margin-top: 20px;
 }

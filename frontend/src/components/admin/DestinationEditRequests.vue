@@ -6,7 +6,7 @@
         <v-layout row wrap s>
           <v-flex xs12 sm12 md12 style="text-align: center;">
             <h3>{{ request.destination.name }}</h3>
-            <v-divider/>
+            <v-divider />
           </v-flex>
           <v-flex xs12 sm12 md2 style="text-align: center; padding-left: 20px">
             <v-btn v-on:click="$router.push('/user/'+request.user.id)">View User</v-btn>
@@ -50,12 +50,17 @@ import { store } from "../../store/index";
 let destinationRepository = RepositoryFactory.get("destination");
 export default {
   store,
+
   data() {
     return {
       userId: null,
       editRequests: []
     };
   },
+
+  /**
+   * Initialises the component on creation and sets the user id of the authenticated user.
+   */
   created: function() {
     this.userId = store.getters.getUser.id;
     // Gets the edit requests
@@ -63,6 +68,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Initialises the component by getting all edit requests and saving this to a component variable.
+     */
     init() {
       // Gets the edit requests
       destinationRepository
@@ -74,6 +82,10 @@ export default {
           console.log(err);
         });
     },
+
+    /**
+     * Sends a request to the server to deny an edit request.
+     */
     denyRequest(requestId) {
       destinationRepository
         .denyEditRequest(requestId)
@@ -84,6 +96,10 @@ export default {
           console.log(err);
         });
     },
+
+    /**
+     * Sends a request to the server to accept an edit request.
+     */
     acceptRequest(requestId) {
       destinationRepository
         .acceptEditRequest(requestId)
@@ -94,6 +110,10 @@ export default {
           console.log(err);
         });
     },
+
+    /**
+     * Creates a list of all the names of the traveller types.
+     */
     getTravellerTypes(travellerTypes) {
       if (travellerTypes !== null) {
         let travellerTypeList = [];

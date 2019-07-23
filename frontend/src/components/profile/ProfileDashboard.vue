@@ -42,7 +42,7 @@
       </v-flex>
 
       <v-flex col xs12 md7>
-        <div ref="trip_tile" >
+        <div ref="trip_tile">
           <v-card class="trips_tile tile" @click="goToUserTrips(user_id)">
             <v-img
               src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1353&q=80"

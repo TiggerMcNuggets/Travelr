@@ -3,7 +3,7 @@
 <template>
   <v-card>
     <v-container fluid>
-      <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options"/>
+      <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options" />
 
       <v-text-field
         v-if="searchActive"
@@ -78,7 +78,7 @@
       </v-tabs>
 
       <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="updateDestinationList"/>
+        <destination-create :createDestinationCallback="updateDestinationList" />
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -153,10 +153,10 @@ ul {
 <script>
 import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let destinationRepository = RepositoryFactory.get("destination");
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import DestinationCreate from "./DestinationCreate";
 import PageHeader from "../common/header/PageHeader";
+let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
@@ -190,12 +190,19 @@ export default {
   },
 
   computed: {
+    /**
+     * Options used in the header component.
+     */
     options() {
       return [
         { action: this.toggleShowCreateDestination, icon: "add" },
         { action: this.toggleShowSearch, icon: "search" }
       ];
     },
+
+    /**
+     * Gets destinations filtered by the search
+     */
     destinationsFiltered() {
       const filteredList = this.destinations.filter(
         destination =>
@@ -203,6 +210,7 @@ export default {
             .toLowerCase()
             .search(this.searchValue.toLowerCase()) !== -1
       );
+
       //Currently sorting trips by id, in future we will sort trips by creation time
       return filteredList.sort(function(a, b) {
         return a.id - b.id;
@@ -266,9 +274,7 @@ export default {
     deleteDestination: function(destId) {
       this.clearAlerts();
       destinationRepository.deleteDestination(this.userId, destId).then(() => {
-        const url = `/users/${
-          this.userId
-        }/destinations/${destId}/toggle_deleted`;
+        const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
         this.rollbackCheckpoint(
           "DELETE",
           {

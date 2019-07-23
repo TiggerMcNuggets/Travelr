@@ -10,6 +10,7 @@ export const getImages = async id => {
   return Repository.get(`/travellers/${id}/photo`);
 };
 
+// Updates personal photo??
 export const updatePersonalPhoto = async payload => {
   return Repository.post(`/travellers/photo/${payload.id}`, payload);
 };

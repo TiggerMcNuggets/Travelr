@@ -71,7 +71,6 @@
           <span class="dot"></span>
           <p>
             <strong>Traveller Types:</strong>
-
             {{getTravellerTypes(destination.travellerTypes)}}
           </p>
         </div>
@@ -85,7 +84,7 @@
                 id="file"
                 ref="file"
                 v-on:change="handleFileUpload()"
-              >
+              />
             </label>
             <div>
               <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
@@ -154,7 +153,7 @@
         </v-dialog>
 
         <v-dialog v-model="chooseExistingDialog" width="800">
-          <PhotoSelect v-bind="{closeDialogue, setDestinationImages}"/>
+          <PhotoSelect v-bind="{closeDialogue, setDestinationImages}" />
         </v-dialog>
       </div>
     </div>
@@ -202,12 +201,8 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
-
-// components
 import PhotoSelect from "../photos/PhotoSelect";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
-
-let destinationRepository = RepositoryFactory.get("destination");
 import { store } from "../../store/index";
 import {
   storeDestinationImage,
@@ -215,6 +210,7 @@ import {
   updateDestinationPhoto,
   addExistingPhoto
 } from "../../repository/DestinationPhotoRepository";
+let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
@@ -384,6 +380,9 @@ export default {
       return newImageList;
     },
 
+    /**
+     * Gets a list of traveller type names.
+     */
     getTravellerTypes(travellerTypes) {
       if (travellerTypes) {
         let travellerTypesString = "";

@@ -126,17 +126,19 @@
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let destinationRepository = RepositoryFactory.get("destination");
 import { rules } from "../form_rules";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import SelectDataRepository from "../../repository/SelectDataRepository";
+let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   mixins: [RollbackMixin],
+
   components: {
     UndoRedoButtons: UndoRedoButtons
   },
+
   data() {
     return {
       destination: {},
@@ -145,6 +147,7 @@ export default {
       ...rules
     };
   },
+
   methods: {
     /**
      * populated list of traveller types for user to select from

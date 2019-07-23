@@ -45,15 +45,25 @@
 import rules from "../common/formRules";
 export default {
   name: "SignupFields",
+
   props: ["email", "password", "confirmPassword"],
+
   data() {
     return { rules };
   },
+
+  /**
+   * Adds form rules when component has mounted.
+   */
   mounted() {
     this.addConfirmPassRule();
     this.addEmailRule();
   },
+
   methods: {
+    /**
+     * Adds a comfirm password rule to the second password field in the form.
+     */
     addConfirmPassRule() {
       this.$set(
         this.rules,
@@ -63,6 +73,10 @@ export default {
         ])
       );
     },
+
+    /**
+     * Adds an email validation rule to the email field.
+     */
     addEmailRule() {
       const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       this.$set(

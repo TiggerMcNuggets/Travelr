@@ -31,7 +31,7 @@
               id="file"
               ref="file"
               v-on:change="handleFileUpload()"
-            >
+            />
           </label>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
         </div>

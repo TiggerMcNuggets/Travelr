@@ -2,13 +2,13 @@
 
 <template>
   <v-container fluid>
-    <PageHeader title="User Search" :options="[]" :disableUndoRedo="true"/>
+    <PageHeader title="User Search" :options="[]" :disableUndoRedo="true" />
     <v-layout row wrap>
       <v-flex xs12 sm8 md9>
-        <userTable/>
+        <userTable />
       </v-flex>
       <v-flex xs12 sm4 md3>
-        <searchFilter/>
+        <searchFilter />
       </v-flex>
     </v-layout>
   </v-container>

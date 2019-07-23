@@ -128,6 +128,10 @@ export default {
       return store.state.users.travellerTypes;
     }
   },
+
+  /**
+   * Gets all avaliable traveller types and nationalities on compoment creation.
+   */
   created: async function() {
     await store.dispatch("getAllTravellerTypes");
     await store.dispatch("getAllNationalities");
