@@ -1,14 +1,8 @@
 <template>
-  <v-form ref="form" v-model="isValid" lazy-validation>
-    <v-flex text-xs-left>
-      <v-card class="profile-card">
-        <UndoRedoButtons
-          :canRedo="rollbackCanRedo()"
-          :canUndo="rollbackCanUndo()"
-          :undo="undo"
-          :redo="redo"
-        ></UndoRedoButtons>
-
+  <v-container fluid>
+    <PageHeader title="Edit Profile" :undo="undo" :redo="redo" enableBackButton :options="[]" />
+    <v-form ref="form" v-model="isValid" lazy-validation>
+      <v-flex text-xs-left>
         <TravellerForm
           :fname.sync="traveller.firstName"
           :mname.sync="traveller.middleName"
@@ -36,9 +30,9 @@
         <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
         <v-alert :value="editErrorAlert" type="error">Cannot edit profile</v-alert>
         <v-alert :value="undoRedoErrorAlert" type="error">Cannot undo or redo</v-alert>
-      </v-card>
-    </v-flex>
-  </v-form>
+      </v-flex>
+    </v-form>
+  </v-container>
 </template>
 
 <style>
@@ -84,11 +78,11 @@ import { uploadProfilePic } from "../../repository/PersonalPhotosRepository";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 
 import { store } from "../../store/index";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons";
+import PageHeader from "../common/header/PageHeader";
 
 export default {
   name: "EditProfile",
-  components: { UndoRedoButtons, TravellerForm },
+  components: { PageHeader, TravellerForm },
 
   store,
   mixins: [RollbackMixin],
@@ -233,7 +227,7 @@ export default {
         console.log(err);
         this.undoRedoErrorAlert = true;
       }
-    },
+    }.bind(this),
 
     /**
      * Redoes the last action and calls getTraveller() afterwards
@@ -246,7 +240,7 @@ export default {
         console.log(err);
         this.undoRedoErrorAlert = true;
       }
-    }
+    }.bind(this)
   },
 
   /**
