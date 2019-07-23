@@ -5,6 +5,7 @@ import { store } from "../store/index";
 // Components
 import ProfilePhotos from "../components/profile/ProfilePhotos";
 import ProfileTrips from "../components/profile/ProfileTrips";
+import Profile from "../components/profile/Profile"
 import userSearch from "../components/userSearch/userSearch";
 import Signup from "../components/signup/Signup.vue";
 import Destination from "../components/destination/Destination";
@@ -138,6 +139,12 @@ let router = new Router({
           path: "",
           name: "travellerProfileDashboard",
           component: ProfileDashboard
+        },
+        {
+          path: "profile",
+          name: "Profile",
+          component: Profile,
+          beforeEnter: authGuard
         },
         {
           path: "edit",
