@@ -2,51 +2,14 @@
 
 <template>
   <v-card>
-    <v-container class="outer-container" height="100%" style="margin-left: 0; margin-top: -20px;">
-      <div class="section">
-        <div class="dest-name">
-          <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-            <v-icon dark>keyboard_arrow_left</v-icon>
-          </v-btn>
-          <undo-redo-buttons
-                  :canRedo="rollbackCanRedo()"
-                  :canUndo="rollbackCanUndo()"
-                  :undo="undo"
-                  :redo="redo">
-          </undo-redo-buttons>
-          <h2 class="headline">Destinations</h2>
-        </div>
-        <div>
-          <v-btn
-                  class="upload-toggle-button"
-                  fab
-                  small
-                  dark
-                  color="indigo"
-                  v-if="isMyProfile || isAdminUser"
-                  @click="toggleShowCreateDestination"
-          >
-            <v-icon dark>add</v-icon>
-          </v-btn>
-          <v-btn
-                  class="upload-toggle-button"
-                  fab
-                  small
-                  dark
-                  color="indigo"
-                  @click="toggleShowSearch"
-          >
-            <v-icon dark>search</v-icon>
-          </v-btn>
-        </div>
-      </div>
+    <v-container fluid>
+      <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options" />
 
-      <v-divider class="photo-header-divider"></v-divider>
       <v-text-field
-              v-if="searchActive"
-              v-model="searchValue"
-              label="Trip name"
-              prepend-icon="search"
+        v-if="searchActive"
+        v-model="searchValue"
+        label="Trip name"
+        prepend-icon="search"
       ></v-text-field>
 
       <v-tabs v-model="active" slider-color="blue">
@@ -54,21 +17,18 @@
 
         <v-tab-item :key="1">
           <li
-                  class="destination-list-element"
-                  v-for="item in destinationsFiltered"
-                  :value="item.value"
-                  :key="item.value"
+            class="destination-list-element"
+            v-for="item in destinationsFiltered"
+            :value="item.value"
+            :key="item.value"
           >
             <v-card class="top-destination-content destination-container">
               <div class="row-container">
                 <div
-                        class="private-public-side-bar side-border"
-                        v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
+                  class="private-public-side-bar side-border"
+                  v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
                 ></div>
-                <div
-                        class="hoverable destination-container"
-                        v-on:click="viewDestination(item.id)"
-                >
+                <div class="hoverable destination-container" v-on:click="viewDestination(item.id)">
                   <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
                   <div class="row-container">
                     <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
@@ -86,16 +46,16 @@
               </div>
               <div>
                 <v-btn
-                        v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
-                        icon
-                        @click="deleteDestination(item.id)"
+                  v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
+                  icon
+                  @click="deleteDestination(item.id)"
                 >
                   <v-icon color="red lighten-1">delete</v-icon>
                 </v-btn>
                 <v-btn
-                        v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
-                        icon
-                        @click="editDestination(item.id)"
+                  v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
+                  icon
+                  @click="editDestination(item.id)"
                 >
                   <v-icon color="orange lighten-1">edit</v-icon>
                 </v-btn>
@@ -103,11 +63,11 @@
                   <v-icon color="blue lighten-1">lock</v-icon>
                 </v-btn>
                 <v-btn
-                        v-if="item.isPublic && item.ownerId === parseInt(userId)"
-                        color="#FF69B4"
-                        flat
-                        icon
-                        @click="makePrivate(item.id)"
+                  v-if="item.isPublic && item.ownerId === parseInt(userId)"
+                  color="#FF69B4"
+                  flat
+                  icon
+                  @click="makePrivate(item.id)"
                 >
                   <v-icon color="hotpink lighten-1">lock_open</v-icon>
                 </v-btn>
@@ -118,7 +78,7 @@
       </v-tabs>
 
       <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="updateDestinationList"/>
+        <destination-create :createDestinationCallback="updateDestinationList" />
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -127,356 +87,338 @@
 </template>
 
 <style>
-  @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-  .outer-container {
-    max-width: 100%;
-    width: 100% !important;
-  }
+@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
+.dest-name div {
+  text-align: start;
+}
+.dest-sub-info p {
+  margin-bottom: 0px;
+  color: grey;
+}
 
-  ul {
-    padding-left: 0px;
-  }
+.outer-container {
+  text-align: center;
+  padding-bottom: 15px;
+  max-width: 100%;
+  width: 100% !important;
+}
 
-  h2 {
-    align-self: flex-end;
-  }
+.horizontal-details {
+  padding-top: 15px;
+}
 
-  hr {
-    margin-bottom: 25px;
-  }
+.pink-background {
+  background-color: hotpink;
+}
 
-  .section {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+.side-border {
+  width: 15px;
+}
 
-  .dest-name {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+.destination-container {
+  padding: 20px;
+}
 
-  .dest-name div {
-    text-align: start;
-  }
-  .dest-sub-info p {
-    margin-bottom: 0px;
-    color: grey;
-  }
+.hoverable:hover {
+  cursor: pointer;
+}
 
-  .dest-name button {
-    margin-right: 20px;
-  }
+.row-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
 
-  .outer-container {
-    text-align: center;
-    padding-bottom: 15px;
-  }
+.top-destination-content span {
+  padding: 10px 20px;
+}
 
-  .horizontal-details {
-    padding-top: 15px;
-  }
+.top-destination-content a {
+  font-family: "Karla", sans-serif;
+  font-size: 15px;
+  margin-left: 10px;
+}
 
-  .pink-background {
-    background-color: hotpink;
-  }
+ul {
+  list-style: none;
+}
 
-  .side-border {
-    width: 15px;
-  }
-
-  .destination-container {
-    padding: 20px;
-  }
-
-  .hoverable:hover {
-    cursor: pointer;
-  }
-
-  .row-container {
-    display: flex;
-    flex-direction: row;
-    margin-top: 10px;
-  }
-
-  .top-destination-content span {
-    padding: 10px 20px;
-  }
-
-  .top-destination-content a {
-    font-family: "Karla", sans-serif;
-    font-size: 15px;
-    margin-left: 10px;
-  }
-
-  ul {
-    list-style: none;
-  }
-
-  .destination-list-element {
-    padding-top: 20px;
-  }
+.destination-list-element {
+  padding-top: 20px;
+  list-style-type: none;
+}
 </style>
 
 
 <script>
-  import { store } from "../../store/index";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  let destinationRepository = RepositoryFactory.get("destination");
-  import RollbackMixin from "../mixins/RollbackMixin.vue";
-  import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-  import DestinationCreate from "./DestinationCreate";
+import { store } from "../../store/index";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import DestinationCreate from "./DestinationCreate";
+import PageHeader from "../common/header/PageHeader";
+let destinationRepository = RepositoryFactory.get("destination");
 
-  export default {
-    store,
-    mixins: [RollbackMixin],
-    components: {
-      UndoRedoButtons,
-      DestinationCreate
-    },
+export default {
+  store,
+  mixins: [RollbackMixin],
+  components: {
+    PageHeader,
+    DestinationCreate
+  },
 
-    data() {
-      return {
-        dialog: false,
-        showEditDestination: false,
-        destinations: [],
-        isMyProfile: false,
-        ownerId: null,
-        active: null,
-        showTooltip: false,
-        filteredList: [],
-        searchValue: "",
-        searchActive: false,
-        undoRedoError: false,
-        setPrivateError: false
-      };
-    },
+  data() {
+    return {
+      dialog: false,
+      showEditDestination: false,
+      destinations: [],
+      isMyProfile: false,
+      ownerId: null,
+      active: null,
+      showTooltip: false,
+      filteredList: [],
+      searchValue: "",
+      searchActive: false,
+      undoRedoError: false,
+      setPrivateError: false
+    };
+  },
 
+  watch: {
+    "$route.params.id": function() {
+      this.init();
+    }
+  },
 
-    watch: {
-      "$route.params.id": function() {
-        this.init();
-      }
-    },
-
-    computed: {
-      destinationsFiltered() {
-        const filteredList = this.destinations.filter(
-                destination =>
-                        destination.name
-                                .toLowerCase()
-                                .search(this.searchValue.toLowerCase()) !== -1
-        );
-        //Currently sorting trips by id, in future we will sort trips by creation time
-        return filteredList.sort(function(a, b) {
-          return a.id - b.id;
-        });
-      }
-    },
-
-    methods: {
-      /**
-       * Initialises the application and checks if the user is displaying thier destinations or viewing someone elses.
-       * Gets the destination list information to display.
-       */
-
-      init() {
-        this.checkIfProfileOwner();
-        this.getDestinationList();
-      },
-
-      /**
-       * Sets all visible fields to invisible
-       */
-      clearAlerts() {
-        this.undoRedoError = false;
-        this.setPrivateError = false;
-      },
-
-      /**
-       * Redirects the user to the destinations edit page.
-       * @param id The id of the destination to redirect to.
-       */
-      editDestination(id) {
-        this.$router.push("/user/" + this.userId + "/destinations/edit/" + id);
-      },
-
-      /**
-       * Redirects the user to the single destination page based on a given id
-       * @param id The id of the single destination which was clicked.
-       */
-      viewDestination(id) {
-        this.$router.push("/user/" + this.userId + "/destinations/" + id);
-      },
-
-      /**
-       * Toggles the dialog to create a new destination.
-       */
-      toggleShowCreateDestination: function() {
-        this.dialog = !this.dialog;
-      },
-
-      /**
-       * Toggles the search bar to search the destinations by name.
-       */
-      toggleShowSearch: function() {
-        this.searchActive = !this.searchActive;
-      },
-
-      /**
-       * Deletes the destination from the database.
-       * @param destId The id of the destination to delete.
-       */
-      deleteDestination: function(destId) {
-        this.clearAlerts();
-        destinationRepository.deleteDestination(this.userId, destId).then(() => {
-          const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
-          this.rollbackCheckpoint(
-                  'DELETE',
-                  {
-                    url: url,
-                  },
-                  {
-                    url: url,
-                  }
-          );
-          this.getDestinationList();
-        });
-      },
-
-      /**
-       * Refreshes the destination list
-       */
-      updateDestinationList: function(destId) {
-        this.clearAlerts();
-        const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
-        this.rollbackCheckpoint(
-                'POST',
-                {
-                  url: url,
-                },
-                {
-                  url: url,
-                }
-        );
-        this.getDestinationList();
-        this.dialog = false;
-      },
-
-      /**
-       * Sets the list of destinations by request to the API
-       */
-      getDestinationList: function() {
-        destinationRepository
-                .getDestinations(this.userId)
-                .then(response => {
-                  this.destinations = response.data;
-                })
-                .catch(err => {
-                  console.log(err);
-                });
-      },
-
-      /**
-       * Makes a destination public and checks for error.
-       * @param destId The destination id to make public
-       */
-      makePublic: function(destId) {
-        this.clearAlerts();
-        destinationRepository
-                .makePublic(destId)
-                .then(() => {
-
-                  this.rollbackCheckpoint(
-                          'POST',
-                          {
-                            url: `/destinations/${destId}/make_public`,
-                          },
-                          {
-                            url: `/destinations/${destId}/make_private`,
-                          }
-                  );
-                  this.init();
-                })
-                .catch(err => {
-                  console.log(err);
-                });
-      },
-
-      /**
-       * Makes a destination private and checks for error
-       * @param destId The destination id to make private
-       */
-      makePrivate: function(destId) {
-        this.clearAlerts();
-        destinationRepository
-                .makePrivate(destId)
-                .then(() => {
-                  this.rollbackCheckpoint(
-                          'POST',
-                          {
-                            url: `destinations/${destId}/make_private`,
-                          },
-                          {
-                            url: `destinations/${destId}/make_public`,
-                          }
-                  );
-                  this.init();
-                })
-                .catch(err => {
-                  console.log(err);
-                  this.setPrivateError = true;
-                })
-      },
-
-      /**
-       * Checks if the id of the page being viewed belongs to the signed in user.
-       */
-      checkIfProfileOwner() {
-        let id = this.$route.params.id;
-        this.userId = id;
-        this.isMyProfile = store.getters.getUser.id;
-      },
-
-      /**
-       * Logs the event to the window.
-       * @param evt The event to log
-       */
-      log: function(evt) {
-        window.console.log(evt);
-      },
-
-      /**
-       * Undoes the last action and gets destinations afterwards
-       */
-      undo: function() {
-        const actions = [this.getDestinationList, this.clearAlerts];
-        try {
-          this.rollbackUndo(actions);
-        } catch (err) {
-          this.undoRedoError = true;
-        }
-      },
-
-      /**
-       * Redoes the last action and gets destinations afterwards
-       */
-      redo: function() {
-        const actions = [this.getDestinationList, this.clearAlerts];
-        try {
-          this.rollbackRedo(actions);
-        } catch (err) {
-          this.undoRedoError = true;
-        }
-      },
+  computed: {
+    /**
+     * Options used in the header component.
+     */
+    options() {
+      return [
+        { action: this.toggleShowCreateDestination, icon: "add" },
+        { action: this.toggleShowSearch, icon: "search" }
+      ];
     },
 
     /**
-     * Initialises the function on component creation.
+     * Gets destinations filtered by the search
      */
-    created: function() {
-      this.init();
+    destinationsFiltered() {
+      const filteredList = this.destinations.filter(
+        destination =>
+          destination.name
+            .toLowerCase()
+            .search(this.searchValue.toLowerCase()) !== -1
+      );
+
+      //Currently sorting trips by id, in future we will sort trips by creation time
+      return filteredList.sort(function(a, b) {
+        return a.id - b.id;
+      });
     }
-  };
+  },
+
+  methods: {
+    /**
+     * Initialises the application and checks if the user is displaying thier destinations or viewing someone elses.
+     * Gets the destination list information to display.
+     */
+
+    init() {
+      this.checkIfProfileOwner();
+      this.getDestinationList();
+    },
+
+    /**
+     * Sets all visible fields to invisible
+     */
+    clearAlerts() {
+      this.undoRedoError = false;
+      this.setPrivateError = false;
+    },
+
+    /**
+     * Redirects the user to the destinations edit page.
+     * @param id The id of the destination to redirect to.
+     */
+    editDestination(id) {
+      this.$router.push("/user/" + this.userId + "/destinations/edit/" + id);
+    },
+
+    /**
+     * Redirects the user to the single destination page based on a given id
+     * @param id The id of the single destination which was clicked.
+     */
+    viewDestination(id) {
+      this.$router.push("/user/" + this.userId + "/destinations/" + id);
+    },
+
+    /**
+     * Toggles the dialog to create a new destination.
+     */
+    toggleShowCreateDestination: function() {
+      this.dialog = !this.dialog;
+    },
+
+    /**
+     * Toggles the search bar to search the destinations by name.
+     */
+    toggleShowSearch: function() {
+      this.searchActive = !this.searchActive;
+    },
+
+    /**
+     * Deletes the destination from the database.
+     * @param destId The id of the destination to delete.
+     */
+    deleteDestination: function(destId) {
+      this.clearAlerts();
+      destinationRepository.deleteDestination(this.userId, destId).then(() => {
+        const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
+        this.getDestinationList();
+      });
+    },
+
+    /**
+     * Refreshes the destination list
+     */
+    updateDestinationList: function(destId) {
+      this.clearAlerts();
+      const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
+      this.rollbackCheckpoint(
+        "POST",
+        {
+          url: url
+        },
+        {
+          url: url
+        }
+      );
+      this.getDestinationList();
+      this.dialog = false;
+    },
+
+    /**
+     * Sets the list of destinations by request to the API
+     */
+    getDestinationList: function() {
+      destinationRepository
+        .getDestinations(this.userId)
+        .then(response => {
+          this.destinations = response.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    /**
+     * Makes a destination public and checks for error.
+     * @param destId The destination id to make public
+     */
+    makePublic: function(destId) {
+      this.clearAlerts();
+      destinationRepository
+        .makePublic(destId)
+        .then(() => {
+          this.rollbackCheckpoint(
+            "POST",
+            {
+              url: `/destinations/${destId}/make_public`
+            },
+            {
+              url: `/destinations/${destId}/make_private`
+            }
+          );
+          this.init();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    /**
+     * Makes a destination private and checks for error
+     * @param destId The destination id to make private
+     */
+    makePrivate: function(destId) {
+      this.clearAlerts();
+      destinationRepository
+        .makePrivate(destId)
+        .then(() => {
+          this.rollbackCheckpoint(
+            "POST",
+            {
+              url: `destinations/${destId}/make_private`
+            },
+            {
+              url: `destinations/${destId}/make_public`
+            }
+          );
+          this.init();
+        })
+        .catch(err => {
+          console.log(err);
+          this.setPrivateError = true;
+        });
+    },
+
+    /**
+     * Checks if the id of the page being viewed belongs to the signed in user.
+     */
+    checkIfProfileOwner() {
+      let id = this.$route.params.id;
+      this.userId = id;
+      this.isMyProfile = store.getters.getUser.id;
+    },
+
+    /**
+     * Logs the event to the window.
+     * @param evt The event to log
+     */
+    log: function(evt) {
+      window.console.log(evt);
+    },
+
+    /**
+     * Undoes the last action and gets destinations afterwards
+     */
+    undo: function() {
+      const actions = [this.getDestinationList, this.clearAlerts];
+      try {
+        this.rollbackUndo(actions);
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    },
+
+    /**
+     * Redoes the last action and gets destinations afterwards
+     */
+    redo: function() {
+      const actions = [this.getDestinationList, this.clearAlerts];
+      try {
+        this.rollbackRedo(actions);
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    }
+  },
+
+  /**
+   * Initialises the function on component creation.
+   */
+  created: function() {
+    this.init();
+  }
+};
 </script>
