@@ -44,7 +44,7 @@
                       flat
                       small
                       color="error"
-                      v-if="index > 1"
+                      v-if="index > 1"c
                       v-on:click="deleteDestination(index)"
                     >Remove</v-btn>
                   </v-flex>
@@ -448,7 +448,6 @@ export default {
             const destToAdd = {};
             const currentDest = tripById.destinations[i];
             destToAdd.title = currentDest.name;
-            console.log("current dest arrival date", currentDest.arrivalDate);
             destToAdd.arrivalDate =
                 currentDest.arrivalDate === null
                     ? null
