@@ -16,11 +16,11 @@
 
     <v-divider class="photo-header-divider"/>
       <v-dialog v-model="shouldDisplayDialog" max-width="100%">
-          <CreateTrips style="background-color: white;"
-                       v-if="true"
-                       :regetTrips="() => console.log('no need')"
-                       :passedTrip="tripId"
-                       :updateViewTripPage="this.updateViewTripPage" />
+          <!--<CreateTrips style="background-color: white;"-->
+                       <!--v-if="true"-->
+                       <!--:regetTrips="() => console.log('no need')"-->
+                       <!--:passedTrip="tripId"-->
+                       <!--:updateViewTripPage="this.updateViewTripPage" />-->
       </v-dialog>
       <v-form lazy-validation
               ref="form"
@@ -240,7 +240,7 @@
 <script>
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
-import CreateTrips from "./CreateTrips.vue";
+// import CreateTrips from "./CreateTrips.vue";
 import draggable from 'vuedraggable';
 import dateTime from "../common/dateTime/dateTime.js";
 import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
@@ -252,7 +252,7 @@ export default {
   store,
   components: {
     draggable,
-    CreateTrips
+    // CreateTrips
   },
   // local variables
   data() {
@@ -298,28 +298,52 @@ export default {
     },
   methods: {
 
+      /**
+       * Expands the destination at given index
+       * @param index {number}
+       */
       toggleExpanded(index) {
           this.trip.destinations[index].expanded = !this.trip.destinations[index].expanded;
       },
 
+      /**
+       * Action performed as soon a destination starts being dragged, slices the destination
+       * children and temporarily adds them to a variable in the data.
+       */
       startDrag(event) {
         this.drag = true;
         const childrenCount = getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]);
+        const copy = JSON.parse(JSON.stringify(this.trip.destinations));
         if (childrenCount > 0) {
-            const subList = this.trip.destinations.splice(event.oldIndex + 1, event.oldIndex + childrenCount - 1);
-            this.draggedSublist = subList;
+            this.draggedSublist = copy.splice(event.oldIndex + 1, event.oldIndex + childrenCount - 1);
         }
-        for (let d of this.trip.destinations) {
+        for (let d of copy) {
             d.hidden = false;
         }
-
+        this.trip.destinations = this.setOrdinal(copy);
       },
 
+      /**
+       * Action performed as soon a destination ends being dragged,
+       * reattaches the sub list stored on start drag at the right index.
+       */
+      endDrag(event) {
+          const copy = JSON.parse(JSON.stringify(this.trip.destinations));
+          copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
+          this.draggedSublist = [];
+          this.trip.destinations = this.setOrdinal(copy);
+      },
+
+      /**
+       * Validates the trip form
+       */
       validateForm() {
-          console.log(this.$refs);
-        if (!this.$refs.form.validate()) console.log('ciao');
+        !this.$refs.form.validate()
       },
 
+      /**
+       * Adds a destination to the trip destinations
+       */
       addTripDestination() {
         const destinationsSize = this.trip.destinations.length;
         this.trip.destinations.push({
@@ -333,6 +357,9 @@ export default {
         });
       },
 
+      /**
+       * Ensures the list of destinations ordinal value is up to date
+       */
       setOrdinal(destinations) {
           const copy = JSON.parse(JSON.stringify(destinations));
           copy.forEach((d, i) => {
@@ -341,31 +368,28 @@ export default {
           return copy
       },
 
-      endDrag(event) {
-          const copy = JSON.parse(JSON.stringify(this.trip.destinations));
-          copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
-          this.draggedSublist = [];
-          this.trip.destinations = this.setOrdinal(copy);
-      },
-
+      /**
+       * Increases the depth of destination at given index
+       */
       promote(index) {
           this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
       },
 
+      /**
+       * Decreases the depth of destination at given index
+       */
       demote(index) {
           this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
       },
 
+      /**
+       * Hides or shows all the children of a destination
+       */
       toggleHiddenDestinations(parent) {
           let i = parent.ordinal + 1;
           const destsLength = this.trip.destinations.length;
-          console.log("-------------------new Parent------------");
-          console.log(destsLength);
-          console.log(i);
           while (i < destsLength && this.trip.destinations[i].depth > parent.depth) {
-              console.log("this.trip.destinations[i]", this.trip.destinations[i]);
               this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
-              console.log("this.trip.destinations[i]", this.trip.destinations[i]);
               i = i + 1;
           }
       },
@@ -433,15 +457,18 @@ export default {
               });
       },
 
+      /**
+       * Performs the validation and API call to update the trip
+       */
       updateTrip: function() {
-          updateTrip(this.userId, this.trip.id, this.trip, this.userDestinations)
+          if (this.$refs.form.validate())
+              updateTrip(this.userId, this.trip.id, this.trip, this.userDestinations)
       }
   },
 
 
 
   created: function() {
-
       this.getDestinations();
       this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
       // If the person viewing the trip is not admin and does not own the trip then takes them back to the page they were on
@@ -450,11 +477,9 @@ export default {
       }
       tripRepo.getTrip(this.userId, this.tripId).then((result) => {
           let trip = result.data;
-          console.log("trip", trip);
-          let ordered_dests = trip.destinations.sort(function(a, b){
+          trip.destinations = trip.destinations.sort(function(a, b){
               return a.ordinal - b.ordinal;
           });
-          trip.destinations = ordered_dests;
           // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
           for (let i = 0; i < trip.destinations.length; i++) {
             trip.destinations[i].expanded = false;
