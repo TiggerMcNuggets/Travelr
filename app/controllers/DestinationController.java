@@ -75,18 +75,19 @@ public class DestinationController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
-        return destinationRepository.getOneDestination(destId).thenApplyAsync(destination -> {
-            // Not Found Check
-            if (destination == null) {
-                return notFound(APIResponses.DESTINATION_NOT_FOUND);
-            }
+        Destination destination = Destination.find.findByIdIncludeDeleted(destId);
+        if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
 
-            Object response;
-            response = new GetDestinationsRes(destination);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonResponse = mapper.valueToTree(response);
-            return ok(jsonResponse);
-        });
+        if (!destination.getIsPublic() || (destination.getIsPublic() && destinationRepository.isDestinationUsed(destId))) {
+            CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, userId, destination.user.id);
+            if (authorisedToView != null) return authorisedToView;
+        }
+
+        Object response;
+        response = new GetDestinationsRes(destination);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonResponse = mapper.valueToTree(response);
+        return CompletableFuture.completedFuture(ok(jsonResponse));
     }
 
     /**
@@ -200,7 +201,7 @@ public class DestinationController extends Controller {
 
             Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
             Boolean isDestinationOwner = (destination.getUser().getId() == userId);
-            if(destination.isPublic && !isAdmin && !isDestinationOwner) {
+            if(!destination.getIsPublic() && !isAdmin && !isDestinationOwner) {
                 return CompletableFuture.completedFuture(Results.forbidden(APIResponses.FORBIDDEN_DESTINATION_EDIT));
             }
 
@@ -213,9 +214,7 @@ public class DestinationController extends Controller {
 
                 return ok("Destination updated");
             });
-
         });
-
     }
 
     /**
@@ -233,21 +232,15 @@ public class DestinationController extends Controller {
         if(updateDestinationForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
+        Destination destination = Destination.find.findById(id);
+        if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+
+        CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, user.getId(), destination.user.id);
+        if (authorisedToView != null) return authorisedToView;
 
         CreateDestReq req = updateDestinationForm.get();
 
-        return destinationRepository.getOneDestination(id).thenComposeAsync(destination -> {
-            // Not Found Check
-            if (destination == null) {
-                return CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
-            }
-            // Forbidden Check
-            if (destination.user.id != user.id) {
-                return CompletableFuture.completedFuture(forbidden("Forbidden: Access Denied"));
-            }
-            return destinationRepository.update(req, id, user.getId()).thenApplyAsync(destId -> ok("Destination updated"));
-
-        });
+        return destinationRepository.update(req, id, user.getId()).thenApplyAsync(destId -> ok("Destination updated"));
 
     }
 
@@ -259,12 +252,17 @@ public class DestinationController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> toggleDestinationDeleted(Http.Request req, Long userId, Long destId) {
+
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
 
         if (middlewareRes != null) return middlewareRes;
         Destination destination = Destination.find.findByIdIncludeDeleted(destId);
 
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
+
+        CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(req, userId, destination.user.id);
+        if (authorisedToView != null) return authorisedToView;
+
         return destinationRepository.toggleDestinationDeleted(destId).thenApplyAsync(deleted -> {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -313,7 +311,7 @@ public class DestinationController extends Controller {
                 return forbidden("Forbidden: There are other users using the destination");
             }
 
-            destination.isPublic = false;
+            destination.setIsPublic(false);
             destination.save();
             return created("Destination is now private");
         });
