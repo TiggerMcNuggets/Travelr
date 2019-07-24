@@ -1,18 +1,5 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-dialog v-model="showSuggestTravellerTypes" max-width="900px">
-    <!-- <template v-slot:activator="{ on }">
-      <v-btn
-        class="upload-toggle-button"
-        fab
-        small
-        dark
-        color="indigo"
-        @click="toggleShowSuggestTravellerTypes"
-      >
-        <v-icon dark>card_travel</v-icon>
-      </v-btn>
-    </template>-->
-
     <v-card min-height="400px" style="padding: 20px">
       <v-layout row wrap style="padding-left: 40px">
         <v-flex xs12 md12>
@@ -70,13 +57,6 @@ export default {
     }
   },
   methods: {
-    // /**
-    //  * Toggles the upload section for the photos
-    //  */
-    // toggleShowSuggestTravellerTypes: function() {
-    //   this.showSuggestTravellerTypes = !this.showSuggestTravellerTypes;
-    // },
-
     /**
      * populated list of traveller types for user to select from
      **/
