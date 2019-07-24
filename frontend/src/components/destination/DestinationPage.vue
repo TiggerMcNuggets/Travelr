@@ -137,7 +137,6 @@ export default {
         const newDest = this.destinations.filter(
           dest => dest.data.id === this.focussedDestination.data.id
         )[0];
-        console.log(newDest);
         this.rollbackSetPreviousBody(newDest.data);
       }
     },

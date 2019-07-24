@@ -40,7 +40,7 @@ export default {
      * @param {*} user_id The id of the user to get trips for.
      */
     getUserTrips(user_id) {
-        return Repository.get('/travellers/' + user_id + '/trips');
+        return Repository.get('/users/' + user_id + '/trips');
     },
 
     /**
