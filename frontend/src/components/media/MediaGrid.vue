@@ -2,15 +2,9 @@
   <v-flex xs9>
     <v-container v-bind="{ [`grid-list-lg`]: true }" fluid class="media-container">
       <v-layout row wrap>
-        <v-flex v-for="n in 38" :key="n" xs12 md4>
+        <v-flex v-for="(item, index) in displayedMedia" :key="index" xs12 md4>
+          {{ item }}
           <v-card flat tile class="media-element">
-            <!--
-            <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
-            <v-icon v-else class="lock-icon" left>lock</v-icon>
-
-            <div v-if="item.is_public" class="triangle"></div>
-            <div v-else class="triangle pink-color"></div>
--->
             <v-img
                     :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
                     height="300px"
@@ -41,17 +35,13 @@
     name: "MediaGrid",
 
     props: {
-      organisedMedia: Object
+      displayedMedia: Object
     },
 
     data() {
-      return {
-
-      }
+      return {}
     },
 
-    methods: {
-
-    }
+    methods: {}
   }
 </script>
