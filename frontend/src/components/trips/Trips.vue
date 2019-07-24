@@ -61,7 +61,11 @@
         :key="item.value"
       >
         <v-card>
-          <v-flex d-flex justify-space-between align-center>
+          <v-flex
+                  d-flex
+                  justify-space-between
+                  align-center
+          >
             <div class="top-destination-content" v-on:click="openTrip(item.id)">
               <h2>{{ item.name }}</h2>
             </div>

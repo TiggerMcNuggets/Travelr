@@ -137,7 +137,6 @@ export default {
         const newDest = this.destinations.filter(
           dest => dest.data.id === this.focussedDestination.data.id
         )[0];
-        console.log(newDest);
         this.rollbackSetPreviousBody(newDest.data);
       }
     },
@@ -202,12 +201,10 @@ export default {
     },
     async fetchAfterRollback() {
       let id = this.focussedDestination.data.id;
-      console.log(id);
       await this.populateDestinations();
       this.focussedDestination = this.destinations.filter(
         dest => dest.data.id === id
       )[0];
-      console.log(this.focussedDestination);
     },
     undo() {
       const actions = [this.fetchAfterRollback]; // fill;
