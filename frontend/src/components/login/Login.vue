@@ -57,6 +57,7 @@ export default {
       store
         .dispatch("login", this.user)
         .then(() => {
+          console.log("push router")
           this.$router.push("/");
         })
         .catch(() => {

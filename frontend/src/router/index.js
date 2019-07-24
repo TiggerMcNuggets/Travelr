@@ -57,6 +57,7 @@ const unauthGuard = (to, from, next) => {
         return next();
       });
   }
+  console.log("here")
   return next(`/user/${store.getters.getUser.id}`);
 };
 
@@ -103,9 +104,9 @@ let router = new Router({
   routes: [
     {
       path: "",
+      redirect: "/login",
       beforeEnter: unauthGuard
     },
-
     {
       path: "",
       name: "home",
@@ -116,15 +117,13 @@ let router = new Router({
           path: "/login",
           name: "login",
           component: Login,
-          beforeEnter: unauthGuard,
-          beforeLeave: unauthGuard
+          beforeEnter: unauthGuard
         },
         {
           path: "/signup",
           name: "signup",
           component: Signup,
-          beforeEnter: unauthGuard,
-          beforeLeave: unauthGuard
+          beforeEnter: unauthGuard
         }
       ]
     },
