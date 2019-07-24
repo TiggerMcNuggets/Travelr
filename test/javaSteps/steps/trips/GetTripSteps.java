@@ -55,4 +55,26 @@ public class GetTripSteps {
 
     }
 
+
+    @When("I download a trip")
+    public void i_download_a_trip() {
+        try {
+            // Create request object
+            Http.RequestBuilder getTrip = Helpers.fakeRequest()
+                    .method("GET")
+                    .header("X-Authorization", state.getToken())
+                    .uri("https://localhost:9000/api/users/" + this.state.getTravellerId() + "/trips/" + state.getTripId() + "/iCal");
+            // Send request
+            state.setResult(route(state.getApplication(), getTrip));
+//            System.out.println("#####################################################################################################");
+//            System.out.println(state.getResult().contentType().toString());
+            Assert.assertTrue(state.getResult().contentType().toString().equals("Optional[text/calendar]"));
+//            System.out.println(state.getResult().body().dataStream());
+//            System.out.println("#####################################################################################################");
+        } catch (Exception e) {
+            System.out.println(e);
+            Assert.assertTrue(false);
+        }
+    }
+
 }
