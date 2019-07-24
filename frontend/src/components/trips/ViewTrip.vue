@@ -8,7 +8,7 @@
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
       </div>
-          <h2 class="headline">{{ trip.name }}</h2>
+          <!--<h2 class="headline">{{ trip.name }}</h2>-->
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShouldDisplayButton()">
           <v-icon dark>edit</v-icon>
         </v-btn>
@@ -22,6 +22,16 @@
                        :passedTrip="tripId"
                        :updateViewTripPage="this.updateViewTripPage" />
       </v-dialog>
+      <v-form lazy-validation
+              ref="form"
+              v-model="isFormValid">
+      <v-text-field
+              v-model="trip.name"
+              :rules="nameRules"
+              :counter="60"
+              label="Trip Name"
+              required
+      ></v-text-field>
       <v-timeline align-top dense>
       <draggable
               class="list-group"
@@ -42,9 +52,6 @@
                       <span class="hoverable"
                               v-on:click="toggleExpanded(i)">{{getDepthData(destination.depth).number}}</span>
                   </template>
-                <v-form lazy-validation
-                        ref="form"
-                        v-model="isFormValid">
                     <v-card
                         :color="getDepthData(destination.depth).color"
                     >
@@ -53,7 +60,7 @@
                               <v-combobox
                                       :rules="noSameDestinationNameConsecutiveRule"
                                       :items="userDestinations.map(dest => dest.name)"
-                                      v-model="destination.name"
+                                      v-model="destination.customName"
                                       label="Select an existing destination"
                               ></v-combobox>
                               <v-btn
@@ -166,11 +173,12 @@
                           </v-container>
                       </v-container>
                     </v-card>
-                </v-form>
               </v-timeline-item>
           </transition-group>
       </draggable>
-    </v-timeline>
+      </v-timeline>
+      </v-form>
+
       <v-layout flex>
           <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -182,6 +190,28 @@
                   </v-btn>
               </template>
               <span>Validate</span>
+          </v-tooltip>
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                  <v-btn
+                          v-on:click="addTripDestination"
+                          icon
+                          v-on="on">
+                      <v-icon color="primary lighten-1">add_circle</v-icon>
+                  </v-btn>
+              </template>
+              <span>Add Destination</span>
+          </v-tooltip>
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                  <v-btn
+                          icon
+                          v-on:click="updateTrip"
+                          v-on="on">
+                      <v-icon color="primary lighten-1">send</v-icon>
+                  </v-btn>
+              </template>
+              <span>Update trip</span>
           </v-tooltip>
 
       </v-layout>
@@ -208,15 +238,14 @@
 </style>
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
 import draggable from 'vuedraggable';
 import dateTime from "../common/dateTime/dateTime.js";
-import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther} from "../form_rules";
-import {getChildrenCount, getDepthData, isDemotable, isPromotable} from "./trips_destinations_util"
-
+import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
+import {getChildrenCount, getDepthData, isDemotable, isPromotable, updateTrip} from "./trips_destinations_util"
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
@@ -246,7 +275,11 @@ export default {
         // define functions to make them visible to the script
         getDepthData: getDepthData,
         isPromotable: isPromotable,
-        isDemotable: isDemotable
+        isDemotable: isDemotable,
+
+        // rules
+        ...rules,
+
     };
   },
 
@@ -287,16 +320,32 @@ export default {
         if (!this.$refs.form.validate()) console.log('ciao');
       },
 
-      setOrdinal() {
-          this.trip.destinations.forEach((d, i) => {
-              this.$set(this.trip.destinations[i], "ordinal", i);
+      addTripDestination() {
+        const destinationsSize = this.trip.destinations.length;
+        this.trip.destinations.push({
+            arrivalDate: null,
+            customName: null,
+            departureDate: null,
+            depth: 0,
+            expanded: false,
+            hidden: false,
+            ordinal: destinationsSize,
+        });
+      },
+
+      setOrdinal(destinations) {
+          const copy = JSON.parse(JSON.stringify(destinations));
+          copy.forEach((d, i) => {
+              d.ordinal = i;
           });
+          return copy
       },
 
       endDrag(event) {
-          this.trip.destinations.splice(event.newIndex + 1, 0, ...this.draggedSublist);
+          const copy = JSON.parse(JSON.stringify(this.trip.destinations));
+          copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
           this.draggedSublist = [];
-          this.setOrdinal();
+          this.trip.destinations = this.setOrdinal(copy);
       },
 
       promote(index) {
@@ -365,9 +414,9 @@ export default {
        * Deletes the given destination from the created/modified trip
        */
       deleteDestination: function(index) {
-          let newDestinations = this.trip.destinations;
+          let newDestinations = JSON.parse(JSON.stringify(this.trip.destinations));
           newDestinations.splice(index, 1);
-          this.trip.destinations = newDestinations;
+          this.trip.destinations = this.setOrdinal(newDestinations);;
       },
 
       /**
@@ -383,7 +432,13 @@ export default {
                   console.log(e);
               });
       },
+
+      updateTrip: function() {
+          updateTrip(this.userId, this.trip.id, this.trip, this.userDestinations)
+      }
   },
+
+
 
   created: function() {
 
@@ -395,6 +450,7 @@ export default {
       }
       tripRepo.getTrip(this.userId, this.tripId).then((result) => {
           let trip = result.data;
+          console.log("trip", trip);
           let ordered_dests = trip.destinations.sort(function(a, b){
               return a.ordinal - b.ordinal;
           });
@@ -404,8 +460,6 @@ export default {
             trip.destinations[i].expanded = false;
             trip.destinations[i].hidden = false;
 
-            // TODO: deleted once done
-            trip.destinations[i].depth = 0;
 
             if (trip.destinations[i].arrivalDate != null) {
               trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
@@ -414,11 +468,6 @@ export default {
               trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
             }
           }
-          // TODO: delete once done
-          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false, depth: 1, ordinal: 2}];
-          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false, depth: 2, ordinal: 3}];
-          trip.destinations = [...trip.destinations, {name: "ciao", arrivalDate: null, departureDate: null, expanded: false, depth: 0, ordinal: 4}];
-
           this.trip = trip;
       });
   }

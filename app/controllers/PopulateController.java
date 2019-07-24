@@ -137,12 +137,12 @@ public class PopulateController extends Controller {
 
         Trip trip = new Trip("John's Trip", "The trip I am taking to go around the world", user2);
 
-        TripDestination td1 = new TripDestination("My Home" , 0, 0, 1563334001, 1563835201, dest1);
-        TripDestination td2 = new TripDestination("My Home" , 1, 0, 1563434001, 1563835201, dest1);
-        TripDestination td3 = new TripDestination("My Home" , 2, 1, 1563534001, 1563835201, dest2);
-        TripDestination td4 = new TripDestination("My Home" , 3, 1, 1563634001, 1563835201, dest3);
-        TripDestination td5 = new TripDestination("My Home" , 4, 0, 1563734001, 1563835201, dest4);
-        TripDestination td6 = new TripDestination("My Home" , 5, 0, 1563834001, 1563835201, dest5);
+        TripDestination td1 = new TripDestination("Boating Beach" , 0, 0, 1563334001, 1563835201, dest1);
+        TripDestination td2 = new TripDestination("Westfield Riccarton" , 1, 0, 1563434001, 1563835201, dest1);
+        TripDestination td3 = new TripDestination("Boating Beach" , 2, 1, 1563534001, 1563835201, dest2);
+        TripDestination td4 = new TripDestination("Westfield Riccarton" , 3, 1, 1563634001, 1563835201, dest3);
+        TripDestination td5 = new TripDestination("Boating Beach" , 4, 0, 1563734001, 1563835201, dest4);
+        TripDestination td6 = new TripDestination("Westfield Riccarton" , 5, 0, 1563834001, 1563835201, dest5);
 
         ArrayList<TripDestination> tdList = new ArrayList<>();
 

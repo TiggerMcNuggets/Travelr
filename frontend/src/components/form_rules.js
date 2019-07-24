@@ -38,12 +38,12 @@ export const noSameDestinationNameConsecutiveRule_name = destinations => {
     console.log("destinations", destinations);
     for (let i = 0; i < destinations.length; i++) {
         if (i + 1 < destinations.length) {
-            if (destinations[i].name === destinations[i + 1].name) {
+            if (destinations[i].customName === destinations[i + 1].customName) {
                 noConsecutiveSame = false;
             }
         }
         if (i - 1 >= 0) {
-            if (destinations[i].name === destinations[i - 1].name) {
+            if (destinations[i].customName === destinations[i - 1].customName) {
                 noConsecutiveSame = false;
             }
         }
