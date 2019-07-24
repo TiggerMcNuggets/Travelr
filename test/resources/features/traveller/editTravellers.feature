@@ -1,48 +1,141 @@
 Feature: EditTravellers
   Description: The purpose of this feature is to test the api endpoint related to editing a traveller
 
-  Background: The database is populated
-    Given I populate the database
-    Then I will receive a 200 response
+  Scenario: Edit my profile successfully
+    Given I am authenticated
+    When I want to edit the profile
+    And The body is
+    """
+    {
+      "firstName": "string",
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "male",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1]
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And The traveller details are
+    | first  | middle | last   | dob | gender |
+    | string | string | string | 0   | male   |
+    And The traveller's nationalities are
+    | id | hasPassport |
+    | 1  | true        |
+    And The traveller's traveller types are
+    | travellerType |
+    | 1             |
 
-  Scenario: Edit my own profile as admin user
-    Given I provide the token "123"
-    And I provide a complete editTraveller json
-    And The traveller id is 1
-    When I edit the traveller
-    Then I will receive a 200 response
+  Scenario: Edit my profile with missing fields
+    Given I am authenticated
+    When I want to edit the profile
+    And The body is
+    """
+    {
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "male",
+      "email": "johnsmith@email.com",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
+    """
+    And I send the request
+    Then I will receive the response code 400
 
-  Scenario: Edit another user's profile as admin user
-    Given I provide the token "123"
-    And I provide a complete editTraveller json
-    And The traveller id is 2
-    When I edit the traveller
-    Then I will receive a 200 response
+  Scenario: Edit traveller when I am not logged in
+    Given I am not authenticated
+    When I want to edit the profile
+    And The body is
+    """
+    {
+      "firstName": "string",
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "male",
+      "email": "johnsmith@email.com",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
+    """
+    And I send the request
+    Then I will receive the response code 401
 
-  Scenario: Edit my own profile as normal user
-    Given I provide the token "abc"
-    And I provide a complete editTraveller json
-    And The traveller id is 3
-    When I edit the traveller
-    Then I will receive a 200 response
+  Scenario: Edit traveller that isn't me
+    Given I am authenticated
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    When I want to edit the profile
+    And The body is
+    """
+    {
+      "firstName": "string",
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "male",
+      "email": "johnsmith@email.com",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
+    """
+    And I send the request
+    Then I will receive the response code 403
 
-  Scenario: Edit traveller with missing fields
-    Given I provide the token "123"
-    And I provide an incomplete editTraveller json
-    And The traveller id is 1
-    When I edit the traveller
-    Then I will receive a 400 response
-
-  Scenario: Edit traveller with invalid token
-    Given I provide the token "345345"
-    And I provide a complete editTraveller json
-    And The traveller id is 1
-    When I edit the traveller
-    Then I will receive a 401 response
-
-  Scenario: Editing another traveller as a normal user
-    Given I provide the token "abc"
-    And I provide a complete editTraveller json
-    And The traveller id is 1
-    When I edit the traveller
-    Then I will receive a 403 response
+  Scenario: Edit traveller that does not exist
+    Given I am authenticated
+    And The user does not exist
+    When I want to edit the profile
+    And The body is
+    """
+    {
+      "firstName": "string",
+      "middleName": "string",
+      "lastName": "string",
+      "dateOfBirth": 0,
+      "gender": "male",
+      "email": "johnsmith@email.com",
+      "password": "string",
+      "nationalities": [
+        {
+          "id": 1,
+          "hasPassport": true
+        }
+      ],
+      "travellerTypes": [1],
+      "accountType": 0
+    }
+    """
+    And I send the request
+    Then I will receive the response code 404
