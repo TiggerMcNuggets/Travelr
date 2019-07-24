@@ -20,7 +20,6 @@
 
 .home__logo {
   width: 60%;
-  /* padding: 40px 20px; */
 }
 
 .home__feature_img {
@@ -29,7 +28,6 @@
 
 .home__login_area {
   width: 80%;
-  /* padding: 20px; */
 }
 
 .home__tagline {

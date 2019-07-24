@@ -50,7 +50,6 @@ export const isPromotable = (destinations, index) => {
     if (index === destinations.length) return false;
     const child = destinations[index];
     const parent = destinations[index - 1];
-    console.log();
     return (child.depth - parent.depth) < 1;
 };
 
@@ -114,7 +113,6 @@ const tripAssembler = (tripBody, userDestinations) => {
                 return destination.customName === dest.name
             }
         );
-        console.log("destById", destById);
         trip.destinations.push({
             customName: destination.title,
             id: destById.id,
