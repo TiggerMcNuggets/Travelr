@@ -13,12 +13,6 @@
   </v-layout>
 </template>
 
-<style scoped>
-  h1 {
-    margin: 10px 0px;
-  }
-</style>
-
 <script>
   import MediaFilter from "../components/media/MediaFilter";
   import MediaGrid from "../components/media/MediaGrid";
