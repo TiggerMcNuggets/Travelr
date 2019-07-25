@@ -2,10 +2,12 @@ package models;
 
 import com.sun.javafx.UnmodifiableArrayList;
 import finders.AlbumFinder;
+import play.data.validation.Constraints;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +20,25 @@ public class Album extends BaseModel {
     @ManyToMany(cascade= CascadeType.ALL)
     public List<Media> media;
 
+    @ManyToOne
+    public User user;
 
-    public Album() {
+    @Constraints.Required
+    public String name;
+
+    /**
+     * Whether the album is a permanent album
+     */
+    @Constraints.Required
+    public Boolean isPermanent;
+
+
+    public Album(User user, String name, Boolean isPermanent) {
+        this.user = user;
+
         this.media = new ArrayList<>();
+        this.name = name;
+        this.isPermanent = isPermanent;
     }
 
     public void addMedia(Media media_item) {

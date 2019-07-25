@@ -4,6 +4,8 @@ import io.ebean.Expr;
 import io.ebean.ExpressionList;
 import models.Album;
 import models.Media;
+import models.User;
+
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -42,9 +44,12 @@ public class AlbumRepository {
      * 
      * @return the new album id which was created.
      */
-    public CompletableFuture<Long> create() {
+    public CompletableFuture<Long> create(String name, Long userId) {
         return supplyAsync(() -> {
-            Album album = new Album();
+            User user = User.find.findById(userId);
+            if (user == null) return null;
+
+            Album album = new Album(user, name, false);
             album.save();
             return album.id;
         }, executionContext);
@@ -59,8 +64,11 @@ public class AlbumRepository {
     public CompletableFuture<Long> remove(Long id) {
         return supplyAsync(() -> {
             Album album = Album.find.findAlbumById(id);
-            album.delete();
-            return album.id;
+            if (!album.isPermanent) {
+                album.delete();
+                return album.id;
+            }
+            return null;
         }, executionContext);
     }
 

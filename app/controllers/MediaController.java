@@ -6,6 +6,7 @@ import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.Media.CreateAlbumReq;
 import controllers.dto.Media.UpdateMediaReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
@@ -117,7 +118,15 @@ public class MediaController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
-        return albumRepository.create().thenApplyAsync(id -> {
+        Form<CreateAlbumReq> createAlbumForm = formFactory.form(CreateAlbumReq.class).bindFromRequest(request);
+
+        if (createAlbumForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error updating media"));
+        }
+
+        CreateAlbumReq req = createAlbumForm.get();
+
+        return albumRepository.create(req.getName(), userId).thenApplyAsync(id -> {
 
             // If album already exists
             if (id == null) {

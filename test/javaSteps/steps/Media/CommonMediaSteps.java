@@ -11,7 +11,7 @@ public class CommonMediaSteps {
 
     @Given("An album exists")
     public void an_album_exists() {
-        Album album = new Album();
+        Album album = new Album(state.getUser(), "Test Album", false);
         album.insert();
         state.setAlbum(album);
     }
