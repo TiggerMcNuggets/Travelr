@@ -3,25 +3,12 @@
   <v-card>
   <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
       <div class="section">
-      <div>
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
       </div>
-          <!--<h2 class="headline">{{ trip.name }}</h2>-->
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShouldDisplayButton()">
-          <v-icon dark>edit</v-icon>
-        </v-btn>
-      </div>
 
     <v-divider class="photo-header-divider"/>
-      <v-dialog v-model="shouldDisplayDialog" max-width="100%">
-          <!--<CreateTrips style="background-color: white;"-->
-                       <!--v-if="true"-->
-                       <!--:regetTrips="() => console.log('no need')"-->
-                       <!--:passedTrip="tripId"-->
-                       <!--:updateViewTripPage="this.updateViewTripPage" />-->
-      </v-dialog>
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">

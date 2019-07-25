@@ -33,6 +33,20 @@
             >
               <v-card class="destination-form-padding">
                 <v-layout>
+                    <v-flex align-self-center>
+                            <v-btn
+                                    :disabled="!isPromotable(trip.destinations, index)"
+                                    icon
+                                    v-on:click="promote(index)">
+                                <v-icon color="primary lighten-1">arrow_upward</v-icon>
+                            </v-btn>
+                            <v-btn
+                                :disabled="!isDemotable(trip.destinations, index)"
+                                icon
+                                v-on:click="demote(index)">
+                                <v-icon color="primary lighten-1">arrow_downward</v-icon>
+                            </v-btn>
+                    </v-flex>
                   <v-flex xs12 md4 class="create-trip-item">
                     <v-combobox
                       :rules="noSameDestinationNameConsecutiveRule"
@@ -40,13 +54,18 @@
                       v-model="destination.title"
                       label="Select an existing destination"
                     ></v-combobox>
-                    <v-btn
-                      flat
-                      small
-                      color="error"
-                      v-if="index > 1"c
-                      v-on:click="deleteDestination(index)"
-                    >Remove</v-btn>
+                      <v-chip
+                              :color="getDepthData(destination.depth).color"
+                              pill>
+                          {{destination.depth + 1}}
+                      </v-chip>
+                      <v-btn
+                              flat
+                              small
+                              color="error"
+                              v-if="index > 1"c
+                              v-on:click="deleteDestination(index)"
+                      >Remove</v-btn>
                   </v-flex>
 
                   <v-flex xs12 md4 class="create-trip-item">
@@ -188,7 +207,7 @@ import {
   noSameDestinationNameConsecutiveRule,
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
-
+import {isDemotable, isPromotable, getDepthData} from "./trips_destinations_util";
 import RollbackMixin from '../mixins/RollbackMixin';
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 let tripRepository = RepositoryFactory.get("trip");
@@ -220,18 +239,20 @@ export default {
         name: "",
         destinations: [
           {
-            title: null,
+            customName: null,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
-            departureDateMenu: false
+            departureDateMenu: false,
+            depth: 0,
           },
           {
-            title: null,
+            customName: null,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
-            departureDateMenu: false
+            departureDateMenu: false,
+            depth: 0,
           }
         ]
       },
@@ -240,7 +261,12 @@ export default {
       id: this.$route.params.id,
       tripID: this.$route.params.trip_id,
       isAdminUser: false,
-      isMyProfile: false
+      isMyProfile: false,
+
+        // utils
+        getDepthData: getDepthData,
+        isPromotable: isPromotable,
+        isDemotable: isDemotable,
     };
   },
   computed: {
@@ -254,6 +280,22 @@ export default {
     }
   },
   methods: {
+
+      /**
+       * Increases the depth of destination at given index
+       */
+      promote(index) {
+          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
+      },
+
+      /**
+       * Decreases the depth of destination at given index
+       */
+      demote(index) {
+          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
+      },
+
+
     /**
      * Gets the list of valid destinations available to a user
      */
@@ -310,11 +352,12 @@ export default {
      */
     addDestinationToTrip: function() {
       const template = {
-        name: null,
+        customName: null,
         arrivalDate: null,
         departureDate: null,
         arrivalDateMenu: false,
-        departureDateMenu: false
+        departureDateMenu: false,
+        depth: 0,
       };
       let newDestinations = this.trip.destinations;
       newDestinations.push(template);
