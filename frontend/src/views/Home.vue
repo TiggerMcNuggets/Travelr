@@ -1,20 +1,20 @@
 <template>
-<v-app id="inspire">
-  <v-container fluid fill-height ma-0 pa-0>
-    <v-layout row>
-      <v-flex col sm6 pa-5 ma-3 mt-5 ml-5>
-        <div class="heading-container">
-          <img class="home__logo" src="../assets/logo2_dark.png">
-          <h3 mt-2 class="home__tagline">Taking the hassle out of your next business trip</h3>
-        </div>
-        <router-view class="home__login_area"></router-view>
-      </v-flex>
-      <v-flex col sm6>
-        <img class="home__feature_img" src="../assets/homepage_graphic.png">
-      </v-flex>
-    </v-layout>
-  </v-container>
-</v-app>
+  <v-app id="inspire">
+    <v-container fluid fill-height ma-0 pa-0>
+      <v-layout row>
+        <v-flex col sm6 pa-5 ma-3 mt-5 ml-5>
+          <div class="heading-container">
+            <img class="home__logo" src="../assets/logo2_dark.png" />
+            <h3 mt-2 class="home__tagline">Taking the hassle out of your next business trip</h3>
+          </div>
+          <router-view class="home__login_area"></router-view>
+        </v-flex>
+        <v-flex col sm6>
+          <img class="home__feature_img" src="../assets/homepage_graphic.png" />
+        </v-flex>
+      </v-layout>
+    </v-container>
+  </v-app>
 </template>
 
 <style>
@@ -30,7 +30,6 @@
 
 .home__login_area {
   width: 80%;
-  /* padding: 20px; */
 }
 
 .home__tagline {
@@ -43,18 +42,6 @@
 
 .heading-container {
   margin-bottom: 60px;
-}
-
-.overlay {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0px;
-  left: 0px;
-  background-image: url("https://farm9.staticflickr.com/8629/16141602477_82d6d91a2d_b.jpg");
-  filter: grayscale(50%);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
 }
 </style>
 

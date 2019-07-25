@@ -1,48 +1,13 @@
 
 
 <template>
-  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
-    <div class="section">
-      <div class="dest-name">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
+  <v-container fluid>
+    <PageHeader title="Trips" :undo="undo" :redo="redo" :options="options" />
 
-        <undo-redo-buttons
-          :canRedo="rollbackCanRedo()"
-          :canUndo="rollbackCanUndo()"
-          :undo="undo"
-          :redo="redo"
-        ></undo-redo-buttons>
-
-        <h2 class="headline">Trips</h2>
-      </div>
-      <div>
-        <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          v-if="isMyProfile || isAdminUser"
-          @click="toggleShowCreateTrip"
-        >
-          <v-icon dark>add</v-icon>
-        </v-btn>
-
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShowSearch">
-          <v-icon dark>search</v-icon>
-        </v-btn>
-      </div>
-    </div>
-
-    <v-divider class="photo-header-divider"></v-divider>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
-
     <div v-if="showCreateTrip">
-
       <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
@@ -125,14 +90,13 @@ import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+import PageHeader from "../common/header/PageHeader";
 let tripRepository = RepositoryFactory.get("trip");
 
 export default {
   store,
 
-   mixins: [RollbackMixin],
-
+  mixins: [RollbackMixin],
 
   // local variables
   data() {
@@ -150,6 +114,13 @@ export default {
   },
   // the place where you want to make the store values readable
   computed: {
+    options() {
+      return [
+        { action: this.toggleShowCreateTrip, icon: "add" },
+        { action: this.toggleShowSearch, icon: "search" }
+      ];
+    },
+
     /**
      * Filters the list of trips according to the search value
      */
@@ -166,18 +137,16 @@ export default {
   },
   // child components
   components: {
-    UndoRedoButtons,
-    CreateTrip: CreateTrips
+    CreateTrip: CreateTrips,
+    PageHeader
   },
   methods: {
-       /**
+    /**
      * Sets all alert error visible fields to invisible
      */
     clearAlerts() {
       this.undoRedoError = false;
     },
-
-
 
     /**
      * Gets trips from the API using using the user_id found in params
@@ -241,15 +210,15 @@ export default {
     deleteTrip: function(tripId) {
       this.clearAlerts();
       tripRepository.deleteTrip(this.user_id, tripId).then(() => {
-        const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
-         this.rollbackCheckpoint(
-        'DELETE',
-        {
-            url: url,
-        },
-        {
-            url: url,
-        }
+        const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`;
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
         );
         this.getUserTrips();
       });
@@ -281,26 +250,25 @@ export default {
      * Adds a checkpoint when creating a trip
      */
     checkpointCreateTrip: function(tripId) {
-      const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`; 
+      const url = `/users/${this.user_id}/trips/${tripId}/toggle_deleted`;
       this.rollbackCheckpoint(
-        'POST',
+        "POST",
         {
-            url: url,
+          url: url
         },
         {
-            url: url,
+          url: url
         }
-        );
+      );
     },
 
-
     /**
-    * Undoes the last action and gets destinations afterwards
-    */
+     * Undoes the last action and gets destinations afterwards
+     */
     undo: function() {
       const actions = [this.getUserTrips, this.clearAlerts];
       try {
-        this.rollbackUndo(actions); 
+        this.rollbackUndo(actions);
       } catch (err) {
         this.undoRedoError = true;
       }
@@ -319,10 +287,9 @@ export default {
     }
   },
 
-    
-
-
-
+  /**
+   * Sets user privalages and gets trips accordingly.
+   */
   created: function() {
     this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;

@@ -121,12 +121,20 @@ export default {
   },
 
   methods: {
+
+    /**
+     * Populates the selection form items such as traveller types and nationalities.
+     */
     async populateSelects() {
       const nationalities = await SelectDataRepository.nationalities();
       this.nationalityList = nationalities.data;
       const travellerTypes = await SelectDataRepository.travellerTypes();
       this.typeList = travellerTypes.data;
     },
+
+    /**
+     * Updates the dat ef birth element with a given value.
+     */
     updateDob(val) {
       this.$emit("update:dob", val);
     }
