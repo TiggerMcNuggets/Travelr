@@ -69,52 +69,15 @@ export const isDemotable = (destinations, index) => {
     return ((parent.depth - child.depth) > -1 && (parentParent.depth - parent.depth) < 1);
 };
 
-/**
- * Checks if the update trip form passes validation
- * If it does then updates trip and updates the view trip page
- */
-export const updateTrip =  (userId, tripId, tripBody, userDestinations) => {
-    const trip = tripAssembler(tripBody, userDestinations);
-    tripRepository
-        .updateTrip(userId, parseInt(tripId), trip)
-        .then(() => {
-            const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
-            this.rollbackCheckpoint(
-                'PUT',
-                {
-                    url: url,
-                    body: trip
-                },
-                {
-                    url: url,
-                    body: this.rollbackPreviousBody
-                }
-            );
-
-            // Update previous body to be used for the next checkpoints reaction
-            this.rollbackSetPreviousBody({...trip});
-            this.updateViewTripPage();
-        })
-        .catch(e => {
-            console.log(e);
-        });
-};
 
 /**
  * Creates a trip object from the data passed that conforms with the API specs
  **/
-const tripAssembler = (tripBody, userDestinations) => {
+export const tripAssembler = (tripBody) => {
     let trip = { name: tripBody.name, destinations: [] };
     tripBody.destinations.forEach((destination, index) => {
-        const destById = userDestinations.find(
-
-            dest => {
-                return destination.customName === dest.name
-            }
-        );
         trip.destinations.push({
-            customName: destination.title,
-            id: destById.id,
+            destination: {...destination.destination},
             ordinal: index,
             depth: destination.depth,
             arrivalDate: moment(destination.arrivalDate).unix(),

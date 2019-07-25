@@ -35,10 +35,17 @@ public class TripService {
             }
 
             trip.setName(tripDTO.name);
-            trip.setDescription(tripDTO.description);
+
+//            trip.setDescription(tripDTO.description);
 
 
-            trip.getDestinations().clear();
+            for(TripDestination td: trip.getDestinations()) {
+                System.out.println(td.delete());
+            }
+            trip.setDestinations(new ArrayList<>());
+            trip.save();
+            System.out.println(trip.destinations.size());
+
 
             ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
 
@@ -70,14 +77,36 @@ public class TripService {
      * @param user
      * @return
      */
-    public CompletableFuture<Long> createTrip(CreateTripDTO tripDTO, User user) {
+    public CompletableFuture<Long> createTrip(TripDTO tripDTO, User user) {
         return supplyAsync(() -> {
 
             Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
 
-            trip.save();
+            trip.setName(tripDTO.name);
 
-            return trip.id;
+//            trip.setDescription(tripDTO.description);
+
+            ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
+
+            for(TripDestinationDTO destDTO : tripDTO.destinations) {
+                Destination destination = Destination.find.byId(destDTO.destination.id);
+
+                TripDestination tripDestination = new TripDestination(
+                        destDTO.customName,
+                        destDTO.ordinal,
+                        destDTO.depth,
+                        destDTO.arrivalDate,
+                        destDTO.departureDate,
+                        destination);
+
+                newTripDestinations.add(tripDestination);
+            }
+
+            trip.setDestinations(newTripDestinations);
+
+            trip.insert();
+
+            return trip.getId();
         }, context);
     }
 

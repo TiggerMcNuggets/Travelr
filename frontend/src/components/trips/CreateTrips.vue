@@ -49,11 +49,13 @@
                     </v-flex>
                   <v-flex xs12 md4 class="create-trip-item">
                     <v-combobox
-                      :rules="noSameDestinationNameConsecutiveRule"
-                      :items="userDestinations.map(dest => dest.name)"
-                      v-model="destination.title"
-                      label="Select an existing destination"
-                    ></v-combobox>
+                        :items="userDestinations"
+                        item-text="name"
+                        v-model="destination.destination"
+                        label="Select an existing destination"
+                        :rules="noSameDestinationNameConsecutiveRule"
+                        return-object
+                ></v-combobox>
                       <v-chip
                               :color="getDepthData(destination.depth).color"
                               pill>
@@ -235,26 +237,30 @@ export default {
       tripToDisplay: null,
       draggableEnabled: true,
       dialogName: "Create a new trip",
+      emptyDest: {
+            arrivalDate: null,
+            departureDate: null,
+            arrivalDateMenu: false,
+            departureDateMenu: false,
+            destination: {name: null}
+          },
       trip: {
         name: "",
-        destinations: [
-          {
-            customName: null,
+        destinations: [{
+            depth: 0,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
             departureDateMenu: false,
+            destination: {name: null}
+          }, {
             depth: 0,
-          },
-          {
-            customName: null,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
             departureDateMenu: false,
-            depth: 0,
-          }
-        ]
+            destination: {name: null}
+          },]
       },
       userDestinations: [],
       ...rules,
@@ -303,6 +309,7 @@ export default {
       return destinationRepository
         .getDestinations(this.id)
         .then(res => {
+          console.log(res.data);
           this.userDestinations = res.data;
         })
         .catch(e => {
@@ -351,16 +358,8 @@ export default {
      * Adds a template empty destination object to the form
      */
     addDestinationToTrip: function() {
-      const template = {
-        customName: null,
-        arrivalDate: null,
-        departureDate: null,
-        arrivalDateMenu: false,
-        departureDateMenu: false,
-        depth: 0,
-      };
       let newDestinations = this.trip.destinations;
-      newDestinations.push(template);
+      newDestinations.push(this.emptyDest);
       this.trip.destinations = newDestinations;
     },
 
@@ -386,56 +385,11 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        if (this.isAdminUser) {
-          tripRepository
-            .createTripForUser(trip, this.id)
-            .then(res => {
-              this.checkpointCreateTrip(res.data.id)
-              this.regetTrips();
-            })
-            .catch(e => {
-              console.log(e);
-            });
-        } else {
-          tripRepository
-            .createTrip(trip)
-            .then(res => {
-              this.checkpointCreateTrip(res.data.id)
-              this.regetTrips();
-            })
-            .catch(e => {
-              console.log(e);
-            });
-        }
-      }
-    },
-
-    /**
-     * Checks if the update trip form passes validation
-     * If it does then updates trip and updates the view trip page
-     */
-    updateTrip: function() {
-      if (this.$refs.form.validate()) {
-        const trip = this.tripAssembler();
         tripRepository
-          .updateTrip(this.id, parseInt(this.passedTrip), trip)
-          .then(() => {
-              const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
-              this.rollbackCheckpoint(
-                  'PUT',
-                  {
-                      url: url,
-                      body: trip
-                  },
-                  {
-                      url: url,
-                      body: this.rollbackPreviousBody
-                  }
-              );
-
-              // Update previous body to be used for the next checkpoints reaction
-              this.rollbackSetPreviousBody({...trip});
-              this.updateViewTripPage();
+          .createTripForUser(trip, this.id)
+          .then(res => {
+            this.checkpointCreateTrip(res.data.id)
+            this.regetTrips();
           })
           .catch(e => {
             console.log(e);
@@ -449,15 +403,11 @@ export default {
      **/
     tripAssembler: function() {
       let trip = { name: this.trip.name, destinations: [] };
+      console.log("tripAssem", this.trip.destinations);
       this.trip.destinations.forEach((destination, index) => {
-        const destById = this.userDestinations.find(
-          dest => {
-              return destination.title === dest.name
-          }
-        );
         trip.destinations.push({
-          id: destById.id,
           ordinal: index,
+          destination: {...destination.destination}, 
           arrivalDate: moment(destination.arrivalDate).unix(),
           departureDate: moment(destination.departureDate).unix()
         });

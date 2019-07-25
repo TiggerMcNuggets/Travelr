@@ -16,14 +16,15 @@ export const rules = {
 
 export const noSameDestinationNameConsecutiveRule = destinations => {
   let noConsecutiveSame = true;
+  console.log("destinations", destinations);
   for (let i = 0; i < destinations.length; i++) {
     if (i + 1 < destinations.length) {
-      if (destinations[i].title === destinations[i + 1].title) {
+      if (destinations[i].destination.name === destinations[i + 1].destination.name) {
         noConsecutiveSame = false;
       }
     }
     if (i - 1 >= 0) {
-      if (destinations[i].title === destinations[i - 1].title) {
+      if (destinations[i].destination.name === destinations[i - 1].destination.name) {
         noConsecutiveSame = false;
       }
     }
@@ -36,12 +37,12 @@ export const noSameDestinationNameConsecutiveRule_name = destinations => {
     let noConsecutiveSame = true;
     for (let i = 0; i < destinations.length; i++) {
         if (i + 1 < destinations.length) {
-            if (destinations[i].customName === destinations[i + 1].customName) {
+            if (destinations[i].destination.name === destinations[i + 1].destination.name) {
                 noConsecutiveSame = false;
             }
         }
         if (i - 1 >= 0) {
-            if (destinations[i].customName === destinations[i - 1].customName) {
+            if (destinations[i].destination.name === destinations[i - 1].destination.name) {
                 noConsecutiveSame = false;
             }
         }

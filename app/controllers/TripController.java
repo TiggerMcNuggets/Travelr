@@ -54,7 +54,7 @@ public class TripController extends Controller {
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> createTrip(Http.Request request, Long userId) {
 
-        Form<CreateTripDTO> createTripForm = formFactory.form(CreateTripDTO.class).bindFromRequest(request);
+        Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
 
         if(createTripForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest());
@@ -62,8 +62,7 @@ public class TripController extends Controller {
 
         User user = request.attrs().get(Attrs.ACCESS_USER);
 
-        CreateTripDTO dto = createTripForm.get();
-
+        TripDTO dto = createTripForm.get();
 
         return tripService.createTrip(dto, user).thenApplyAsync((tripId) -> created(Json.toJson(tripId)));
     }
