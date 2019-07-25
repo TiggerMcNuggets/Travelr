@@ -140,7 +140,7 @@ public class MediaController extends Controller {
      * this function may need added authorisation checks!!
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> updateUserMedia(Http.Request request, Long media_id) {
+    public CompletionStage<Result> updateUserMedia(Http.Request request, Long user_id, Long media_id) {
         Form<UpdateMediaReq> updateMediaForm = formFactory.form(UpdateMediaReq.class).bindFromRequest(request);
 
         if (updateMediaForm.hasErrors()) {
@@ -169,7 +169,7 @@ public class MediaController extends Controller {
      * will need security measures added
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long album_id, Long media_id) {
+    public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.addMediaToAlbum(album_id, media_id).thenApplyAsync(updated_album_id -> {
             //not found check, repository checks that both album and media exist
             if(updated_album_id != null) {
