@@ -18,6 +18,8 @@
       return {}
     },
 
-    methods: {}
+    methods: {
+
+    }
   }
 </script>

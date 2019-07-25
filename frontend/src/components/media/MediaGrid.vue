@@ -2,8 +2,8 @@
   <v-flex xs9>
     <v-container v-bind="{ [`grid-list-lg`]: true }" fluid class="media-container">
       <v-layout row wrap>
-        <v-flex v-for="(item, index) in displayedMedia" :key="index" xs12 md4>
-          <Album v-if="item.content" :albumContent="item"></Album>
+        <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 md4 @click="open(item)">
+          <AlbumElement v-if="item.content" :album="item" ></AlbumElement>
           <MediaElement v-else :mediaObject="item"></MediaElement>
         </v-flex>
       </v-layout>
@@ -18,25 +18,38 @@
 </style>
 
 <script>
-  import Album from "./AlbumElement";
+  import AlbumElement from "./AlbumElement";
   import MediaElement from "./MediaElement";
 
   export default {
     name: "MediaGrid",
 
     props: {
-      displayedMedia: Array
+      filteredMedia: Array
     },
 
     components: {
-      Album,
+      AlbumElement,
       MediaElement
     },
 
     data() {
-      return {}
+      return {
+      }
     },
 
-    methods: {}
+    methods: {
+      open(item) {
+
+        // Trying to open an album
+        if (item.content) {
+
+        } else {
+        // Trying to open an image/video/media
+
+        }
+
+      }
+    }
   }
 </script>

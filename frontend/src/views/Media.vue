@@ -7,7 +7,7 @@
 
       <MediaFilter :changeFilter="changeFilter" :mediaCounts="mediaCounts"></MediaFilter>
 
-      <MediaGrid :displayedMedia="displayedMedia"></MediaGrid>
+      <MediaGrid :filteredMedia="filteredMedia"></MediaGrid>
 
     </v-layout>
   </v-layout>
@@ -64,7 +64,7 @@
         };
       },
 
-      displayedMedia: function () {
+      filteredMedia: function () {
         let media = [];
         let albumsFilter = 1;
         let photosFilter = 2;

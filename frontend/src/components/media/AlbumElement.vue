@@ -8,8 +8,8 @@
         <div class="triangle"></div>
 
         <v-img
-                :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
-                height="300px"
+            :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
+            height="300px"
         ></v-img>
     </v-card>
 </template>>
@@ -23,7 +23,7 @@
     name: "Album",
 
     props: {
-      albumContent: Object
+      album: Object
     },
 
     data() {
