@@ -53,4 +53,20 @@ public class AlbumRepository {
             return album.id;
         }, executionContext);
     }
+
+
+    /**
+     * Deletes an album
+     *
+     * @return the album id which was deleted.
+     */
+    public CompletableFuture<Long> remove(Long id) {
+        return supplyAsync(() -> {
+            Album album = new Album();
+            album.delete();
+            return album.id;
+        }, executionContext);
+    }
+
+
 }
