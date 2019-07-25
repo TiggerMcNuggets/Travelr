@@ -82,4 +82,12 @@ public class TripDestinationDTO {
     public void setDestination(DestinationDTO destination) {
         this.destination = destination;
     }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
 }

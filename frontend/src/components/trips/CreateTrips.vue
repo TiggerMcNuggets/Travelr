@@ -216,24 +216,16 @@ export default {
       tripToDisplay: null,
       draggableEnabled: true,
       dialogName: "Create a new trip",
+      emptyDest: {
+            arrivalDate: null,
+            departureDate: null,
+            arrivalDateMenu: false,
+            departureDateMenu: false,
+            destination: {name: null}
+          },
       trip: {
         name: "",
-        destinations: [
-          {
-            title: null,
-            arrivalDate: null,
-            departureDate: null,
-            arrivalDateMenu: false,
-            departureDateMenu: false
-          },
-          {
-            title: null,
-            arrivalDate: null,
-            departureDate: null,
-            arrivalDateMenu: false,
-            departureDateMenu: false
-          }
-        ]
+        destinations: [emptyDest, emptyDest]
       },
       userDestinations: [],
       ...rules,
@@ -309,15 +301,8 @@ export default {
      * Adds a template empty destination object to the form
      */
     addDestinationToTrip: function() {
-      const template = {
-        name: null,
-        arrivalDate: null,
-        departureDate: null,
-        arrivalDateMenu: false,
-        departureDateMenu: false
-      };
       let newDestinations = this.trip.destinations;
-      newDestinations.push(template);
+      newDestinations.push(this.emptyDest);
       this.trip.destinations = newDestinations;
     },
 
@@ -367,38 +352,38 @@ export default {
       }
     },
 
-    /**
-     * Checks if the update trip form passes validation
-     * If it does then updates trip and updates the view trip page
-     */
-    updateTrip: function() {
-      if (this.$refs.form.validate()) {
-        const trip = this.tripAssembler();
-        tripRepository
-          .updateTrip(this.id, parseInt(this.passedTrip), trip)
-          .then(() => {
-              const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
-              this.rollbackCheckpoint(
-                  'PUT',
-                  {
-                      url: url,
-                      body: trip
-                  },
-                  {
-                      url: url,
-                      body: this.rollbackPreviousBody
-                  }
-              );
+    // /**
+    //  * Checks if the update trip form passes validation
+    //  * If it does then updates trip and updates the view trip page
+    //  */
+    // updateTrip: function() {
+    //   if (this.$refs.form.validate()) {
+    //     const trip = this.tripAssembler();
+    //     tripRepository
+    //       .updateTrip(this.id, parseInt(this.passedTrip), trip)
+    //       .then(() => {
+    //           const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
+    //           this.rollbackCheckpoint(
+    //               'PUT',
+    //               {
+    //                   url: url,
+    //                   body: trip
+    //               },
+    //               {
+    //                   url: url,
+    //                   body: this.rollbackPreviousBody
+    //               }
+    //           );
 
-              // Update previous body to be used for the next checkpoints reaction
-              this.rollbackSetPreviousBody({...trip});
-              this.updateViewTripPage();
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      }
-    },
+    //           // Update previous body to be used for the next checkpoints reaction
+    //           this.rollbackSetPreviousBody({...trip});
+    //           this.updateViewTripPage();
+    //       })
+    //       .catch(e => {
+    //         console.log(e);
+    //       });
+    //   }
+    // },
 
     /**
      * Creates a trip object from the data passed that conforms with the API specs

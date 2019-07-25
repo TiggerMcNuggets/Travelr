@@ -58,10 +58,12 @@
                       <v-container class="container-custom-padding">
                           <v-card-title>
                               <v-combobox
-                                      :rules="noSameDestinationNameConsecutiveRule"
-                                      :items="userDestinations.map(dest => dest.name)"
-                                      v-model="destination.customName"
+                                      :items="userDestinations"
+                                      item-text="name"
+                                      v-model="destination.destination"
                                       label="Select an existing destination"
+                                      :rules="noSameDestinationNameConsecutiveRule"
+                                      return-object
                               ></v-combobox>
                               <v-btn
                                   v-on:click="toggleHiddenDestinations(destination)"
@@ -240,12 +242,12 @@
 <script>
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
-// import CreateTrips from "./CreateTrips.vue";
 import draggable from 'vuedraggable';
 import dateTime from "../common/dateTime/dateTime.js";
 import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
-import {getChildrenCount, getDepthData, isDemotable, isPromotable, updateTrip} from "./trips_destinations_util"
+import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let tripRepository = RepositoryFactory.get("trip")
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
@@ -348,9 +350,9 @@ export default {
         const destinationsSize = this.trip.destinations.length;
         this.trip.destinations.push({
             arrivalDate: null,
-            customName: null,
             departureDate: null,
             depth: 0,
+            destination: {name: null},
             expanded: false,
             hidden: false,
             ordinal: destinationsSize,
@@ -394,6 +396,41 @@ export default {
           }
       },
 
+      /**
+     * Checks if the update trip form passes validation
+     * If it does then updates trip and updates the view trip page
+     */
+    updateTrip() {
+        if (this.$refs.form.validate()) {
+
+            const trip = tripAssembler(this.trip);
+            const userId = this.userId
+            const tripId = parseInt(this.trip.id);
+            tripRepository
+                .updateTrip(userId, tripId, trip)
+                .then(() => {
+                    const url = `/users/${userId}/trips/${parseInt(tripId)}`;
+                    this.rollbackCheckpoint(
+                        'PUT',
+                        {
+                            url: url,
+                            body: trip
+                        },
+                        {
+                            url: url,
+                            body: this.rollbackPreviousBody
+                        }
+                    );
+
+                    // Update previous body to be used for the next checkpoints reaction
+                    this.rollbackSetPreviousBody({...trip});
+                    this.updateViewTripPage();
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+    },
 
       /**
        * Redirects users page to the destination page of the provided destination id
@@ -440,7 +477,7 @@ export default {
       deleteDestination: function(index) {
           let newDestinations = JSON.parse(JSON.stringify(this.trip.destinations));
           newDestinations.splice(index, 1);
-          this.trip.destinations = this.setOrdinal(newDestinations);;
+          this.trip.destinations = this.setOrdinal(newDestinations);
       },
 
       /**
@@ -456,14 +493,6 @@ export default {
                   console.log(e);
               });
       },
-
-      /**
-       * Performs the validation and API call to update the trip
-       */
-      updateTrip: function() {
-          if (this.$refs.form.validate())
-              updateTrip(this.userId, this.trip.id, this.trip, this.userDestinations)
-      }
   },
 
 

@@ -22,7 +22,6 @@ public class Trip extends BaseModel {
     @Constraints.Required
     public String name;
 
-    @Constraints.Required
     public String description;
 
     @Column(columnDefinition = "boolean default 0")

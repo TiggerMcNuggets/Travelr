@@ -14,13 +14,12 @@ import java.util.List;
  */
 public class TripDTO {
 
-    @Constraints.Required
+
     public long id;
 
     @Constraints.Required
     public String name;
 
-    @Constraints.Required
     public String description;
 
 
@@ -93,4 +92,6 @@ public class TripDTO {
     public void setDestinations(List<TripDestinationDTO> destinations) {
         this.destinations = destinations;
     }
+
+
 }
