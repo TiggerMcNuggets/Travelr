@@ -8,20 +8,18 @@
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
       </div>
-          <!--<h2 class="headline">{{ trip.name }}</h2>-->
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShouldDisplayButton()">
           <v-icon dark>edit</v-icon>
         </v-btn>
       </div>
 
     <v-divider class="photo-header-divider"/>
-      <v-dialog v-model="shouldDisplayDialog" max-width="100%">
-          <!--<CreateTrips style="background-color: white;"-->
-                       <!--v-if="true"-->
-                       <!--:regetTrips="() => console.log('no need')"-->
-                       <!--:passedTrip="tripId"-->
-                       <!--:updateViewTripPage="this.updateViewTripPage" />-->
-      </v-dialog>
+      <undo-redo-buttons
+              :canRedo="rollbackCanRedo()"
+              :canUndo="rollbackCanUndo()"
+              :undo="undo"
+              :redo="redo"
+      ></undo-redo-buttons>
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">
@@ -240,6 +238,8 @@
 </style>
 
 <script>
+import RollbackMixin from '../mixins/RollbackMixin';
+import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import draggable from 'vuedraggable';
@@ -254,8 +254,9 @@ export default {
   store,
   components: {
     draggable,
-    // CreateTrips
+    UndoRedoButtons
   },
+    mixins: [RollbackMixin],
   // local variables
   data() {
     return {
@@ -404,12 +405,13 @@ export default {
         if (this.$refs.form.validate()) {
 
             const trip = tripAssembler(this.trip);
-            const userId = this.userId
+            const userId = this.userId;
             const tripId = parseInt(this.trip.id);
             tripRepository
                 .updateTrip(userId, tripId, trip)
                 .then(() => {
-                    const url = `/users/${userId}/trips/${parseInt(tripId)}`;
+                    const url = `/users/${userId}/trips/${tripId}`;
+                    console.log("trip", trip);
                     this.rollbackCheckpoint(
                         'PUT',
                         {
@@ -423,7 +425,7 @@ export default {
                     );
 
                     // Update previous body to be used for the next checkpoints reaction
-                    this.rollbackSetPreviousBody({...trip});
+                    this.rollbackSetPreviousBody(trip);
                     this.updateViewTripPage();
                 })
                 .catch(e => {
@@ -493,8 +495,47 @@ export default {
                   console.log(e);
               });
       },
-  },
 
+      getTrip: function() {
+          return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
+              let trip = result.data;
+              trip.destinations = trip.destinations.sort(function(a, b){
+                  return a.ordinal - b.ordinal;
+              });
+              // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
+              for (let i = 0; i < trip.destinations.length; i++) {
+                  trip.destinations[i].expanded = false;
+                  trip.destinations[i].hidden = false;
+
+
+                  if (trip.destinations[i].arrivalDate != null) {
+                      trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+                  }
+                  if (trip.destinations[i].arrivalDate != null) {
+                      trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+                  }
+              }
+              this.trip = trip;
+              return this.trip;
+          });
+      },
+
+      /**
+       * Undoes the last action and calls setDestination() afterwards
+       */
+      undo: function() {
+          const actions = [this.getTrip];
+          this.rollbackUndo(actions);
+      },
+
+      /**
+       * Redoes the last action and calls setDestination() afterwards
+       */
+      redo: function() {
+          const actions = [this.getTrip];
+          this.rollbackRedo(actions);
+      },
+  },
 
 
   created: function() {
@@ -504,26 +545,7 @@ export default {
       if (!this.isMyProfile && !this.isAdmin) {
         this.$router.go(-1);
       }
-      tripRepo.getTrip(this.userId, this.tripId).then((result) => {
-          let trip = result.data;
-          trip.destinations = trip.destinations.sort(function(a, b){
-              return a.ordinal - b.ordinal;
-          });
-          // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
-          for (let i = 0; i < trip.destinations.length; i++) {
-            trip.destinations[i].expanded = false;
-            trip.destinations[i].hidden = false;
-
-
-            if (trip.destinations[i].arrivalDate != null) {
-              trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-            }
-            if (trip.destinations[i].arrivalDate != null) {
-              trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
-            }
-          }
-          this.trip = trip;
-      });
+      this.getTrip().then((trip) => this.rollbackSetPreviousBody(tripAssembler(trip)));
   }
 };
 </script>
