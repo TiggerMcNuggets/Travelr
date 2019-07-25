@@ -188,13 +188,31 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> deleteAlbum(Http.Request request, Long user_id, Long album_id) {
-        return albumRepository.remove(album_id).thenApplyAsync(updated_album_id -> {
+        return albumRepository.remove(album_id).thenApplyAsync(deleted_album_id -> {
             //not found check, repository checks that both album and media exist
-            if(updated_album_id != null) {
+            if(deleted_album_id != null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
             return ok("Album deleted");
+        });
+    }
+
+    /**
+     * Deletes an existing album
+     * @param request the http request
+     * @param album_id the id of the existing album
+     * @return 200 if deletion successful otherwise 404 not found.
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id) {
+        return mediaRepository.remove(album_id, media_id).thenApplyAsync(deleted_media_id -> {
+            //not found check, repository checks that both album and media exist
+            if(deleted_media_id != null) {
+                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
+
+            }
+            return ok("Media deleted");
         });
     }
 }

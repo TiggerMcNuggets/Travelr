@@ -105,4 +105,23 @@ public class MediaRepository {
     public CompletableFuture<Media> getOne(Long id) {
         return supplyAsync(() -> Media.find.findMediaById(id), executionContext);
     }
+
+    /**
+     * Deletes single media item from an album
+     *
+     * @return the media id which was deleted.
+     */
+    public CompletableFuture<Long> remove(Long album_id, Long media_id) {
+        return supplyAsync(() -> {
+            Album album = Album.find.findAlbumById(album_id);
+            if (album == null) return null; // album does not exist
+
+            Media media = Media.find.findMediaById(media_id);
+            if (media == null) return null; // media does not exist
+
+            album.removeMedia(media);
+            return media.id;
+        }, executionContext);
+    }
+
 }
