@@ -1,4 +1,5 @@
 <template>
+
   <v-flex xs2>
     <v-list class="list">
       <v-list-tile v-for="(item, i) in filterCategories" :key="i" @click="changeFilter(i)" class="tile">
@@ -8,14 +9,25 @@
       </v-list-tile>
     </v-list>
 
-    <v-btn class="upload-button" @click="() => uploadDialogActive = !uploadDialogActive" flat>
-      <v-icon left dark>add</v-icon>
-      Upload
+    <v-btn class="upload-button" @click="toggleUploadDialogue" flat>
+        <v-icon left dark>insert_photo</v-icon>
+        Upload Media
+    </v-btn>
+
+
+    <v-btn class="create-album-button" @click="toggleCreateAlbumDialogue" flat>
+        <v-icon left dark>photo_library</v-icon>
+        Create Album
     </v-btn>
 
     <v-dialog v-model="uploadDialogActive" width="800">
-      <MediaUpload :uploadImages="uploadMedia"/>
+      <MediaUpload :uploadImages="uploadMedia" :toggleUploadDialogue="toggleUploadDialogue"/>
     </v-dialog>
+
+    <v-dialog v-model="createAlbumDialogActive" width="800">
+      <AlbumCreate :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"/>
+    </v-dialog>
+
   </v-flex>
 </template>
 
@@ -33,14 +45,21 @@
   }
 
   .upload-button {
-    margin-top: 30px;
+    margin-top: 100px;
     margin-left: 0px;
     height: 48px;
+  }
+
+  .create-album-button {
+      margin-top: 0px;
+      margin-left: 0px;
+      height: 48px;
   }
 </style>
 
 <script>
   import MediaUpload from "../photos/PhotoUpload";
+  import AlbumCreate from "./AlbumCreate";
 
   export default {
     name: "MediaFilter",
@@ -51,12 +70,14 @@
     },
 
     components: {
-      MediaUpload
+      MediaUpload,
+      AlbumCreate
     },
 
     data() {
       return {
-        uploadDialogActive: false
+        uploadDialogActive: false,
+        createAlbumDialogActive: false
       }
     },
 
@@ -81,7 +102,15 @@
 
     methods: {
       uploadMedia() {
-        this.uploadDialogActive = false;
+        this.toggleUploadDialogue();
+      },
+
+      toggleUploadDialogue() {
+        this.uploadDialogActive = !this.uploadDialogActive;
+      },
+
+      toggleCreateAlbumDialogue() {
+        this.createAlbumDialogActive = !this.createAlbumDialogActive;
       }
     }
   }

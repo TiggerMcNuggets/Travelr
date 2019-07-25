@@ -18,7 +18,7 @@
 </style>
 
 <script>
-  import Album from "./Album";
+  import Album from "./AlbumElement";
   import MediaElement from "./MediaElement";
 
   export default {

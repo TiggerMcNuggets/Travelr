@@ -17,7 +17,9 @@
     <v-divider></v-divider>
 
     <v-card-actions>
-      <v-btn ma-3 color="primary" flat v-on:click="uploadImages(rawFiles)">Upload Photos</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn ma-3 flat v-on:click="toggleUploadDialogue()">Cancel</v-btn>
+        <v-btn ma-3 color="primary" flat v-on:click="uploadImages(rawFiles)">Upload Photos</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -49,7 +51,8 @@ export default {
   },
 
   props: {
-    uploadImages: Function
+    uploadImages: Function,
+    toggleUploadDialogue: Function
   },
 
   // local variables
