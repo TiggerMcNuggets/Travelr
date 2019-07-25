@@ -1,13 +1,9 @@
 package repository;
 
-import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
 import models.Album;
 import models.Media;
-import models.PersonalPhoto;
-import models.User;
-
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -62,7 +58,7 @@ public class AlbumRepository {
      */
     public CompletableFuture<Long> remove(Long id) {
         return supplyAsync(() -> {
-            Album album = new Album();
+            Album album = Album.find.findAlbumById(id);
             album.delete();
             return album.id;
         }, executionContext);
