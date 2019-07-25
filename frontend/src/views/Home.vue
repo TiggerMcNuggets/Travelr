@@ -30,7 +30,6 @@
 
 .home__login_area {
   width: 80%;
-  /* padding: 20px; */
 }
 
 .home__tagline {

@@ -160,7 +160,7 @@ public class DestinationRepository {
         // Transfer destination in trips
         boolean destinationTaken = false;
         for (TripDestination tripDestination : tripDestinations) {
-            tripDestination.setDestination(destination);
+//            tripDestination.setDestination(destination);
             destinationTaken = true;
             tripDestination.save();
         }
@@ -208,6 +208,13 @@ public class DestinationRepository {
             dest.update();
             return dest.deleted;
         }, context);
+    }
+
+    public Boolean isDestinationUsed(Long destinationId) {
+//        return supplyAsync(() -> {
+            List<TripDestination> tripDestinations = TripDestination.find.getAllByDestinationId(destinationId);
+            return tripDestinations.size() > 0;
+//        }, context);
     }
 
 
