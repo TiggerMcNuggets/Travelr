@@ -22,7 +22,7 @@ public class Media extends BaseModel {
     public Boolean is_public = false;
 
     /**
-     * The photo filename.
+     * The media URI.
      */
     @NotNull
     @Constraints.Required
@@ -31,11 +31,12 @@ public class Media extends BaseModel {
 
 
     /**
-     * The photo filename.
+     * The the media type.
      */
     @NotNull
     @Constraints.Required
     public String mediaType;
+
 
     /**
      * The user which the media belongs to
