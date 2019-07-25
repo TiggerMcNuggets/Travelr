@@ -43,11 +43,11 @@ PUT        /api/destinations/photo/:photo_id                    controllers.Dest
 PUT        /api/users/:user_id/destinations/:dest_id/photo      controllers.DestinationPhotoController.addExistingPhotoToDestinationPhotos(request: Request, user_id: Long, dest_id: Long)
 
 # Media
-POST        /api/users/:id/album                              controllers.MediaController.createAlbumGivenUser(request: Request, id: Long)
-POST        /api/users/:id/media/:album_id                    controllers.MediaController.uploadMedia(request: Request, id: Long, album_id: Long)
-GET         /api/users/:id/media/:album_id                    controllers.MediaController.getAlbumContent(request: Request, id: Long, album_id: Long)
-POST        /api/users/:id/media/:media_id                    controllers.MediaController.updateUserMedia(request: Request, media_id: Long)
-PATCH       /api/users/:id/media/:album_id/media/:media_id    controllers.MediaController.addMediaToAlbum(request: Request, album_id: Long, media_id: Long)
+POST        /api/users/:id/albums                              controllers.MediaController.createAlbumGivenUser(request: Request, id: Long)
+POST        /api/users/:id/albums/:album_id                    controllers.MediaController.uploadMedia(request: Request, id: Long, album_id: Long)
+GET         /api/users/:id/albums/:album_id                    controllers.MediaController.getAlbumContent(request: Request, id: Long, album_id: Long)
+PATCH       /api/users/:id/albums/:album_id/media/:media_id    controllers.MediaController.addMediaToAlbum(request: Request, album_id: Long, media_id: Long)
+POST        /api/users/:id/media/:media_id                     controllers.MediaController.updateUserMedia(request: Request, media_id: Long)
 
 
 # Destinations (Old)
