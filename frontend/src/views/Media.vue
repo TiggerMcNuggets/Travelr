@@ -57,7 +57,7 @@
 
       mediaCounts: function () {
         return {
-          "all": this.organisedMedia.images.length + this.organisedMedia.videos.length,
+          "all": this.organisedMedia.images.length + this.organisedMedia.videos.length + this.albums.length,
           "albums": this.albums.length,
           "images": this.organisedMedia.images.length,
           "videos": this.organisedMedia.videos.length

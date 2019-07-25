@@ -76,12 +76,12 @@
             title: 'Videos', count: this.mediaCounts.videos
           }
         ];
-      },
+      }
+    },
 
-      methods: {
-        uploadMedia() {
-          this.uploadDialogActive = false;
-        }
+    methods: {
+      uploadMedia() {
+        this.uploadDialogActive = false;
       }
     }
   }
