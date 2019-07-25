@@ -69,6 +69,10 @@ export default {
     };
   },
   methods: {
+
+    /**
+     * Sets the travelller nationalities and date of birth values.
+     */
     setTraveller() {
       this.$set(
         this.traveller,
@@ -85,6 +89,10 @@ export default {
       );
     },
 
+    /**
+     * Handles user registration by validating and calling sign up endpoint.
+     * User is logged in and redirected to their dashboard if the sign up is sucessful.
+     */
     handleSignup() {
       if (this.$refs.form.validate()) {
         this.setTraveller();

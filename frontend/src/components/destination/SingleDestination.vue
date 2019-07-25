@@ -6,16 +6,6 @@
       <div class="inner-container">
         <div class="section">
           <div class="dest-name">
-            <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              @click="$router.go(-1)"
-            >
-              <v-icon dark>keyboard_arrow_left</v-icon>
-            </v-btn>
             <h2 class="headline">{{destination.name}}</h2>
           </div>
           <div>
@@ -164,7 +154,7 @@
         </v-dialog>
 
         <v-dialog v-model="chooseExistingDialog" width="800">
-          <PhotoSelect :uploadImages="uploadMedia" />
+          <PhotoSelect v-bind="{closeDialogue, setDestinationImages}" />
         </v-dialog>
       </div>
     </div>
@@ -210,259 +200,234 @@
 
 
 <script>
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  import base_url from "../../repository/BaseUrl";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import base_url from "../../repository/BaseUrl";
+import PhotoSelect from "../photos/PhotoSelect";
+import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
+import { store } from "../../store/index";
+import {
+  storeDestinationImage,
+  getImages,
+  updateDestinationPhoto,
+  addExistingPhoto
+} from "../../repository/DestinationPhotoRepository";
+let destinationRepository = RepositoryFactory.get("destination");
 
-  // components
-  import PhotoSelect from "../photos/PhotoUpload";
-  import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
+export default {
+  store,
 
-  let destinationRepository = RepositoryFactory.get("destination");
-  import { store } from "../../store/index";
-  import {
-    storeDestinationImage,
-    getImages,
-    updateDestinationPhoto,
-    addExistingPhoto
-  } from "../../repository/DestinationPhotoRepository";
+  components: {
+    PhotoSelect,
+    SuggestTravellerTypes
+  },
 
-  export default {
-    store,
+  // local variables
+  data() {
+    return {
+      files: [],
+      TravellerTypes: [],
+      typeList: [],
+      clickedImageURL: "",
+      clickedImage: {},
+      clickedImageWidth: 0,
+      dialog: false,
+      publicPhotoSwitch: false,
+      showUploadSection: false,
+      userId: null,
+      isMyProfile: false,
+      isAdminUser: false,
+      destination: {},
+      destId: null,
+      uploadError: false,
+      chooseExistingDialog: false,
+      uploadSuccessful: false,
+      errorText:
+        "You are trying to upload a duplicate image or an error occured while uploading.",
+      showSuggestTravellerTypes: false
+    };
+  },
 
-    components: {
-      PhotoSelect,
-      SuggestTravellerTypes
-    },
-
-    // local variables
-    data() {
-      return {
-        files: [],
-        TravellerTypes: [],
-        typeList: [],
-        clickedImageURL: "",
-        clickedImage: {},
-        clickedImageWidth: 0,
-        dialog: false,
-        publicPhotoSwitch: false,
-        showUploadSection: false,
-        userId: null,
-        isMyProfile: false,
-        isAdminUser: false,
-        destination: {},
-        destId: null,
-        uploadError: false,
-        chooseExistingDialog: false,
-        uploadSuccessful: false,
-        errorText:
-                "You are trying to upload a duplicate image or an error occured while uploading.",
-        showSuggestTravellerTypes: false,
-      };
-    },
-
-    methods: {
-
-      /**
-       * Redirects the user to the edit destination page.
-       */
-      editDestination() {
-        this.$router.push(
-                "/user/" + this.userId + "/destinations/edit/" + this.destId
-        );
-      },
-
-      /**
-       * Sets the selected existing photos to be added to destination photos which have been selected from the dialog to
-       * choose existing photos. Takes each photo filename which has been selected and calls the API to add it to the users destination photos.
-       * Closes the dialogue once done.
-       * @param selectedImages The photo details for all the photos selected by the user.
-       */
-      setDestinationImages(selectedImages) {
-        for (let i = 0; i < selectedImages.length; i++) {
-          addExistingPhoto(this.userId, this.destId, {
-            photo_filename: selectedImages[i].photo_filename
-          }).then(() => {
-            getImages(this.userId, this.destId).then(result => {
-              this.files = this.groupImages(result.data);
-            });
-          });
-        }
-        this.closeDialogue();
-      },
-
-      /**
-       * Opens the choose existing photo selector dialog.
-       */
-      uploadExisting() {
-        this.chooseExistingDialog = true;
-      },
-
-      /**
-       * Closes the choose existing photo dialog.
-       */
-      closeDialogue() {
-        this.chooseExistingDialog = false;
-      },
-
-      /**
-       * Sets the file property the the file being uploaded.
-       */
-      handleFileUpload() {
-        this.file = this.$refs.file.files[0];
-      },
-
-      /**
-       * Toggles the upload section for the photos
-       */
-      toggleShowUploadPhoto() {
-        this.showUploadSection = !this.showUploadSection;
-      },
-
-      /**
-       * Updates whether the photo is public or private depending on the switch state.
-       */
-      updatePhotoVisability() {
-        this.clickedImage.is_public = this.publicPhotoSwitch;
-        updateDestinationPhoto(this.clickedImage);
-      },
-
-      uploadMedia(files) {
-
-        // Can't do a for each on a FileList
-        for (let i = 0; i < files.length; i++) {
-          let file = files[i];
-          let formData = new FormData();
-          formData.append("picture", file);
-
-          storeDestinationImage(this.userId, this.destId, formData)
-            .then(() => {
-              getImages(this.userId, this.destId).then(result => {
-                this.uploadExisting = true;
-                this.files = this.groupImages(result.data);
-              });
-            })
-            .catch(error => {
-              this.uploadError = true;
-              this.errorText = error.response.data;
-            });
-          }
-
-          this.closeDialogue();
-      },
-
-      /**
-       * Submits the image file and uploads it to the server
-       */
-      submitFile() {
-        this.uploadError = false;
-        this.uploadExisting = false;
-        let formData = new FormData();
-        formData.append("picture", this.file);
-
-        storeDestinationImage(this.userId, this.destId, formData)
-                .then(() => {
-                  getImages(this.userId, this.destId).then(result => {
-                    this.uploadExisting = true;
-                    this.files = this.groupImages(result.data);
-                  });
-                })
-                .catch(error => {
-                  this.uploadError = true;
-                  this.errorText = error.response.data;
-                });
-        this.$refs.file.value = "";
-      },
-
-      /**
-       * Gets the image src url for the server
-       * @param item The photo item to get the image for.
-       * @returns {string} A url of where to find the photo to set as src
-       */
-      getImgUrl(item) {
-        return base_url + "/api/destinations/photo/" + item.photo_filename;
-      },
-
-      /**
-       * Sets the width of the dialog based on the image width.
-       * @param selectedImage The image which has been clicked on.
-       */
-      setDialogueContent(selectedImage = "") {
-        this.dialog = true;
-        this.clickedImage = selectedImage;
-        this.publicPhotoSwitch = selectedImage.is_public;
-        this.clickedImageURL = this.getImgUrl(selectedImage);
-        const myImage = new Image();
-        myImage.src =
-                base_url + "/api/destinations/photo/" + selectedImage.photo_filename;
-        this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
-      },
-
-      /**
-       * Groups the images into rows with four columns.
-       * @param imageList The list of image data from the server.
-       * @returns {Array} A list of rows each with four images.
-       */
-      groupImages(imageList) {
-        let newImageList = [];
-        let row = [];
-        const num_cols = 4;
-        for (let i = 0; i < imageList.length; i++) {
-          if (i % num_cols === 0 && row.length !== 0) {
-            newImageList.unshift(row);
-            row = [];
-          }
-          row.push(imageList[i]);
-        }
-
-        newImageList.unshift(row);
-        newImageList.reverse();
-        return newImageList;
-      },
-
-      getTravellerTypes(travellerTypes) {
-        if (travellerTypes) {
-          let travellerTypesString = "";
-          for (let i = 0; i < travellerTypes.length; i++) {
-            travellerTypesString += travellerTypes[i].name;
-            if(i !== (travellerTypes.length - 1)){
-              travellerTypesString += ", ";
-            }
-          }
-          return travellerTypesString;
-        } else {
-          return "-";
-        }
-      }
+  methods: {
+    /**
+     * Redirects the user to the edit destination page.
+     */
+    editDestination() {
+      this.$router.push(
+        "/user/" + this.userId + "/destinations/edit/" + this.destId
+      );
     },
 
     /**
-     * Initialises the application on component creation.
+     * Sets the selected existing photos to be added to destination photos which have been selected from the dialog to
+     * choose existing photos. Takes each photo filename which has been selected and calls the API to add it to the users destination photos.
+     * Closes the dialogue once done.
+     * @param selectedImages The photo details for all the photos selected by the user.
      */
-    created() {
-      this.userId = this.$route.params.id;
-      this.destId = this.$route.params.dest_id;
+    setDestinationImages(selectedImages) {
+      for (let i = 0; i < selectedImages.length; i++) {
+        addExistingPhoto(this.userId, this.destId, {
+          photo_filename: selectedImages[i].photo_filename
+        }).then(() => {
+          getImages(this.userId, this.destId).then(result => {
+            this.files = this.groupImages(result.data);
+          });
+        });
+      }
+      this.closeDialogue();
+    },
 
-      if (!this.userId) {
-        this.userId = store.getters.getUser.id;
+    /**
+     * Opens the choose existing photo selector dialog.
+     */
+    uploadExisting() {
+      this.chooseExistingDialog = true;
+    },
+
+    /**
+     * Closes the choose existing photo dialog.
+     */
+    closeDialogue() {
+      this.chooseExistingDialog = false;
+    },
+
+    /**
+     * Sets the file property the the file being uploaded.
+     */
+    handleFileUpload() {
+      this.file = this.$refs.file.files[0];
+    },
+
+    /**
+     * Toggles the upload section for the photos
+     */
+    toggleShowUploadPhoto: function() {
+      this.showUploadSection = !this.showUploadSection;
+    },
+
+    /**
+     * Updates whether the photo is public or private depending on the switch state.
+     */
+    updatePhotoVisability() {
+      this.clickedImage.is_public = this.publicPhotoSwitch;
+      updateDestinationPhoto(this.clickedImage);
+    },
+
+    /**
+     * Submits the image file and uploads it to the server
+     */
+    submitFile() {
+      this.uploadError = false;
+      this.uploadExisting = false;
+      let formData = new FormData();
+      formData.append("picture", this.file);
+
+      storeDestinationImage(this.userId, this.destId, formData)
+        .then(() => {
+          getImages(this.userId, this.destId).then(result => {
+            this.uploadExisting = true;
+            this.files = this.groupImages(result.data);
+          });
+        })
+        .catch(error => {
+          this.uploadError = true;
+          this.errorText = error.response.data;
+        });
+      this.$refs.file.value = "";
+    },
+
+    /**
+     * Gets the image src url for the server
+     * @param item The photo item to get the image for.
+     * @returns {string} A url of where to find the photo to set as src
+     */
+    getImgUrl(item) {
+      return base_url + "/api/destinations/photo/" + item.photo_filename;
+    },
+
+    /**
+     * Sets the width of the dialog based on the image width.
+     * @param selectedImage The image which has been clicked on.
+     */
+    setDialogueContent(selectedImage = "") {
+      this.dialog = true;
+      this.clickedImage = selectedImage;
+      this.publicPhotoSwitch = selectedImage.is_public;
+      this.clickedImageURL = this.getImgUrl(selectedImage);
+      const myImage = new Image();
+      myImage.src =
+        base_url + "/api/destinations/photo/" + selectedImage.photo_filename;
+      this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+    },
+
+    /**
+     * Groups the images into rows with four columns.
+     * @param imageList The list of image data from the server.
+     * @returns {Array} A list of rows each with four images.
+     */
+    groupImages(imageList) {
+      let newImageList = [];
+      let row = [];
+      const num_cols = 4;
+      for (let i = 0; i < imageList.length; i++) {
+        if (i % num_cols === 0 && row.length !== 0) {
+          newImageList.unshift(row);
+          row = [];
+        }
+        row.push(imageList[i]);
       }
 
-      this.isMyProfile = store.getters.getUser.id == this.userId;
-      this.isAdminUser = store.getters.getIsUserAdmin;
+      newImageList.unshift(row);
+      newImageList.reverse();
+      return newImageList;
+    },
 
-      // Gets all the images to display on the page.
-      getImages(this.userId, this.destId).then(result => {
-        this.files = this.groupImages(result.data);
-      });
-
-      // Gets the information relating to selected destination.
-      destinationRepository
-              .getDestination(this.userId, this.destId)
-              .then(response => {
-                this.destination = response.data;
-              })
-              .catch(err => {
-                console.log(err);
-              });
+    /**
+     * Gets a list of traveller type names.
+     */
+    getTravellerTypes(travellerTypes) {
+      if (travellerTypes) {
+        let travellerTypesString = "";
+        for (let i = 0; i < travellerTypes.length; i++) {
+          travellerTypesString += travellerTypes[i].name;
+          if (i !== travellerTypes.length - 1) {
+            travellerTypesString += ", ";
+          }
+        }
+        return travellerTypesString;
+      } else {
+        return "-";
+      }
     }
-  };
+  },
+
+  /**
+   * Initialises the application on component creation.
+   */
+  created: function() {
+    this.userId = this.$route.params.id;
+    this.destId = this.$route.params.dest_id;
+
+    if (!this.userId) {
+      this.userId = store.getters.getUser.id;
+    }
+
+    this.isMyProfile = store.getters.getUser.id == this.userId;
+    this.isAdminUser = store.getters.getIsUserAdmin;
+
+    // Gets all the images to display on the page.
+    getImages(this.userId, this.destId).then(result => {
+      this.files = this.groupImages(result.data);
+    });
+
+    // Gets the information relating to selected destination.
+    destinationRepository
+      .getDestination(this.userId, this.destId)
+      .then(response => {
+        this.destination = response.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+};
 </script>

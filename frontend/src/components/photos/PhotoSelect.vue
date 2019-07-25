@@ -101,7 +101,6 @@ h2 {
 hr {
   margin-bottom: 25px;
 }
-
 </style>
 
 
@@ -169,7 +168,6 @@ export default {
         }
       }
     },
-
 
     /**
      * Toggles if the image is selected and adding or removing from selected list.

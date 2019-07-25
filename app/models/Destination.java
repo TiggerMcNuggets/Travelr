@@ -146,6 +146,9 @@ public class Destination extends BaseModel {
     public void setUser(models.User user) {
         this.user = user;
     }
-    
+
+    public boolean getIsPublic() { return isPublic; }
+
+    public void setIsPublic(boolean isPublic) { this.isPublic = isPublic; }
 }
 

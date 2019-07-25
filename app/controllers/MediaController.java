@@ -119,7 +119,7 @@ public class MediaController extends Controller {
 
         return albumRepository.create().thenApplyAsync(id -> {
 
-            // If destination already exists
+            // If album already exists
             if (id == null) {
                 return badRequest();
             }

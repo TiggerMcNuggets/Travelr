@@ -24,4 +24,8 @@ public class BaseModel extends Model {
   public void setId(Long id) {
     this.id = id;
   }
+
+  public boolean getDeleted() { return deleted; }
+
+  public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }

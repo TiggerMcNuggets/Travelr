@@ -13,27 +13,9 @@ public class GetDestinationsSteps {
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
 
-    /**
-     * Executes a fake request to get destinations
-     */
-    @When("I get destinations")
-    public void iGetDestinations() {
-        try {
-            // Create request object
-            Http.RequestBuilder getDestinations = Helpers.fakeRequest()
-                    .method("GET")
-                    .header("X-Authorization", state.getToken())
-                    .uri("https://localhost:9000/api/users/" + state.getTravellerId() + "/destinations");
-
-            // Send request
-            state.setResult(route(state.getApplication(), getDestinations));
-
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
-        }
+    @When("I want to get destinations")
+    public void iWantToGetDestinations() {
+        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/destinations", state.getUser().getId())));
+        state.getRequest().method("GET");
     }
-
-
-
 }
