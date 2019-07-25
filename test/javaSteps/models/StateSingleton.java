@@ -1,6 +1,7 @@
 package javaSteps.models;
 
 import com.google.inject.Inject;
+import models.Album;
 import models.Destination;
 import models.User;
 import play.Application;
@@ -23,6 +24,8 @@ public class StateSingleton {
     private Result result;
     private User user;
     private Destination destination;
+    private Album album;
+
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
@@ -83,5 +86,13 @@ public class StateSingleton {
 
     public void setDestination(Destination destination) {
         this.destination = destination;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
     }
 }
