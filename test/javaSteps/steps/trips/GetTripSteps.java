@@ -68,13 +68,17 @@ public class GetTripSteps {
             state.setResult(route(state.getApplication(), getTrip));
 //            System.out.println("#####################################################################################################");
 //            System.out.println(state.getResult().contentType().toString());
-            Assert.assertTrue(state.getResult().contentType().toString().equals("Optional[text/calendar]"));
 //            System.out.println(state.getResult().body().dataStream());
 //            System.out.println("#####################################################################################################");
         } catch (Exception e) {
             System.out.println(e);
             Assert.assertTrue(false);
         }
+    }
+
+    @Then("The content type will be {string}")
+    public void the_content_type_will_be(String string) {
+        Assert.assertTrue(state.getResult().contentType().toString().equals(string));
     }
 
 }
