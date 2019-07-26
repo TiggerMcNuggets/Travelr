@@ -60,7 +60,7 @@
         :value="item.value"
         :key="item.value"
       >
-        <v-card>
+        <v-card class="hoverable pa-2">
           <v-flex
                   d-flex
                   justify-space-between

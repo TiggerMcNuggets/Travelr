@@ -11,6 +11,7 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import dto.trip.CreateTripDTO;
 import dto.trip.TripDTO;
+import dto.shared.CreatedDTO;
 import io.ebean.Ebean;
 
 import models.Trip;
@@ -64,7 +65,7 @@ public class TripController extends Controller {
 
         TripDTO dto = createTripForm.get();
 
-        return tripService.createTrip(dto, user).thenApplyAsync((tripId) -> created(Json.toJson(tripId)));
+        return tripService.createTrip(dto, user).thenApplyAsync((tripId) -> created(Json.toJson(new CreatedDTO(tripId))));
     }
 
     /**

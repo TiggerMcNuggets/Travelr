@@ -9,6 +9,42 @@
       </div>
 
     <v-divider class="photo-header-divider"/>
+      <v-layout flex >
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                  <v-btn
+                          v-on:click="validateForm"
+                          icon
+                          v-on="on">
+                      <v-icon color="primary lighten-1">check_circle</v-icon>
+                  </v-btn>
+              </template>
+              <span>Validate</span>
+          </v-tooltip>
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                  <v-btn
+                          v-on:click="addTripDestination"
+                          icon
+                          v-on="on">
+                      <v-icon color="primary lighten-1">add_circle</v-icon>
+                  </v-btn>
+              </template>
+              <span>Add Destination</span>
+          </v-tooltip>
+          <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                  <v-btn
+                          icon
+                          v-on:click="updateTrip"
+                          v-on="on">
+                      <v-icon color="primary lighten-1">send</v-icon>
+                  </v-btn>
+              </template>
+              <span>Update trip</span>
+          </v-tooltip>
+
+      </v-layout>
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">
@@ -168,42 +204,6 @@
       </v-timeline>
       </v-form>
 
-      <v-layout flex>
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                         v-on:click="validateForm"
-                         icon
-                         v-on="on">
-                      <v-icon color="primary lighten-1">check_circle</v-icon>
-                  </v-btn>
-              </template>
-              <span>Validate</span>
-          </v-tooltip>
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                          v-on:click="addTripDestination"
-                          icon
-                          v-on="on">
-                      <v-icon color="primary lighten-1">add_circle</v-icon>
-                  </v-btn>
-              </template>
-              <span>Add Destination</span>
-          </v-tooltip>
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                          icon
-                          v-on:click="updateTrip"
-                          v-on="on">
-                      <v-icon color="primary lighten-1">send</v-icon>
-                  </v-btn>
-              </template>
-              <span>Update trip</span>
-          </v-tooltip>
-
-      </v-layout>
 </v-container>
 </v-card>
 

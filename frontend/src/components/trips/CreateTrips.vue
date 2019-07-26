@@ -388,7 +388,7 @@ export default {
         tripRepository
           .createTripForUser(trip, this.id)
           .then(res => {
-            this.checkpointCreateTrip(res.data.id)
+            this.checkpointCreateTrip(res.data.id);
             this.regetTrips();
           })
           .catch(e => {
@@ -403,7 +403,6 @@ export default {
      **/
     tripAssembler: function() {
       let trip = { name: this.trip.name, destinations: [] };
-      console.log("tripAssem", this.trip.destinations);
       this.trip.destinations.forEach((destination, index) => {
         trip.destinations.push({
           ordinal: index,
