@@ -103,14 +103,11 @@ let router = new Router({
   routes: [
     {
       path: "",
-      beforeEnter: unauthGuard
-    },
-
-    {
-      path: "",
       name: "home",
       component: Home,
       beforeEnter: unauthGuard,
+      beforeLeave: unauthGuard,
+      redirect: "/login",
       children: [
         {
           path: "/login",

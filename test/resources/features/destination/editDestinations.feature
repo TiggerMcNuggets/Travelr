@@ -1,43 +1,141 @@
 Feature: EditDestinations
   Description: The purpose of this feature is to test the api endpoint related to editing a destination
 
-  Background: The database is populated
-    Given I populate the database
+  Scenario: Edit a destination successfully
+    Given I am authenticated
+    And I own the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to edit the destination
+    And The body is
+      """
+      {
+        "name": "Eiffel",
+        "latitude": 10.0,
+        "longitude": 10.0,
+        "type": "Land",
+        "district": "Par",
+        "country": "Fra"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 200
+    And The destination is
+      | name   | latitude  | longitude  | type | district | country |
+      | Eiffel | 10.0      | 10.0       | Land | Par      | Fra     |
 
-  Scenario: Edit destination with correct fields
-    Given I provide the token "123"
-    And I provide valid destination edit values
-    And The destination id is 1
-    When I edit the destination
-    Then I will receive a 200 response
+  Scenario: Edit a destination successfully for a user as an admin
+    Given I am authenticated
+    And I am an admin
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    And They own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to edit the destination
+    And The body is
+      """
+      {
+        "name": "Eiffel",
+        "latitude": 10.0,
+        "longitude": 10.0,
+        "type": "Land",
+        "district": "Par",
+        "country": "Fra"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 200
+    And The destination is
+      | name   | latitude  | longitude  | type | district | country |
+      | Eiffel | 10.0      | 10.0       | Land | Par      | Fra     |
 
-  Scenario: Edit destination with missing fields
-    Given I provide the token "123"
-    And I provide invalid destination edit values
-    And The destination id is 1
-    When I edit the destination
-    Then I will receive a 400 response
+  Scenario: Edit a destination with incomplete destination information
+    Given I am authenticated
+    And I own the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to edit the destination
+    And The body is
+      """
+      {
+        "name": "Eiffel",
+        "latitude": 10.0,
+        "longitude": 10.0,
+        "type": "Land",
+        "district": "Par"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 400
+    And The destination is
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
 
-  Scenario: Edit destination with invalid token
-    Given I provide the token "345345"
-    And I provide valid destination edit values
-    And The destination id is 1
-    When I edit the destination
-    Then I will receive a 401 response
+  Scenario: Edit a destination when I am not logged in
+    Given I am not authenticated
+    And I own the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to edit the destination
+    And The body is
+      """
+      {
+        "name": "Eiffel",
+        "latitude": 10.0,
+        "longitude": 10.0,
+        "type": "Land",
+        "district": "Par",
+        "country": "Fra"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 401
+    And The destination is
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
 
-  Scenario: Editing a destination which does not exist
-    Given I provide the token "123"
-    And I provide valid destination edit values
-    And The destination id is 12
-    When I edit the destination
-    Then I will receive a 404 response
+  Scenario: Edit a destination that is not mine
+    Given I am authenticated
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    And They own the destination
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to edit the destination
+    And The body is
+      """
+      {
+        "name": "Eiffel",
+        "latitude": 10.0,
+        "longitude": 10.0,
+        "type": "Land",
+        "district": "Par",
+        "country": "Fra"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 403
+    And The destination is
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
 
-  # Consider checking the following => Given Another traveller with id 2 has created a destination with id 4
-  # This works currently due to the population method which has user 2 create destination 4.
-  Scenario: Editing a destination which does not belong to the signed in user.
-    Given I provide the token "abc"
-    And The traveller id is 2
-    And I provide valid destination edit values
-    And The destination id is 4
-    When I edit the destination
-    Then I will receive a 403 response
+  Scenario: Edit a destination that does not exist
+    Given I am authenticated
+    And I do not own a destination
+    When I want to edit the destination
+    And The body is
+      """
+      {
+        "name": "Eiffel",
+        "latitude": 10.0,
+        "longitude": 10.0,
+        "type": "Land",
+        "district": "Par",
+        "country": "Fra"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 404

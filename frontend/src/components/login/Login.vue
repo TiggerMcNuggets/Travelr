@@ -18,18 +18,23 @@
     <v-alert :value="loginAlert" color="error">Incorrect email and/or password</v-alert>
 
     <v-btn class="login-button" large v-on:click="login" color="error">Login</v-btn>
-    <router-link to="/signup">
+    <router-link class="no-underline" to="/signup">
       <v-btn class="login-button" large outline color="error">Sign up</v-btn>
     </router-link>
   </div>
 </template>
 
-<style>
-@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
+<style lang="scss">
+  @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
-.login-button {
-  margin: 40px 20px 0px 0px;
-}
+  .login-button {
+    margin: 40px 20px 0px 0px;
+  }
+
+  no-underline {
+    text-decoration: none;
+  }
+
 </style>
 
 <script>
@@ -56,8 +61,8 @@ export default {
       this.loginAlert = false;
       store
         .dispatch("login", this.user)
-        .then(() => {
-          this.$router.push("/");
+        .then(res => {
+          this.$router.push(`/user/${res.data.id}`);
         })
         .catch(() => {
           this.loginAlert = true;
