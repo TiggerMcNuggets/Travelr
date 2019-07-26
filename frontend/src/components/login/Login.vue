@@ -31,7 +31,7 @@
     margin: 40px 20px 0px 0px;
   }
 
-  no-underline {
+  .no-underline {
     text-decoration: none;
   }
 
