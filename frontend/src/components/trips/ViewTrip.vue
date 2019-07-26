@@ -1,6 +1,9 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
 
   <v-card>
+            <TripMap
+        :destinations="trip.destinations"
+      />
   <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
       <div class="section">
       <div>
@@ -227,6 +230,8 @@
         padding: 0;
     }
 
+    .trip-map
+
     .date-margin {
         padding: 8px 16px 4px 16px
     }
@@ -255,7 +260,8 @@ export default {
   store,
   components: {
     draggable,
-    UndoRedoButtons
+    UndoRedoButtons,
+    TripMap
   },
     mixins: [RollbackMixin],
   // local variables
@@ -537,10 +543,6 @@ export default {
           this.rollbackRedo(actions);
       },
   },
-    components: {
-        TripMap: TripMap
-    },
-
 
   created: function() {
       this.getDestinations();

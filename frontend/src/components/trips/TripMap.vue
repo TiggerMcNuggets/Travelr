@@ -9,18 +9,17 @@
       >
         <!-- Private destination markers -->
         <GmapMarker
-          v-for="path in pathList"
-          :key="path.ordinal"
-          :position="{lat: path.lat, lng: path.lng}"
+          v-for="(destination, i) in listOfDestinations"
+          :key="i"
+          :position=destination
           :draggable="false"
-          :icon="privateMarker"
+          :icon="blueMarker"
         />
         <GmapPolyline
           v-for="path in pathList"
-          :key = path.ordinal
-          :path = path
-          :options="{strokeColor: path.strokeColor}"
-          :strokeWeight = 1
+          :key=path.ordinal
+          :path=path
+          :options="{strokeColor: path[0].strokeColor}"
           >
         </GmapPolyline>
       </GmapMap>
@@ -40,7 +39,6 @@
   import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style"
 
   // resources
-  import pinkMarker from "../../assets/pink-google-maps-marker.svg";
   import blueMarker from "../../assets/blue-google-maps-marker.svg";
 
   export default {
@@ -66,17 +64,7 @@
           position: { lat: 0, lng: 0 },
           open: false
         },
-        publicMarker: blueMarker,
-        privateMarker: pinkMarker,
-        trip: [
-            {lat: -43.53205440000001, lng: 172.63622540000006, ordinal: 1, depth: 1},
-            {lat: -36.8484597, lng: 174.76333150000005, ordinal: 2, depth: 1},
-            {lat: -33.8688197, lng: 151.20929550000005, ordinal: 3, depth: 2},
-            {lat: 41.90278349999999, lng: 12.496365500000024, ordinal: 4, depth: 3},
-            {lat: -17.6509195, lng: -149.42604210000002, ordinal: 5, depth: 3},
-            {lat: -17.6509195, lng: -149.42604210000002, ordinal: 6, depth: 2},
-            {lat: 55.9366784, lng: -4.7739458, ordinal: 7, depth: 1}
-],
+        blueMarker: blueMarker
       };
     },
 
@@ -89,6 +77,13 @@
     },
 
     computed: {
+
+      listOfDestinations() {
+        return this.pathList.reduce((accumulator, path) => {
+          return accumulator.concat([...path])
+        }, []);
+      },
+
       /*
       * Creates an array of arrays containing latitude and longitude to represent different polylines.
       * This is used to differentiate between different levels of nested trips.
@@ -97,32 +92,43 @@
         let tempPaths = [];
         let tempPath = [];
         let currentDepth;
-        for (let i = 0; i < this.trip.length; i++) {
+        for (let i = 0; i < this.destinations.length; i++) {
           console.log(i);
           let RGB = ["00", "00", "00"]
-          currentDepth = this.trip[i].depth;
-          if (i + 1 == this.trip.length) {
-            tempPath.push(this.trip[i])
-            RGB[(this.trip[i - 1].depth - 1)] = "FF";
+          currentDepth = this.destinations[i].depth;
+          if (i + 1 == this.destinations.length) {
+            tempPath.push(this.destinations[i])
+            RGB[(this.destinations[i - 1].depth) % 3] = "FF";
             tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
             tempPaths.push(tempPath);
             break
           } else if (i == 0) {
-            tempPath.push(this.trip[i]);
-          } else if ((currentDepth < this.trip[i + 1].depth) || (currentDepth < this.trip[i - 1].depth)) {
-            tempPath.push(this.trip[i]);
-            if (currentDepth < this.trip[i - 1].depth) {
-              RGB[(this.trip[i - 1].depth - 1)] = "FF";
+            tempPath.push(this.destinations[i]);
+          } else if ((currentDepth < this.destinations[i + 1].depth) || (currentDepth < this.destinations[i - 1].depth)) {
+            tempPath.push(this.destinations[i]);
+            if (currentDepth < this.destinations[i - 1].depth) {
+              RGB[(this.destinations[i - 1].depth % 3)] = "FF";
             } else {
-              RGB[(this.trip[i].depth - 1)] = "FF";
+              RGB[(this.destinations[i].depth % 3)] = "FF";
             }
             tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
             tempPaths.push(tempPath)
             tempPath = [];
-            tempPath.push(this.trip[i]);
+            tempPath.push(this.destinations[i]);
           } else {
-            tempPath.push(this.trip[i]);
+            tempPath.push(this.destinations[i]);
           }
+        }
+        console.log(tempPaths);
+        console.log("here")
+        for (let i = 0; i < tempPaths.length; i++) {
+          tempPaths[i] = tempPaths[i].map((path) => {
+            return {
+              ...tempPaths[i],
+              lat: path.destination.latitude,
+              lng: path.destination.longitude,
+              }
+          });
         }
         console.log(tempPaths);
         return tempPaths;
