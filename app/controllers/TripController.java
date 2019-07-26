@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import dto.trip.CreateTripDTO;
 import dto.trip.TripDTO;
 import dto.shared.CreatedDTO;
@@ -49,6 +50,7 @@ public class TripController extends Controller {
 
     /**
      * Create a trip endpoint
+     *
      * @param request
      * @return
      */
@@ -57,7 +59,7 @@ public class TripController extends Controller {
 
         Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
 
-        if(createTripForm.hasErrors()) {
+        if (createTripForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest());
         }
 
@@ -70,6 +72,7 @@ public class TripController extends Controller {
 
     /**
      * update trip endpoint
+     *
      * @param request
      * @return
      */
@@ -79,7 +82,7 @@ public class TripController extends Controller {
         Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
         TripDTO dto = createTripForm.get();
 
-        if(createTripForm.hasErrors()) {
+        if (createTripForm.hasErrors()) {
             System.out.println(createTripForm.errors());
             return CompletableFuture.completedFuture(badRequest());
         }
@@ -88,7 +91,7 @@ public class TripController extends Controller {
 
 
         return tripService.updateTrip(tripId, dto, user).thenApplyAsync((trip) -> {
-            if(trip == null) {
+            if (trip == null) {
                 return notFound();
             }
 
@@ -98,6 +101,7 @@ public class TripController extends Controller {
 
     /**
      * Get all trips for a given user
+     *
      * @param request
      * @param userId
      * @return
@@ -108,7 +112,7 @@ public class TripController extends Controller {
         return tripService.getTripsForUser(userId).thenApplyAsync(trips -> {
             ArrayList<TripDTO> tripDTOS = new ArrayList<>();
 
-            for(Trip trip : trips) {
+            for (Trip trip : trips) {
                 tripDTOS.add(new TripDTO(trip));
             }
 
@@ -119,6 +123,7 @@ public class TripController extends Controller {
 
     /**
      * Get a trip by tripId
+     *
      * @param request
      * @param tripId
      * @return
@@ -127,7 +132,7 @@ public class TripController extends Controller {
     public CompletionStage<Result> getTripById(Http.Request request, Long tripId, Long userId) {
         // TODO ADD AUTH CHECK
         return tripService.getTripById(tripId).thenApplyAsync(trip -> {
-            if(trip == null) {
+            if (trip == null) {
                 return notFound();
             }
             return ok(Json.toJson(new TripDTO(trip)));
@@ -138,13 +143,39 @@ public class TripController extends Controller {
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> deleteTrip(Http.Request request, Long tripId, Long userId) {
         return tripService.deleteTrip(tripId).thenApplyAsync(success -> {
-           if(success) {
-               return ok();
-           } else {
-               return badRequest();
-           }
+            if (success) {
+                return ok();
+            } else {
+                return badRequest();
+            }
         });
     }
+
+    /**
+     * //     * Soft Deletes a trip
+     * //     * @param req the http request
+     * //     * @param userId the id of the user
+     * //     * @param tripId the id of the destination
+     * //
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
+        Trip trip = Trip.find.findByIdIncludeDeleted(tripId);
+
+        if (trip == null) return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode response = mapper.createObjectNode();
+
+            response.put("id", tripId);
+            response.put("deleted", deleted);
+
+            return ok(response.toString());
+        });
+    }
+}
+
 
 
 //    /**
@@ -455,4 +486,3 @@ public class TripController extends Controller {
 //        });
 //
 
-}

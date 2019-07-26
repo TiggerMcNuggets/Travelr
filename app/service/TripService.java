@@ -152,6 +152,19 @@ public class TripService {
             return false;
         }, context);
 
+    }
 
+    /**
+     * Toggles the deletion of a trip given an Id
+     * @param id
+     * @return true if the trip is deleted
+     */
+    public CompletableFuture<Boolean> toggleTripDeleted(Long id) {
+        return supplyAsync(() -> {
+            Trip trip = Trip.find.findByIdIncludeDeleted(id);
+            trip.setDeleted(!trip.isDeleted());
+            trip.update();
+            return trip.isDeleted();
+        }, context);
     }
 }
