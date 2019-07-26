@@ -56,8 +56,8 @@ export default {
       this.loginAlert = false;
       store
         .dispatch("login", this.user)
-        .then(() => {
-          this.$router.push("/");
+        .then(res => {
+          this.$router.push(`/user/${res.data.id}`);
         })
         .catch(() => {
           this.loginAlert = true;
