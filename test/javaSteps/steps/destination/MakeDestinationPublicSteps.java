@@ -22,70 +22,27 @@ public class MakeDestinationPublicSteps {
 
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
-    private DestinationFinder destinationFinder = new DestinationFinder();
-    private int destinationId;
-    private Integer firstCreatedId = null;
 
-    @Given("The private destination id is {int}")
-    public void thePrivateDestinationIdIs(Integer id) {
-        destinationId = id;
+    @When("I want to make the destination public")
+    public void iWantToMakeTheDestinationPublic() {
+        state.getRequest().method("PUT");
+        state.getRequest().uri(String.format("https://localhost:9000/api/destinations/%s/make_public", state.getDestination().getId()));
     }
 
-    @When("I make the destination public")
-    public void iMakeTheDestinationPublic() {
-        try {
-            // Create request object
-            Http.RequestBuilder info = Helpers.fakeRequest()
-                    .method("PUT")
-                    .header("X-Authorization", state.getToken())
-                    .uri("https://localhost:9000/api/destinations/" + destinationId + "/make_public");
-
-            // Send request
-            state.setResult(route(state.getApplication(), info));
-
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
-        }
+    @When("I want to make the destination private")
+    public void iWantToMakeTheDestinationPrivate() {
+        state.getRequest().method("PUT");
+        state.getRequest().uri(String.format("https://localhost:9000/api/destinations/%s/make_private", state.getDestination().getId()));
     }
 
-    @Then("the owner of the destination with id {int} is {int}")
-    public void the_owner_of_the_destination_with_id_is(Integer dest_id, Integer owner_id) {
-        Assert.assertEquals(destinationFinder.findById(Long.valueOf(dest_id)).getUser().getId(), Long.valueOf(owner_id));
-
+    @Then("The destination is now public")
+    public void theDestinationIsNowPublic() {
+        Assert.assertTrue((Destination.find.findById(state.getDestination().getId())).getIsPublic());
     }
 
-    @Given("I create a destination for user id {int}")
-    public void iCreateADestinationWithId(int userId) {
-        JsonNode destinationData = Json.parse("{ \"name\": \"string\", \"latitude\": 5, \"longitude\": 5, \"type\": \"string\", \"district\": \"string\", \"country\": \"string\"}");
-        try {
-            // Create request object
-            Http.RequestBuilder createDestinationForUser = Helpers.fakeRequest()
-                    .method("POST")
-                    .header("X-Authorization", state.getToken())
-                    .bodyJson(destinationData)
-                    .uri("http://localhost:9000/api/users/"+ userId +"/destinations");
-
-            // Send request
-            state.setResult(route(state.getApplication(), createDestinationForUser));
-
-            JsonNode responseBody = Json.parse(contentAsString(state.getResult()));
-            destinationId = responseBody.get("id").asInt();
-
-            if (firstCreatedId == null) {
-                firstCreatedId = destinationId;
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
-        }
-
+    @Then("The destination is now private")
+    public void theDestinationIsNowPrivate() {
+        Assert.assertFalse((Destination.find.findById(state.getDestination().getId())).getIsPublic());
     }
 
-    @Then("My first destination should be deleted")
-    public void myFirstDestinationShouldBeDeleted() {
-        Destination destination = Destination.find.findById(firstCreatedId.longValue());
-        Assert.assertNull(destination);
-    }
 }

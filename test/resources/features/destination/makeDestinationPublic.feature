@@ -1,39 +1,80 @@
 Feature: Make Destination Public
   Description: Tests the api endpoint related to making a destination public
 
-  Background: The database is populated
-    Given I populate the database
-
   Scenario: Make a destination public successfully
-    Given I provide the token "123"
-    And The private destination id is 1
-    When I make the destination public
-    Then I will receive a 201 response
+    Given I am authenticated
+    And I own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to make the destination public
+    And I send the request
+    Then I will receive the response code 201
+    And The destination is now public
 
+  Scenario: Make a destination public successfully for a user as an admin
+    Given I am authenticated
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    And They own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to make the destination public
+    And I send the request
+    Then I will receive the response code 201
+    And The destination is now public
+
+  Scenario: Make a destination private successfully
+    Given I am authenticated
+    And I own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    And The destination is public
+    When I want to make the destination private
+    And I send the request
+    Then I will receive the response code 201
+    And The destination is now private
+
+  Scenario: Make a destination private successfully for a user as an admin
+    Given I am authenticated
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    And They own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    And The destination is public
+    When I want to make the destination private
+    And I send the request
+    Then I will receive the response code 201
+    And The destination is now private
+
+  Scenario: Make a destination public when I am not logged in
+    Given I am not authenticated
+    And I own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    When I want to make the destination public
+    And I send the request
+    Then I will receive the response code 401
+
+  Scenario: Make a destination private when I am not logged in
+    Given I am not authenticated
+    And I own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    And The destination is public
+    When I want to make the destination private
+    And I send the request
+    Then I will receive the response code 401
 
   Scenario: Make a destination public that does not exist
-    Given I provide the token "123"
-    And The private destination id is 100
-    When I make the destination public
-    Then I will receive a 404 response
+    Given I am authenticated
+    And I do not own a destination
+    When I want to make the destination public
+    And I send the request
+    Then I will receive the response code 404
 
-  Scenario: Use a public destination in a trip
-    Given I provide the token "abc"
-    And The private destination id is 1
-    And I make the destination public
-    And The private destination id is 2
-    And I make the destination public
-    When I provide the token "123"
-    And I provide complete trip information
-    And I create a trip
-    Then the owner of the destination with id 1 is 1
-
-  Scenario: Deletion after merging destinations
-    Given I provide the token "123"
-    And I create a destination for user id 2
-    And I provide the token "abc"
-    And I create a destination for user id 3
-    When I make the destination public
-    Then My first destination should be deleted
-
-
+  # TODO: Scenario: Make a destination public and someone else uses in a trip
+  # TODO: Scenario: Deletion after merging destinations
+  # ^ Both of these are integration tests that requires trip tests to be finished

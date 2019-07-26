@@ -45,9 +45,9 @@
             :allowedToEdit="isAllowedToEdit"
           ></DestinationDetails>
         </v-flex>
-    </v-layout>
+      </v-layout>
     </v-flex>
-       </v-layout>
+  </v-layout>
 </template>
 
 <style>
@@ -114,14 +114,25 @@ export default {
   },
 
   methods: {
+    /**
+     * Creates a deep copy
+     */
     deepCopy(value) {
       return deepCopy(value);
     },
+
+    /**
+     * Creates an empty destination?? Is this used??
+     */
     createDestination() {
       this.focussedDestination = {
         data: {}
       };
     },
+
+    /**
+     * Toggles between destinations
+     */
     toggleDestination(destination) {
       var showDest = this.destinations.filter(
         x => x.data.id === destination.data.id
@@ -131,16 +142,23 @@ export default {
         showDest[0].isShowing = !showDest[0].isShowing;
       }
     },
+
+    /**
+     * Changed the focused destination to a given destination
+     */
     focusDestination(destination) {
       this.focussedDestination = this.deepCopy(destination);
       if (this.focussedDestination.data && this.focussedDestination.data.id) {
         const newDest = this.destinations.filter(
           dest => dest.data.id === this.focussedDestination.data.id
         )[0];
-        console.log(newDest);
         this.rollbackSetPreviousBody(newDest.data);
       }
     },
+
+    /**
+     * Checks if a destination exists if it does, updates it. If it doesn't, a new destination is created.
+     */
     submitDestination(destination) {
       if (destination.data.id) {
         DestinationRepository.updateDestination(
@@ -149,9 +167,7 @@ export default {
           destination.data
         )
           .then(() => {
-            const url = `/users/${this.userId}/destinations/${
-              destination.data.id
-            }`;
+            const url = `/users/${this.userId}/destinations/${destination.data.id}`;
             this.rollbackCheckpoint(
               "PUT",
               {
@@ -180,6 +196,10 @@ export default {
           });
       }
     },
+
+    /**
+     * Populates the destinations
+     */
     async populateDestinations() {
       this.destinations = [];
       try {
@@ -197,18 +217,28 @@ export default {
         console.error(err);
       }
     },
+
+    /**
+     * Cancels an edit on a clicked destination.
+     */
     cancelEdit() {
       this.focussedDestination = {};
     },
+
+    /**
+     * Updates destinations and focussed destination following a rollback action.
+     */
     async fetchAfterRollback() {
       let id = this.focussedDestination.data.id;
-      console.log(id);
       await this.populateDestinations();
       this.focussedDestination = this.destinations.filter(
         dest => dest.data.id === id
       )[0];
-      console.log(this.focussedDestination);
     },
+
+    /**
+     * Sets the rollback undo action.
+     */
     undo() {
       const actions = [this.fetchAfterRollback]; // fill;
       try {
@@ -217,6 +247,10 @@ export default {
         console.error(err);
       }
     },
+
+    /**
+     * Sets the redo rollback action.
+     */
     redo() {
       const actions = [this.fetchAfterRollback]; // fill;
       try {
@@ -226,18 +260,29 @@ export default {
       }
     }
   },
+
   computed: {
+    /**
+     * Checks if the user is authenticated to edit the selected destinatoin.
+     */
     isAllowedToEdit() {
       return (
         this.isAdminUser ||
         this.focussedDestination.data.ownerId === this.userId
       );
     },
+
+    /**
+     * Gets all visable destinations?
+     */
     visableDestinations() {
       return this.destinations.filter(x => x.isShowing);
     }
   },
 
+  /**
+   * Populates all the destinations and sets the user information on component creation.
+   */
   created() {
     this.populateDestinations();
     this.isAdminUser = store.getters.getIsUserAdmin;
