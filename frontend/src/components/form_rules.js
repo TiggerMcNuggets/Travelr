@@ -35,10 +35,24 @@ export const noSameDestinationNameConsecutiveRule = destinations => {
   return [noConsecutiveSame || "Cannot have same destination consecutive"];
 };
 
-/**
- * Form rules for checking order validity of arrival and departure dates for trips.
- * @param {*} destinations The destinations being tested
- */
+// TODO: need to make this standard
+export const noSameDestinationNameConsecutiveRule_name = destinations => {
+    let noConsecutiveSame = true;
+    for (let i = 0; i < destinations.length; i++) {
+        if (i + 1 < destinations.length) {
+            if (destinations[i].destination.name === destinations[i + 1].destination.name) {
+                noConsecutiveSame = false;
+            }
+        }
+        if (i - 1 >= 0) {
+            if (destinations[i].destination.name === destinations[i - 1].destination.name) {
+                noConsecutiveSame = false;
+            }
+        }
+    }
+    return [noConsecutiveSame || "Cannot have same destination consecutive"];
+};
+
 export const arrivalBeforeDepartureAndDestinationsOneAfterTheOther = destinations => {
   let noArrivalAfterDeparture = true;
   for (let i = 0; i < destinations.length; i++) {

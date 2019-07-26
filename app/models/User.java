@@ -88,6 +88,11 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
 
+    // Returns true if the user is an admin
+    public boolean isAdmin() {
+        return this.accountType > 0;
+    }
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }

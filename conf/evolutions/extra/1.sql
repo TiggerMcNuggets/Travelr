@@ -72,8 +72,6 @@ create table trip (
   id                            bigint auto_increment not null,
   user_id                       bigint,
   name                          varchar(255),
-  description                   varchar(255),
-  published                     boolean default 0 not null,
   deleted                       boolean default false not null,
   constraint pk_trip primary key (id)
 );
@@ -82,11 +80,10 @@ create table trip_destination (
   id                            bigint auto_increment not null,
   trip_id                       bigint,
   destination_id                bigint,
-  depth                         integer not null,
+  arrival_date                  integer,
+  departure_date                integer,
+  name                          varchar(255),
   ordinal                       integer not null,
-  custom_name                   varchar(255),
-  arrival_date                  integer not null,
-  departure_date                integer not null,
   deleted                       boolean default false not null,
   constraint pk_trip_destination primary key (id)
 );
@@ -174,7 +171,6 @@ alter table user_nationality add constraint fk_user_nationality_user_id foreign 
 
 create index ix_user_nationality_nationality_id on user_nationality (nationality_id);
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
-
 
 -- !Downs
 

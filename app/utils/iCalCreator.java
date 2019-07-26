@@ -34,7 +34,8 @@ public class iCalCreator {
         calendar.getProperties().add(CalScale.GREGORIAN);
         int UID = 0;
         for (TripDestination destination: trip.destinations) {
-            if (destination.getArrivalDate() != null && destination.getDepartureDate() != null) {
+
+            if (destination.getArrivalDate() != 0 && destination.getDepartureDate() != 0) {
                 //Addition of 24*60*60 will add one day to the date which in turn will make it export to .ics file with correct dates.
                 Date start = new Date(new Date((destination.getArrivalDate() + 24*60*60) * 1000L));
                 Date end = new Date(new Date((destination.getDepartureDate() + 24*60*60) * 1000L));
@@ -43,7 +44,7 @@ public class iCalCreator {
                 dest.getProperties().add(new Uid(Integer.toString(UID)));
 
                 calendar.getComponents().add(dest);
-            } else if (destination.getArrivalDate() != null && destination.getDepartureDate() == null) {
+            } else if (destination.getArrivalDate() != 0 && destination.getDepartureDate() == 0) {
                 Date start = new Date(new Date((destination.getArrivalDate() + 24*60*60) * 1000L));
 
                 // Adding 2*(24*60*60) to force the event to start and end on the same day if there is no end date
@@ -59,6 +60,7 @@ public class iCalCreator {
         }
 
         calendar.validate();
+
         return calendar;
     }
 

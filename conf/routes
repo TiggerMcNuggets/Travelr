@@ -20,7 +20,6 @@ GET         /api/travellers_filter              controllers.UserController.getFi
 GET         /api/travellers                     controllers.UserController.getUsers(request: Request)
 POST        /api/travellers                     controllers.UserController.createUser(request: Request)
 GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
-GET         /api/travellers/:id/trips           controllers.TripController.getTrips(request: Request, id: Long)
 GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
 PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
 PUT         /api/travellers/:id/toggle_deleted  controllers.UserController.toggleUserDeleted(request: Request, id: Long)
@@ -61,36 +60,16 @@ POST        /api/destinations/edit_requests/:requestId/accept        controllers
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
 
+# Trips (trips within trips)
+
+POST        /api/users/:userId/trips            controllers.TripController.createTrip(request: Request, userId: Long)
+GET         /api/users/:userId/trips            controllers.TripController.getUserTrips(request: Request, userId: Long)
+GET         /api/users/:userId/trips/:tripId    controllers.TripController.getTripById(request: Request, tripId: Long, userId: Long)
+PUT         /api/users/:userId/trips/:tripId    controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
+DELETE      /api/users/:userId/trips/:tripId     controllers.TripController.deleteTrip(request: Request, tripId: Long, userId: Long)
 
 
-
-
-
-# Trips (Old)
-GET         /api/users/:id/trips                controllers.TripController.getTrips(request: Request, id: Long)
-
-
-GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
 GET         /api/users/:user_id/trips/:trip_id/iCal  controllers.TripController.getUserTripAsICalFile(request: Request, user_id: Long, trip_id: Long)
-
-# Trips
-GET         /api/trips                          controllers.TripController.getUserTrips(request: Request)
-#route for when admin is not taken into account
-POST        /api/trips                          controllers.TripController.createTrip(request: Request)
-POST        /api/users/:user_id/trips           controllers.TripController.createTripWithUser(request: Request, user_id: Long)
-PUT         /api/users/:user_id/trips/:trip_id/toggle_deleted controllers.TripController.softDeleteTrip(request: Request, user_id: Long, trip_id: Long)
-
-
-GET         /api/trips/:id                      controllers.TripController.getTrips(request: Request, id: Long)
-PUT         /api/trips/:id                      controllers.TripController.updateUserTrip(request: Request, id: Long)
-
-
-
-# Trips (NEW)
-PUT         /api/users/:user_id/trips/:trip_id  controllers.TripController.updateUserTripGivenUser(request: Request, trip_id: Long, user_id: Long)
-GET         /api/users/:user_id/trips/:trip_id  controllers.TripController.getUserTripWhenUserGiven(request: Request, user_id: Long, trip_id: Long)
-
-
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)

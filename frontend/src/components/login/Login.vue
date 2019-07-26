@@ -30,6 +30,24 @@
 .login-button {
   margin: 40px 20px 0px 0px;
 }
+
+.form-container {
+  width: 50%;
+  margin: 50px 0px;
+}
+
+h1 {
+  margin: 50px 0px;
+  font-size: 42px;
+}
+
+.width-for-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+}
 </style>
 
 <script>
