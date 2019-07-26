@@ -61,13 +61,12 @@ export const isPromotable = (destinations, index) => {
  */
 export const isDemotable = (destinations, index) => {
     if (index === 0) return false; // cannot demote first destination
-    if (index === (destinations.length - 1)) return false; // cannot demote last one as it also cannot be promoted
     if (destinations[index].depth === 0) return false; // cannot demote destination that is part of main one
-    const parentParent = destinations[index - 1];
+    if (index === (destinations.length - 1)) return false; // cannot demote last one as it also cannot be promoted
     const parent = destinations[index];
+    const parentParent = destinations[index - 1];
     const child = destinations[index + 1];
     return ((parent.depth - child.depth) > -1 && (parentParent.depth - parent.depth) < 1);
-
 };
 
 
