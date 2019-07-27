@@ -20,7 +20,7 @@ import SingleDestination from "../components/destination/SingleDestination";
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
 
-const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
+const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}/dashboard`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
 
 const authGuard = (to, from, next) => {
@@ -57,7 +57,7 @@ const unauthGuard = (to, from, next) => {
         return next();
       });
   }
-  return next(`/user/${store.getters.getUser.id}`);
+  return next(`/user/${store.getters.getUser.id}/dashboard`);
 };
 
 const standardAccessGuard = (to, from, next) => {
@@ -130,9 +130,10 @@ let router = new Router({
       path: "/user/:id",
       component: Page,
       beforeEnter: authGuard,
+      redirect: "/user/:id/dashboard",
       children: [
         {
-          path: "",
+          path: "dashboard",
           name: "travellerProfileDashboard",
           component: ProfileDashboard
         },

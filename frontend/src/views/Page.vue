@@ -99,7 +99,7 @@ export default {
           {
             name: "Profile",
             icon: "account_circle",
-            link: "/user/" + store.getters.getUser.id
+            link: "/user/" + store.getters.getUser.id + "/dashboard"
           },
           { name: "Users", icon: "supervised_user_circle", link: "/users" },
           { name: "Destination Map", icon: "map", link: "/destinations" },
