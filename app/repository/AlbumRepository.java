@@ -71,6 +71,25 @@ public class AlbumRepository {
             return null;
         }, executionContext);
     }
+    /**
+     * Returns all photos assoociated with a user.
+     *
+     * @param id           user id The user id
+     * @param privateMedia if true will not return the public photos that are
+     *                     available to the user
+     * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
+     *         associated with the user.
+     */
+    public CompletionStage<List<Album>> listUserAlbums(Long userId, Boolean privateMedia) {
+        return supplyAsync(() -> {
+            User user = User.find.findById(userId);
+            if (user == null) return null;
+
+            return user.getAlbums();
+        }, executionContext);
+    }
+
+
 
 
 }

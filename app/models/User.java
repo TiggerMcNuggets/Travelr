@@ -248,6 +248,14 @@ public class User extends BaseModel {
         }
     }
 
+    public Album getDefaultAlbum() {
+        return defaultAlbum;
+    }
+
+    public List<Album> getAlbums() {
+        return albums;
+    }
+
     public User(CreateUserReq request) {
         this.firstName = request.firstName;
         this.middleName = request.middleName;
@@ -262,6 +270,7 @@ public class User extends BaseModel {
         this.timestamp = date.getTime() / 1000;
         this.albums = new ArrayList<>();
         this.defaultAlbum = new Album(this, "All", true);
+        this.albums.add(defaultAlbum);
     }
 
     public User(String first, String last, String email, int dob) {
@@ -275,7 +284,7 @@ public class User extends BaseModel {
         this.timestamp = date.getTime() / 1000;
         this.albums = new ArrayList<>();
         this.defaultAlbum = new Album(this, "All", true);
-
+        this.albums.add(defaultAlbum);
     }
 
 }

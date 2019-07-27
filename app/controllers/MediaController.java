@@ -105,6 +105,27 @@ public class MediaController extends Controller {
     }
 
     /**
+     * Retrieves all albums for a user
+     *
+     * @param request  the http request
+     * @param user_id  the id of the user who wants to see the album content
+     * @param album_id id of the album
+     * @return json representation of accessible content in the album
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUsersAlbums(Http.Request request, Long user_id, Long album_id) {
+
+        User user = request.attrs().get(Attrs.USER);
+        Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+
+        return albumRepository.listUserAlbums(album_id, user.id == user_id || isAdmin).thenApplyAsync(media -> {
+            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType");
+            return ok(Ebean.json().toJson(media, pathProperties));
+        });
+    }
+
+
+    /**
      * creates a new album
      *
      * @param request http request
