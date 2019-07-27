@@ -1,15 +1,13 @@
 <template>
 
-  <v-flex xs2>
-    <v-list class="list">
-      <v-list-tile v-for="(item, i) in filterCategories" :key="i" @click="changeFilter(i)" class="tile">
-        <v-list-tile-content>
-          <v-list-tile-title v-html="item.title +  ` (` + item.count +`)`"></v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
+  <v-list class="list">
+    <v-list-tile v-for="(item, i) in filterCategories" :key="i" @click="changeFilter(item.title)" class="tile" v-if="item.count > 0">
+      <v-list-tile-content>
+        <v-list-tile-title v-html="item.title +  ` (` + item.count +`)`"></v-list-tile-title>
+      </v-list-tile-content>
+    </v-list-tile>
+  </v-list>
 
-  </v-flex>
 </template>
 
 <style scoped>
@@ -27,41 +25,37 @@
 </style>
 
 <script>
-  export default {
-    name: "MediaFilter",
+	export default {
+		name: "MediaFilter",
 
-    props: {
-      changeFilter: Function,
-      mediaCounts: Object
-    },
+		props: {
+			changeFilter: Function,
+			mediaCounts: Object
+		},
 
-    data() {
-      return {
+		data() {
+			return {}
+		},
 
-      }
-    },
+		computed: {
+			filterCategories: function () {
+				return [
+					{
+						title: 'All', count: this.mediaCounts.all
+					},
+					{
+						title: 'Albums', count: this.mediaCounts.albums
+					},
+					{
+						title: 'Photos', count: this.mediaCounts.photos
+					},
+					{
+						title: 'Videos', count: this.mediaCounts.videos
+					}
+				];
+			}
+		},
 
-    computed: {
-      filterCategories: function () {
-        return [
-          {
-            title: 'All', count: this.mediaCounts.all
-          },
-          {
-            title: 'Albums', count: this.mediaCounts.albums
-          },
-          {
-            title: 'Photos', count: this.mediaCounts.images
-          },
-          {
-            title: 'Videos', count: this.mediaCounts.videos
-          }
-        ];
-      }
-    },
-
-    methods: {
-
-    }
-  }
+		methods: {}
+	}
 </script>

@@ -1,63 +1,63 @@
 <template>
-    <v-layout>
-        <v-flex mb-3>
-            <v-flex ml-0 pl-0 >
-                <span class="title">{{ album.name }}</span>
-            </v-flex>
-            <v-card flat tile hover>
+  <v-layout>
+    <v-flex mb-3>
+      <v-flex ml-0 pl-0>
+        <span class="title">{{ album.name }}</span>
+      </v-flex>
+      <v-card flat tile hover>
 
-                <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
-                <div v-if="!album.public" class="triangle pink-color"></div>
+        <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
+        <div v-if="!album.public" class="triangle pink-color"></div>
 
-                <div class="grid-4-container">
-                    <v-img
-                            v-for="n in 4"
-                            :key="n"
-                            :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
-                            lazy-src="https://picsum.photos/id/11/100/60"
-                            :height="145">
+        <div class="grid-4-container">
+          <v-img
+                  v-for="n in 4"
+                  :key="n"
+                  :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
+                  lazy-src="https://picsum.photos/id/11/100/60"
+                  :height="145">
 
-                        <template v-slot:placeholder>
-                            <v-layout
-                                    fill-height
-                                    align-center
-                                    justify-center
-                                    ma-0
-                            >
-                                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                            </v-layout>
-                        </template>
-                    </v-img>
-                </div>
-            </v-card>
-        </v-flex>
-    </v-layout>
+            <template v-slot:placeholder>
+              <v-layout
+                      fill-height
+                      align-center
+                      justify-center
+                      ma-0
+              >
+                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+              </v-layout>
+            </template>
+          </v-img>
+        </div>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <style scoped>
-    @import "../../assets/css/style.css";
+  @import "../../assets/css/style.css";
 
-    .grid-4-container {
-        display: grid;
-        grid-template-columns: calc(50% - 5px) calc(50% - 5px);
-        grid-template-rows: calc(50% - 5px) calc(50% - 5px);
-        grid-gap: 10px;
-        transition: opacity .4s ease-in-out;
-    }
+  .grid-4-container {
+    display: grid;
+    grid-template-columns: calc(50% - 5px) calc(50% - 5px);
+    grid-template-rows: calc(50% - 5px) calc(50% - 5px);
+    grid-gap: 10px;
+    transition: opacity .4s ease-in-out;
+  }
 </style>
 
 <script>
-  export default {
-    name: "Album",
+	export default {
+		name: "Album",
 
-    props: {
-      album: Object
-    },
+		props: {
+			album: Object
+		},
 
-    data() {
-      return {}
-    },
+		data() {
+			return {}
+		},
 
-    methods: {}
-  }
+		methods: {}
+	}
 </script>
