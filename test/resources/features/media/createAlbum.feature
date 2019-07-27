@@ -4,6 +4,12 @@ Feature: CreateAlbum
   Scenario: Create an album successfully
     Given I am authenticated
     When I want to create an album
+    And The body is
+      """
+      {
+        "name": "January"
+      }
+      """
     And I send the request
     Then I will receive the response code 201
     And I will receive the response body
@@ -22,6 +28,12 @@ Feature: CreateAlbum
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     When I want to create an album
+    And The body is
+      """
+      {
+        "name": "January"
+      }
+      """
     And I send the request
     Then I will receive the response code 201
     And I will receive the response body

@@ -1,13 +1,16 @@
 package controllers.dto.Media;
 
-public class CreateAlbumReq {
-    private String name;
+import play.data.validation.Constraints;
 
-    public CreateAlbumReq(String name) {
-        this.name = name;
-    }
+public class CreateAlbumReq {
+    @Constraints.Required
+    public String name;
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
