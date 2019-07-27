@@ -56,7 +56,7 @@ export default {
     getUsers() {
       this.$store
         .dispatch("getUsers", false)
-        .then((result) => {
+        .then(() => {
           return;
         })
         .catch(err => {
