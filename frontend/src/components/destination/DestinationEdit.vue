@@ -113,7 +113,6 @@
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import { rules } from "../form_rules";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import SelectDataRepository from "../../repository/SelectDataRepository";
 import PageHeader from "../common/header/PageHeader"
 let destinationRepository = RepositoryFactory.get("destination");
@@ -122,7 +121,6 @@ export default {
   mixins: [RollbackMixin],
 
   components: {
-    UndoRedoButtons: UndoRedoButtons,
     PageHeader
   },
 
