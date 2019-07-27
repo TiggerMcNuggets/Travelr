@@ -1,5 +1,5 @@
 <template>
-  <v-flex xs9>
+  <v-flex xs10>
     <v-container v-bind="{ [`grid-list-lg`]: true }" fluid class="media-container">
       <v-layout row wrap>
         <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 md4 @click="open(item)">
@@ -43,7 +43,7 @@
 
         // Trying to open an album
         if (item.content) {
-
+          this.$router.push(`/album/${item.id}`);
         } else {
         // Trying to open an image/video/media
 

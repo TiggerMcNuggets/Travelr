@@ -10,13 +10,13 @@
     </v-list>
 
     <v-btn class="upload-button" @click="toggleUploadDialogue" flat>
-        <v-icon left dark>insert_photo</v-icon>
+        <v-icon left dark>add_photo_alternate</v-icon>
         Upload Media
     </v-btn>
 
 
     <v-btn class="create-album-button" @click="toggleCreateAlbumDialogue" flat>
-        <v-icon left dark>photo_library</v-icon>
+        <v-icon left dark>add_to_photos</v-icon>
         Create Album
     </v-btn>
 

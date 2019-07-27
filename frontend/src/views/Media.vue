@@ -1,14 +1,9 @@
 <template>
   <v-layout d-block pl-4 pt-3>
-    <v-flex xs3>
-      <h1>Media</h1>
-    </v-flex>
+    <PageHeader title="Media" disableUndoRedo :options="[]"/>
     <v-layout row wrap>
-
       <MediaFilter :changeFilter="changeFilter" :mediaCounts="mediaCounts"></MediaFilter>
-
       <MediaGrid :filteredMedia="filteredMedia"></MediaGrid>
-
     </v-layout>
   </v-layout>
 </template>
@@ -16,7 +11,8 @@
 <script>
   import MediaFilter from "../components/media/MediaFilter";
   import MediaGrid from "../components/media/MediaGrid";
-  import {temp} from "../components/media/temp";
+  import PageHeader from "../components/common/header/PageHeader";
+  import { temp } from "../components/media/temp";
 
   export default {
     name: "Media",
@@ -30,7 +26,8 @@
 
     components: {
       MediaFilter,
-      MediaGrid
+      MediaGrid,
+      PageHeader
     },
 
     computed: {
