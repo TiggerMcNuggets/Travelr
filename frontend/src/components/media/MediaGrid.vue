@@ -1,8 +1,8 @@
 <template>
   <v-flex xs10>
-    <v-container v-bind="{ [`grid-list-lg`]: true }" fluid class="media-container">
+    <v-container v-bind="{ [`grid-list-xl`]: true }" fluid class="media-container">
       <v-layout row wrap>
-        <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 md4 @click="open(item)">
+        <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 md3 @click="open(item)">
           <AlbumElement v-if="item.content" :album="item" ></AlbumElement>
           <MediaElement v-else :mediaObject="item"></MediaElement>
         </v-flex>
@@ -13,7 +13,7 @@
 
 <style scoped>
   .media-container {
-    padding-top: 0;
+    padding-top: 10px;
   }
 </style>
 

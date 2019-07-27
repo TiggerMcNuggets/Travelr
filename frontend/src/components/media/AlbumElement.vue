@@ -1,44 +1,48 @@
 <template>
-    <v-card flat tile hover class="media-element">
-        <!--<v-icon v-if="albumContent.is_public" class="lock-icon" left>lock_open</v-icon>-->
-        <v-icon class="lock-icon" left>photo_library</v-icon>
+    <v-layout>
+        <v-flex mb-3>
+            <v-flex ml-0 pl-0 >
+                <span class="title">{{ album.name }}</span>
+            </v-flex>
+            <v-card flat tile hover>
 
-        <!--<div v-if="albumContent.is_public" class="triangle"></div>-->
-        <div class="triangle"></div>
-        <div class="grid-4-container">
-            <v-img class="box"
-                    :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
-    </v-img>
-            <v-img class="box"
-                    :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
+                <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
+                <div v-if="!album.public" class="triangle pink-color"></div>
 
-            ></v-img>
-            <v-img class="box"
-                    :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
+                <div class="grid-4-container">
+                    <v-img
+                            v-for="n in 4"
+                            :key="n"
+                            :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
+                            lazy-src="https://picsum.photos/id/11/100/60"
+                            :height="145">
 
-            ></v-img>
-            <v-img class="box"
-                    :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
-
-            ></v-img>
-        </div>
-    </v-card>
-</template>>
+                        <template v-slot:placeholder>
+                            <v-layout
+                                    fill-height
+                                    align-center
+                                    justify-center
+                                    ma-0
+                            >
+                                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                            </v-layout>
+                        </template>
+                    </v-img>
+                </div>
+            </v-card>
+        </v-flex>
+    </v-layout>
+</template>
 
 <style scoped>
     @import "../../assets/css/style.css";
 
     .grid-4-container {
         display: grid;
-        grid-template-columns: 100px 100px 100px;
+        grid-template-columns: calc(50% - 5px) calc(50% - 5px);
+        grid-template-rows: calc(50% - 5px) calc(50% - 5px);
         grid-gap: 10px;
-    }
-
-    .box {
-        color: #fff;
-        border-radius: 5px;
-        padding: 20px;
-        font-size: 150%;
+        transition: opacity .4s ease-in-out;
     }
 </style>
 
