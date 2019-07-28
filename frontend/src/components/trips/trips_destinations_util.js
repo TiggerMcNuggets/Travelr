@@ -1,4 +1,5 @@
-
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let tripRepository = RepositoryFactory.get("trip");
 import moment from "moment";
 
 /**

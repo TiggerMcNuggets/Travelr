@@ -65,7 +65,7 @@
                               flat
                               small
                               color="error"
-                              v-if="index > 1 " c
+                              v-if="index > 1"c
                               v-on:click="deleteDestination(index)"
                       >Remove</v-btn>
                   </v-flex>
