@@ -29,14 +29,12 @@ public class Media extends BaseModel {
     @Unique
     public String uriString;
 
-
     /**
      * The the media type.
      */
     @NotNull
     @Constraints.Required
     public String mediaType;
-
 
     /**
      * The user which the media belongs to
@@ -51,7 +49,6 @@ public class Media extends BaseModel {
     @Constraints.Required
     @ManyToMany(cascade = CascadeType.REMOVE)
     public List<Album> albums = new ArrayList<>();
-
 
     public Media(User user, String uriString) {
         this.uriString = uriString;
@@ -95,5 +92,8 @@ public class Media extends BaseModel {
         this.albums.remove(album);
     }
 
+    public Boolean fileCanBeDeleted() {
+        return this.albums.size() == 0;
+    }
 
 }

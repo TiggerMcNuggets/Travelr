@@ -86,6 +86,7 @@ public class MediaRepository {
 
     /**
      * Updates a media that belongs to a user, changes it from private to public
+     * 
      * @param request the request DTO
      * @param mediaId the media id
      * @return completable future of the new destination
@@ -102,6 +103,7 @@ public class MediaRepository {
 
     /**
      * Gets one media item that belongs to a user
+     * 
      * @param id the media id
      * @return completable future of the photo
      */
@@ -117,21 +119,26 @@ public class MediaRepository {
     public CompletableFuture<Long> remove(Long album_id, Long media_id) {
         return supplyAsync(() -> {
             Album album = Album.find.findAlbumById(album_id);
-            if (album == null) return null; // album does not exist
+            if (album == null)
+                return null; // album does not exist
 
             Media media = Media.find.findMediaById(media_id);
-            if (media == null) return null; // media does not exist
+            if (media == null)
+                return null; // media does not exist
 
-            album.removeMedia(media);
-
-            if (media.albums.size() == 0) {
+            if (media.fileCanBeDeleted()) {
                 File file = new File(MEDIA_FILEPATH + media.getUriString());
                 if (file.delete()) {
+                    album.removeMedia(media);
+                    album.save();
                     return media.id;
                 } else {
                     return null;
                 }
             }
+
+            album.removeMedia(media);
+            album.save();
 
             return media.id;
         }, executionContext);
