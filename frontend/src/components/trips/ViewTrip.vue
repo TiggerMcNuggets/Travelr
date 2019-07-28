@@ -6,6 +6,31 @@
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
+
+        <wrapper v-if="hasMissingDates">
+        <v-tooltip bottom>
+            <template v-slot:activator="{on}">
+                <v-btn
+                @click="downloadTrip()"
+                class="upload-toggle-button" fab small dark color="indigo"
+                v-on="on"
+                >
+                <v-icon >calendar_today</v-icon>
+                </v-btn>
+            </template>
+            <span>This Calander Has Missing Destinations</span>
+        </v-tooltip>
+        </wrapper>
+        <wrapper v-else>
+            <v-btn
+            @click="downloadTrip()"
+            class="upload-toggle-button" fab small dark color="indigo"
+            v-on="on"
+            >
+            <v-icon >calendar_today</v-icon>
+            </v-btn>
+        </wrapper>
+
       </div>
 
     <v-divider class="photo-header-divider"/>
@@ -256,6 +281,7 @@ export default {
         isFormValid: true,
 
         isMyProfile: false,
+        hasMissingDates: true,
         isAdmin: store.getters.getIsUserAdmin,
         tripId:  this.$route.params.trip_id,
         userId:  this.$route.params.id,
@@ -289,6 +315,23 @@ export default {
         }
     },
   methods: {
+    
+        /**
+         * Downloads the trip from the database as an ics.
+         */
+        downloadTrip: function() {
+        tripRepository.downloadTrip(this.userId, this.tripId).then(res => {
+            console.log("THIS IS ME");
+            console.log(res);
+            console.log(res.data);
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${this.trip.name}.ics`);
+            document.body.appendChild(link);
+            link.click();
+        });
+        },
 
       /**
        * Expands the destination at given index
@@ -491,16 +534,19 @@ export default {
               trip.destinations = trip.destinations.sort(function(a, b){
                   return a.ordinal - b.ordinal;
               });
+              this.hasMissingDates = false;
               // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
               for (let i = 0; i < trip.destinations.length; i++) {
                   trip.destinations[i].expanded = false;
                   trip.destinations[i].hidden = false;
+                  if (trip.destinations[i].arrivalDate == 0) {
+                    this.hasMissingDates = true;
+                  }
 
-
-                  if (trip.destinations[i].arrivalDate != null) {
+                  if (trip.destinations[i].arrivalDate != 0) {
                       trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
                   }
-                  if (trip.destinations[i].arrivalDate != null) {
+                  if (trip.destinations[i].arrivalDate != 0) {
                       trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
                   }
               }
