@@ -6,9 +6,7 @@ import com.typesafe.config.Config;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.Media.CreateAlbumReq;
-import controllers.dto.Media.UpdateMediaReq;
-import controllers.dto.Photo.UpdatePhotoReq;
+import controllers.dto.Media.*;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.Album;
@@ -65,7 +63,7 @@ public class MediaController extends Controller {
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        return albumRepository.list(album_id, user.id == user_id || isAdmin).thenApplyAsync(media -> {
+        return albumRepository.list(album_id, ((user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
             PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType");
             return ok(Ebean.json().toJson(media, pathProperties));
         });
@@ -114,14 +112,15 @@ public class MediaController extends Controller {
      * @return json representation of accessible content in the album
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> getUsersAlbums(Http.Request request, Long user_id, Long album_id) {
+    public CompletionStage<Result> getUsersAlbums(Http.Request request, Long user_id) {
 
-        User user = request.attrs().get(Attrs.USER);
-        Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+        return albumRepository.listUserAlbums(user_id).thenApplyAsync(albums -> {
 
-        return albumRepository.listUserAlbums(album_id, user.id == user_id || isAdmin).thenApplyAsync(media -> {
-            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType");
-            return ok(Ebean.json().toJson(media, pathProperties));
+            GetAlbumsRes response = new GetAlbumsRes(request, albums);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response.getGetAlbumRes());
+
+            return ok(jsonResponse);
         });
     }
 
@@ -260,8 +259,8 @@ public class MediaController extends Controller {
      * @param filename The file name of the image to get.
      * @return The raw image file which corresponds to the filename given.
      */
-
-    public Result getImageFromDatabase(String filename) {
+    @Authorization.RequireAuth
+    public Result getImageFromDatabase(Http.Request request, Long user_id, String filename) {
 
         File file = new File(this.MEDIA_FILEPATH + filename);
         try {

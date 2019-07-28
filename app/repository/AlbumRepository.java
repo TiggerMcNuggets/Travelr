@@ -2,16 +2,22 @@ package repository;
 
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
+import io.ebean.Ebean;
+import io.ebean.text.PathProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 import models.Album;
 import models.Media;
 import models.User;
 
 import javax.inject.Inject;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+
+import java.util.ArrayList;
 
 public class AlbumRepository {
 
@@ -25,16 +31,16 @@ public class AlbumRepository {
     /**
      * Returns all photos assoociated with a user.
      * 
-     * @param id           user id The user id
+     * @param albumId      user id The user id
      * @param privateMedia if true will not return the public photos that are
      *                     available to the user
      * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
      *         associated with the user.
      */
-    public CompletionStage<List<Media>> list(Long id, Boolean privateMedia) {
+    public CompletionStage<List<Media>> list(Long albumId, Boolean privateMedia) {
         return supplyAsync(() -> {
-            ExpressionList<Media> query = Media.find.query().where().eq("user_id", id).or(Expr.eq("is_public", true),
-                    Expr.eq("is_public", !privateMedia));
+            ExpressionList<Media> query = Media.find.query().where().eq("albums.id", albumId)
+                    .or(Expr.eq("is_public", true), Expr.eq("is_public", !privateMedia));
             return query.findList();
         }, executionContext);
     }
@@ -47,14 +53,14 @@ public class AlbumRepository {
     public CompletableFuture<Long> create(String name, Long userId) {
         return supplyAsync(() -> {
             User user = User.find.findById(userId);
-            if (user == null) return null;
+            if (user == null)
+                return null;
 
             Album album = new Album(user, name, false);
             album.save();
             return album.id;
         }, executionContext);
     }
-
 
     /**
      * Deletes an album
@@ -71,25 +77,21 @@ public class AlbumRepository {
             return null;
         }, executionContext);
     }
+
     /**
-     * Returns all photos assoociated with a user.
+     * Returns all albums associated with a user.
      *
-     * @param id           user id The user id
-     * @param privateMedia if true will not return the public photos that are
-     *                     available to the user
-     * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
-     *         associated with the user.
+     * @param userId user id The user id
+     * @return CompletionStage<List<Album>> The list of albums associated with the
+     *         user.
      */
-    public CompletionStage<List<Album>> listUserAlbums(Long userId, Boolean privateMedia) {
+    public CompletionStage<List<Album>> listUserAlbums(Long userId) {
         return supplyAsync(() -> {
             User user = User.find.findById(userId);
-            if (user == null) return null;
-
+            if (user == null)
+                return null;
             return user.getAlbums();
         }, executionContext);
     }
-
-
-
 
 }
