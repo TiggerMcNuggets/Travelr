@@ -313,7 +313,7 @@ public class DestinationController extends Controller {
                 return forbidden("Forbidden: There are other users using the destination");
             }
 
-            destination.isPublic = false;
+            destination.setPublic(false);
             destination.save();
             return created("Destination is now private");
         });
