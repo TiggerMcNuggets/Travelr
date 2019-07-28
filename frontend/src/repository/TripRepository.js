@@ -69,5 +69,14 @@ export default {
      */
     deleteTrip(userId, tripId) {
         return Repository.put(`/users/${userId}/trips/${tripId}/toggle_deleted`);
+    },
+
+    /**
+     * Downloads a users trip 
+     * @param {*} userId The user id    
+     * @param {*} tripId The trip id to download.
+     */
+    downloadTrip(userId, tripId) {
+        return Repository.get(`/users/${userId}/trips/${tripId}/iCal`);
     }
 }
