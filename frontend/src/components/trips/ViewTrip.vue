@@ -9,8 +9,6 @@
       </div>
 
     <v-divider class="photo-header-divider"/>
-
-      </v-layout>
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">
@@ -243,7 +241,6 @@
 
 <script>
 import RollbackMixin from '../mixins/RollbackMixin';
-import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import draggable from 'vuedraggable';
@@ -259,7 +256,6 @@ export default {
   store,
   components: {
     draggable,
-    UndoRedoButtons,
     TripMap
   },
     mixins: [RollbackMixin],
