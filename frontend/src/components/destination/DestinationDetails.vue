@@ -264,9 +264,9 @@ export default {
      * Redirects user to the destination details page.
      */
     gotoDest() {
-      var userId = this.$store.getters.getUser.id;
+      let userId = this.$store.getters.getUser.id;
       this.$router.push(
-        `/user/${userId}/destinations/${this.focussedDestination.data.id}`
+        `/user/${userId}/destinations/${this.focussedDestination.id}`
       );
     },
 
