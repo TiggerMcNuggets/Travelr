@@ -289,7 +289,7 @@ import blueMarker from "../../assets/blue-google-maps-marker.svg";
             return x.types.includes("country");
           })[0].long_name;
 
-          this.focussedDestination = destinationData;
+          this.focusDestination(destinationData);
           this.placeNewMarker(coordinates);
           this.panAndZoom(coordinates);
           destinationData.district = searchData.address_components.filter(x => {
@@ -303,15 +303,16 @@ import blueMarker from "../../assets/blue-google-maps-marker.svg";
        * Places a new marker on the map and updates the parameters on the destination info panel
        */
       placeNewMarker(coordinates) {
+        let destination = {...this.focussedDestination};
         if (!this.focussedDestination) {
-          this.focussedDestination = {};
+          destination = {};
         } else if (this.focussedDestination && this.focussedDestination.id) {
-          this.focussedDestination = {};
+          destination = {};
         }
 
-        this.focussedDestination.latitude = coordinates.latitude;
-        this.focussedDestination.longitude = coordinates.longitude;
-        this.focusDestination(this.focussedDestination);
+        destination.latitude = coordinates.latitude;
+        destination.longitude = coordinates.longitude;
+        this.focusDestination(destination);
       },
     //     this.focussedDestination.data = destinationData;
     //     this.placeNewMarker(coordinates);

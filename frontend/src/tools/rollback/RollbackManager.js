@@ -51,24 +51,16 @@ export default class RollbackManager {
      * Calls the stack undo method and calls the resulting function
      */
     async undo() {
-        console.log("stack: ", this.stack.stack);
-        console.log("pointer: ", this.stack.pointer);
         const reaction = this.stack.undo();
         await reaction();
-        console.log("stack after: ", this.stack.stack);
-        console.log("pointer after: ", this.stack.pointer);
     }
 
     /**
      * Calls the stack redo method and calls the resulting function
      */
     async redo() {
-        console.log("stack: ", this.stack.stack);
-        console.log("pointer: ", this.stack.pointer);
         const action = this.stack.redo();
         await action();
-        console.log("stack after: ", this.stack.stack);
-        console.log("pointer after: ", this.stack.pointer);
     }
 
     /**

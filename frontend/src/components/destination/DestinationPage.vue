@@ -177,7 +177,6 @@ export default {
      */
     submitDestination(destination) {
       if (destination.id) {
-        console.log("HERE");
         this._putDestination(
           this.userId,
           destination.id,
@@ -247,7 +246,6 @@ export default {
     async fetchAfterRollback() {
       let id = this.focussedDestination.id;
       await this._getDestinations(this.userId);
-      console.log("destinations", this.destinations);
       this.focussedDestination = this.destinations.filter(
               dest => dest.id === id
       )[0];
