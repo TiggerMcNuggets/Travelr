@@ -56,4 +56,28 @@ public class Album extends BaseModel {
     public void setMedia(List<Media> media) {
         this.media = media;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boolean getPermanent() {
+        return isPermanent;
+    }
+
+    public void setPermanent(Boolean permanent) {
+        isPermanent = permanent;
+    }
 }
