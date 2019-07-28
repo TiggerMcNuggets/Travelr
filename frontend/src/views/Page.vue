@@ -3,7 +3,7 @@
     <v-toolbar fixed app clipped-right class="main-header">
       <router-link to="/" class="primary-logo">
         <v-toolbar-title class="fill-height toolbar toolbar-title">
-          <img class="fill-height" src="../assets/logo2_white.png" />
+          <img class="fill-height" src="../assets/logo2_white.png">
         </v-toolbar-title>
       </router-link>
     </v-toolbar>
@@ -11,12 +11,12 @@
       <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
-            <v-list-tile-avatar @click="mini = false">
-              <img src="https://randomuser.me/api/portraits/men/85.jpg" />
+            <v-list-tile-avatar>
+              <img :src="getImgUrl">
             </v-list-tile-avatar>
 
             <v-list-tile-content>
-              <v-list-tile-title>John Leider</v-list-tile-title>
+              <v-list-tile-title>{{traveller.firstName}} {{traveller.lastName}}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -89,6 +89,8 @@
 
 <script>
 import { store } from "../store/index";
+import DefaultPic from "../assets/defaultPic.png";
+import base_url from "../repository/BaseUrl";
 
 export default {
   name: "App",
@@ -96,19 +98,28 @@ export default {
   data() {
     return {
       mini: true,
-      right: null
+      right: null,
+      traveller: {}
     };
   },
   computed: {
+    /**
+     * Defines the menu options to appear in the side navigation.
+     */
     menuOptions() {
       let menuOptions = [];
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
           {
+            name: "Dashboard",
+            icon: "dashboard",
+            link: "/user/" + store.getters.getUser.id + "/dashboard"
+          },
+          {
             name: "Profile",
             icon: "account_circle",
-            link: "/user/" + store.getters.getUser.id + "/dashboard"
+            link: "/user/" + store.getters.getUser.id + "/profile"
           },
           { name: "Users", icon: "supervised_user_circle", link: "/users" },
           { name: "Destination Map", icon: "map", link: "/destinations" },
@@ -136,11 +147,33 @@ export default {
       return menuOptions;
     },
 
+    /**
+     * Gets the src of the profile picture
+     * @returns {string} The src of the profile picture.
+     */
+    getImgUrl() {
+      if (
+        !this.traveller.userProfilePhoto ||
+        this.traveller.userProfilePhoto == "defaultPic.png"
+      ) {
+        return DefaultPic;
+      } else {
+        return base_url + "/api/travellers/profile-photo/" + this.traveller.id;
+      }
+    },
+
+    /**
+     * Checks if the user is logged in.
+     */
     loggedIn() {
       return store.getters.isLoggedIn;
     }
   },
+
   methods: {
+    /**
+     * Executes the logout action and redirects the user to the login page.
+     */
     logout() {
       store
         .dispatch("logout")
@@ -151,6 +184,10 @@ export default {
           this.$router.push("/login");
         });
     }
+  },
+
+  created() {
+    this.traveller = store.getters.getUser;
   }
 };
 </script>

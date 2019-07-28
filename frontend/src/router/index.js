@@ -3,8 +3,9 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
-import ProfilePhotos from "../components/profile/ProfilePhotos";
-import ProfileTrips from "../components/profile/ProfileTrips";
+import ProfilePhotos from "../components/profile/PersonalPhotos";
+import Trips from "../components/trips/Trips";
+import Profile from "../components/profile/Profile"
 import userSearch from "../components/userSearch/userSearch";
 import Signup from "../components/signup/Signup.vue";
 import Destination from "../components/destination/Destination";
@@ -138,6 +139,12 @@ let router = new Router({
           component: ProfileDashboard
         },
         {
+          path: "profile",
+          name: "Profile",
+          component: Profile,
+          beforeEnter: authGuard
+        },
+        {
           path: "edit",
           name: "editProfile",
           component: EditProfile,
@@ -152,7 +159,7 @@ let router = new Router({
         {
           path: "trips",
           name: "travellerTrips",
-          component: ProfileTrips
+          component: Trips
         },
         {
           path: "/user/:id/trips/:trip_id",
