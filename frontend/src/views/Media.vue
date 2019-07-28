@@ -30,7 +30,7 @@
 	import MediaFilter from "../components/media/MediaFilter";
 	import MediaGrid from "../components/media/MediaGrid";
 	import PageHeader from "../components/common/header/PageHeader";
-	import MediaUpload from "../components/photos/PhotoUpload";
+	import MediaUpload from "../components/media/MediaUpload";
 	import AlbumCreate from "../components/media/AlbumCreate";
 	import {temp} from "../components/media/temp";
 	import {deepCopy} from "../tools/deepCopy"
