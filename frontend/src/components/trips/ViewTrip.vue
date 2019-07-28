@@ -76,10 +76,12 @@
                         >
                         <v-container class="container-custom-padding">
                             <v-card-title>
-                                    <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate)" top>
+                                    <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                                isNaN(destination.arrivalDate) || isNaN(destination.departureDate))" top>
                                         <template v-slot:activator="{ on }">
                                             <v-avatar v-on="on">
-                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate)">info</v-icon>
+                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                                isNaN(destination.arrivalDate) || isNaN(destination.departureDate))">info</v-icon>
                                             </v-avatar>
                                         </template>
                                         <span>Missing Dates</span>
