@@ -63,9 +63,9 @@ public class MediaController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
-
-        return albumRepository.list(album_id, user.id == user_id || isAdmin).thenApplyAsync(media -> {
-            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType");
+        
+        return albumRepository.list(album_id , ((user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
+            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
             return ok(Ebean.json().toJson(media, pathProperties));
         });
     }
@@ -94,10 +94,8 @@ public class MediaController extends Controller {
                 if (media_id != null) {
                     return ok("File uploaded with Media ID " + media_id);
 
-                } else if (media_id == null) {
-                    return badRequest("Duplicate Media.");
                 } else {
-                    return badRequest("Error adding reference to the database.");
+                    return badRequest("Duplicate Media.");
                 }
             });
         } else {
@@ -119,7 +117,7 @@ public class MediaController extends Controller {
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        return albumRepository.listUserAlbums(album_id, user.id == user_id || isAdmin).thenApplyAsync(media -> {
+        return albumRepository.listUserAlbums(album_id, (user.id).equals(user_id) || isAdmin).thenApplyAsync(media -> {
             PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType");
             return ok(Ebean.json().toJson(media, pathProperties));
         });

@@ -65,6 +65,7 @@ create table destination_photo (
 create table media (
   id                            bigint auto_increment not null,
   is_public                     boolean default 0 not null,
+  caption                       varchar(150),
   uri_string                    varchar(255) not null,
   media_type                    varchar(255) not null,
   user_id                       bigint,

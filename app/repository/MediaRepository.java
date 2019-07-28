@@ -90,7 +90,8 @@ public class MediaRepository {
     public CompletableFuture<Long> update(UpdateMediaReq request, Long mediaId) {
         return supplyAsync(() -> {
             Media media = Media.find.findMediaById(mediaId);
-            media.is_public = request.is_public;
+            if (request.is_public != null) media.setIs_public(request.is_public);
+            if (request.caption != null) media.setCaption(request.caption);
             media.save();
 
             return media.id;

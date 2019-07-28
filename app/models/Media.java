@@ -22,6 +22,12 @@ public class Media extends BaseModel {
     public Boolean is_public = false;
 
     /**
+     * The media caption
+     */
+    @Column(length = 250)
+    public String caption;
+
+    /**
      * The media URI.
      */
     @NotNull
@@ -57,6 +63,13 @@ public class Media extends BaseModel {
         this.uriString = uriString;
         this.user = user;
         this.mediaType = "Photo";
+    }
+
+    public Media(User user, String uriString, String caption) {
+        this.uriString = uriString;
+        this.user = user;
+        this.mediaType = "Photo";
+        this.caption = caption;
     }
 
     public String getUriString() {
@@ -95,5 +108,11 @@ public class Media extends BaseModel {
         this.albums.remove(album);
     }
 
+    public String getCaption() {
+        return caption;
+    }
 
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
 }

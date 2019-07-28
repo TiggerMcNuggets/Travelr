@@ -23,18 +23,16 @@ public class AlbumRepository {
     }
 
     /**
-     * Returns all photos assoociated with a user.
-     * 
+     * Returns all the photos within the specified album
      * @param id           user id The user id
      * @param privateMedia if true will not return the public photos that are
      *                     available to the user
      * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
      *         associated with the user.
      */
-    public CompletionStage<List<Media>> list(Long id, Boolean privateMedia) {
+    public CompletionStage<List<Media>> list(Long albumId, Boolean privateMedia) {
         return supplyAsync(() -> {
-            ExpressionList<Media> query = Media.find.query().where().eq("user_id", id).or(Expr.eq("is_public", true),
-                    Expr.eq("is_public", !privateMedia));
+            ExpressionList<Media> query = Media.find.query().where().eq("albums.id", albumId).or(Expr.eq("is_public", true), Expr.eq("is_public", !privateMedia));
             return query.findList();
         }, executionContext);
     }
@@ -74,7 +72,7 @@ public class AlbumRepository {
     /**
      * Returns all photos assoociated with a user.
      *
-     * @param id           user id The user id
+     * @param userId           user id The user id
      * @param privateMedia if true will not return the public photos that are
      *                     available to the user
      * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
