@@ -220,6 +220,9 @@ export default {
       )[0];
     },
 
+    /**
+     * Returns the is showing array generated from the list of destinations
+     */
     populateIsShowing() {
       return [...this.isShowing, ...this.destinations.filter(dest => !this.isShowing.map(destShow => destShow.id).includes(dest.id)).map(destination => {
         return {

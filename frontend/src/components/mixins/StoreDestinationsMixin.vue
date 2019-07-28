@@ -19,6 +19,11 @@
         },
 
         methods: {
+            /**
+             * Sends request to get all destinations and saves it to the store
+             * @param userId The user's id
+             * @returns {Promise<void>}
+             */
             _getDestinations: async function(userId) {
                 try {
                     await this.$store.dispatch('getDestinations', {userId});
@@ -27,6 +32,12 @@
                 }
             },
 
+            /**
+             * Creates a new destination
+             * @param userId The user's id
+             * @param destination The destination body
+             * @returns {Promise<void>}
+             */
             _postDestination: async function(userId, destination) {
                 try {
                     return await this.$store.dispatch('postDestination', {userId, destination});
@@ -36,6 +47,13 @@
                 }
             },
 
+            /**
+             * Updates a destination
+             * @param userId The user's id
+             * @param destinationId The destination's id
+             * @param destination The destination body
+             * @returns {Promise<void>}
+             */
             _putDestination: async function(userId, destinationId, destination) {
                 try {
                     await this.$store.dispatch('putDestination', {userId, destinationId, destination});
@@ -44,6 +62,12 @@
                 }
             },
 
+            /**
+             * Deletes a destination
+             * @param userId The user's id
+             * @param destinationId The destination's id
+             * @returns {Promise<void>}
+             */
             _deleteDestination: async function(userId, destinationId) {
                 try {
                     await this.$store.dispatch('deleteDestination',{userId, destinationId});
@@ -52,6 +76,11 @@
                 }
             },
 
+            /**
+             * Gets a destination by its id
+             * @param destId The destination's id
+             * @returns The destination object
+             */
             getDestinationById: function(destId) {
                 return this.destinations[destId];
             }

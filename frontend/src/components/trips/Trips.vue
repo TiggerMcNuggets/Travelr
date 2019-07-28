@@ -87,11 +87,8 @@ ul {
 <script>
 import { store } from "../../store/index";
 import CreateTrips from "./CreateTrips.vue";
-// import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
-import StoreTripsMixin from "../mixins/StroreTripsMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-// let tripRepository = RepositoryFactory.get("trip");
+import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
 import PageHeader from "../common/header/PageHeader";
 
 
@@ -200,19 +197,6 @@ export default {
         );
       });
     },
-
-    // /**
-    //  * Calls the function toggleShowCreateTrip
-    //  * then gets the trips the current profile the user is on
-    //  */
-    // regetTrips: function() {
-    //   this.toggleShowCreateTrip();
-    //   if (this.isMyProfile) {
-    //     this.getTrips();
-    //   } else {
-    //     this.getUserTrips();
-    //   }
-    // },
 
     /**
      * Checks if the profile the user is on is theres

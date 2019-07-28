@@ -21,7 +21,8 @@
         methods: {
 
             /**
-             * @param userId
+             * Gets a list of user's trips and saves to store
+             * @param userId The user's id
              * @returns {Promise<void>}
              */
             _getTrips: async function(userId) {
@@ -32,6 +33,12 @@
                 }
             },
 
+            /**
+             * Creates a trip for a user and saves to store
+             * @param userId The user's id
+             * @param trip The trip object
+             * @returns {Promise<void>}
+             */
             _postTrip: async function(userId, trip) {
                 try {
                     return await this.$store.dispatch('postTrip', {userId, trip});
@@ -41,6 +48,13 @@
                 }
             },
 
+            /**
+             * Updates a trip for a user and saves to store
+             * @param userId The user's id
+             * @param tripId The trip's id
+             * @param trip The trip object
+             * @returns {Promise<void>}
+             */
             _putTrip: async function(userId, tripId, trip) {
                 try {
                     await this.$store.dispatch('putTrip', {userId, tripId, trip});
@@ -49,6 +63,12 @@
                 }
             },
 
+            /**
+             * Deletes a trip for a user and saves to store
+             * @param userId The user's id
+             * @param tripId The trip's id
+             * @returns {Promise<void>}
+             */
             _deleteTrip: async function(userId, tripId) {
                 try {
                     await this.$store.dispatch('deleteTrip',{userId, tripId});

@@ -80,7 +80,7 @@
       </v-tabs>
 
       <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="createDestionationCallback"/>
+        <destination-create :createDestinationCallback="createDestinationCallback"/>
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -362,7 +362,7 @@ export default {
      * Allows the main list of destinations to undo the creation of the new one
      * and closes the dialog
      */
-    createDestionationCallback: function(destId) {
+    createDestinationCallback: function(destId) {
       this.clearAlerts();
       const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
       this.rollbackCheckpoint(

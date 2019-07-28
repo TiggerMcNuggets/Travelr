@@ -190,7 +190,7 @@ import {
 } from "../form_rules";
 
 
-import StoreTripsMixin from '../mixins/StroreTripsMixin'
+import StoreTripsMixin from '../mixins/StoreTripsMixin'
 import RollbackMixin from '../mixins/RollbackMixin';
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 let tripRepository = RepositoryFactory.get("trip");
