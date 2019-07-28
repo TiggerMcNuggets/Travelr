@@ -27,11 +27,18 @@ import java.util.List;
 
 public class iCalCreator {
 
+    /**
+     * Takes in any trip and returns a calendar object if there is at least one destination with arrival date
+     * @param trip the trip that is getting turned into an iCal file
+     * @return a Calendar object from the trip provided
+     */
     public Calendar createCalendarFromTrip(Trip trip) {
+
         Calendar calendar = new Calendar();
         calendar.getProperties().add(new ProdId(trip.getId().toString()));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
+
         int UID = 0;
         for (TripDestination destination: trip.destinations) {
 

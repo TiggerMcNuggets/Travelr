@@ -510,7 +510,7 @@ public class TripController extends Controller {
             File tempFile = File.createTempFile(trip.name, ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
             bw.write(iCalString.toString());
-            bw.close();;
+            bw.close();
             return CompletableFuture.completedFuture(ok(tempFile));
         } catch (IOException e) {
             e.printStackTrace();

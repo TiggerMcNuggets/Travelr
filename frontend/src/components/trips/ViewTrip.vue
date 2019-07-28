@@ -323,11 +323,11 @@ export default {
         }
     },
   methods: {
-    
-        /**
-         * Downloads the trip from the database as an ics.
-         */
-        downloadTrip: function() {
+
+    /**
+     * Downloads the trip from the database as an ics.
+     */
+    downloadTrip: function() {
         tripRepository.downloadTrip(this.userId, this.tripId).then(res => {
             //The below code is needed to download something using JavaScript
             const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -337,105 +337,105 @@ export default {
             document.body.appendChild(link);
             link.click();
         });
-        },
+    },
 
-      /**
-       * Expands the destination at given index
-       * @param index {number}
-       */
-      toggleExpanded(index) {
-          this.trip.destinations[index].expanded = !this.trip.destinations[index].expanded;
-      },
+    /**
+     * Expands the destination at given index
+     * @param index {number}
+     */
+    toggleExpanded(index) {
+        this.trip.destinations[index].expanded = !this.trip.destinations[index].expanded;
+    },
 
-      /**
-       * Action performed as soon a destination starts being dragged, slices the destination
-       * children and temporarily adds them to a variable in the data.
-       */
-      startDrag(event) {
-        this.drag = true;
-        const childrenCount = getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]);
+    /**
+     * Action performed as soon a destination starts being dragged, slices the destination
+     * children and temporarily adds them to a variable in the data.
+     */
+    startDrag(event) {
+    this.drag = true;
+    const childrenCount = getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]);
+    const copy = JSON.parse(JSON.stringify(this.trip.destinations));
+    if (childrenCount > 0) {
+        this.draggedSublist = copy.splice(event.oldIndex + 1, event.oldIndex + childrenCount - 1);
+    }
+    for (let d of copy) {
+        d.hidden = false;
+    }
+    this.trip.destinations = this.setOrdinal(copy);
+    },
+
+    /**
+     * Action performed as soon a destination ends being dragged,
+     * reattaches the sub list stored on start drag at the right index.
+     */
+    endDrag(event) {
         const copy = JSON.parse(JSON.stringify(this.trip.destinations));
-        if (childrenCount > 0) {
-            this.draggedSublist = copy.splice(event.oldIndex + 1, event.oldIndex + childrenCount - 1);
-        }
-        for (let d of copy) {
-            d.hidden = false;
-        }
+        copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
+        this.draggedSublist = [];
         this.trip.destinations = this.setOrdinal(copy);
-      },
+    },
 
-      /**
-       * Action performed as soon a destination ends being dragged,
-       * reattaches the sub list stored on start drag at the right index.
-       */
-      endDrag(event) {
-          const copy = JSON.parse(JSON.stringify(this.trip.destinations));
-          copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
-          this.draggedSublist = [];
-          this.trip.destinations = this.setOrdinal(copy);
-      },
+    /**
+     * Validates the trip form
+     */
+    validateForm() {
+    !this.$refs.form.validate()
+    },
 
-      /**
-       * Validates the trip form
-       */
-      validateForm() {
-        !this.$refs.form.validate()
-      },
+    /**
+     * Adds a destination to the trip destinations
+     */
+    addTripDestination() {
+    const destinationsSize = this.trip.destinations.length;
+    this.trip.destinations.push({
+        arrivalDate: null,
+        departureDate: null,
+        depth: 0,
+        destination: {name: null},
+        expanded: false,
+        hidden: false,
+        ordinal: destinationsSize,
+    });
+    },
 
-      /**
-       * Adds a destination to the trip destinations
-       */
-      addTripDestination() {
-        const destinationsSize = this.trip.destinations.length;
-        this.trip.destinations.push({
-            arrivalDate: null,
-            departureDate: null,
-            depth: 0,
-            destination: {name: null},
-            expanded: false,
-            hidden: false,
-            ordinal: destinationsSize,
+    /**
+     * Ensures the list of destinations ordinal value is up to date
+     */
+    setOrdinal(destinations) {
+        const copy = JSON.parse(JSON.stringify(destinations));
+        copy.forEach((d, i) => {
+            d.ordinal = i;
         });
-      },
+        return copy
+    },
 
-      /**
-       * Ensures the list of destinations ordinal value is up to date
-       */
-      setOrdinal(destinations) {
-          const copy = JSON.parse(JSON.stringify(destinations));
-          copy.forEach((d, i) => {
-              d.ordinal = i;
-          });
-          return copy
-      },
+    /**
+     * Increases the depth of destination at given index
+     */
+    promote(index) {
+        this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
+    },
 
-      /**
-       * Increases the depth of destination at given index
-       */
-      promote(index) {
-          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
-      },
+    /**
+     * Decreases the depth of destination at given index
+     */
+    demote(index) {
+        this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
+    },
 
-      /**
-       * Decreases the depth of destination at given index
-       */
-      demote(index) {
-          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
-      },
+    /**
+     * Hides or shows all the children of a destination
+     */
+    toggleHiddenDestinations(parent) {
+        let i = parent.ordinal + 1;
+        const destsLength = this.trip.destinations.length;
+        while (i < destsLength && this.trip.destinations[i].depth > parent.depth) {
+            this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
+            i = i + 1;
+        }
+    },
 
-      /**
-       * Hides or shows all the children of a destination
-       */
-      toggleHiddenDestinations(parent) {
-          let i = parent.ordinal + 1;
-          const destsLength = this.trip.destinations.length;
-          while (i < destsLength && this.trip.destinations[i].depth > parent.depth) {
-              this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
-              i = i + 1;
-          }
-      },
-
-      /**
+    /**
      * Checks if the update trip form passes validation
      * If it does then updates trip and updates the view trip page
      */
@@ -472,115 +472,115 @@ export default {
         }
     },
 
-      /**
-       * Redirects users page to the destination page of the provided destination id
-       * @param dest_id the id of the destination
-       */
-      viewDestination(dest_id) {
+    /**
+     * Redirects users page to the destination page of the provided destination id
+     * @param dest_id the id of the destination
+     */
+    viewDestination(dest_id) {
         this.$router.push("/user/"+this.userId+"/destinations/"+dest_id);
-      },
+    },
 
     /**
      * Decides if the edit trip dialog should be displayed
      */
     toggleShouldDisplayButton: function() {
-      this.shouldDisplayDialog = !this.shouldDisplayDialog;
+        this.shouldDisplayDialog = !this.shouldDisplayDialog;
     },
 
-      /**
-       * Invoked by child component create-trip once the trip has been modified, is passed as prop
-       */
-      updateViewTripPage: function() {
-          tripRepo.getTrip(this.userId, this.tripId).then((result) => {
-              let trip = result.data;
-              // Sorts the destinations ensure they are in the order of their ordinal
-              let ordered_dests = trip.destinations.sort(function(a, b){
-                  return a.ordinal - b.ordinal;
-              });
-              trip.destinations = ordered_dests;
-              // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
-              for (let i = 0; i < trip.destinations.length; i++) {
-                if (trip.destinations[i].arrivalDate != null) {
-                  trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+    /**
+     * Invoked by child component create-trip once the trip has been modified, is passed as prop
+     */
+    updateViewTripPage: function() {
+        tripRepo.getTrip(this.userId, this.tripId).then((result) => {
+            let trip = result.data;
+            // Sorts the destinations ensure they are in the order of their ordinal
+            let ordered_dests = trip.destinations.sort(function(a, b){
+                return a.ordinal - b.ordinal;
+            });
+            trip.destinations = ordered_dests;
+            // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
+            for (let i = 0; i < trip.destinations.length; i++) {
+            if (trip.destinations[i].arrivalDate != null) {
+                trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+            }
+            if (trip.destinations[i].arrivalDate != null) {
+                trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+            }
+            }
+            this.trip = trip;
+        });
+    },
+
+    /**
+     * Deletes the given destination from the created/modified trip
+     */
+    deleteDestination: function(index) {
+        let newDestinations = JSON.parse(JSON.stringify(this.trip.destinations));
+        newDestinations.splice(index, 1);
+        this.trip.destinations = this.setOrdinal(newDestinations);
+    },
+
+    /**
+     * Gets the list of valid destinations available to a user
+     */
+    getDestinations: function() {
+        return destinationRepository
+            .getDestinations(this.userId)
+            .then(res => {
+                this.userDestinations = res.data;
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    },
+
+    getTrip: function() {
+        return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
+            let trip = result.data;
+            trip.destinations = trip.destinations.sort(function(a, b){
+                return a.ordinal - b.ordinal;
+            });
+            this.hasMissingDates = false;
+            let numOfMissingDates = 0;
+            // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
+            for (let i = 0; i < trip.destinations.length; i++) {
+                trip.destinations[i].expanded = false;
+                trip.destinations[i].hidden = false;
+                if (trip.destinations[i].arrivalDate == 0) {
+                this.hasMissingDates = true;
+                numOfMissingDates++;
                 }
-                if (trip.destinations[i].arrivalDate != null) {
-                  trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+
+                if (trip.destinations[i].arrivalDate != 0) {
+                    trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
                 }
-              }
-              this.trip = trip;
-          });
-      },
+                if (trip.destinations[i].arrivalDate != 0) {
+                    trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+                }
+            }
+            if (numOfMissingDates === trip.destinations.length) {
+                this.canDownloadTrip = false;
+            }
+            this.trip = trip;
+            return this.trip;
+        });
+    },
 
-      /**
-       * Deletes the given destination from the created/modified trip
-       */
-      deleteDestination: function(index) {
-          let newDestinations = JSON.parse(JSON.stringify(this.trip.destinations));
-          newDestinations.splice(index, 1);
-          this.trip.destinations = this.setOrdinal(newDestinations);
-      },
+    /**
+     * Undoes the last action and calls setDestination() afterwards
+     */
+    undo: function() {
+        const actions = [this.getTrip];
+        this.rollbackUndo(actions);
+    },
 
-      /**
-       * Gets the list of valid destinations available to a user
-       */
-      getDestinations: function() {
-          return destinationRepository
-              .getDestinations(this.userId)
-              .then(res => {
-                  this.userDestinations = res.data;
-              })
-              .catch(e => {
-                  console.log(e);
-              });
-      },
-
-      getTrip: function() {
-          return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
-              let trip = result.data;
-              trip.destinations = trip.destinations.sort(function(a, b){
-                  return a.ordinal - b.ordinal;
-              });
-              this.hasMissingDates = false;
-              let numOfMissingDates = 0;
-              // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
-              for (let i = 0; i < trip.destinations.length; i++) {
-                  trip.destinations[i].expanded = false;
-                  trip.destinations[i].hidden = false;
-                  if (trip.destinations[i].arrivalDate == 0) {
-                    this.hasMissingDates = true;
-                    numOfMissingDates++;
-                  }
-
-                  if (trip.destinations[i].arrivalDate != 0) {
-                      trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-                  }
-                  if (trip.destinations[i].arrivalDate != 0) {
-                      trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
-                  }
-              }
-              if (numOfMissingDates === trip.destinations.length) {
-                  this.canDownloadTrip = false;
-              }
-              this.trip = trip;
-              return this.trip;
-          });
-      },
-
-      /**
-       * Undoes the last action and calls setDestination() afterwards
-       */
-      undo: function() {
-          const actions = [this.getTrip];
-          this.rollbackUndo(actions);
-      },
-
-      /**
-       * Redoes the last action and calls setDestination() afterwards
-       */
-      redo: function() {
-          const actions = [this.getTrip];
-          this.rollbackRedo(actions);
-      },
+    /**
+     * Redoes the last action and calls setDestination() afterwards
+     */
+    redo: function() {
+        const actions = [this.getTrip];
+        this.rollbackRedo(actions);
+    },
   },
 
 
