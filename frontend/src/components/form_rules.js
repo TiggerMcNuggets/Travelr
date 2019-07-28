@@ -14,6 +14,10 @@ export const rules = {
 
 // rules helpers (depending on how big they become we can move this into helpers)
 
+/**
+ * Form rule for checking if there are any consective destinations given a list.
+ * @param {*} destinations A list of destinations to be checked.
+ */
 export const noSameDestinationNameConsecutiveRule = destinations => {
   let noConsecutiveSame = true;
   console.log("destinations", destinations);
@@ -66,10 +70,19 @@ export const arrivalBeforeDepartureAndDestinationsOneAfterTheOther = destination
   ];
 };
 
+
+/**
+ * Form rules for checking for int values.
+ * @param {*} n The entered value
+ */
 function isInt(n) {
   return Number(n) === n && n % 1 === 0;
 }
 
+/**
+ * Form rules for checking for float values.
+ * @param {*} n The entered value
+ */
 function isFloat(n) {
   return Number(n) === n && n % 1 !== 0;
 }

@@ -9,12 +9,12 @@
                 <img
                   class="dest-small-image"
                   src="https://perkinsdesigns.files.wordpress.com/2015/11/jan15_mountains_galore3.png"
-                >
+                />
               </div>
             </div>
             <div>
               <strong>{{ destination.data.name }}</strong>
-              <br>
+              <br />
               <span class="caption">{{ destination.data.district}}, {{ destination.data.country }}</span>
             </div>
           </div>
@@ -66,9 +66,11 @@ export default {
       checkbox: false
     };
   },
+
   props: {
     destination: Object
   },
+
   methods: {}
 };
 </script>

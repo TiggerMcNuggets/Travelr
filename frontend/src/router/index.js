@@ -17,7 +17,6 @@ import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue";
 import ViewTrip from "../components/trips/ViewTrip.vue";
 import SingleDestination from "../components/destination/SingleDestination";
-import DestinationEditRequests from "../components/admin/DestinationEditRequests";
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
 
@@ -43,7 +42,9 @@ const authGuard = (to, from, next) => {
 };
 
 const unauthGuard = (to, from, next) => {
-  if (!store.getters.getToken) { return next() };
+  if (!store.getters.getToken) {
+    return next();
+  }
   if (store.getters.getToken && !store.getters.getUser) {
     store
       .dispatch("fetchMe")
@@ -101,7 +102,7 @@ let router = new Router({
   mode: "history",
   routes: [
     {
-      path: "/",
+      path: "",
       beforeEnter: unauthGuard
     },
 
@@ -186,15 +187,6 @@ let router = new Router({
           path: "/admin_dash",
           name: "admin_dash",
           component: AdminDashboard,
-          beforeEnter: authGuard,
-          meta: {
-            requiresAdmin: true
-          }
-        },
-        {
-          path: "/edit_requests",
-          name: "edit_requests",
-          component: DestinationEditRequests,
           beforeEnter: authGuard,
           meta: {
             requiresAdmin: true

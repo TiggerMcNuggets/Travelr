@@ -95,7 +95,6 @@
 }
 .destination-main-map {
   width: 100%;
-  height: 830px;
 }
 </style>
 
@@ -171,7 +170,7 @@ export default {
         return this.focussedDestination.data.id;
       }
       return -1;
-    }
+    },
   },
 
   methods: {
@@ -289,7 +288,30 @@ export default {
         latitude: clickEvent.latLng.lat(),
         longitude: clickEvent.latLng.lng()
       });
+    },
+
+    /**
+     * Updates the map height when the window is resized.
+     */
+    updateMapHeight() {
+      let height = window.innerHeight - 64; // Window innerheight with header subtracted is map area.
+      this.$refs.map.$el.style.height = `${height}px`; // Setting the map to the height calculated above.
     }
+  },
+
+  /**
+   * Sets the map height to the right height initially and binds the window resize event to the function to resize the map.
+   */
+  mounted() {
+    this.updateMapHeight();
+    window.addEventListener("resize", this.updateMapHeight);
+  },
+
+  /**
+   * Removes the event listener for the resize event from the component.
+   */
+  beforeDestroy: function() {
+    window.removeEventListener("resize", this.updateMapHeight);
   }
 };
 </script>

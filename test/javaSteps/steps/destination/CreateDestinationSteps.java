@@ -1,8 +1,10 @@
 package javaSteps.steps.destination;
 
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import models.Destination;
+import org.junit.Assert;
 import play.libs.Json;
 
 import static play.test.Helpers.contentAsString;
@@ -18,8 +20,13 @@ public class CreateDestinationSteps {
         state.getRequest().method("POST");
     }
 
-    @When("I check my destination")
-    public void iCheckMyDestination() {
+    @When("I check the destination")
+    public void iCheckTheDestination() {
         state.setDestination(Destination.find.findById(Json.parse(contentAsString(state.getResult())).get("id").asLong()));
+    }
+
+    @Then("The destination belongs to the user")
+    public void theDestinationBelongsToTheUser() {
+        Assert.assertEquals(state.getDestination().getUser(), state.getUser());
     }
 }

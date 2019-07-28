@@ -448,12 +448,12 @@ export default {
         this.$router.push("/user/"+this.userId+"/destinations/"+dest_id);
       },
 
-      /**
-       * Decides if the edit trip dialog should be displayed
-       */
-      toggleShouldDisplayButton: function() {
-        this.shouldDisplayDialog = !this.shouldDisplayDialog;
-      },
+    /**
+     * Decides if the edit trip dialog should be displayed
+     */
+    toggleShouldDisplayButton: function() {
+      this.shouldDisplayDialog = !this.shouldDisplayDialog;
+    },
 
       /**
        * Invoked by child component create-trip once the trip has been modified, is passed as prop

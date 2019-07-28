@@ -86,12 +86,24 @@ export default {
   watch: {},
 
   computed: {
+
+    /**
+     * Gets all the private destinations for the user.
+     */
     privateDestinations() {
       return this.destinations.filter(x => !x.data.isPublic);
     },
+    
+    /**
+     * Gets all the public destinations for the user.
+     */
     publicDestinations() {
       return this.destinations.filter(x => x.data.isPublic);
     },
+
+    /**
+     * Sets the underline color of the destination depending if it is public or private.
+     */
     underlineColor() {
       if (this.tab === 1) {
         return "accent";
