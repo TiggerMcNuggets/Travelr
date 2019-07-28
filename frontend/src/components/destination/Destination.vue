@@ -3,7 +3,7 @@
 <template>
   <v-card>
     <v-container fluid>
-      <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options" />
+      <PageHeader title="Destinations" :undo="undo" :redo="redo" :canRedo="rollbackCanRedo" :canUndo="rollbackCanUndo"  :options="options" />
 
       <v-text-field
         v-if="searchActive"
@@ -305,38 +305,6 @@ export default {
       });
     },
 
-    // /**
-    //  * Refreshes the destination list
-    //  */
-    // updateDestinationList: function(destId) {
-    //   this.clearAlerts();
-    //   const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
-    //   this.rollbackCheckpoint(
-    //     "POST",
-    //     {
-    //       url: url
-    //     },
-    //     {
-    //       url: url
-    //     }
-    //   );
-    //   this.getDestinationList();
-    //   this.dialog = false;
-    // },
-
-    // /**
-    //  * Sets the list of destinations by request to the API
-    //  */
-    // getDestinationList: function() {
-    //   destinationRepository
-    //     .getDestinations(this.userId)
-    //     .then(response => {
-    //       this.destinations = response.data;
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // },
 
     /**
      * Makes a destination public and checks for error.
@@ -449,29 +417,6 @@ export default {
       window.console.log(evt);
     },
 
-    // /**
-    //  * Undoes the last action and gets destinations afterwards
-    //  */
-    // undo: function() {
-    //   const actions = [this.getDestinationList, this.clearAlerts];
-    //   try {
-    //     this.rollbackUndo(actions);
-    //   } catch (err) {
-    //     this.undoRedoError = true;
-    //   }
-    // },
-
-    // /**
-    //  * Redoes the last action and gets destinations afterwards
-    //  */
-    // redo: function() {
-    //   const actions = [this.getDestinationList, this.clearAlerts];
-    //   try {
-    //     this.rollbackRedo(actions);
-    //   } catch (err) {
-    //     this.undoRedoError = true;
-    //   }
-    // }
   },
 
   /**

@@ -140,15 +140,6 @@ export default {
       };
     },
 
-    // /**
-    //  * Toggles between destinations
-    //  */
-    // toggleDestination(destination) {
-    //   var showDest = this.destinations.filter(
-    //     x => x.data.id === destination.data.id
-    //   );
-    // },
-
     isDestinationShowing(destinationId) {
       return this.isShowing.find(x => x.id === destinationId).isShowing;
     },
@@ -214,27 +205,6 @@ export default {
           });
       }
     },
-    //
-    // /**
-    //  * Populates the destinations
-    //  */
-    // async populateDestinations() {
-    //   this.destinations = [];
-    //   try {
-    //     const response = await DestinationRepository.getDestinations(
-    //       this.userId
-    //     );
-    //     response.data.forEach(data => {
-    //       var destinationObject = {
-    //         data: data,
-    //         isShowing: true
-    //       };
-    //       this.destinations.push(destinationObject);
-    //     });
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // },
 
     /**
      * Cancels an edit on a clicked destination.

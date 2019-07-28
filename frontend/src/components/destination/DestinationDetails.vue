@@ -214,27 +214,7 @@ export default {
         deep: true
       }
     },
-//   },
-//   watch: {
-    // /**
-    //  * Reset back to viewing mode on destination change
-    //  */
-    // focussedDestination: {
-    //   handler: function(newValue, oldValue) {
-    //     if (oldValue.data.id !== newValue.data.id) {
-    //       this.goToViewDestination();
-    //     }
-    //     if (newValue.data !== this.destination.data) {
-    //       this.destination = this.focussedDestination;
-    //     }
-    //   },
 
-    //   gotoDest() {
-    //     const userId = this.$store.getters.getUser.id;
-    //     this.$router.push(
-    //       `/user/${userId}/destinations/${this.focussedDestination.id}`
-    //     );
-    // }
   methods: {
     /**
      * Turns off edit mode.

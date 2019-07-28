@@ -153,28 +153,6 @@
         }
       },
 
-    // /**
-    //  * Sends a request to the API to create a destination based on the data entered into the form.
-    //  * Checks for an error and logs result if unsuccessful.
-    //  */
-    // createDestination: function() {
-    //   if (this.$refs.form.validate()) {
-    //     destinationRepository
-    //       .createDestination(this.userId, this.destination)
-    //       .then(res => {
-    //         this.$refs.form.reset();
-    //         this.isError = false;
-    //         this.$emit("close-map-info-window");
-    //         this.createDestinationCallback(res.data.id);
-    //       })
-    //       .catch(err => {
-    //         console.log(err);
-    //         this.isError = true;
-    //         console.log("error creating destination");
-    //       });
-    //   }
-    // },
-
     /**
      * Resets the form values to blank.
      */

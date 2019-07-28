@@ -169,36 +169,6 @@ import blueMarker from "../../assets/blue-google-maps-marker.svg";
         }
         return -1;
       },
-
-
-//   computed: {
-    // /*
-    //  * Returns the list of private destinations
-    //  */
-    // privateDestinations() {
-    //   return this.destinations.filter(
-    //     x => !x.data.isPublic && x.data.id !== this.focussedId
-    //   );
-    // },
-
-    // /*
-    //  * Returns the list of public destinations
-    //  */
-    // publicDestinations() {
-    //   return this.destinations.filter(
-    //     x => x.data.isPublic && x.data.id !== this.focussedId
-    //   );
-    // },
-
-    // /*
-    //  * Returns -1 to avoid indexing an undefined object.
-    //  */
-    // focussedId() {
-    //   if (this.focussedDestination.data != null) {
-    //     return this.focussedDestination.data.id;
-    //   }
-    //   return -1;
-    // },
   },
 
   methods: {
@@ -237,22 +207,6 @@ import blueMarker from "../../assets/blue-google-maps-marker.svg";
         this.focussedDestination.longitude = location.latLng.lng();
         this.focusDestination(focussedDestination);
       },
-      
-    //     this.$refs.map.$mapObject.panTo({
-    //       lat: coordinates.latitude,
-    //       lng: coordinates.longitude
-    //     });
-    //     zoomer.in(15);
-    //   });
-
-    // /*
-    //  * Updates the location of the currently selected marker after a user stops dragging it.
-    //  */
-    // updateCoordinatesAfterDrag(location, focussedDestination) {
-    //   this.focussedDestination.data.latitude = location.latLng.lat();
-    //   this.focussedDestination.data.longitude = location.latLng.lng();
-    //   this.focusDestination(focussedDestination);
-    // },
 
     /*
      * Updates the selected destination details in the info panel with autocomplete search details
