@@ -41,13 +41,172 @@
       </div>
 
     <v-divider class="photo-header-divider"/>
-      <v-layout flex >
+      <v-form lazy-validation
+              ref="form"
+              v-model="isFormValid">
+      <v-text-field
+              v-model="trip.name"
+              :rules="nameRules"
+              :counter="60"
+              label="Trip Name"
+              required
+      ></v-text-field>
+        <v-timeline align-top dense>
+        <draggable
+                class="list-group"
+                tag="ul"
+                v-model="trip.destinations"
+                @start="startDrag"
+                @end="endDrag">
+            <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+
+                <v-timeline-item
+                    v-for="(destination, i) in notHiddenTrips"
+                    :key="i"
+                    class="trip-timeline-item-width white--text mb-5"
+                    :color="getDepthData(destination.depth).color"
+                    :large="getDepthData(destination.depth).large"
+                >
+                    <template v-slot:icon>
+                        <span class="hoverable"
+                                v-on:click="toggleExpanded(i)">{{getDepthData(destination.depth).number}}</span>
+                    </template>
+                        <v-card
+                            :color="getDepthData(destination.depth).color"
+                        >
+                        <v-container class="container-custom-padding">
+                            <v-card-title>
+                                <v-combobox
+                                        :items="userDestinations"
+                                        item-text="name"
+                                        v-model="destination.destination"
+                                        label="Select an existing destination"
+                                        :rules="noSameDestinationNameConsecutiveRule"
+                                        return-object
+                                ></v-combobox>
+                                <v-btn
+                                    v-on:click="toggleHiddenDestinations(destination)"
+                                    fab flat small>
+                                    <v-icon>view_headline</v-icon>
+                                </v-btn>
+                                <v-btn
+                                        :disabled="!isPromotable(trip.destinations, destination.ordinal)"
+                                        v-on:click="promote(destination.ordinal)"
+                                        fab flat small>
+                                    <v-icon>arrow_upward</v-icon>
+                                </v-btn>
+                                <v-btn
+                                        :disabled="!isDemotable(trip.destinations, destination.ordinal)"
+                                        v-on:click="demote(destination.ordinal)"
+                                        fab flat small>
+                                    <v-icon>arrow_downward</v-icon>
+                                </v-btn>
+                            </v-card-title>
+                            <v-container v-if="destination.expanded">
+                            <v-menu
+                                v-model="destination.arrivalDateMenu"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                lazy
+                                transition="scale-transition"
+                                offset-y
+                                full-width
+                                min-width="290px"
+                            >
+                                <template v-slot:activator="{ on }">
+                                    <v-text-field
+                                        v-model="destination.arrivalDate"
+                                        :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
+                                        label="Arrival date"
+                                        prepend-icon="event"
+                                        readonly
+                                        v-on="on"
+                                        class="date-margin"
+                                    ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                        v-model="destination.arrivalDate"
+                                        @input="destination.arrivalDateMenu = false"
+                                ></v-date-picker>
+                            </v-menu>
+                                <v-menu
+                                    v-model="destination.departureDateMenu"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    lazy
+                                    transition="scale-transition"
+                                    offset-y
+                                    full-width
+                                    min-width="290px"
+                                >
+                                    <template v-slot:activator="{ on }">
+                                        <v-text-field
+                                            v-model="destination.departureDate"
+                                            :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
+                                            label="Departure date"
+                                            prepend-icon="event"
+                                            readonly
+                                            v-on="on"
+                                            class="date-margin"
+                                        ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                            v-model="destination.departureDate"
+                                            @input="destination.departureDateMenu = false"
+                                    ></v-date-picker>
+                                </v-menu>
+
+                                <div>
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn
+                                                    v-on="on"
+                                                    v-on:click="deleteDestination(i)"
+                                                    fab flat small dark>
+                                                <v-icon>delete</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Delete</span>
+                                    </v-tooltip>
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn
+                                                    v-on="on"
+                                                    v-on:click="toggleExpanded(i)"
+                                                    fab flat small dark>
+                                                <v-icon>visibility_off</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Hide</span>
+                                    </v-tooltip>
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn
+                                                    v-on="on"
+                                                    v-on:click="viewDestination(destination.id)"
+                                                    fab small dark flat>
+                                                <v-icon>explore</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>View Destination</span>
+                                    </v-tooltip>
+                                </div>
+                            </v-container>
+                        </v-container>
+                        </v-card>
+                </v-timeline-item>
+            </transition-group>
+        </draggable>
+        </v-timeline>
+      </v-form>
+
+      <v-layout flex>
           <v-tooltip top>
               <template v-slot:activator="{ on }">
                   <v-btn
-                          v-on:click="validateForm"
-                          icon
-                          v-on="on">
+                         v-on:click="validateForm"
+                         icon
+                         v-on="on">
                       <v-icon color="primary lighten-1">check_circle</v-icon>
                   </v-btn>
               </template>
@@ -77,167 +236,11 @@
           </v-tooltip>
 
       </v-layout>
-      <v-form lazy-validation
-              ref="form"
-              v-model="isFormValid">
-      <v-text-field
-              v-model="trip.name"
-              :rules="nameRules"
-              :counter="60"
-              label="Trip Name"
-              required
-      ></v-text-field>
-      <v-timeline align-top dense>
-      <draggable
-              class="list-group"
-              tag="ul"
-              v-model="trip.destinations"
-              @start="startDrag"
-              @end="endDrag">
-          <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-
-              <v-timeline-item
-                v-for="(destination, i) in notHiddenTrips"
-                :key="i"
-                class="trip-timeline-item-width white--text mb-5"
-                :color="getDepthData(destination.depth).color"
-                :large="getDepthData(destination.depth).large"
-              >
-                  <template v-slot:icon>
-                      <span class="hoverable"
-                              v-on:click="toggleExpanded(i)">{{getDepthData(destination.depth).number}}</span>
-                  </template>
-                    <v-card
-                        :color="getDepthData(destination.depth).color"
-                    >
-                      <v-container class="container-custom-padding">
-                          <v-card-title>
-                              <v-combobox
-                                      :items="userDestinations"
-                                      item-text="name"
-                                      v-model="destination.destination"
-                                      label="Select an existing destination"
-                                      :rules="noSameDestinationNameConsecutiveRule"
-                                      return-object
-                              ></v-combobox>
-                              <v-btn
-                                  v-on:click="toggleHiddenDestinations(destination)"
-                                  fab flat small>
-                                  <v-icon>view_headline</v-icon>
-                              </v-btn>
-                              <v-btn
-                                      :disabled="!isPromotable(trip.destinations, destination.ordinal)"
-                                      v-on:click="promote(destination.ordinal)"
-                                      fab flat small>
-                                  <v-icon>arrow_upward</v-icon>
-                              </v-btn>
-                              <v-btn
-                                      :disabled="!isDemotable(trip.destinations, destination.ordinal)"
-                                      v-on:click="demote(destination.ordinal)"
-                                      fab flat small>
-                                  <v-icon>arrow_downward</v-icon>
-                              </v-btn>
-                          </v-card-title>
-                          <v-container v-if="destination.expanded">
-                          <v-menu
-                              v-model="destination.arrivalDateMenu"
-                              :close-on-content-click="false"
-                              :nudge-right="40"
-                              lazy
-                              transition="scale-transition"
-                              offset-y
-                              full-width
-                              min-width="290px"
-                          >
-                              <template v-slot:activator="{ on }">
-                                  <v-text-field
-                                      v-model="destination.arrivalDate"
-                                      :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
-                                      label="Arrival date"
-                                      prepend-icon="event"
-                                      readonly
-                                      v-on="on"
-                                      class="date-margin"
-                                  ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                      v-model="destination.arrivalDate"
-                                      @input="destination.arrivalDateMenu = false"
-                              ></v-date-picker>
-                          </v-menu>
-                             <v-menu
-                                v-model="destination.departureDateMenu"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                lazy
-                                transition="scale-transition"
-                                offset-y
-                                full-width
-                                min-width="290px"
-                            >
-                                <template v-slot:activator="{ on }">
-                                    <v-text-field
-                                        v-model="destination.departureDate"
-                                        :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
-                                        label="Departure date"
-                                        prepend-icon="event"
-                                        readonly
-                                        v-on="on"
-                                        class="date-margin"
-                                    ></v-text-field>
-                                </template>
-                                <v-date-picker
-                                        v-model="destination.departureDate"
-                                        @input="destination.departureDateMenu = false"
-                                ></v-date-picker>
-                            </v-menu>
-
-                            <div>
-                                <v-tooltip top>
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                                v-on="on"
-                                                v-on:click="deleteDestination(i)"
-                                                fab flat small dark>
-                                            <v-icon>delete</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Delete</span>
-                                </v-tooltip>
-                                <v-tooltip top>
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                                v-on="on"
-                                                v-on:click="toggleExpanded(i)"
-                                                fab flat small dark>
-                                            <v-icon>visibility_off</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>Hide</span>
-                                </v-tooltip>
-                                <v-tooltip top>
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn
-                                                v-on="on"
-                                                v-on:click="viewDestination(destination.id)"
-                                                fab small dark flat>
-                                            <v-icon>explore</v-icon>
-                                        </v-btn>
-                                    </template>
-                                    <span>View Destination</span>
-                                </v-tooltip>
-                            </div>
-                          </v-container>
-                      </v-container>
-                    </v-card>
-              </v-timeline-item>
-          </transition-group>
-      </draggable>
-      </v-timeline>
-      </v-form>
-
-</v-container>
-</v-card>
+    </v-container>
+    <TripMap
+        :destinations="trip.destinations"
+        class="trip-map"/>
+    </v-card>
 
 </template>
 
@@ -246,6 +249,16 @@
         min-width: 300px;
         width: 25%;
         padding: 0;
+    }
+
+    .trip-map {
+        width: 55%;
+        height: 100px;
+        padding: 0;
+        position: fixed;
+        top: 25%;
+        right: 5%;
+        /* position: absolute; */
     }
 
     .date-margin {
@@ -260,10 +273,10 @@
 
 <script>
 import RollbackMixin from '../mixins/RollbackMixin';
-import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import draggable from 'vuedraggable';
+import TripMap from "./TripMap.vue";
 import dateTime from "../common/dateTime/dateTime.js";
 import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
 import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
@@ -275,7 +288,7 @@ export default {
   store,
   components: {
     draggable,
-    UndoRedoButtons
+    TripMap
   },
     mixins: [RollbackMixin],
   // local variables
@@ -582,7 +595,6 @@ export default {
         this.rollbackRedo(actions);
     },
   },
-
 
   created: function() {
       this.getDestinations();
