@@ -35,7 +35,6 @@
 
 <script>
   import { GoogleMapLightStyle } from "../../assets/google-map-light-style"
-  import { GoogleMapDarkStyle } from "../../assets/google-map-dark-style"
 
   // resources
   import blueMarker from "../../assets/blue-google-maps-marker.svg";
@@ -142,18 +141,6 @@
           this.gMapOptions.center = {lat: this.destinations[0].destination.latitude, lng: this.destinations[0].destination.longitude};
         }
         return tempPaths;
-      },
-
-      /*
-      * Toggles the map to have a dark theme
-      */
-      toggleDarkMode() {
-        if (this.darkModeOn) {
-          this.gMapOptions.styles = GoogleMapLightStyle;
-        } else {
-          this.gMapOptions.styles = GoogleMapDarkStyle;
-        }
-        this.darkModeOn = !this.darkModeOn;
       },
     },
   };
