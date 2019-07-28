@@ -85,7 +85,7 @@
         </v-flex>
         <v-flex xs12>
           <v-layout justify-start>
-            <v-btn @click="goToViewDestination">Cancel</v-btn>
+            <v-btn @click="goToViewDestination" v-if="editMode">Cancel</v-btn>
             <v-btn color="primary" v-if="editMode" @click="updateDestination">Update</v-btn>
             <v-btn color="primary" v-else @click="updateDestination">Create</v-btn>
           </v-layout>
