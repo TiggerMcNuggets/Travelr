@@ -1,54 +1,32 @@
 package javaSteps.steps.destination;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
+import models.Destination;
 import org.junit.Assert;
 import play.libs.Json;
-import play.mvc.Http;
-import play.test.Helpers;
 
-import static play.test.Helpers.route;
+import static play.test.Helpers.contentAsString;
 
 public class CreateDestinationSteps {
 
     // Singleton object that holds shared values across features
     private StateSingleton state = StateSingleton.getInstance();
 
-    private JsonNode destinationData;
-
-    /**
-     * Sets destinationData to a JSON object that has all fields validated
-     */
-    @Given("I provide complete destination information")
-    public void iProvideCompleteDestinationInformation() {
-        destinationData = Json.parse("{ \"name\": \"string\", \"latitude\": 5, \"longitude\": 5, \"type\": \"string\", \"district\": \"string\", \"country\": \"string\"}");
+    @When("I want to create a destination")
+    public void iWantToCreateADestination() {
+        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/destinations", state.getUser().getId())));
+        state.getRequest().method("POST");
     }
 
-    @When("I create a destination for user with id {int}")
-    public void i_create_a_destination_for_user_with_id(int int1) {
-        try {
-            // Create request object
-            Http.RequestBuilder createDestinationForUser = Helpers.fakeRequest()
-                    .method("POST")
-                    .header("X-Authorization", state.getToken())
-                    .bodyJson(destinationData)
-                    .uri("http://localhost:9000/api/users/"+ int1 +"/destinations");
-
-            // Send request
-            state.setResult(route(state.getApplication(), createDestinationForUser));
-
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
-        }
+    @When("I check the destination")
+    public void iCheckTheDestination() {
+        state.setDestination(Destination.find.findById(Json.parse(contentAsString(state.getResult())).get("id").asLong()));
     }
 
-    @Given("I provide incomplete destination information")
-    public void iProvideIncompleteDestinationInformation() {
-        destinationData = Json.parse("{}");
+    @Then("The destination belongs to the user")
+    public void theDestinationBelongsToTheUser() {
+        Assert.assertEquals(state.getDestination().getUser(), state.getUser());
     }
-
-
 }

@@ -38,7 +38,9 @@ public class InitSteps extends WithApplication {
         Guice.createInjector(builder.applicationModule()).injectMembers(this);
 
         Helpers.start(state.getApplication());
+        state.setRequest(Helpers.fakeRequest());
     }
+
 
     /**
      * Tears down the fake app
