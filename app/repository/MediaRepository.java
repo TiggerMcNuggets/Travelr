@@ -41,13 +41,6 @@ public class MediaRepository {
             ExpressionList<Media> query = Media.find.query().where().eq("user_id", id);
             List<Media> mediaList = query.findList();
 
-            for (Media media : mediaList) {
-                if (media.getUriString().equals(imageFileName)) {
-                    System.err.println("Duplicate Photo");
-                    return null;
-                }
-            }
-
             Media media = new Media(traveller, imageFileName);
             Album album = Album.find.findAlbumById(album_id);
 
@@ -94,7 +87,8 @@ public class MediaRepository {
     public CompletableFuture<Long> update(UpdateMediaReq request, Long mediaId) {
         return supplyAsync(() -> {
             Media media = Media.find.findMediaById(mediaId);
-            media.is_public = request.is_public;
+            if (request.is_public != null) media.setIs_public(request.is_public);
+
             media.save();
 
             return media.id;
