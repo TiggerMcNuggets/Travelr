@@ -28,4 +28,19 @@ public class UserNationality extends BaseModel {
         this.hasPassport = hasPassport;
     }
 
+    public boolean getHasPassport() {
+        return hasPassport;
+    }
+
+    public void setHasPassport(boolean hasPassport) {
+        this.hasPassport = hasPassport;
+    }
+
+    public Nationality getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(Nationality nationality) {
+        this.nationality = nationality;
+    }
 }

@@ -1,18 +1,17 @@
 package javaSteps.steps.traveller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 import javaSteps.models.StateSingleton;
+import models.Nationality;
+import models.TravellerType;
+import models.User;
+import models.UserNationality;
 import org.junit.Assert;
-import play.libs.Json;
-import play.mvc.Http;
-import play.test.Helpers;
 
-import static play.test.Helpers.route;
-
+import java.util.List;
+import java.util.Map;
 
 /**
  * Contains steps for testing editing a traveller
@@ -22,42 +21,48 @@ public class EditTravellerSteps {
     // Singleton object that holds shared values across steps
     private StateSingleton state = StateSingleton.getInstance();
 
-    private JsonNode editData;
-
-    /**
-     * Sets editData to a JSON object that has all fields validated
-     */
-    @Given("I provide a complete editTraveller json")
-    public void iProvideACompleteEditTravellerJson() {
-        editData = Json.parse("{ \"firstName\": \"string\", \"middleName\": \"string\", \"lastName\": \"string\", \"dateOfBirth\": 0, \"gender\": \"string\", \"email\": \"string@string.string\", \"password\": \"string\", \"nationalities\": [ { \"id\": 1, \"hasPassport\": true } ], \"travellerTypes\": [1], \"accountType\": 0 }");
-    }
-    /**
-     * Sets editData to an empty JSON object
-     */
-    @Given("I provide an incomplete editTraveller json")
-    public void iProvideAnIncompleteEditTravellerJson() {
-        editData = Json.parse("{}");
+    @When("I want to edit the profile")
+    public void iWantToEditTheProfile() {
+        state.getRequest().uri((String.format("http://localhost:9000/api/travellers/%s", state.getUser().getId())));
+        state.getRequest().method("PUT");
     }
 
-    /**
-     * Executes a fake request to edit the traveller
-     */
-    @When("I edit the traveller")
-    public void iEditTheTraveller() {
-        try {
-            // Create request object
-            Http.RequestBuilder edit = Helpers.fakeRequest()
-                    .method("PUT")
-                    .bodyJson(editData)
-                    .header("X-Authorization", state.getToken())
-                    .uri("https://localhost:9000/api/travellers/" + state.getTravellerId());
+    @Then("The traveller details are")
+    public void theTravellerDetailsAre(List<Map<String, String>> dataTable) {
+        User user = User.find.findById(state.getUser().getId());
+        Map<String, String> userInfo = dataTable.get(0);
 
-            // Send request
-            state.setResult(route(state.getApplication(), edit));
+        Assert.assertEquals(userInfo.get("first"), user.getFirstName());
+        Assert.assertEquals(userInfo.get("middle"), user.getFirstName());
+        Assert.assertEquals(userInfo.get("last"), user.getFirstName());
+        Assert.assertEquals(Integer.parseInt(userInfo.get("dob")), user.getDateOfBirth());
+        Assert.assertEquals(userInfo.get("gender"), user.getGender());
+    }
 
-        } catch (Exception e) {
-            System.out.println(e);
-            Assert.assertTrue(false);
+    @Then("The traveller's nationalities are")
+    public void theTravellerSNationalitiesAre(List<Map<String, String>> nationalities) {
+        User user = User.find.findById(state.getUser().getId());
+        Assert.assertEquals(user.getNationalities().size(), nationalities.size());
+
+        for (int i = 0; i < nationalities.size(); i++) {
+            Map<String, String> nationality = nationalities.get(i);
+            UserNationality userNationality = user.getNationalities().get(i);
+
+            Assert.assertEquals(Long.valueOf(nationality.get("id")), userNationality.getNationality().getId());
+            Assert.assertEquals(Boolean.valueOf(nationality.get("hasPassport")), userNationality.getHasPassport());
+        }
+    }
+
+    @Then("The traveller's traveller types are")
+    public void theTravellerSTravellerTypesAre(List<Map<String, String>> travellerTypes) {
+        User user = User.find.findById(state.getUser().getId());
+        Assert.assertEquals(user.getTravellerTypes().size(), travellerTypes.size());
+
+        for (int i = 0; i < travellerTypes.size(); i++) {
+            Map<String, String> travellerType = travellerTypes.get(i);
+            TravellerType userTravellerType = user.getTravellerTypes().get(i);
+
+            Assert.assertEquals(Long.valueOf(travellerType.get("travellerType")), userTravellerType.getId());
         }
     }
 }

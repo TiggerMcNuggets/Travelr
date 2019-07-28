@@ -276,9 +276,16 @@ export default {
     };
   },
   computed: {
+    /**
+     * A rule for the form to ensure there is no consecutive destination names in a trip.
+     */
     noSameDestinationNameConsecutiveRule() {
       return noSameDestinationNameConsecutiveRule(this.trip.destinations);
     },
+
+    /**
+     * A rule to enforce arrival and departure times are in a valid order.
+     */
     arrivalBeforeDepartureAndDestinationsOneAfterTheOther() {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.destinations

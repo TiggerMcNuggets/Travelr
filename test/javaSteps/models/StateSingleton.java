@@ -1,6 +1,5 @@
 package javaSteps.models;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 import models.Destination;
 import models.User;
@@ -20,13 +19,10 @@ public class StateSingleton {
     // Common data that needs to be shared
     @Inject
     private Application application;
-    private int travellerId; //Shouldn't need, delete when fully refactored
-    private int destinationId;
-    private String token; //Shouldn't need, delete when fully refactored
-    private JsonNode requestData; //Shouldn't need, delete when fully refactored
-    private Result result;
-    private String tripId;
     private Http.RequestBuilder request;
+    private Result result;
+    private User user;
+    private Destination destination;
 
     private User user;
     private Destination destination;
@@ -60,32 +56,12 @@ public class StateSingleton {
         return application;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    public Http.RequestBuilder getRequest() {
+        return request;
     }
 
-    public int getTravellerId() { return travellerId; }
-
-    public void setTravellerId(int travellerId) { this.travellerId = travellerId; }
-
-    public void setDestinationId(int destinationId) { this.destinationId = destinationId; }
-
-    public int getDestinationId() { return destinationId; }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public JsonNode getRequestData() {
-        return requestData;
-    }
-
-    public void setRequestData(JsonNode requestData) {
-        this.requestData = requestData;
+    public void setRequest(Http.RequestBuilder request) {
+        this.request = request;
     }
 
     public Result getResult() {
@@ -96,28 +72,12 @@ public class StateSingleton {
         this.result = result;
     }
 
-    public String getTripId() {
-        return tripId;
-    }
-
-    public void setTripId(String tripId) {
-        this.tripId = tripId;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Http.RequestBuilder getRequest() {
-        return request;
-    }
-
-    public void setRequest(Http.RequestBuilder request) {
-        this.request = request;
     }
 
     public Destination getDestination() {

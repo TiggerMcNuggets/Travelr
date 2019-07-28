@@ -136,7 +136,7 @@ public class DestinationRepository {
                 mergeDestinations(destination, sameDestinations);
             }
 
-            destination.isPublic = true;
+            destination.setIsPublic(true);
             destination.update();
 
             return destinationId;
@@ -204,17 +204,16 @@ public class DestinationRepository {
     public CompletableFuture<Boolean> toggleDestinationDeleted(Long id) {
         return supplyAsync(() -> {
             Destination dest = Destination.find.findByIdIncludeDeleted(id);
-            dest.deleted = !dest.deleted;
+            dest.setDeleted(!dest.deleted);
+
             dest.update();
-            return dest.deleted;
+            return dest.getDeleted();
         }, context);
     }
 
     public Boolean isDestinationUsed(Long destinationId) {
-//        return supplyAsync(() -> {
-            List<TripDestination> tripDestinations = TripDestination.find.getAllByDestinationId(destinationId);
-            return tripDestinations.size() > 0;
-//        }, context);
+        List<TripDestination> tripDestinations = TripDestination.find.getAllByDestinationId(destinationId);
+        return tripDestinations.size() > 0;
     }
 
 

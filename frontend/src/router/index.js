@@ -3,8 +3,6 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
-import Home from "../views/Home.vue";
-// import Dashboard from "../components/profile/Profile";
 import ProfilePhotos from "../components/profile/ProfilePhotos";
 import ProfileTrips from "../components/profile/ProfileTrips";
 import userSearch from "../components/userSearch/userSearch";
@@ -12,13 +10,13 @@ import Signup from "../components/signup/Signup.vue";
 import Destination from "../components/destination/Destination";
 import DestinationEdit from "../components/destination/DestinationEdit";
 import Login from "../components/login/Login";
+import Home from "../views/Home";
 import ProfileDashboard from "../components/profile/ProfileDashboard";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import EditProfile from "../components/profile/EditProfile.vue";
 import Logout from "../components/logout/Logout.vue";
 import ViewTrip from "../components/trips/ViewTrip.vue";
 import SingleDestination from "../components/destination/SingleDestination";
-import DestinationEditRequests from "../components/admin/DestinationEditRequests";
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
 
@@ -44,7 +42,9 @@ const authGuard = (to, from, next) => {
 };
 
 const unauthGuard = (to, from, next) => {
-  if (!store.getters.getToken) return next();
+  if (!store.getters.getToken) {
+    return next();
+  }
   if (store.getters.getToken && !store.getters.getUser) {
     store
       .dispatch("fetchMe")
@@ -103,9 +103,30 @@ let router = new Router({
   routes: [
     {
       path: "",
+      beforeEnter: unauthGuard
+    },
+
+    {
+      path: "",
       name: "home",
       component: Home,
-      beforeEnter: unauthGuard
+      beforeEnter: unauthGuard,
+      children: [
+        {
+          path: "/login",
+          name: "login",
+          component: Login,
+          beforeEnter: unauthGuard,
+          beforeLeave: unauthGuard
+        },
+        {
+          path: "/signup",
+          name: "signup",
+          component: Signup,
+          beforeEnter: unauthGuard,
+          beforeLeave: unauthGuard
+        }
+      ]
     },
 
     {
@@ -172,15 +193,6 @@ let router = new Router({
           }
         },
         {
-          path: "/edit_requests",
-          name: "edit_requests",
-          component: DestinationEditRequests,
-          beforeEnter: authGuard,
-          meta: {
-            requiresAdmin: true
-          }
-        },
-        {
           path: "/users",
           name: "userSearch",
           component: userSearch,
@@ -188,18 +200,7 @@ let router = new Router({
         }
       ]
     },
-    {
-      path: "/login",
-      name: "login",
-      component: Login,
-      beforeEnter: unauthGuard
-    },
-    {
-      path: "/signup",
-      name: "signup",
-      component: Signup,
-      beforeEnter: unauthGuard
-    },
+
     {
       path: "/logout",
       name: "logout",
