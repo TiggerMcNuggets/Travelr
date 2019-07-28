@@ -6,8 +6,7 @@
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
-
-        <wrapper v-if="hasMissingDates">
+        <div v-if="hasMissingDates && canDownloadTrip">
         <v-tooltip bottom>
             <template v-slot:activator="{on}">
                 <v-btn
@@ -20,16 +19,25 @@
             </template>
             <span>This Calander Has Missing Destinations</span>
         </v-tooltip>
-        </wrapper>
-        <wrapper v-else>
+        </div>
+        <div v-else-if="!canDownloadTrip">
             <v-btn
+            icon
+            disabled
             @click="downloadTrip()"
-            class="upload-toggle-button" fab small dark color="indigo"
-            v-on="on"
+            class="upload-toggle-button"
             >
             <v-icon >calendar_today</v-icon>
             </v-btn>
-        </wrapper>
+        </div>
+        <div v-else>
+            <v-btn
+            @click="downloadTrip()"
+            class="upload-toggle-button" fab small dark color="indigo"
+            >
+            <v-icon >calendar_today</v-icon>
+            </v-btn>
+        </div>
 
       </div>
 
@@ -289,6 +297,7 @@ export default {
         trip: {destinations:[]},
         userDestinations: [],
         shouldDisplayDialog: false,
+        canDownloadTrip: true,
 
         // define functions to make them visible to the script
         getDepthData: getDepthData,
@@ -321,9 +330,7 @@ export default {
          */
         downloadTrip: function() {
         tripRepository.downloadTrip(this.userId, this.tripId).then(res => {
-            console.log("THIS IS ME");
-            console.log(res);
-            console.log(res.data);
+            //The below code is needed to download something using JavaScript
             const url = window.URL.createObjectURL(new Blob([res.data]));
             const link = document.createElement('a');
             link.href = url;
@@ -535,12 +542,14 @@ export default {
                   return a.ordinal - b.ordinal;
               });
               this.hasMissingDates = false;
+              let numOfMissingDates = 0;
               // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
               for (let i = 0; i < trip.destinations.length; i++) {
                   trip.destinations[i].expanded = false;
                   trip.destinations[i].hidden = false;
                   if (trip.destinations[i].arrivalDate == 0) {
                     this.hasMissingDates = true;
+                    numOfMissingDates++;
                   }
 
                   if (trip.destinations[i].arrivalDate != 0) {
@@ -549,6 +558,9 @@ export default {
                   if (trip.destinations[i].arrivalDate != 0) {
                       trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
                   }
+              }
+              if (numOfMissingDates === trip.destinations.length) {
+                  this.canDownloadTrip = false;
               }
               this.trip = trip;
               return this.trip;
