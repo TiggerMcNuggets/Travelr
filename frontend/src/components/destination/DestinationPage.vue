@@ -195,9 +195,8 @@ export default {
             console.error(err);
           });
       } else {
-        DestinationRepository.createDestination(this.userId, destination)
+        this._postDestination(this.userId, destination)
           .then(() => {
-            // this.getDestinations();
             this.focussedDestination = {};
           })
           .catch(err => {
