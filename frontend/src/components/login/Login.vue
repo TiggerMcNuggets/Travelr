@@ -24,19 +24,6 @@
   </div>
 </template>
 
-<style lang="scss">
-  @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
-
-  .login-button {
-    margin: 40px 20px 0px 0px;
-  }
-
-  .no-underline {
-    text-decoration: none;
-  }
-
-</style>
-
 <script>
 import { store } from "../../store/index";
 
