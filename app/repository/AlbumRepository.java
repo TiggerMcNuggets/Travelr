@@ -64,7 +64,7 @@ public class AlbumRepository {
     public CompletableFuture<Long> remove(Long id) {
         return supplyAsync(() -> {
             Album album = Album.find.findAlbumById(id);
-            if (!album.isPermanent) {
+            if (!album.isPermanent && album != null) {
                 album.delete();
                 return album.id;
             }
