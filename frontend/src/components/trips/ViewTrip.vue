@@ -473,7 +473,6 @@ export default {
                 .updateTrip(userId, tripId, trip)
                 .then(() => {
                     const url = `/users/${userId}/trips/${tripId}`;
-                    console.log("trip", trip);
                     this.rollbackCheckpoint(
                         'PUT',
                         {
@@ -585,7 +584,6 @@ export default {
             if (numOfMissingDates === trip.destinations.length) {
                 this.canDownloadTrip = false;
             }
-            console.log(trip)
             this.trip = trip;
             return this.trip;
         });
