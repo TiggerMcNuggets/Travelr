@@ -1,177 +1,123 @@
 
 
 <template>
-  <v-card>
-    <div class="outer-container">
-      <div class="inner-container">
-        <div class="section">
-          <div class="dest-name">
-            <h2 class="headline">{{destination.name}}</h2>
-          </div>
-          <div>
-            <suggest-traveller-types
-              v-if="destination.isPublic && destination.ownerId !== parseInt(userId)"
-              class="upload-toggle-button"
-              :destinationId="destId"
-              :userTravellerTypes="destination.travellerTypes"
-            />
-            <v-btn v-else class="upload-toggle-button" fab small dark color="indigo">
-              <v-icon dark>lock</v-icon>
-            </v-btn>
-            <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              v-if="(isMyProfile || isAdminUser) && destination.ownerId === parseInt(userId)"
-              @click="editDestination"
-            >
-              <v-icon dark>edit</v-icon>
-            </v-btn>
-            <v-btn
-              class="upload-toggle-button"
-              fab
-              small
-              dark
-              color="indigo"
-              v-if="isMyProfile || isAdminUser"
-              @click="toggleShowUploadPhoto"
-            >
-              <v-icon dark>insert_photo</v-icon>
-            </v-btn>
-          </div>
-        </div>
-        <v-divider class="photo-header-divider"></v-divider>
-        <div class="dest-sub-info">
-          <p>
-            <strong>Type:</strong>
-            {{destination.type}}
-          </p>
-          <span class="dot"></span>
-          <p>
-            <strong>District:</strong>
-            {{destination.district}}
-          </p>
-          <span class="dot"></span>
-          <p>
-            <strong>Country:</strong>
-            {{destination.country}}
-          </p>
-          <span class="dot"></span>
-          <p>
-            <strong>Latitude:</strong>
-            {{destination.latitude}}
-          </p>
-          <span class="dot"></span>
-          <p>
-            <strong>Longitude:</strong>
-            {{destination.longitude}}
-          </p>
-          <span class="dot"></span>
-          <p>
-            <strong>Traveller Types:</strong>
+  <v-container fluid>
+    <PageHeader :title="destination.name" disableUndoRedo enableBackButton :options="options"/>
 
-            {{getTravellerTypes(destination.travellerTypes)}}
-          </p>
-        </div>
-        <v-divider class="photo-header-divider"></v-divider>
-        <div v-if="showUploadSection">
-          <div class="upload-section section">
-            <label>
-              <input
-                class="choose-file-button"
-                type="file"
-                id="file"
-                ref="file"
-                v-on:change="handleFileUpload()"
-              />
-            </label>
-            <div>
-              <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
-              <v-btn v-on:click="uploadExisting()">Choose Existing</v-btn>
-            </div>
-          </div>
-          <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
-          <v-alert :value="uploadSuccessful" color="success">Upload Successful</v-alert>
-          <v-divider class="photo-header-divider"></v-divider>
-        </div>
-
-        <ul>
-          <li v-for="row in files" :value="row.value" :key="row.value">
-            <div class="personal-photo-row">
-              <div
-                v-for="item in row"
-                :value="item.value"
-                :key="item.value"
-                class="image-container"
-              >
-                <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
-                <v-icon v-else class="lock-icon" left>lock</v-icon>
-
-                <div v-if="item.is_public" class="triangle pink-color"></div>
-                <div v-else class="triangle"></div>
-
-                <v-img
-                  @click.stop="dialog = true"
-                  v-on:click="setDialogueContent(item)"
-                  class="personal-photo-element"
-                  :src="getImgUrl(item)"
-                ></v-img>
-              </div>
-            </div>
-          </li>
-        </ul>
-
-        <v-dialog v-model="dialog" :width="clickedImageWidth">
-          <v-card>
-            <v-img :src="clickedImageURL"></v-img>
-
-            <v-card-title primary-title>
-              <div>
-                <h5 class="headline mb-0">Image Name</h5>
-                <div>Description/Other meta info</div>
-              </div>
-            </v-card-title>
-
-            <v-divider></v-divider>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-switch
-                v-if="clickedImage.is_public"
-                disabled
-                v-model="publicPhotoSwitch"
-                :label="`Public Photo`"
-              ></v-switch>
-              <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-              <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-            </v-card-actions>
-            <v-card-actions>
-              <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <v-dialog v-model="chooseExistingDialog" width="800">
-          <PhotoSelect v-bind="{closeDialogue, setDestinationImages}" />
-        </v-dialog>
-      </div>
+    <div class="dest-sub-info">
+      <p>
+        <strong>Type:</strong>
+        {{destination.type}}
+      </p>
+      <p>
+        <strong>District:</strong>
+        {{destination.district}}
+      </p>
+      <p>
+        <strong>Country:</strong>
+        {{destination.country}}
+      </p>
+      <p>
+        <strong>Latitude:</strong>
+        {{destination.latitude}}
+      </p>
+      <p>
+        <strong>Longitude:</strong>
+        {{destination.longitude}}
+      </p>
+      <p>
+        <strong>Traveller Types:</strong>
+        {{getTravellerTypes(destination.travellerTypes)}}
+      </p>
     </div>
-  </v-card>
+    <v-divider class="photo-header-divider"></v-divider>
+    <div v-if="showUploadSection">
+      <div class="upload-section section">
+        <label>
+          <input
+            class="choose-file-button"
+            type="file"
+            id="file"
+            ref="file"
+            v-on:change="handleFileUpload()"
+          >
+        </label>
+        <div>
+          <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
+          <v-btn v-on:click="uploadExisting()">Choose Existing</v-btn>
+        </div>
+      </div>
+      <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
+      <v-alert :value="uploadSuccessful" color="success">Upload Successful</v-alert>
+      <v-divider class="photo-header-divider"></v-divider>
+    </div>
+
+    <ul>
+      <li v-for="row in files" :value="row.value" :key="row.value">
+        <div class="personal-photo-row">
+          <div v-for="item in row" :value="item.value" :key="item.value" class="image-container">
+            <v-icon v-if="item.is_public" class="lock-icon" left>lock_open</v-icon>
+            <v-icon v-else class="lock-icon" left>lock</v-icon>
+
+            <div v-if="item.is_public" class="triangle pink-color"></div>
+            <div v-else class="triangle"></div>
+
+            <v-img
+              @click.stop="dialog = true"
+              v-on:click="setDialogueContent(item)"
+              class="personal-photo-element"
+              :src="getImgUrl(item)"
+            ></v-img>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <suggest-traveller-types
+      :destinationId="destId"
+      :userTravellerTypes="[]"
+      :showSuggestTravellerTypes="showSuggestTravellerTypes"
+      :close="toggleShowSuggestTravellerTypes"
+    />
+
+    <v-dialog v-model="dialog" :width="clickedImageWidth">
+      <v-card>
+        <v-img :src="clickedImageURL"></v-img>
+
+        <v-card-title primary-title>
+          <div>
+            <h5 class="headline mb-0">Image Name</h5>
+            <div>Description/Other meta info</div>
+          </div>
+        </v-card-title>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-switch
+            v-if="clickedImage.is_public"
+            disabled
+            v-model="publicPhotoSwitch"
+            :label="`Public Photo`"
+          ></v-switch>
+          <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
+          <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
+        </v-card-actions>
+        <v-card-actions>
+          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="chooseExistingDialog" width="800">
+      <PhotoSelect v-bind="{closeDialogue, setDestinationImages}"/>
+    </v-dialog>
+  </v-container>
 </template>
 
 <style>
 @import "../../assets/css/style.css";
-.dot {
-  height: 7px;
-  width: 7px;
-  margin: 0px 10px;
-  background-color: #3f51b5;
-  border-radius: 50%;
-  display: inline-block;
-}
-
 .dest-name {
   display: flex;
   justify-content: space-between;
@@ -186,10 +132,9 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-left: 70px;
 }
 .dest-sub-info p {
-  margin-bottom: 0px;
+  margin-right: 20px;
   color: grey;
 }
 
@@ -211,6 +156,8 @@ import {
   updateDestinationPhoto,
   addExistingPhoto
 } from "../../repository/DestinationPhotoRepository";
+import PageHeader from "../common/header/PageHeader";
+
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
@@ -218,7 +165,8 @@ export default {
 
   components: {
     PhotoSelect,
-    SuggestTravellerTypes
+    SuggestTravellerTypes,
+    PageHeader
   },
 
   // local variables
@@ -247,7 +195,49 @@ export default {
     };
   },
 
+  computed: {
+    /**
+     * Options used in the header component.
+     */
+    options() {
+      let options = [];
+
+      if (
+        (this.isMyProfile || this.isAdminUser) &&
+        this.destination.ownerId === parseInt(this.userId)
+      ) {
+        options.push({ action: this.editDestination, icon: "edit" });
+      }
+
+      if (this.isMyProfile || this.isAdminUser) {
+        options.push({
+          action: this.toggleShowUploadPhoto,
+          icon: "insert_photo"
+        });
+      }
+
+      if (
+        this.destination.isPublic &&
+        this.destination.ownerId !== parseInt(this.userId)
+      ) {
+        options.push({
+          action: this.toggleShowSuggestTravellerTypes,
+          icon: "card_travel"
+        });
+      }
+
+      return options;
+    }
+  },
+
   methods: {
+    /**
+     * Toggles the upload section for the photos
+     */
+    toggleShowSuggestTravellerTypes: function() {
+      this.showSuggestTravellerTypes = !this.showSuggestTravellerTypes;
+    },
+
     /**
      * Redirects the user to the edit destination page.
      */
