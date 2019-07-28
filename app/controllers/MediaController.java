@@ -45,7 +45,7 @@ public class MediaController extends Controller {
     @Inject
     public MediaController(Config config, PersonalPhotoRepository personalPhotoRepository, MediaRepository mediaRepository, AlbumRepository albumRepository) {
         String rootPath = System.getProperty("user.home");
-        MEDIA_FILEPATH = rootPath + config.getString("personalPhotosFilePath");
+        MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
         this.mediaRepository = mediaRepository;
         this.albumRepository = albumRepository;
     }
@@ -93,7 +93,6 @@ public class MediaController extends Controller {
             return mediaRepository.add(user_id, album_id, fileName).thenApplyAsync(media_id -> {
                 if (media_id != null) {
                     return ok("File uploaded with Media ID " + media_id);
-
                 } else if (media_id == null) {
                     return badRequest("Duplicate Media.");
                 } else {
@@ -226,7 +225,6 @@ public class MediaController extends Controller {
         if(user_id != Album.find.findAlbumById(album_id).getUser().getId()) {
             return CompletableFuture.completedFuture(unauthorized(APIResponses.FORBIDDEN_ALBUM_DELETION));
         }
-
 
         return albumRepository.remove(album_id).thenApplyAsync(deleted_album_id -> {
             //not found check, repository checks that both album and media exist

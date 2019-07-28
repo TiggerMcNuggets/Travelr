@@ -1,27 +1,30 @@
 package repository;
 
 import controllers.dto.Media.UpdateMediaReq;
-import controllers.dto.Photo.UpdatePhotoReq;
-import io.ebean.Expr;
 import io.ebean.ExpressionList;
 import models.Album;
 import models.Media;
-import models.PersonalPhoto;
 import models.User;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import com.typesafe.config.Config;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class MediaRepository {
 
     private final DatabaseExecutionContext executionContext;
+    private final String rootPath = System.getProperty("user.home");
+    private String MEDIA_FILEPATH;
 
     @Inject
-    public MediaRepository(DatabaseExecutionContext executionContext) {
+    public MediaRepository(Config config, DatabaseExecutionContext executionContext) {
+        MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
         this.executionContext = executionContext;
     }
 
@@ -120,6 +123,16 @@ public class MediaRepository {
             if (media == null) return null; // media does not exist
 
             album.removeMedia(media);
+
+            if (media.albums.size() == 0) {
+                File file = new File(MEDIA_FILEPATH + media.getUriString());
+                if (file.delete()) {
+                    return media.id;
+                } else {
+                    return null;
+                }
+            }
+
             return media.id;
         }, executionContext);
     }
