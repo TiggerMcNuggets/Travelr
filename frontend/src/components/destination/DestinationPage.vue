@@ -21,7 +21,7 @@
           ></DestinationMap>
         </v-flex>
 
-        <v-flex xs4 sm3 md2 v-if="focussedDestination.id">
+        <v-flex xs4 sm3 md2 v-if="focussedDestination">
           <v-flex
             v-if="focussedDestination.id && isAllowedToEdit"
             d-flex
@@ -38,7 +38,7 @@
             ></UndoRedoButtons>
           </v-flex>
           <DestinationDetails
-            v-if="focussedDestination.id"
+            v-if="focussedDestination"
             :focussedDestination="deepCopy(focussedDestination)"
             :passBackDestination="submitDestination"
             :focusDestination="focusDestination"
