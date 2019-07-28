@@ -84,7 +84,7 @@
                                                 isNaN(destination.arrivalDate) || isNaN(destination.departureDate))">info</v-icon>
                                             </v-avatar>
                                         </template>
-                                        <span>Missing Dates</span>
+                                        <span>Missing Date(s)</span>
                                     </v-tooltip>
                                 <v-combobox
                                         :items="userDestinations"
