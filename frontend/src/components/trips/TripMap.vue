@@ -11,15 +11,14 @@
         <GmapMarker
           v-for="(destination, i) in listOfDestinations"
           :key="i"
-          :position=destination
+          :position="destination"
           :draggable="false"
           :icon="blueMarker"
         />
         <GmapPolyline
-          v-for="path in pathList"
-          :key=path.ordinal
-          :path=path
-          :options="{strokeColor: path[0].strokeColor}"
+          v-for="path in paths"
+          :key="path.id"
+          :options="{path: path, strokeColor: path[0].strokeColor}"
           >
         </GmapPolyline>
       </GmapMap>
@@ -58,7 +57,6 @@
             latLngBounds: {north: 85, south: -85, west: -180, east: 180},
             strictBounds: true
           },
-          strokeColor: '#0000FF'
         },
         infoWindow: {
           position: { lat: 0, lng: 0 },
@@ -69,20 +67,32 @@
     },
 
     props: {
-      destinations: Array
-    },
-
-    created() {
-      console.log("test" + this.destinations);
+      destinations: Array,
+      initialDestination: Object
     },
 
     computed: {
 
+      /*
+      * Returns a list of paths to be rendered as polylines obtained from the pathList function.
+      */
+      paths() {
+        return this.pathList();
+      },
+
+      /*
+      * Returns a concatenated list of destinations
+      */
       listOfDestinations() {
-        return this.pathList.reduce((accumulator, path) => {
+        return this.pathList().reduce((accumulator, path) => {
           return accumulator.concat([...path])
         }, []);
       },
+
+      
+    },
+
+    methods: {
 
       /*
       * Creates an array of arrays containing latitude and longitude to represent different polylines.
@@ -93,12 +103,11 @@
         let tempPath = [];
         let currentDepth;
         for (let i = 0; i < this.destinations.length; i++) {
-          console.log(i);
           let RGB = ["00", "00", "00"]
           currentDepth = this.destinations[i].depth;
           if (i + 1 == this.destinations.length) {
             tempPath.push(this.destinations[i])
-            RGB[(this.destinations[i - 1].depth) % 3] = "FF";
+            RGB[((this.destinations[i - 1].depth + 2) % 3)] = "FF";
             tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
             tempPaths.push(tempPath);
             break
@@ -107,9 +116,9 @@
           } else if ((currentDepth < this.destinations[i + 1].depth) || (currentDepth < this.destinations[i - 1].depth)) {
             tempPath.push(this.destinations[i]);
             if (currentDepth < this.destinations[i - 1].depth) {
-              RGB[(this.destinations[i - 1].depth % 3)] = "FF";
+              RGB[((this.destinations[i - 1].depth + 2) % 3)] = "FF";
             } else {
-              RGB[(this.destinations[i].depth % 3)] = "FF";
+              RGB[((this.destinations[i].depth + 2) % 3)] = "FF";
             }
             tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
             tempPaths.push(tempPath)
@@ -119,8 +128,6 @@
             tempPath.push(this.destinations[i]);
           }
         }
-        console.log(tempPaths);
-        console.log("here")
         for (let i = 0; i < tempPaths.length; i++) {
           tempPaths[i] = tempPaths[i].map((path) => {
             return {
@@ -130,12 +137,12 @@
               }
           });
         }
-        console.log(tempPaths);
-        return tempPaths;
-      }
-    },
 
-    methods: {
+        if (this.destinations[0] != undefined) {
+          this.gMapOptions.center = {lat: this.destinations[0].destination.latitude, lng: this.destinations[0].destination.longitude};
+        }
+        return tempPaths;
+      },
 
       /*
       * Toggles the map to have a dark theme
@@ -148,6 +155,6 @@
         }
         this.darkModeOn = !this.darkModeOn;
       },
-    }
+    },
   };
 </script>
