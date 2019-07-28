@@ -1,6 +1,14 @@
 <template>
   <v-container fluid>
-    <PageHeader title="Edit Profile" :undo="undo" :redo="redo" enableBackButton :options="[]" />
+    <PageHeader
+      title="Edit Profile"
+      :undo="undo"
+      :redo="redo"
+      :canRedo="rollbackCanRedo"
+      :canUndo="rollbackCanUndo"
+      enableBackButton
+      :options="[]"
+    />
     <v-form ref="form" v-model="isValid" lazy-validation>
       <v-flex text-xs-left>
         <TravellerForm
@@ -23,7 +31,7 @@
               id="file"
               ref="file"
               v-on:change="handleFileUpload()"
-            />
+            >
           </label>
         </div>
         <v-btn :disabled="!isValid" large color="error" @click="handleEdit">Save</v-btn>
@@ -68,7 +76,6 @@ export default {
     };
   },
   methods: {
-
     /**
      * Sets all visible alerts to invisible
      */
@@ -194,7 +201,7 @@ export default {
         console.log(err);
         this.undoRedoErrorAlert = true;
       }
-    }.bind(this),
+    },
 
     /**
      * Redoes the last action and calls getTraveller() afterwards
@@ -207,7 +214,7 @@ export default {
         console.log(err);
         this.undoRedoErrorAlert = true;
       }
-    }.bind(this)
+    }
   },
 
   /**
