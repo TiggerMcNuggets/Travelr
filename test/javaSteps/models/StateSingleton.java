@@ -24,8 +24,6 @@ public class StateSingleton {
     private User user;
     private Destination destination;
 
-    private User user;
-    private Destination destination;
 
     /**
      * Private constructor to avoid illegal initialisation of new objects
