@@ -25,6 +25,7 @@ import repository.PersonalPhotoRepository;
 import utils.FileHelper;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -253,5 +254,22 @@ public class MediaController extends Controller {
             return ok(APIResponses.SUCCESSFUL_MEDIA_DELETION);
         });
     }
+
+    /**
+     * Gets a raw image from the file system and sends this as response data.
+     * @param filename The file name of the image to get.
+     * @return The raw image file which corresponds to the filename given.
+     */
+
+    public Result getImageFromDatabase(String filename) {
+
+        File file = new File(this.MEDIA_FILEPATH + filename);
+        try {
+            return ok(file);
+        } catch (Exception e) {
+            return badRequest(APIResponses.MISSING_FILE);
+        }
+    }
+
 }
 

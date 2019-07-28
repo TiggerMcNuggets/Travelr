@@ -50,6 +50,7 @@ DELETE      /api/users/:id/albums/:album_id                    controllers.Media
 PATCH       /api/users/:id/albums/:album_id/media/:media_id    controllers.MediaController.addMediaToAlbum(request: Request, id: Long, album_id: Long, media_id: Long)
 DELETE      /api/users/:id/albums/:album_id/media/:media_id    controllers.MediaController.deleteSingleMedia(request: Request, id: Long, album_id: Long, media_id: Long)
 POST        /api/users/:id/media/:media_id                     controllers.MediaController.updateUserMedia(request: Request, id: Long, media_id: Long)
+GET         /api/users/:id/albums/:album_id/media/media_id     controllers.MediaController.getImageFromDatabase(request: Request, id: Long, media: Long)
 
 
 # Destinations (Old)
