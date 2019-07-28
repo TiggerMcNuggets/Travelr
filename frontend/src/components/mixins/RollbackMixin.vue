@@ -71,6 +71,9 @@ export default {
         return this.rollbackManager.canRedo();
     },
 
+    /**
+     * TODO
+     */
     rollbackFlush: function() {
         return this.rollbackManager.flush();
     }

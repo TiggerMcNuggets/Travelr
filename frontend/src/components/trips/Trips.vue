@@ -1,48 +1,13 @@
 
 
 <template>
-  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
-    <div class="section">
-      <div class="dest-name">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
+  <v-container fluid>
+    <PageHeader title="Trips" :undo="undo" :redo="redo" :options="options" />
 
-        <undo-redo-buttons
-          :canRedo="rollbackCanRedo()"
-          :canUndo="rollbackCanUndo()"
-          :undo="undo"
-          :redo="redo"
-        ></undo-redo-buttons>
-
-        <h2 class="headline">Trips</h2>
-      </div>
-      <div>
-        <v-btn
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          v-if="isMyProfile || isAdminUser"
-          @click="toggleShowCreateTrip"
-        >
-          <v-icon dark>add</v-icon>
-        </v-btn>
-
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShowSearch">
-          <v-icon dark>search</v-icon>
-        </v-btn>
-      </div>
-    </div>
-
-    <v-divider class="photo-header-divider"></v-divider>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
 
-
     <div v-if="showCreateTrip">
-
       <create-trip
         v-if="showCreateTrip"
         :toggleShowCreateTrip="toggleShowCreateTrip"
@@ -127,6 +92,8 @@ import RollbackMixin from "../mixins/RollbackMixin.vue";
 import StoreTripsMixin from "../mixins/StroreTripsMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 // let tripRepository = RepositoryFactory.get("trip");
+import PageHeader from "../common/header/PageHeader";
+
 
 export default {
   store,
@@ -151,6 +118,13 @@ export default {
   },
   // the place where you want to make the store values readable
   computed: {
+    options() {
+      return [
+        { action: this.toggleShowCreateTrip, icon: "add" },
+        { action: this.toggleShowSearch, icon: "search" }
+      ];
+    },
+
     /**
      * Filters the list of trips according to the search value
      */
@@ -168,12 +142,12 @@ export default {
 
   // child components
   components: {
-    UndoRedoButtons,
-    CreateTrip: CreateTrips
+    CreateTrip: CreateTrips,
+    PageHeader
   },
 
   methods: {
-       /**
+    /**
      * Sets all alert error visible fields to invisible
      */
     clearAlerts() {
@@ -255,24 +229,23 @@ export default {
     checkpointCreateTrip: function(tripId) {
       const url = `/users/${this.userId}/trips/${tripId}/toggle_deleted`;
       this.rollbackCheckpoint(
-        'POST',
+        "POST",
         {
-            url: url,
+          url: url
         },
         {
-            url: url,
+          url: url
         }
-        );
+      );
     },
 
-
     /**
-    * Undoes the last action and gets destinations afterwards
-    */
+     * Undoes the last action and gets destinations afterwards
+     */
     undo: function() {
       const actions = [() => this._getTrips(this.userId), this.clearAlerts];
       try {
-        this.rollbackUndo(actions); 
+        this.rollbackUndo(actions);
       } catch (err) {
         this.undoRedoError = true;
       }
@@ -291,7 +264,9 @@ export default {
     }
   },
 
-
+  /**
+   * Sets user privalages and gets trips accordingly.
+   */
   created: function() {
     this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;

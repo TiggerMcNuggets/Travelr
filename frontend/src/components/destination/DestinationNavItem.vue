@@ -9,7 +9,7 @@
                 <img
                   class="dest-small-image"
                   src="https://perkinsdesigns.files.wordpress.com/2015/11/jan15_mountains_galore3.png"
-                >
+                />
               </div>
             </div>
             <div>
@@ -64,6 +64,7 @@ export default {
   data() {
     return {};
   },
+
   props: {
     destination: Object,
     isShowing: Boolean,

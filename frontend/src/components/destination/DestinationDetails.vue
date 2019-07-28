@@ -5,7 +5,6 @@
         <v-flex xs12 mt-3 pb-2 px-3>
           <p v-if="createMode" class="font-weight-bold dest-heading">Create Destination</p>
           <p v-if="editMode && !createMode" class="font-weight-bold dest-heading">Edit Destination</p>
-     
         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
@@ -159,34 +158,34 @@
 
 
 <script>
-  import { rules } from "../form_rules";
-  import SelectDataRepository from "../../repository/SelectDataRepository";
+import { rules } from "../form_rules";
+import SelectDataRepository from "../../repository/SelectDataRepository";
 
-  export default {
-    data() {
-      return {
-        editMode: false,
-        destination: {
-          data: {
-          }
-        },
-        ...rules,
-        typeList: [],
-        travellerTypes: []
-      };
-    },
-    /**
-     * focussedDestination: Clicked on / selected point
-     * passBackDestination: What todo when save/create is clicked
-     * focusDestination: Send a update focused destination to the DestinationPage
-     */
-    props: {
-      focussedDestination: Object,
-      passBackDestination: Function,
-      focusDestination: Function,
-      allowedToEdit: Boolean
-    },
-    computed: {
+export default {
+  data() {
+    return {
+      editMode: false,
+      destination: {
+        data: {}
+      },
+      ...rules,
+      typeList: [],
+      travellerTypes: []
+    };
+  },
+
+  /**
+   * focussedDestination: Clicked on / selected point
+   * passBackDestination: What todo when save/create is clicked
+   * focusDestination: Send a update focused destination to the DestinationPage
+   */
+  props: {
+    focussedDestination: Object,
+    passBackDestination: Function,
+    focusDestination: Function,
+    allowedToEdit: Boolean
+  },
+  computed: {
 
       /**
        * Is it in create mode or viewing/edit mode
@@ -215,25 +214,62 @@
         deep: true
       }
     },
-    methods: {
-      /**
-       *
-       */
-      goToViewDestination() {
-        this.editMode = false;
-      },
-      /**
-       * Updated long and lat on the map marker when fields are changed
-       */
-      pushDestination() {
-        this.focusDestination(this.destination);
-      },
-      updateDestination(){
-        if(this.$refs.form.validate()) {
-          this.passBackDestination(this.destination);
-          this.goToViewDestination();
-        }
-      },
+//   },
+//   watch: {
+    // /**
+    //  * Reset back to viewing mode on destination change
+    //  */
+    // focussedDestination: {
+    //   handler: function(newValue, oldValue) {
+    //     if (oldValue.data.id !== newValue.data.id) {
+    //       this.goToViewDestination();
+    //     }
+    //     if (newValue.data !== this.destination.data) {
+    //       this.destination = this.focussedDestination;
+    //     }
+    //   },
+
+    //   gotoDest() {
+    //     const userId = this.$store.getters.getUser.id;
+    //     this.$router.push(
+    //       `/user/${userId}/destinations/${this.focussedDestination.id}`
+    //     );
+    // }
+  methods: {
+    /**
+     * Turns off edit mode.
+     */
+    goToViewDestination() {
+      this.editMode = false;
+    },
+
+    /**
+     * Updated long and lat on the map marker when fields are changed
+     */
+    pushDestination() {
+      this.focusDestination(this.destination);
+    },
+
+    /**
+     * Updates the destination and returns to viewing mode.
+     */
+    updateDestination() {
+      if (this.$refs.form.validate()) {
+        this.passBackDestination(this.destination);
+        this.goToViewDestination();
+      }
+    },
+
+    /**
+     * Redirects user to the destination details page.
+     */
+    gotoDest() {
+      var userId = this.$store.getters.getUser.id;
+      this.$router.push(
+        `/user/${userId}/destinations/${this.focussedDestination.data.id}`
+      );
+    },
+
       /**
        * populated list of traveller types for user to select from
        **/
@@ -242,17 +278,15 @@
         this.typeList = travellerTypes.data;
 
       },
-      gotoDest() {
-        const userId = this.$store.getters.getUser.id;
-        this.$router.push(
-          `/user/${userId}/destinations/${this.focussedDestination.id}`
-        );
-      }
-    },
-    mounted() {
-      this.populateSelects();
-      this.destination = this.focussedDestination;
-    },
-  };
+  },
+
+  /**
+   * Populates the select elements in the form and sets the selected destination element once component has mounted.
+   */
+  mounted() {
+    this.populateSelects();
+    this.destination = this.focussedDestination;
+  }
+};
 </script>
 

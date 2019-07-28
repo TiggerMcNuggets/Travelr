@@ -1,0 +1,20 @@
+@import "theme.scss";
+@import "header.scss";
+@import "dashboard.scss";
+
+h1 {
+  align-self: flex-end;
+  font-size: 50px;
+}
+
+aside {
+  margin-right: 0px !important;
+}
+
+main {
+  margin-left: 0px !important;
+}
+
+.theme--light.application {
+  background-color: white;
+}

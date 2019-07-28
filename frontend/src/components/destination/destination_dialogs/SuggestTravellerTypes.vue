@@ -95,6 +95,10 @@
                     });
             },
         },
+
+        /**
+         * Populates the selection form items once component has mounted.
+         */
         mounted() {
             this.populateSelects();
             this.selectedTravellerTypes = deepCopy(this.userTravellerTypes);

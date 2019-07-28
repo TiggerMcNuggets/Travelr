@@ -124,14 +124,29 @@ export default {
   },
 
   methods: {
+    /**
+     * Creates a deep copy
+     */
     deepCopy(value) {
       return deepCopy(value);
     },
 
+    /**
+     * Creates an empty destination?? Is this used??
+     */
     createDestination() {
       this.focussedDestination = {
         data: {}
       };
+    },
+
+    /**
+     * Toggles between destinations
+     */
+    toggleDestination(destination) {
+      var showDest = this.destinations.filter(
+        x => x.data.id === destination.data.id
+      );
     },
 
     isDestinationShowing(destinationId) {
@@ -143,6 +158,9 @@ export default {
       this.isShowing[index].isShowing = !this.isShowing[index].isShowing;
     },
 
+    /**
+     * Changed the focused destination to a given destination
+     */
     focusDestination(destination) {
       this.focussedDestination = this.deepCopy(destination);
       if (this.focussedDestination && this.focussedDestination.id) {
@@ -153,6 +171,10 @@ export default {
       }
     },
 
+
+    /**
+     * Checks if a destination exists if it does, updates it. If it doesn't, a new destination is created.
+     */
     submitDestination(destination) {
       if (destination.id) {
         DestinationRepository.updateDestination(
@@ -176,7 +198,7 @@ export default {
               }
             );
             this.rollbackPreviousBody = destination;
-            this.getDestinations(this.userId);
+
           })
           .catch(err => {
             console.error(err);
@@ -184,7 +206,7 @@ export default {
       } else {
         DestinationRepository.createDestination(this.userId, destination)
           .then(() => {
-            this.getDestinations();
+            // this.getDestinations();
             this.focussedDestination = {};
           })
           .catch(err => {
@@ -193,17 +215,41 @@ export default {
       }
     },
 
+    // /**
+    //  * Populates the destinations
+    //  */
+    // async populateDestinations() {
+    //   this.destinations = [];
+    //   try {
+    //     const response = await DestinationRepository.getDestinations(
+    //       this.userId
+    //     );
+    //     response.data.forEach(data => {
+    //       var destinationObject = {
+    //         data: data,
+    //         isShowing: true
+    //       };
+    //       this.destinations.push(destinationObject);
+    //     });
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // },
+
+    /**
+     * Cancels an edit on a clicked destination.
+     */
     cancelEdit() {
       this.focussedDestination = {};
     },
 
-    async fetchAfterRollback() {
-      let id = this.focussedDestination.id;
-      await this.getDestinations(this.userId);
-      this.focussedDestination = this.destinations.filter(
-        dest => dest.id === id
-      )[0];
-    },
+    // async fetchAfterRollback() {
+    //   let id = this.focussedDestination.id;
+    //   // await this.getDestinations(this.userId);
+    //   this.focussedDestination = this.destinations.filter(
+    //     dest => dest.id === id
+    //   )[0];
+    // },
 
     populateIsShowing() {
       return [...this.isShowing, ...this.destinations.map(dest => {
@@ -216,16 +262,27 @@ export default {
       })]
     },
     
+    /**
+     * Sets the rollback undo action.
+     */
     undo() {
-      const actions = [this.fetchAfterRollback]; // fill;
+      const actions = [
+              // this.fetchAfterRollback,
+        () => this._getDestinations(this.userId)]; // fill;
       try {
         this.rollbackUndo(actions);
       } catch (err) {
         console.error(err);
       }
     },
+
+    /**
+     * Sets the redo rollback action.
+     */
     redo() {
-      const actions = [this.fetchAfterRollback]; // fill;
+      const actions = [
+              // this.fetchAfterRollback,
+        () => this._getDestinations(this.userId)]; // fill;
       try {
         this.rollbackRedo(actions);
       } catch (err) {
@@ -233,7 +290,11 @@ export default {
       }
     }
   },
+
   computed: {
+    /**
+     * Checks if the user is authenticated to edit the selected destinatoin.
+     */
     isAllowedToEdit() {
       return (
         this.isAdminUser ||
