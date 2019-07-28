@@ -95,8 +95,6 @@
   import { rules } from "../form_rules";
   import SelectDataRepository from "../../repository/SelectDataRepository";
   import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  let destinationRepository = RepositoryFactory.get("destination");
 
   export default {
     mixins: [StoreDestinationsMixin],

@@ -158,28 +158,6 @@
         });
     },
 
-    /**
-     * Updates a destination by through a request to the API based on the updated data in the form.
-     * This function will first check if the data is valid and only submit successfully if it is.
-     * A checkpoint is pushed to the undo redo stack containing information for the action and reaction
-     */
-    updateDestination: function() {
-      if (this.$refs.form.validate()) {
-        const userId = this.$route.params.id;
-        const destId = this.$route.params.dest_id;
-
-        // Call the update request
-        destinationRepository
-                .getDestination(this.$route.params.id, this.$route.params.dest_id)
-                .then(result => {
-                  this.destination = result.data;
-
-                  // This is set to later be pushed as a reaction to the rollback stack
-                  this.rollbackSetPreviousBody(result.data);
-                });
-      }
-    },
-
       /**
        * Updates a destination by through a request to the API based on the updated data in the form.
        * This function will first check if the data is valid and only submit successfully if it is.

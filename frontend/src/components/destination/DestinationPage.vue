@@ -70,8 +70,6 @@
 
 <script>
 import { store } from "../../store/index";
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let DestinationRepository = RepositoryFactory.get("destination");
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import DestinationNav from "./DestinationNav";
