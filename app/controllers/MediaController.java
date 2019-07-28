@@ -11,6 +11,7 @@ import controllers.dto.Media.UpdateMediaReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
+import models.Album;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -218,13 +219,22 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> deleteAlbum(Http.Request request, Long user_id, Long album_id) {
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user_id);
+        if (middlewareRes != null) return middlewareRes;
+
+        if(user_id != Album.find.findAlbumById(album_id).getUser().getId()) {
+            return CompletableFuture.completedFuture(unauthorized(APIResponses.FORBIDDEN_ALBUM_DELETION));
+        }
+
+
         return albumRepository.remove(album_id).thenApplyAsync(deleted_album_id -> {
             //not found check, repository checks that both album and media exist
-            if(deleted_album_id != null) {
+            if(deleted_album_id == null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
-            return ok("Album deleted");
+            return ok(APIResponses.SUCCESSFUL_ALBUM_DELETION);
         });
     }
 
@@ -238,11 +248,11 @@ public class MediaController extends Controller {
     public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.remove(album_id, media_id).thenApplyAsync(deleted_media_id -> {
             //not found check, repository checks that both album and media exist
-            if(deleted_media_id != null) {
+            if(deleted_media_id == null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
-            return ok("Media deleted");
+            return ok(APIResponses.SUCCESSFUL_MEDIA_DELETION);
         });
     }
 }
