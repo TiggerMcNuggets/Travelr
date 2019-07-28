@@ -3,23 +3,14 @@
   <v-card>
   <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
       <div class="section">
-      <div>
         <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
       </div>
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="toggleShouldDisplayButton()">
-          <v-icon dark>edit</v-icon>
-        </v-btn>
-      </div>
 
     <v-divider class="photo-header-divider"/>
-      <undo-redo-buttons
-              :canRedo="rollbackCanRedo()"
-              :canUndo="rollbackCanUndo()"
-              :undo="undo"
-              :redo="redo"
-      ></undo-redo-buttons>
+
+      </v-layout>
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">
