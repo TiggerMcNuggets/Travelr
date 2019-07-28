@@ -66,7 +66,7 @@ Feature: CreateDestination
     And The body is
       """
       {
-        "name": "Eiffel Tower",
+        "name": "Eiffel Tower",F40
         "latitude": 5.0,
         "longitude": 5.0,
         "type": "Landmark",

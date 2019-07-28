@@ -3,6 +3,18 @@ Feature: Create Trip
 
   Scenario: Create a trip successfully
     Given I am authenticated
+    And I own the following destinations
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+      | Small River  | 3.0      | 3.0       | River    | Otago      | New Zealand|
+    When I create a trip called "My Trip" from my destinations
+
+
+
+
+
+
 
   Scenario: Create a trip for a user as an admin
   # TODO: Implement, (expect 201)
