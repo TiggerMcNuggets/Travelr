@@ -3,7 +3,6 @@
 // Variables
 $profile-image-size: 250px;
 
-
 /*
 ---------- Profile Details ----------
 */
@@ -37,10 +36,10 @@ li {
 .profile-container {
   height: $profile-image-size !important;
   width: $profile-image-size !important;
+  margin: auto;
   overflow: hidden !important;
   border-radius: $profile-image-size !important;
 }
-
 
 /*
 ---------- Profile Edit ----------
