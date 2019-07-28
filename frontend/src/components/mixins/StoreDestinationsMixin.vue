@@ -21,7 +21,7 @@
         methods: {
             _getDestinations: async function(userId) {
                 try {
-                    this.$store.dispatch('getDestinations', {userId});
+                    await this.$store.dispatch('getDestinations', {userId});
                 } catch (e) {
                     print(e);
                 }

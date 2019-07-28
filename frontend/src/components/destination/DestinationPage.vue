@@ -117,7 +117,7 @@ export default {
 
     destinations: {
       handler: function() {
-        this.isShowing = this.populateIsShowing();
+        this.isShowing = [...this.populateIsShowing()];
       }
     }
 
@@ -140,14 +140,14 @@ export default {
       };
     },
 
-    /**
-     * Toggles between destinations
-     */
-    toggleDestination(destination) {
-      var showDest = this.destinations.filter(
-        x => x.data.id === destination.data.id
-      );
-    },
+    // /**
+    //  * Toggles between destinations
+    //  */
+    // toggleDestination(destination) {
+    //   var showDest = this.destinations.filter(
+    //     x => x.data.id === destination.data.id
+    //   );
+    // },
 
     isDestinationShowing(destinationId) {
       return this.isShowing.find(x => x.id === destinationId).isShowing;
@@ -177,7 +177,8 @@ export default {
      */
     submitDestination(destination) {
       if (destination.id) {
-        DestinationRepository.updateDestination(
+        console.log("HERE");
+        this._putDestination(
           this.userId,
           destination.id,
           destination
@@ -214,7 +215,7 @@ export default {
           });
       }
     },
-
+    //
     // /**
     //  * Populates the destinations
     //  */
@@ -243,23 +244,22 @@ export default {
       this.focussedDestination = {};
     },
 
-    // async fetchAfterRollback() {
-    //   let id = this.focussedDestination.id;
-    //   // await this.getDestinations(this.userId);
-    //   this.focussedDestination = this.destinations.filter(
-    //     dest => dest.id === id
-    //   )[0];
-    // },
+    async fetchAfterRollback() {
+      let id = this.focussedDestination.id;
+      await this._getDestinations(this.userId);
+      console.log("destinations", this.destinations);
+      this.focussedDestination = this.destinations.filter(
+              dest => dest.id === id
+      )[0];
+    },
 
     populateIsShowing() {
-      return [...this.isShowing, ...this.destinations.map(dest => {
-        if (!this.isShowing.map(destShow => destShow.id).includes(dest.id)) {
-          return {
-            id: dest.id,
-            isShowing: true,
-          }
+      return [...this.isShowing, ...this.destinations.filter(dest => !this.isShowing.map(destShow => destShow.id).includes(dest.id)).map(destination => {
+        return {
+          id: destination.id,
+          isShowing: true,
         }
-      })]
+      })];
     },
     
     /**
@@ -267,8 +267,8 @@ export default {
      */
     undo() {
       const actions = [
-              // this.fetchAfterRollback,
-        () => this._getDestinations(this.userId)]; // fill;
+        this.fetchAfterRollback
+      ]; // fill;
       try {
         this.rollbackUndo(actions);
       } catch (err) {
@@ -281,8 +281,8 @@ export default {
      */
     redo() {
       const actions = [
-              // this.fetchAfterRollback,
-        () => this._getDestinations(this.userId)]; // fill;
+        this.fetchAfterRollback
+      ]; // fill;
       try {
         this.rollbackRedo(actions);
       } catch (err) {
@@ -303,8 +303,8 @@ export default {
     },
 
     visibleDestinations() {
-      return this.isShowing ? this.destinations.filter(x => {
-        const isShowing = this.isShowing.find(y => y.id === x.id)
+      return this.isShowing.length ? this.destinations.filter(x => {
+        const isShowing = this.isShowing.find(y => y.id === x.id);
         return isShowing ? isShowing.isShowing : false
       }) : this.destinations;
     }
