@@ -7,23 +7,17 @@
         </v-toolbar-title>
       </router-link>
     </v-toolbar>
-    <v-navigation-drawer fixed v-model="drawer" app :mini-variant.sync="mini" hide-overlay>
+    <v-navigation-drawer fixed app :mini-variant="mini" hide-overlay>
       <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
-            <v-list-tile-avatar>
+            <v-list-tile-avatar @click="mini = false">
               <img src="https://randomuser.me/api/portraits/men/85.jpg" />
             </v-list-tile-avatar>
 
             <v-list-tile-content>
               <v-list-tile-title>John Leider</v-list-tile-title>
             </v-list-tile-content>
-
-            <v-list-tile-action>
-              <v-btn icon @click.stop="mini = !mini">
-                <v-icon>chevron_left</v-icon>
-              </v-btn>
-            </v-list-tile-action>
           </v-list-tile>
         </v-list>
       </v-toolbar>
@@ -43,6 +37,18 @@
           <v-list-tile-content>Logout</v-list-tile-content>
         </v-list-tile>
       </v-list>
+
+      <v-list class="pt-0 pb-0 collapse">
+        <v-list-tile @click.stop="mini = !mini">
+          <v-list-tile-action>
+            <v-icon v-if="mini">chevron_right</v-icon>
+            <v-icon v-else>chevron_left</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>Collapse Sidebar</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
     </v-navigation-drawer>
     <v-content>
       <v-container fluid fill-height ma-0 pa-0>
@@ -58,6 +64,13 @@
 
 <style lang="scss">
 @import "../assets/css/main.scss";
+
+.v-navigation-drawer .collapse {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
 
 .primary-logo {
   height: 50%;
@@ -82,24 +95,20 @@ export default {
   store,
   data() {
     return {
-      drawer: true,
       mini: true,
       right: null
     };
   },
   computed: {
     menuOptions() {
-      let menuOptions = [
-        { name: "Sign Up", icon: "assignment_ind", link: "/signup" },
-        { name: "Log In", icon: "lock_open", link: "/login" }
-      ];
+      let menuOptions = [];
 
       if (store.getters.isLoggedIn) {
         menuOptions = [
           {
             name: "Profile",
             icon: "account_circle",
-            link: "/user/" + store.getters.getUser.id
+            link: "/user/" + store.getters.getUser.id + "/dashboard"
           },
           { name: "Users", icon: "supervised_user_circle", link: "/users" },
           { name: "Destination Map", icon: "map", link: "/destinations" },
@@ -115,6 +124,7 @@ export default {
           }
         ];
       }
+
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
         menuOptions.push({
           name: "Admin Panel",
