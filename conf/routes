@@ -70,6 +70,7 @@ DELETE      /api/users/:userId/trips/:tripId                controllers.TripCont
 PUT         /api/users/:userId/trips/:tripId/toggle_deleted controllers.TripController.softDeleteTrip(request: Request, tripId: Long, userId: Long)
 
 
+GET         /api/users/:user_id/trips/:trip_id/iCal  controllers.TripController.getUserTripAsICalFile(request: Request, user_id: Long, trip_id: Long)
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)

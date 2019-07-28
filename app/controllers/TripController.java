@@ -1,23 +1,21 @@
 package controllers;
 
 
-import akka.dispatch.sysmsg.Create;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.inject.Inject;
 
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
-import controllers.constants.APIResponses;
 import dto.trip.CreateTripDTO;
+import controllers.constants.APIResponses;
 import dto.trip.TripDTO;
 import dto.shared.CreatedDTO;
 import io.ebean.Ebean;
 
 import models.Trip;
-import models.TripDestination;
 import models.User;
+import net.fortuna.ical4j.model.Calendar;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -25,14 +23,17 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
-import play.mvc.StatusHeader;
 import service.TripService;
 
-import java.rmi.ServerException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import utils.iCalCreator;
 
 
 public class TripController extends Controller {
@@ -174,7 +175,6 @@ public class TripController extends Controller {
             return ok(response.toString());
         });
     }
-}
 
 
 
@@ -486,3 +486,35 @@ public class TripController extends Controller {
 //        });
 //
 
+    /**
+     * Creates a .ics file to return to the user with the trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the trip
+     * @return The .ics file generated for the trip
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTripAsICalFile(Http.Request req, Long userId, Long tripId){
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+
+        if (middlewareRes != null) return middlewareRes;
+
+        Trip trip = Trip.find.byId(tripId);
+
+        if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+
+        iCalCreator creator = new iCalCreator();
+        Calendar iCalString = creator.createCalendarFromTrip(trip);
+        try {
+            File tempFile = File.createTempFile(trip.name, ".ics");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
+            bw.write(iCalString.toString());
+            bw.close();
+            return CompletableFuture.completedFuture(ok(tempFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CompletableFuture.completedFuture(internalServerError());
+        }
+    }
+}
