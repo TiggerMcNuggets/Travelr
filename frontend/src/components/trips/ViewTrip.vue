@@ -76,6 +76,14 @@
                         >
                         <v-container class="container-custom-padding">
                             <v-card-title>
+                                    <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate)" top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-avatar v-on="on">
+                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate)">info</v-icon>
+                                            </v-avatar>
+                                        </template>
+                                        <span>Missing Dates</span>
+                                    </v-tooltip>
                                 <v-combobox
                                         :items="userDestinations"
                                         item-text="name"
@@ -83,7 +91,8 @@
                                         label="Select an existing destination"
                                         :rules="noSameDestinationNameConsecutiveRule"
                                         return-object
-                                ></v-combobox>
+                                >
+                                </v-combobox>
                                 <v-btn
                                     v-on:click="toggleHiddenDestinations(destination)"
                                     fab flat small>
@@ -574,6 +583,7 @@ export default {
             if (numOfMissingDates === trip.destinations.length) {
                 this.canDownloadTrip = false;
             }
+            console.log(trip)
             this.trip = trip;
             return this.trip;
         });
