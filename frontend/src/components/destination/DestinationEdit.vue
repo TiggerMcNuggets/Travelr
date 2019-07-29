@@ -110,19 +110,21 @@
 
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import { rules } from "../form_rules";
-import RollbackMixin from "../mixins/RollbackMixin.vue";
-import SelectDataRepository from "../../repository/SelectDataRepository";
-import PageHeader from "../common/header/PageHeader"
-let destinationRepository = RepositoryFactory.get("destination");
+  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  let destinationRepository = RepositoryFactory.get("destination");
+  import { rules } from "../form_rules";
+  import RollbackMixin from "../mixins/RollbackMixin.vue";
+  import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+  import SelectDataRepository from "../../repository/SelectDataRepository";
+  import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
+  import PageHeader from "../common/header/PageHeader";
 
-export default {
-  mixins: [RollbackMixin],
-
-  components: {
-    PageHeader
-  },
+  export default {
+    mixins: [RollbackMixin, StoreDestinationsMixin],
+    components: {
+      UndoRedoButtons,
+      PageHeader
+    },
 
   data() {
     return {
@@ -156,45 +158,48 @@ export default {
         });
     },
 
-    /**
-     * Updates a destination by through a request to the API based on the updated data in the form.
-     * This function will first check if the data is valid and only submit successfully if it is.
-     * A checkpoint is pushed to the undo redo stack containing information for the action and reaction
-     */
-    updateDestination: function() {
-      if (this.$refs.form.validate()) {
-        const userId = this.$route.params.id;
-        const destId = this.$route.params.dest_id;
+      /**
+       * Updates a destination by through a request to the API based on the updated data in the form.
+       * This function will first check if the data is valid and only submit successfully if it is.
+       * A checkpoint is pushed to the undo redo stack containing information for the action and reaction
+       */
+      updateDestination: function() {
+        if (this.$refs.form.validate()) {
+          const userId = this.$route.params.id;
+          const destId = this.$route.params.dest_id;
 
-        // Call the update request
-        destinationRepository
-          .updateDestination(userId, destId, this.destination)
-          .then(() => {
-            const url = `/users/${userId}/destinations/${destId}`;
+          // Call the update request
+          this._putDestination(
+                          userId,
+                          destId,
+                          this.destination
+                  )
+                  .then(() => {
+                    const url = `/users/${userId}/destinations/${destId}`;
 
-            // Pushes checkpoint containing type of action, action body, and reaction body
-            this.rollbackCheckpoint(
-              "PUT",
-              {
-                url: url,
-                body: { ...this.destination }
-              },
-              {
-                url: url,
-                body: this.rollbackPreviousBody
-              }
-            );
+                    // Pushes checkpoint containing type of action, action body, and reaction body
+                    this.rollbackCheckpoint(
+                            'PUT',
+                            {
+                              url: url,
+                              body: {...this.destination}
+                            },
+                            {
+                              url: url,
+                              body: this.rollbackPreviousBody
+                            }
+                    );
 
-            // Update previous body to be used for the next checkpoints reaction
-            this.rollbackSetPreviousBody(this.destination);
-            this.isError = false;
-          })
-          .catch(e => {
-            console.error(e);
-            this.isError = true;
-          });
-      }
-    },
+                    // Update previous body to be used for the next checkpoints reaction
+                    this.rollbackSetPreviousBody(this.destination);
+                    this.isError = false;
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                    this.isError = true;
+                  });
+        }
+      },
 
     /**
      * Undoes the last action and calls setDestination() afterwards
