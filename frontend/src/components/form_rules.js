@@ -20,7 +20,6 @@ export const rules = {
  */
 export const noSameDestinationNameConsecutiveRule = destinations => {
   let noConsecutiveSame = true;
-  console.log("destinations", destinations);
   for (let i = 0; i < destinations.length; i++) {
     if (i + 1 < destinations.length) {
       if (destinations[i].destination.name === destinations[i + 1].destination.name) {
