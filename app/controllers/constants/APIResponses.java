@@ -15,6 +15,9 @@ public class APIResponses {
     public static final String FORBIDDEN_ALBUM_DELETION = "The album does not belong to you";
     public static final String SUCCESSFUL_ALBUM_DELETION = "Album deleted";
     public static final String SUCCESSFUL_MEDIA_DELETION = "Media deleted";
+    public static final String FORBIDDEN_ALBUM_UPDATE = FORBIDDEN_ALBUM_DELETION;
+    public static final String SUCCESSFUL_ALBUM_UPDATE = "Album updated";
+    public static final String DUPLICATE_ALBUM_NAME = "Duplicate album name";
 
 
 }
