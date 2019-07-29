@@ -269,5 +269,43 @@ public class MediaController extends Controller {
         }
     }
 
+    /**
+     * Updates an album name
+     * @param request The request body for the album which includes name
+     * @param userId The user's id
+     * @param albumId The album's id
+     * @return 200 if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateAlbumGivenUser(Http.Request request, Long userId, Long albumId) {
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        Form<CreateAlbumReq> createAlbumForm = formFactory.form(CreateAlbumReq.class).bindFromRequest(request);
+
+        if (createAlbumForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error updating album"));
+        }
+
+        CreateAlbumReq req = createAlbumForm.get();
+        boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+
+        return albumRepository.updateAlbum(albumId, userId, isAdmin, req).thenApplyAsync(album -> {
+            if (album == null) {
+                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
+            }
+
+            else if (!isAdmin && album.getUser().getId() != userId) {
+                return forbidden(APIResponses.FORBIDDEN_ALBUM_UPDATE);
+            }
+
+            else if (req.getName() != album.getName()) {
+                return badRequest(APIResponses.DUPLICATE_ALBUM_NAME);
+            }
+
+            return ok(APIResponses.SUCCESSFUL_ALBUM_UPDATE);
+        });
+    }
 }
 

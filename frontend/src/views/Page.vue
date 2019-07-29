@@ -117,6 +117,11 @@ export default {
             link: "/user/" + store.getters.getUser.id + "/dashboard"
           },
           {
+            name: "Media",
+            icon: "insert_photo",
+            link: "/user/" + store.getters.getUser.id + "/media"
+          },
+          {
             name: "Profile",
             icon: "account_circle",
             link: "/user/" + store.getters.getUser.id + "/profile"

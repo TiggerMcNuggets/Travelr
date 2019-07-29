@@ -5,7 +5,7 @@ import { store } from "../store/index";
 // Components
 import ProfilePhotos from "../components/profile/PersonalPhotos";
 import Trips from "../components/trips/Trips";
-import Profile from "../components/profile/Profile"
+import Profile from "../components/profile/Profile";
 import userSearch from "../components/userSearch/userSearch";
 import Signup from "../components/signup/Signup.vue";
 import Destination from "../components/destination/Destination";
@@ -20,7 +20,7 @@ import ViewTrip from "../components/trips/ViewTrip.vue";
 import SingleDestination from "../components/destination/SingleDestination";
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
-import Media from "../views/Media"
+import Media from "../views/Media";
 
 const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}/dashboard`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
@@ -168,7 +168,7 @@ let router = new Router({
           component: ViewTrip
         },
         {
-          path: "photos",
+          path: "media",
           name: "travellerProfilePhotos",
           component: Media
         },
