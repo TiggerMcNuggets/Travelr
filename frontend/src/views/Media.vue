@@ -16,11 +16,11 @@
     </v-layout>
 
     <v-dialog v-model="uploadDialogActive" width="800">
-      <MediaUpload :uploadphotos="uploadMedia" :toggleUploadDialogue="toggleUploadDialogue"></MediaUpload>
+      <MediaUpload :uploadMedia="uploadMedia" :toggleUploadDialogue="toggleUploadDialogue"></MediaUpload>
     </v-dialog>
 
-    <v-dialog v-model="createAlbumDialogActive" width="800">
-      <AlbumCreate :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"></AlbumCreate>
+    <v-dialog v-model="createAlbumDialogActive" width="500">
+      <AlbumCreate :createNewAlbum="createNewAlbum" :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"></AlbumCreate>
     </v-dialog>
 
   </v-container>
@@ -32,8 +32,11 @@
 	import PageHeader from "../components/common/header/PageHeader";
 	import MediaUpload from "../components/photos/PhotoUpload";
 	import AlbumCreate from "../components/media/AlbumCreate";
-	import {temp} from "../components/media/temp";
-	import {deepCopy} from "../tools/deepCopy"
+
+  import {deepCopy} from "../tools/deepCopy"
+  import { RepositoryFactory } from "../repository/RepositoryFactory";
+  import { temp } from '../components/media/temp'
+  let mediaRepository = RepositoryFactory.get("media");
 
 	export default {
 		name: "Media",
@@ -41,13 +44,17 @@
 		data() {
 			return {
 				activeFilter: "Albums",
-				allMedia: temp,
+        tempMedia: temp,
+				allMedia: [],
 				activeMedia: [],
 				uploadDialogActive: false,
 				createAlbumDialogActive: false,
 				viewingAlbum: false,
-				activeAlbumMetadata: null
-			}
+				activeAlbumMetadata: null,
+        userId: null,
+        isMyProfile: false,
+        isAdminUser: false
+      }
 		},
 
 		components: {
@@ -67,7 +74,7 @@
 			 *   3. Organise  'activeMedia'  into separate media categories stored in  'organisedMedia'
 			 *   4. Count each media item and store the counts in  'mediaCounts'
 			 *   *** READY STATE ***
-			 *   5. When a user clicks on an album,  'activeMedia'  is update to the album content.
+			 *   5. When a user clicks on an album,  'activeMedia'  is updated to the album content.
 			 *      This triggers a recalculation for steps 3 and 4 and everything cascades nicely.
 			 */
 
@@ -84,7 +91,7 @@
 					"albums": []
 				};
 
-				let viewingAlbum = this.viewingAlbum;
+        let viewingAlbum = this.viewingAlbum;
 
 				this.activeMedia.forEach(function (album) {
 					if (!viewingAlbum) organisedMedia.all.push(album);
@@ -93,9 +100,9 @@
 					album.content.forEach(function (media) {
 						organisedMedia.all.push(media);
 
-						if (media.type === "photo") {
+						if (media.type === "Photo") {
 							organisedMedia.photos.push(media);
-						} else if (media.type === "video") {
+						} else if (media.type === "Video") {
 							organisedMedia.videos.push(media);
 						}
 					});
@@ -123,12 +130,12 @@
 				};
 			},
 
-			/**
+			/**../../store/index
 			 * Filters the currently displayed media (organisedMedia) to only display whichever category the user selects
 			 * This is recomputed every time organisedMedia is updated.
 			 *
 			 *  Note,  'filteredMedia'  is simply a function to provide code clarity, it simply filters and returns
-			 *  the media the user has requested to see. This function is semi-redundant as  'organisedMedia' performs
+			 *  the media the user has requested to see. This function is semi-redundant as  'organisedMedia'  performs
 			 *  a similar function, however I believe it makes things more readable.
 			 */
 			filteredMedia: function () {
@@ -171,21 +178,56 @@
 		},
 
 		methods: {
+      /**
+       * Updates the active filter to the provided parameter
+       */
 			changeFilter(filter) {
 				this.activeFilter = filter;
 			},
 
+      /**
+       * Toggles the visibility of the media upload dialogue.
+       */
 			toggleUploadDialogue() {
 				this.uploadDialogActive = !this.uploadDialogActive;
 			},
 
+      /**
+       * Toggles the visibility of the album creation dialogue.
+       */
 			toggleCreateAlbumDialogue() {
 				this.createAlbumDialogActive = !this.createAlbumDialogActive;
-			},
+      },
 
-			uploadMedia() {
-				this.toggleUploadDialogue();
-			},
+      /**
+       * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
+       */
+      getAllAlbums: function() {
+        mediaRepository
+        .getUserAlbums(this.userId)
+        .then(response => {
+          this.allMedia = response.data;
+          this.activeMedia = deepCopy(this.allMedia);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      },
+
+      /**
+       * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
+       */
+      createNewAlbum: function(newAlbumName) {
+        mediaRepository
+        .createAlbum(this.userId, {"name": newAlbumName})
+        .then(response => {
+          this.getAllAlbums();
+          this.toggleCreateAlbumDialogue();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      },
 
 			/**
 			 * Handles opening of media grid elements. If an album element is clicked on, the media inside the album is
@@ -205,17 +247,61 @@
 				}
 			},
 
+      /**
+       * This method overrides the default router.go(-1) functionality provided by the PageHeader component.
+       * It simply updates the user's grid back to viewing all of their albums.
+       */
 			navigateBack() {
 				this.viewingAlbum = false;
 				this.activeFilter = "Albums";
 				this.activeMedia = deepCopy(this.allMedia);
 				this.activeAlbumMetadata = null;
-			}
-		},
+			},
+
+      /**
+       * Uploads the given media files the backend.
+       */
+      uploadMedia(files) {
+        let TEMP_ALBUM_ID = 1;
+        console.log(files);
+        for (let i = 0; i < files.length; i++) {
+          let file = files[i];
+          let formData = new FormData();
+          formData.append("picture", file);
+
+          mediaRepository.uploadMediaToAlbum(this.userId, TEMP_ALBUM_ID, formData)
+          .then((result) => {
+              console.log(result.data);
+            // mediaRepository.getAlbumContent(this.userId, TEMP_ALBUM_ID).then(result => {
+              this.getAllAlbums();
+            // });
+          })
+          .catch(error => {
+            this.uploadError = true;
+            this.errorText = error.response.data;
+          });
+        }
+
+        this.toggleUploadDialogue();
+      },
+
+    },
 
     mounted() {
-			this.activeMedia = deepCopy(this.allMedia);
-		}
+      this.userId = this.$route.params.id;
+      this.destId = this.$route.params.dest_id;
+
+      if (!this.userId) {
+        this.userId = this.$store.getters.getUser.id;
+      }
+
+      this.isMyProfile = this.$store.getters.getUser.id == this.userId;
+      this.isAdminUser = this.$store.getters.getIsUserAdmin;
+
+      this.getAllAlbums();
+		},
+
+
 
 	}
 </script>
