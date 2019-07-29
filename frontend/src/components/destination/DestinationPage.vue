@@ -6,6 +6,7 @@
         <v-flex v-if="browseActive" xs4 sm3 md2>
           <DestinationNav
             :destinations="destinations"
+            :isDestinationShowing="isDestinationShowing"
             :focusDestination="focusDestination"
             :toggleDestination="toggleDestination"
             :closeDestinationNav="() => { browseActive = false }"
@@ -13,16 +14,16 @@
         </v-flex>
         <v-flex>
           <DestinationMap
-            :destinations="visableDestinations"
+            :destinations="visibleDestinations"
             :focussedDestination="deepCopy(focussedDestination)"
             :focusDestination="focusDestination"
             :openDestinationNav="() => { browseActive = !browseActive }"
           ></DestinationMap>
         </v-flex>
 
-        <v-flex xs4 sm3 md2 v-if="focussedDestination.data">
+        <v-flex xs4 sm3 md2 v-if="focussedDestination">
           <v-flex
-            v-if="focussedDestination.data && focussedDestination.data.id && isAllowedToEdit"
+            v-if="focussedDestination.id && isAllowedToEdit"
             d-flex
             align-start
             pb-1
@@ -37,7 +38,7 @@
             ></UndoRedoButtons>
           </v-flex>
           <DestinationDetails
-            v-if="focussedDestination.data"
+            v-if="focussedDestination"
             :focussedDestination="deepCopy(focussedDestination)"
             :passBackDestination="submitDestination"
             :focusDestination="focusDestination"
@@ -49,6 +50,7 @@
     </v-flex>
   </v-layout>
 </template>
+
 
 <style>
 .browse-button {
@@ -68,18 +70,17 @@
 
 <script>
 import { store } from "../../store/index";
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let DestinationRepository = RepositoryFactory.get("destination");
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import DestinationNav from "./DestinationNav";
 import DestinationMap from "./DestinationMap";
 import DestinationDetails from "./DestinationDetails";
 import { deepCopy } from "../../tools/deepCopy";
+import StoreDestinationsMixinVue from '../mixins/StoreDestinationsMixin.vue';
 
 export default {
   store,
-  mixins: [RollbackMixin],
+  mixins: [RollbackMixin, StoreDestinationsMixinVue],
   components: {
     UndoRedoButtons,
     DestinationNav,
@@ -89,11 +90,11 @@ export default {
 
   data() {
     return {
-      destinations: [],
       focussedDestination: {},
       browseActive: false,
+      isShowing: [],
 
-      // priviledges data
+      // privileges data
       isAdminUser: false,
       userId: store.getters.getUser.id
     };
@@ -105,12 +106,19 @@ export default {
      */
     focussedDestination: {
       handler: function(newValue, oldValue) {
-        if (oldValue.data.id !== newValue.data.id) {
+        if (oldValue.id !== newValue.id) {
           this.rollbackFlush();
         }
       },
       deep: true
+    },
+
+    destinations: {
+      handler: function() {
+        this.isShowing = [...this.populateIsShowing()];
+      }
     }
+
   },
 
   methods: {
@@ -130,17 +138,13 @@ export default {
       };
     },
 
-    /**
-     * Toggles between destinations
-     */
-    toggleDestination(destination) {
-      var showDest = this.destinations.filter(
-        x => x.data.id === destination.data.id
-      );
+    isDestinationShowing(destinationId) {
+      return this.isShowing.find(x => x.id === destinationId).isShowing;
+    },
 
-      if (showDest[0]) {
-        showDest[0].isShowing = !showDest[0].isShowing;
-      }
+    toggleDestination(destination) {
+      const index = this.isShowing.findIndex(x => x.id == destination.id);
+      this.isShowing[index].isShowing = !this.isShowing[index].isShowing;
     },
 
     /**
@@ -148,73 +152,54 @@ export default {
      */
     focusDestination(destination) {
       this.focussedDestination = this.deepCopy(destination);
-      if (this.focussedDestination.data && this.focussedDestination.data.id) {
+      if (this.focussedDestination && this.focussedDestination.id) {
         const newDest = this.destinations.filter(
-          dest => dest.data.id === this.focussedDestination.data.id
+          dest => dest.id === this.focussedDestination.id
         )[0];
-        this.rollbackSetPreviousBody(newDest.data);
+        this.rollbackSetPreviousBody(newDest);
       }
     },
+
 
     /**
      * Checks if a destination exists if it does, updates it. If it doesn't, a new destination is created.
      */
     submitDestination(destination) {
-      if (destination.data.id) {
-        DestinationRepository.updateDestination(
+      if (destination.id) {
+        this._putDestination(
           this.userId,
-          destination.data.id,
-          destination.data
+          destination.id,
+          destination
         )
           .then(() => {
-            const url = `/users/${this.userId}/destinations/${destination.data.id}`;
+            const url = `/users/${this.userId}/destinations/${
+              destination.id
+            }`;
             this.rollbackCheckpoint(
               "PUT",
               {
                 url: url,
-                body: destination.data
+                body: destination
               },
               {
                 url: url,
                 body: this.rollbackPreviousBody
               }
             );
-            this.rollbackPreviousBody = destination.data;
-            this.populateDestinations();
+            this.rollbackPreviousBody = destination;
+
           })
           .catch(err => {
             console.error(err);
           });
       } else {
-        DestinationRepository.createDestination(this.userId, destination.data)
+        this._postDestination(this.userId, destination)
           .then(() => {
-            this.populateDestinations();
             this.focussedDestination = {};
           })
           .catch(err => {
             console.error(err);
           });
-      }
-    },
-
-    /**
-     * Populates the destinations
-     */
-    async populateDestinations() {
-      this.destinations = [];
-      try {
-        const response = await DestinationRepository.getDestinations(
-          this.userId
-        );
-        response.data.forEach(data => {
-          var destinationObject = {
-            data: data,
-            isShowing: true
-          };
-          this.destinations.push(destinationObject);
-        });
-      } catch (err) {
-        console.error(err);
       }
     },
 
@@ -225,22 +210,33 @@ export default {
       this.focussedDestination = {};
     },
 
-    /**
-     * Updates destinations and focussed destination following a rollback action.
-     */
     async fetchAfterRollback() {
-      let id = this.focussedDestination.data.id;
-      await this.populateDestinations();
+      let id = this.focussedDestination.id;
+      await this._getDestinations(this.userId);
       this.focussedDestination = this.destinations.filter(
-        dest => dest.data.id === id
+              dest => dest.id === id
       )[0];
     },
 
     /**
+     * Returns the is showing array generated from the list of destinations
+     */
+    populateIsShowing() {
+      return [...this.isShowing, ...this.destinations.filter(dest => !this.isShowing.map(destShow => destShow.id).includes(dest.id)).map(destination => {
+        return {
+          id: destination.id,
+          isShowing: true,
+        }
+      })];
+    },
+    
+    /**
      * Sets the rollback undo action.
      */
     undo() {
-      const actions = [this.fetchAfterRollback]; // fill;
+      const actions = [
+        this.fetchAfterRollback
+      ]; // fill;
       try {
         this.rollbackUndo(actions);
       } catch (err) {
@@ -252,7 +248,9 @@ export default {
      * Sets the redo rollback action.
      */
     redo() {
-      const actions = [this.fetchAfterRollback]; // fill;
+      const actions = [
+        this.fetchAfterRollback
+      ]; // fill;
       try {
         this.rollbackRedo(actions);
       } catch (err) {
@@ -268,26 +266,22 @@ export default {
     isAllowedToEdit() {
       return (
         this.isAdminUser ||
-        this.focussedDestination.data.ownerId === this.userId
+        this.focussedDestination.ownerId === this.userId
       );
     },
 
-    /**
-     * Gets all visable destinations?
-     */
-    visableDestinations() {
-      return this.destinations.filter(x => x.isShowing);
+    visibleDestinations() {
+      return this.isShowing.length ? this.destinations.filter(x => {
+        const isShowing = this.isShowing.find(y => y.id === x.id);
+        return isShowing ? isShowing.isShowing : false
+      }) : this.destinations;
     }
   },
 
-  /**
-   * Populates all the destinations and sets the user information on component creation.
-   */
-  created() {
-    this.populateDestinations();
+  async mounted() {
     this.isAdminUser = store.getters.getIsUserAdmin;
     this.userId = store.getters.getUser.id;
-  }
+  },
 };
 </script>
 

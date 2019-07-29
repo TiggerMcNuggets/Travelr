@@ -14,8 +14,9 @@
                     v-bind:key="index"
                     v-for="(destination, index) in privateDestinations"
                     :destination="destination"
+                    :isShowing="isDestinationShowing(destination.id)"
                     @click.native="toggleDestination(destination)"
-                    @dblclick="focusDestination(destination)"
+                    @dblclick.native="focusDestination(destination)"
                   />
                 </v-flex>
               </v-tab-item>
@@ -24,10 +25,10 @@
                   <DestinationNavItem
                     v-bind:key="index"
                     v-for="(destination, index) in publicDestinations"
-                    v-bind:class="{showing: destination.isShowing}"
+                    :isShowing="isDestinationShowing(destination.id)"
                     :destination="destination"
                     @click.native="toggleDestination(destination)"
-                    @dblclick="focusDestination(destination)"
+                    @dblclick.native="focusDestination(destination)"
                   />
                 </v-flex>
               </v-tab-item>
@@ -75,13 +76,15 @@ export default {
       browseActive: false
     };
   },
-  methods: {},
+  methods: {
+  },
 
   props: {
     destinations: Array,
+    isDestinationShowing: Function,
     focusDestination: Function,
     toggleDestination: Function,
-    closeDestinationNav: Function
+    closeDestinationNav: Function,
   },
   watch: {},
 
@@ -91,14 +94,14 @@ export default {
      * Gets all the private destinations for the user.
      */
     privateDestinations() {
-      return this.destinations.filter(x => !x.data.isPublic);
+      return this.destinations.filter(x => !x.isPublic);
     },
     
     /**
      * Gets all the public destinations for the user.
      */
     publicDestinations() {
-      return this.destinations.filter(x => x.data.isPublic);
+      return this.destinations.filter(x => x.isPublic);
     },
 
     /**

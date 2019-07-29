@@ -43,7 +43,7 @@ export default {
      */
     rollbackUndo: async function(actions) {
       await this.rollbackManager.undo();
-      for (let action of actions) action();
+      for (let action of actions) await action();
     },
 
     /**
@@ -52,7 +52,7 @@ export default {
      */
     rollbackRedo: async function(actions) {
       await this.rollbackManager.redo();
-      for (let action of actions) action();
+      for (let action of actions) await action();
     }, 
 
     /**
