@@ -7,6 +7,7 @@ import UserRepository from "./UserRepository";
 import NationalityRepository from "./NationalityRepository";
 import TravellerTypesRepository from "./TravellerTypesRepository";
 import SelectDataRepository from "./SelectDataRepository";
+import MediaRepository from "./MediaRepository";
 
 // Add all repositories here to access from anywhere
 const repositories = {
@@ -18,7 +19,8 @@ const repositories = {
     user: UserRepository,
     nationality: NationalityRepository,
     travellerType: TravellerTypesRepository,
-    selectData: SelectDataRepository
+    selectData: SelectDataRepository,
+    media: MediaRepository
 };
 
 

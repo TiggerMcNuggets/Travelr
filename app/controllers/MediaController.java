@@ -259,7 +259,6 @@ public class MediaController extends Controller {
      * @param filename The file name of the image to get.
      * @return The raw image file which corresponds to the filename given.
      */
-    @Authorization.RequireAuth
     public Result getImageFromDatabase(Http.Request request, Long user_id, String filename) {
 
         File file = new File(this.MEDIA_FILEPATH + filename);

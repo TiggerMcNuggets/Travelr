@@ -9,6 +9,7 @@ public class MediaRes {
     private Long id;
     private String filename;
     private Boolean is_public;
+    private String type;
 
     /**
      *
@@ -18,6 +19,7 @@ public class MediaRes {
         this.id = media.id;
         this.filename = media.uriString;
         this.is_public = media.is_public;
+        this.type = media.mediaType;
     }
 
     /**
@@ -40,5 +42,14 @@ public class MediaRes {
     public Boolean isIs_public() {
         return is_public;
     }
+
+    /**
+     * @return String return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+
 
 }
