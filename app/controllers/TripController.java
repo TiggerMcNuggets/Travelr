@@ -15,7 +15,7 @@ import io.ebean.Ebean;
 
 import models.Trip;
 import models.User;
-import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model .Calendar;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
