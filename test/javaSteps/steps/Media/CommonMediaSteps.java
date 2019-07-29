@@ -1,11 +1,12 @@
 package javaSteps.steps.Media;
 
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import javaSteps.models.StateSingleton;
 import models.Album;
-import models.Destination;
 import models.Media;
 import models.User;
+import org.junit.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,24 @@ public class CommonMediaSteps {
         state.getAlbum().addMedia(state.getMedia());
         state.getMedia().addAlbum(state.getAlbum());
         state.getMedia().insert();
+    }
+
+    @Then("The album is")
+    public void the_album_is(List<Map<String, String>> dataTable) {
+        Album album = Album.find.findAlbumById(state.getAlbum().getId());
+
+        Map<String, String> albumInfo = dataTable.get(0);
+
+        Assert.assertEquals(albumInfo.get("name"), album.getName());
+    }
+
+    @Given("I do not own an album")
+    public void i_do_not_own_an_album() {
+        Album album = new Album(state.getUser(), "Album", true);
+        album.setId(100L);
+        state.setAlbum(album);
+        // By not inserting, the album does not exist
+        // Album needed to be created to pass id into request uri
     }
 
 
