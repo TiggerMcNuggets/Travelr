@@ -1,15 +1,6 @@
 <template>
   <v-flex>
-    <v-card-title>
-      <undo-redo-buttons
-        :canRedo="rollbackCanRedo()"
-        :canUndo="rollbackCanUndo()"
-        :undo="undo"
-        :redo="redo"
-      ></undo-redo-buttons>
-      <v-spacer></v-spacer>
-      <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-    </v-card-title>
+    <v-card-title></v-card-title>
     <v-data-table :headers="getColumns" :items="users" :search="search">
       <template v-slot:items="props">
         <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
@@ -20,7 +11,7 @@
           <ul style="list-style-type:none">
             <li v-for="(nationality, index) in props.item.nationalities" :key="index">
               {{ nationality.name }}
-              <br>
+              <br />
             </li>
           </ul>
         </td>
@@ -28,7 +19,7 @@
           <ul style="list-style-type:none">
             <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
               {{ travelType.name }}
-              <br>
+              <br />
             </li>
           </ul>
         </td>
@@ -45,27 +36,31 @@
 
 
 <script>
-import RollbackMixin from "../mixins/RollbackMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-
 export default {
-  mixins: [RollbackMixin],
-  components: {
-    UndoRedoButtons: UndoRedoButtons
+  props: {
+    search: String,
+    deleteUser: Function,
+    isError: Boolean
   },
+
   data() {
     return {
-      search: "",
-      isAdmin: false,
-      isError: false
+      isAdmin: false
     };
   },
 
-  computed: {
+  methods: {
     /**
-     * Returns a list of users from the this.$store.state
-     * @return A list of users from the this.$store.state
+     * Takes in a users id and redirects current page to that users account.
+     * @param id
      */
+    goToUser(id) {
+      var endpoint = "/user/" + id;
+      this.$router.push(endpoint);
+    }
+  },
+
+  computed: {
     users() {
       return this.$store.state.users.users;
     },
@@ -104,61 +99,6 @@ export default {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
       return columns;
-    }
-  },
-  methods: {
-    /**
-     * Takes in a users ID, Deletes the user then regets all users from the database into the this.$store.state
-     * @param userId
-     */
-    async deleteUser(userId) {
-      this.isError = false;
-      try {
-        await this.$store.dispatch("toggleUserDeleted", userId);
-      } catch (err) {
-        this.isError = true;
-        console.error(err);
-        return;
-      }
-
-      const url = `/travellers/${userId}/toggle_deleted`;
-      this.rollbackCheckpoint(
-        "DELETE",
-        {
-          url: url
-        },
-        {
-          url: url
-        }
-      );
-      this.getUsers();
-    },
-
-    /**
-     * Takes in a users id and redirects current page to that users account.
-     * @param id
-     */
-    goToUser(id) {
-      var endpoint = "/user/" + id;
-      this.$router.push(endpoint);
-    },
-
-    /**
-     * Undoes the last action and gets users afterwards
-     */
-    undo: function() {
-      this.isError = false;
-      const actions = [this.getUsers];
-      this.rollbackUndo(actions);
-    },
-
-    /**
-     * Redoes the last action and gets users afterwards
-     */
-    redo: function() {
-      this.isError = false;
-      const actions = [this.getUsers];
-      this.rollbackRedo(actions);
     }
   },
 

@@ -3,7 +3,7 @@
 <template>
   <v-card>
     <v-container fluid>
-      <PageHeader title="Destinations" :undo="undo" :redo="redo" :options="options" />
+      <PageHeader title="Destinations" :undo="undo" :redo="redo" :canRedo="rollbackCanRedo" :canUndo="rollbackCanUndo"  :options="options" />
 
       <v-text-field
         v-if="searchActive"
