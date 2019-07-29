@@ -1,6 +1,5 @@
 package models;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import finders.AlbumFinder;
 import play.data.validation.Constraints;
 
