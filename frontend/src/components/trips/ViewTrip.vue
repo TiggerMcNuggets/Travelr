@@ -269,7 +269,6 @@
         position: fixed;
         top: 25%;
         right: 5%;
-        /* position: absolute; */
     }
 
     .date-margin {
@@ -504,13 +503,6 @@ export default {
     },
 
     /**
-     * Decides if the edit trip dialog should be displayed
-     */
-    toggleShouldDisplayButton: function() {
-        this.shouldDisplayDialog = !this.shouldDisplayDialog;
-    },
-
-    /**
      * Invoked by child component create-trip once the trip has been modified, is passed as prop
      */
     updateViewTripPage: function() {
@@ -523,6 +515,7 @@ export default {
             trip.destinations = ordered_dests;
             // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
             for (let i = 0; i < trip.destinations.length; i++) {
+                trip.destinations[i].expanded = false;
             if (trip.destinations[i].arrivalDate) {
                 trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
             }
@@ -569,15 +562,15 @@ export default {
             for (let i = 0; i < trip.destinations.length; i++) {
                 trip.destinations[i].expanded = false;
                 trip.destinations[i].hidden = false;
-                if (trip.destinations[i].arrivalDate == 0) {
-                this.hasMissingDates = true;
-                numOfMissingDates++;
+                if (trip.destinations[i].arrivalDate === 0) {
+                    this.hasMissingDates = true;
+                    numOfMissingDates++;
                 }
 
-                if (trip.destinations[i].arrivalDate != 0) {
+                if (trip.destinations[i].arrivalDate !== 0) {
                     trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
                 }
-                if (trip.destinations[i].arrivalDate != 0) {
+                if (trip.destinations[i].departureDate !== 0) {
                     trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
                 }
             }

@@ -209,6 +209,7 @@ import {
   noSameDestinationNameConsecutiveRule,
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
+import {deepCopy} from "../../tools/deepCopy"
 import {isDemotable, isPromotable, getDepthData} from "./trips_destinations_util";
 
 
@@ -247,6 +248,7 @@ export default {
             departureDate: null,
             arrivalDateMenu: false,
             departureDateMenu: false,
+            depth: 0,
             destination: {name: null}
           },
       trip: {
@@ -371,7 +373,7 @@ export default {
      */
     addDestinationToTrip: function() {
       let newDestinations = this.trip.destinations;
-      newDestinations.push(this.emptyDest);
+      newDestinations.push(deepCopy(this.emptyDest));
       this.trip.destinations = newDestinations;
     },
 
@@ -399,8 +401,8 @@ export default {
         const trip = this.tripAssembler();
         this._postTrip(this.id, trip)
           .then(res => {
+            this.toggleShowCreateTrip();
             this.checkpointCreateTrip(res.data.id)
-            // this.regetTrips();
           })
           .catch(e => {
             console.log(e);
@@ -448,12 +450,14 @@ export default {
       let trip = { name: this.trip.name, destinations: [] };
       this.trip.destinations.forEach((destination, index) => {
         trip.destinations.push({
+          depth: destination.depth,
           ordinal: index,
           destination: {...destination.destination}, 
           arrivalDate: moment(destination.arrivalDate).unix(),
           departureDate: moment(destination.departureDate).unix()
         });
       });
+      console.log("dests", trip.destinations);
       return trip;
     },
     /**
