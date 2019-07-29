@@ -81,7 +81,7 @@
                                         <template v-slot:activator="{ on }">
                                             <v-avatar v-on="on">
                                                 <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate ||
-                                                isNaN(destination.arrivalDate) || isNaN(destination.departureDate))">info</v-icon>
+                                                destination.arrivalDate == null || destination.departureDate == null)">info</v-icon>
                                             </v-avatar>
                                         </template>
                                         <span>Missing Date(s)</span>
@@ -523,10 +523,10 @@ export default {
             trip.destinations = ordered_dests;
             // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
             for (let i = 0; i < trip.destinations.length; i++) {
-            if (!!trip.destinations[i].arrivalDate) {
+            if (trip.destinations[i].arrivalDate) {
                 trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
             }
-            if (!!trip.destinations[i].departureDate) {
+            if (trip.destinations[i].departureDate) {
                 trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
             }
             }

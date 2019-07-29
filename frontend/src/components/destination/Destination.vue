@@ -182,7 +182,6 @@ export default {
   components: {
     PageHeader,
     DestinationCreate,
-    UndoRedoButtons,
   },
 
   data() {

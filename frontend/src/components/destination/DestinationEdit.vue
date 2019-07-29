@@ -122,7 +122,6 @@
   export default {
     mixins: [RollbackMixin, StoreDestinationsMixin],
     components: {
-      UndoRedoButtons,
       PageHeader
     },
 
