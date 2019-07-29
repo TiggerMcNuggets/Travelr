@@ -1,5 +1,6 @@
 <template>
-    <v-dialog v-model="imageDialog" :width="clickedImageWidth">
+    <!-- <v-dialog v-model="imageDialog" :width="clickedImageWidth"> -->
+    <v-dialog v-model="imageDialog" width="70%">
       <v-card>
         <v-img :src="clickedImageURL"></v-img>
 
@@ -14,6 +15,29 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
+            <v-select
+                style="width: 20%"
+                v-model="value"
+                :items="['items','dsa','dsadasd']"
+                label="Albums"
+                multiple
+            >
+                <template v-slot:selection="{ item, index }">
+                    <v-chip v-if="index === 0">
+                    <span>{{ item }}</span>
+                    </v-chip>
+                    <span
+                    v-if="index === 1"
+                    class="grey--text caption"
+                    >(+{{ value.length - 1 }} others)</span>
+                </template>
+            </v-select>
+            
+          <v-spacer></v-spacer>
+          <v-switch
+            v-model="makeProfileMedia"
+            :label="`Made Profile Media`"
+          ></v-switch>
           <v-switch
             v-if="isPublic"
             disabled
@@ -22,6 +46,7 @@
           ></v-switch>
           <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
           <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
+          <v-spacer></v-spacer>
         </v-card-actions>
         <v-card-actions>
           <v-btn color="primary" flat @click="imageDialog = false">Close</v-btn>
@@ -60,10 +85,21 @@ export default {
     return {
         isPublic: false,
         dialog: false,
+        makeProfileMedia: false,
+        publicPhoto: publicPhotoSwitch,
+        value: ''
     };
   },
 
   methods: {
+
+    updatePublicStatus() {
+        if (this.publicPhotoSwitch === false) {
+            this.publicPhotoSwitch = true;
+        }
+        this.makeProfileMedia = true;
+    },
+      
     /**
      * Updates whether the photo is public or private depending on the switch state.
      */
