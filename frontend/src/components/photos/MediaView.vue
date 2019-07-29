@@ -18,7 +18,7 @@
             <v-select
                 style="width: 20%"
                 v-model="value"
-                :items="['items','dsa','dsadasd']"
+                :items="albums"
                 label="Albums"
                 multiple
             >
@@ -68,6 +68,7 @@ import {
 } from "../../repository/DestinationPhotoRepository";
 
 let destinationRepository = RepositoryFactory.get("destination");
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
@@ -87,7 +88,8 @@ export default {
         dialog: false,
         makeProfileMedia: false,
         publicPhoto: publicPhotoSwitch,
-        value: ''
+        value: '',
+        albums: []
     };
   },
 
@@ -118,6 +120,16 @@ export default {
       this.imageDialog = this.dialog;
       console.log(this.isPublic);
       console.log(this.clickedImage);
+      mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
+          let albums = []
+          for (let i = 0; i < res.data.length; i++) {
+              console.log(i);
+              console.log(res.data[i].name);
+              albums.push(res.data[i].name);
+              console.log(res.data[i].name);
+          }
+          this.albums = albums;
+      })
   }
 }
 </script>
