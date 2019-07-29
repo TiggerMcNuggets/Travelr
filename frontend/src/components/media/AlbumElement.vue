@@ -7,13 +7,15 @@
       <v-card flat tile hover>
 
         <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
-        <div v-if="!album.public" class="triangle pink-color"></div>
+        <div v-if="!album.public" class="triangle"></div>
+
+        <!--:src="getImgFromUrl(album.content[n].filename)"-->
 
         <div class="grid-4-container">
           <v-img
                   v-for="n in 4"
                   :key="n"
-                  :src="`https://unsplash.it/400/400?image=${Math.floor(Math.random() * 100) + 1}`"
+                  src=""
                   lazy-src="https://picsum.photos/id/11/100/60"
                   :height="145">
 
@@ -51,13 +53,16 @@
 		name: "Album",
 
 		props: {
-			album: Object
+			album: Object,
+      getImgFromUrl: Function
 		},
 
 		data() {
 			return {}
 		},
 
-		methods: {}
+		methods: {
+
+    }
 	}
 </script>

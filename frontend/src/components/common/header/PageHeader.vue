@@ -18,14 +18,14 @@
       <!-- Optional undo redo buttons -->
       <UndoRedoButtons
         v-if="!disableUndoRedo"
-        :canRedo="rollbackCanRedo()"
-        :canUndo="rollbackCanUndo()"
+        :canRedo="canRedo()"
+        :canUndo="canUndo()"
         :undo="undo"
         :redo="redo"
       ></UndoRedoButtons>
 
       <!-- Page options such as add or search to be displayed on the right side of the header -->
-      <div>
+      <div v-if="options">
         <v-btn
           v-for="option in options.entries()"
           :key="option[0]"
@@ -59,14 +59,11 @@
 
 
 <script>
-import RollbackMixin from "../../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../../common/rollback/UndoRedoButtons.vue";
 
 export default {
   // Generic page header to be reused on pages and make consistent.
   name: "PageHeader",
-
-  mixins: [RollbackMixin],
 
   components: {
     UndoRedoButtons
@@ -78,6 +75,8 @@ export default {
     options: Array,
     undo: Function,
     redo: Function,
+    canUndo: Function,
+    canRedo: Function,
     disableUndoRedo: Boolean,
     enableBackButton: Boolean,
     backButtonOverride: Function

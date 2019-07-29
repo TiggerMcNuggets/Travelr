@@ -19,7 +19,7 @@
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn ma-3 flat v-on:click="toggleUploadDialogue()">Cancel</v-btn>
-        <v-btn ma-3 color="primary" flat v-on:click="uploadImages(rawFiles)">Upload Photos</v-btn>
+        <v-btn ma-3 color="primary" flat v-on:click="uploadMedia(rawFiles)">Upload Media</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -78,7 +78,7 @@ export default {
     },
 
     triggerCallback(e, callback) {
-      var files;
+      let files;
       if (e.dataTransfer) {
         files = e.dataTransfer.files;
       } else if (e.target) {
@@ -88,7 +88,7 @@ export default {
     },
 
     makeDroppable(ele, callback) {
-      var input = document.createElement("input");
+      let input = document.createElement("input");
       input.setAttribute("type", "file");
       input.setAttribute("multiple", true);
       input.style.display = "none";
@@ -124,13 +124,13 @@ export default {
   },
 
   mounted: function() {
-    var dropzone = document.getElementById("dropzone");
+    let dropzone = document.getElementById("dropzone");
 
     this.makeDroppable(dropzone, files => {
       this.rawFiles = files;
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        var reader = new FileReader();
+        let reader = new FileReader();
 
         reader.onload = e => {
           this.files.push(e.target.result);
