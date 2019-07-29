@@ -9,6 +9,7 @@ Feature: Create Trip
       | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
       | Small River  | 3.0      | 3.0       | River    | Otago      | New Zealand|
     When I create a trip called "My Trip" from my destinations
+    Then I have a trip 
 
 
 

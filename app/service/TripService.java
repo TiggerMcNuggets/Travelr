@@ -36,9 +36,6 @@ public class TripService {
 
             trip.setName(tripDTO.name);
 
-//            trip.setDescription(tripDTO.description);
-
-
             for(TripDestination td: trip.getDestinations()) {
                 System.out.println(td.delete());
             }
@@ -81,10 +78,6 @@ public class TripService {
         return supplyAsync(() -> {
 
             Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
-
-            trip.setName(tripDTO.name);
-
-//            trip.setDescription(tripDTO.description);
 
             ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
 
