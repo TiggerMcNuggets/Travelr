@@ -51,7 +51,7 @@ export default {
   },
 
   props: {
-    uploadImages: Function,
+    uploadMedia: Function,
     toggleUploadDialogue: Function
   },
 

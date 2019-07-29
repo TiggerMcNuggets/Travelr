@@ -16,7 +16,7 @@
     </v-layout>
 
     <v-dialog v-model="uploadDialogActive" width="800">
-      <MediaUpload :uploadphotos="uploadMedia" :toggleUploadDialogue="toggleUploadDialogue"></MediaUpload>
+      <MediaUpload :uploadMedia="uploadMedia" :toggleUploadDialogue="toggleUploadDialogue" :allAlbums="this.organisedMedia.albums"></MediaUpload>
     </v-dialog>
 
     <v-dialog v-model="createAlbumDialogActive" width="800">
