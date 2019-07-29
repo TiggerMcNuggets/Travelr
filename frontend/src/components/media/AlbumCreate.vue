@@ -7,25 +7,12 @@
 
     <v-card-text>
       <v-layout row wrap>
-        <v-flex ml-4 md3>
+        <v-flex xs12 ml-3 mr-3>
           <v-text-field
-                  label="Title"
-                  :value="albumTitle"
-                  maxlength="50"
+            label="Title"
+            v-model="newAlbumName"
+            maxlength="50"
           ></v-text-field>
-        </v-flex>
-        <v-flex ml-4 md6>
-          <v-text-field
-                  label="Short Description"
-                  :value="albumDescription"
-                  maxlength="50"
-          ></v-text-field>
-        </v-flex>
-        <v-flex ml-3>
-          <v-switch
-                  v-model="publicSwitch"
-                  label="Private"
-          ></v-switch>
         </v-flex>
       </v-layout>
     </v-card-text>
@@ -35,7 +22,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn ma-3 flat v-on:click="toggleCreateAlbumDialogue()">Cancel</v-btn>
-      <v-btn ma-3 color="primary" flat v-on:click="createAlbum()">Create Album</v-btn>
+      <v-btn ma-3 color="primary" flat v-on:click="createNewAlbum(newAlbumName)">Create Album</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -43,21 +30,19 @@
 <script>
 	export default {
 		props: {
-			toggleCreateAlbumDialogue: Function
+			toggleCreateAlbumDialogue: Function,
+      createNewAlbum: Function
 		},
 
 		data() {
 			return {
 				publicSwitch: false,
-				albumTitle: "",
-				albumDescription: ""
+        newAlbumName: ""
 			};
 		},
 
 		methods: {
-			createAlbum() {
-				console.log("IMPLEMENT ME!");
-			}
+
 		}
 
 	};

@@ -48,6 +48,11 @@ public class CommonSteps  {
         state.getRequest().bodyJson(Json.parse(reqBody));
     }
 
+    @When("The repsonse is")
+    public void theResponseIs(String reqBody) {
+        state.getRequest().bodyText(reqBody);
+    }
+
     @When("I send the request")
     public void iSendTheRequest() {
         state.setResult(route(state.getApplication(), state.getRequest()));
@@ -73,6 +78,12 @@ public class CommonSteps  {
         }
 
         Assert.assertEquals(Json.parse(resBody), res);
+    }
+
+    @Then("I will receive the response body text")
+    public void iWillReceiveTheResponseText(String resBody) {
+        String res = contentAsString(state.getResult());
+        Assert.assertEquals(resBody, res);
     }
 
     @Given("The user exists")
