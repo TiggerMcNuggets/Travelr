@@ -1,5 +1,3 @@
-
-
 <template>
   <v-container fluid>
     <PageHeader :title="destination.name" disableUndoRedo enableBackButton :options="options"/>
@@ -79,8 +77,14 @@
       :showSuggestTravellerTypes="showSuggestTravellerTypes"
       :close="toggleShowSuggestTravellerTypes"
     />
-
-    <v-dialog v-model="dialog" :width="clickedImageWidth">
+    <MediaView
+      :clickedImageWidth.sync="clickedImageWidth"
+      :clickedImageURL.sync="clickedImageURL"
+      :clickedImage.sync="clickedImage"
+      :publicPhotoSwitch.sync="publicPhotoSwitch"
+      :imageDialog.sync="dialog"
+    />
+    <!-- <v-dialog v-model="dialog" :width="clickedImageWidth">
       <v-card>
         <v-img :src="clickedImageURL"></v-img>
 
@@ -108,7 +112,7 @@
           <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
 
     <v-dialog v-model="chooseExistingDialog" width="800">
       <PhotoSelect v-bind="{closeDialogue, setDestinationImages}"/>
@@ -149,6 +153,7 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
 import PhotoSelect from "../photos/PhotoSelect";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
+import MediaView from "../photos/MediaView";
 import { store } from "../../store/index";
 import {
   storeDestinationImage,
@@ -166,7 +171,8 @@ export default {
   components: {
     PhotoSelect,
     SuggestTravellerTypes,
-    PageHeader
+    PageHeader,
+    MediaView
   },
 
   // local variables

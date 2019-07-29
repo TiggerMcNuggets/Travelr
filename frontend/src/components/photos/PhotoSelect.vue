@@ -2,7 +2,7 @@
 
 <template>
   <v-card>
-    <div class="outer-container">
+    <!-- <div class="outer-container">
       <div class="inner-container">
         <v-card-title primary-title class="headline media-popup-header white--text">
           <h5 class="font-weight-regular">Add Existing Photo</h5>
@@ -103,7 +103,7 @@
     </div>
     <v-divider></v-divider>
     <v-btn class="button" color="error" v-on:click="processSelected()">Add</v-btn>
-    <v-btn class="button" outline color="error" @click="closeDialogue()">Cancel</v-btn>
+    <v-btn class="button" outline color="error" @click="closeDialogue()">Cancel</v-btn> -->
   </v-card>
 </template>
 
