@@ -4,7 +4,10 @@
 
       <!-- Right side of page header with optional back button and page title -->
       <div class="page__title_container">
-        <v-btn fab small dark color="indigo" @click="$router.go(-1)" v-if="enableBackButton">
+        <v-btn fab small dark color="indigo" @click="$router.go(-1)" v-if="enableBackButton && !backButtonOverride">
+          <v-icon dark>keyboard_arrow_left</v-icon>
+        </v-btn>
+        <v-btn fab small dark color="indigo" @click="backButtonOverride" v-if="enableBackButton && backButtonOverride">
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
         <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
@@ -15,14 +18,14 @@
       <!-- Optional undo redo buttons -->
       <UndoRedoButtons
         v-if="!disableUndoRedo"
-        :canRedo="rollbackCanRedo()"
-        :canUndo="rollbackCanUndo()"
+        :canRedo="canRedo()"
+        :canUndo="canUndo()"
         :undo="undo"
         :redo="redo"
       ></UndoRedoButtons>
 
       <!-- Page options such as add or search to be displayed on the right side of the header -->
-      <div>
+      <div v-if="options">
         <v-btn
           v-for="option in options.entries()"
           :key="option[0]"
@@ -56,14 +59,11 @@
 
 
 <script>
-import RollbackMixin from "../../mixins/RollbackMixin.vue";
 import UndoRedoButtons from "../../common/rollback/UndoRedoButtons.vue";
 
 export default {
-  // Generic page header to be reused on pages and make consistant.
+  // Generic page header to be reused on pages and make consistent.
   name: "PageHeader",
-
-  mixins: [RollbackMixin],
 
   components: {
     UndoRedoButtons
@@ -75,8 +75,11 @@ export default {
     options: Array,
     undo: Function,
     redo: Function,
+    canUndo: Function,
+    canRedo: Function,
     disableUndoRedo: Boolean,
-    enableBackButton: Boolean
+    enableBackButton: Boolean,
+    backButtonOverride: Function
   }
 };
 </script>

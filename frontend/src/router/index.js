@@ -3,8 +3,9 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
-// import ProfilePhotos from "../components/profile/ProfilePhotos";
-import ProfileTrips from "../components/profile/ProfileTrips";
+import ProfilePhotos from "../components/profile/PersonalPhotos";
+import Trips from "../components/trips/Trips";
+import Profile from "../components/profile/Profile"
 import userSearch from "../components/userSearch/userSearch";
 import Signup from "../components/signup/Signup.vue";
 import Destination from "../components/destination/Destination";
@@ -21,7 +22,7 @@ import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
 import Media from "../views/Media"
 
-const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}`;
+const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}/dashboard`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
 
 const authGuard = (to, from, next) => {
@@ -58,7 +59,7 @@ const unauthGuard = (to, from, next) => {
         return next();
       });
   }
-  return next(`/user/${store.getters.getUser.id}`);
+  return next(`/user/${store.getters.getUser.id}/dashboard`);
 };
 
 const standardAccessGuard = (to, from, next) => {
@@ -104,14 +105,11 @@ let router = new Router({
   routes: [
     {
       path: "",
-      beforeEnter: unauthGuard
-    },
-
-    {
-      path: "",
       name: "home",
       component: Home,
       beforeEnter: unauthGuard,
+      beforeLeave: unauthGuard,
+      redirect: "/login",
       children: [
         {
           path: "/login",
@@ -134,11 +132,18 @@ let router = new Router({
       path: "/user/:id",
       component: Page,
       beforeEnter: authGuard,
+      redirect: "/user/:id/dashboard",
       children: [
         {
-          path: "",
+          path: "dashboard",
           name: "travellerProfileDashboard",
           component: ProfileDashboard
+        },
+        {
+          path: "profile",
+          name: "Profile",
+          component: Profile,
+          beforeEnter: authGuard
         },
         {
           path: "edit",
@@ -155,7 +160,7 @@ let router = new Router({
         {
           path: "trips",
           name: "travellerTrips",
-          component: ProfileTrips
+          component: Trips
         },
         {
           path: "/user/:id/trips/:trip_id",

@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 public class FileHelper {
     
@@ -58,7 +59,10 @@ public class FileHelper {
    * @return
    */
   public String getHashedImage(String name) {
-    return name.hashCode() + "." + getFileExtension(name);
+
+    UUID uuid = UUID.randomUUID();
+    String randomUUIDString = uuid.toString();
+    return randomUUIDString + "." + getFileExtension(name);
   }
 
 

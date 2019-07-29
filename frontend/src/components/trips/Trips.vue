@@ -2,7 +2,7 @@
 
 <template>
   <v-container fluid>
-    <PageHeader title="Trips" :undo="undo" :redo="redo" :options="options" />
+    <PageHeader title="Trips" :undo="undo" :redo="redo" :canRedo="rollbackCanRedo" :canUndo="rollbackCanUndo" :options="options" />
 
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>

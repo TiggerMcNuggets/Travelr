@@ -1,6 +1,5 @@
 package models;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import finders.AlbumFinder;
 import play.data.validation.Constraints;
 
@@ -49,8 +48,8 @@ public class Album extends BaseModel {
         media.remove(media_item);
     }
 
-    public UnmodifiableArrayList<Media> getMedia() {
-        return (UnmodifiableArrayList<Media>) media;
+    public List<Media> getMedia() {
+        return (List<Media>) media;
     }
 
     public void setMedia(List<Media> media) {

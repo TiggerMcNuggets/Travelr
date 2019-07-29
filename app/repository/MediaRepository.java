@@ -1,27 +1,30 @@
 package repository;
 
 import controllers.dto.Media.UpdateMediaReq;
-import controllers.dto.Photo.UpdatePhotoReq;
-import io.ebean.Expr;
 import io.ebean.ExpressionList;
 import models.Album;
 import models.Media;
-import models.PersonalPhoto;
 import models.User;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import com.typesafe.config.Config;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class MediaRepository {
 
     private final DatabaseExecutionContext executionContext;
+    private final String rootPath = System.getProperty("user.home");
+    private String MEDIA_FILEPATH;
 
     @Inject
-    public MediaRepository(DatabaseExecutionContext executionContext) {
+    public MediaRepository(Config config, DatabaseExecutionContext executionContext) {
+        MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
         this.executionContext = executionContext;
     }
 
@@ -37,13 +40,6 @@ public class MediaRepository {
                 return null; // bad user
             ExpressionList<Media> query = Media.find.query().where().eq("user_id", id);
             List<Media> mediaList = query.findList();
-
-            for (Media media : mediaList) {
-                if (media.getUriString().equals(imageFileName)) {
-                    System.err.println("Duplicate Photo");
-                    return null;
-                }
-            }
 
             Media media = new Media(traveller, imageFileName);
             Album album = Album.find.findAlbumById(album_id);
@@ -83,6 +79,7 @@ public class MediaRepository {
 
     /**
      * Updates a media that belongs to a user, changes it from private to public
+     * 
      * @param request the request DTO
      * @param mediaId the media id
      * @return completable future of the new destination
@@ -90,8 +87,10 @@ public class MediaRepository {
     public CompletableFuture<Long> update(UpdateMediaReq request, Long mediaId) {
         return supplyAsync(() -> {
             Media media = Media.find.findMediaById(mediaId);
-            if (request.is_public != null) media.setIs_public(request.is_public);
-            if (request.caption != null) media.setCaption(request.caption);
+            if (request.is_public != null)
+                media.setIs_public(request.is_public);
+            if (request.caption != null)
+                media.setCaption(request.caption);
             media.save();
 
             return media.id;
@@ -100,6 +99,7 @@ public class MediaRepository {
 
     /**
      * Gets one media item that belongs to a user
+     * 
      * @param id the media id
      * @return completable future of the photo
      */
@@ -115,12 +115,27 @@ public class MediaRepository {
     public CompletableFuture<Long> remove(Long album_id, Long media_id) {
         return supplyAsync(() -> {
             Album album = Album.find.findAlbumById(album_id);
-            if (album == null) return null; // album does not exist
+            if (album == null)
+                return null; // album does not exist
 
             Media media = Media.find.findMediaById(media_id);
-            if (media == null) return null; // media does not exist
+            if (media == null)
+                return null; // media does not exist
+
+            if (media.fileCanBeDeleted()) {
+                File file = new File(MEDIA_FILEPATH + media.getUriString());
+                if (file.delete()) {
+                    album.removeMedia(media);
+                    album.save();
+                    return media.id;
+                } else {
+                    return null;
+                }
+            }
 
             album.removeMedia(media);
+            album.save();
+
             return media.id;
         }, executionContext);
     }
