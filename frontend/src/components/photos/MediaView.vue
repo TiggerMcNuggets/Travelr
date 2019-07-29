@@ -49,7 +49,7 @@
           <v-spacer></v-spacer>
         </v-card-actions>
         <v-card-actions>
-          <v-btn color="primary" flat @click="imageDialog = false">Close</v-btn>
+          <v-btn color="primary" flat @click="closeMediaDialogue">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -78,7 +78,8 @@ export default {
     "clickedImageURL",
     "clickedImage",
     "publicPhotoSwitch",
-    "imageDialog"
+    "imageDialog",
+    "closeMediaDialogue"
   ],
 
   // local variables

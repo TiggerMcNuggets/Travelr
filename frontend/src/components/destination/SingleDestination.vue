@@ -83,6 +83,7 @@
       :clickedImage.sync="clickedImage"
       :publicPhotoSwitch.sync="publicPhotoSwitch"
       :imageDialog.sync="dialog"
+      :closeMediaDialogue="closeMediaDialogue"
     />
     <!-- <v-dialog v-model="dialog" :width="clickedImageWidth">
       <v-card>
@@ -284,6 +285,13 @@ export default {
      */
     closeDialogue() {
       this.chooseExistingDialog = false;
+    },
+
+    /**
+     * Closes the choose existing photo dialog.
+     */
+    closeMediaDialogue() {
+      this.dialog = false;
     },
 
     /**
