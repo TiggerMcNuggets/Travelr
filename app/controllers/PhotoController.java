@@ -129,7 +129,7 @@ public class PhotoController extends Controller {
         Form<UpdatePhotoReq> updatePhotoForm = formFactory.form(UpdatePhotoReq.class).bindFromRequest(request);
 
         if (updatePhotoForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Error uploading photo"));
+            return CompletableFuture.completedFuture(badRequest("Error updating photo"));
         }
 
         UpdatePhotoReq req = updatePhotoForm.get();
