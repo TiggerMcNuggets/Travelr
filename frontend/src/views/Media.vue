@@ -1,7 +1,7 @@
 <template>
-  <v-layout d-block pl-4 pt-3>
+  <v-container fluid>
     <PageHeader v-if="viewingAlbum" :title="activeAlbumMetadata.name" disableUndoRedo enableBackButton :backButtonOverride="navigateBack" :options="options"/>
-    <PageHeader v-else title="Media" disableUndoRedo enableBackButton :options="options"/>
+    <PageHeader v-else title="Media" disableUndoRedo :options="options"/>
 
     <v-layout row wrap>
       <v-flex xs2 v-if="viewingAlbum">
@@ -23,7 +23,7 @@
       <AlbumCreate :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"></AlbumCreate>
     </v-dialog>
 
-  </v-layout>
+  </v-container>
 </template>
 
 <script>
