@@ -1,14 +1,16 @@
 <template>
-  <v-form ref="form" v-model="isValid" lazy-validation>
-    <v-flex text-xs-left>
-      <v-card class="profile-card">
-        <UndoRedoButtons
-          :canRedo="rollbackCanRedo()"
-          :canUndo="rollbackCanUndo()"
-          :undo="undo"
-          :redo="redo"
-        ></UndoRedoButtons>
-
+  <v-container fluid>
+    <PageHeader
+      title="Edit Profile"
+      :undo="undo"
+      :redo="redo"
+      :canRedo="rollbackCanRedo"
+      :canUndo="rollbackCanUndo"
+      enableBackButton
+      :options="[]"
+    />
+    <v-form ref="form" v-model="isValid" lazy-validation>
+      <v-flex text-xs-left>
         <TravellerForm
           :fname.sync="traveller.firstName"
           :mname.sync="traveller.middleName"
@@ -29,51 +31,17 @@
               id="file"
               ref="file"
               v-on:change="handleFileUpload()"
-            />
+            >
           </label>
-          <v-btn @click="submitFile">Upload Photo</v-btn>
         </div>
-        <v-btn :disabled="!isValid" color="primary" @click="handleEdit">Save</v-btn>
+        <v-btn :disabled="!isValid" large color="error" @click="handleEdit">Save</v-btn>
+        <v-btn @click="submitFile" large outline color="error">Upload Photo</v-btn>
         <v-alert :value="editErrorAlert" type="error">Cannot edit profile</v-alert>
         <v-alert :value="undoRedoErrorAlert" type="error">Cannot undo or redo</v-alert>
-      </v-card>
-    </v-flex>
-  </v-form>
+      </v-flex>
+    </v-form>
+  </v-container>
 </template>
-
-<style>
-.upload-section {
-  padding: 30px 10px;
-}
-
-.choose-file-button {
-  background-color: #f5f5f5;
-  color: rgba(0, 0, 0, 0.87);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-
-  align-items: center;
-  border-radius: 2px;
-  display: inline-flex;
-  height: 36px;
-  flex: 0 0 auto;
-  font-size: 14px;
-  font-weight: 500;
-  justify-content: center;
-  margin: 6px 8px;
-  min-width: 88px;
-  outline: 0;
-  text-transform: uppercase;
-  text-decoration: none;
-  position: relative;
-  vertical-align: middle;
-}
-
-.profile-card {
-  margin-top: 20px;
-}
-</style>
 
 <script>
 import userRepo from "../../repository/UserRepository";
@@ -84,14 +52,16 @@ import { uploadProfilePic } from "../../repository/PersonalPhotosRepository";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 
 import { store } from "../../store/index";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons";
+import PageHeader from "../common/header/PageHeader";
 
 export default {
   name: "EditProfile",
-  components: { UndoRedoButtons, TravellerForm },
+  components: { PageHeader, TravellerForm },
 
   store,
+
   mixins: [RollbackMixin],
+
   data() {
     return {
       isValid: false,
@@ -106,8 +76,6 @@ export default {
     };
   },
   methods: {
-    // Sets the file property to the new file uploaded
-
     /**
      * Sets all visible alerts to invisible
      */

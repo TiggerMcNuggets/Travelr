@@ -210,6 +210,9 @@ import {
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
 import {isDemotable, isPromotable, getDepthData} from "./trips_destinations_util";
+
+
+import StoreTripsMixin from '../mixins/StoreTripsMixin'
 import RollbackMixin from '../mixins/RollbackMixin';
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 let tripRepository = RepositoryFactory.get("trip");
@@ -217,14 +220,16 @@ let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
-  mixins: [RollbackMixin],
+  mixins: [
+          RollbackMixin,
+          StoreTripsMixin
+  ],
   components: {
     UndoRedoButtons,
     draggable: draggable
   },
   props: {
     toggleShowCreateTrip: Function,
-    regetTrips: Function,
     passedTrip: String,
     updateViewTripPage: Function,
     checkpointCreateTrip: Function
@@ -392,11 +397,42 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        tripRepository
-          .createTripForUser(trip, this.id)
+        this._postTrip(this.id, trip)
           .then(res => {
-            this.checkpointCreateTrip(res.data.id);
-            this.regetTrips();
+            this.checkpointCreateTrip(res.data.id)
+            // this.regetTrips();
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    },
+
+    /**
+     * Checks if the update trip form passes validation
+     * If it does then updates trip and updates the view trip page
+     */
+    updateTrip: function() {
+      if (this.$refs.form.validate()) {
+        const trip = this.tripAssembler();
+        this._putTrip(this.id, parseInt(this.passedTrip), trip)
+          .then(() => {
+              const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
+              this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                      url: url,
+                      body: trip
+                  },
+                  {
+                      url: url,
+                      body: this.rollbackPreviousBody
+                  }
+              );
+
+              // Update previous body to be used for the next checkpoints reaction
+              this.rollbackSetPreviousBody({...trip});
+              this.updateViewTripPage();
           })
           .catch(e => {
             console.log(e);

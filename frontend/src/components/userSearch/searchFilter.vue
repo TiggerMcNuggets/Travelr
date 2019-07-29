@@ -1,5 +1,4 @@
 <template>
-  <v-flex>
     <v-form>
       <v-layout wrap class="side-filter">
         <v-flex xs12 sm6 md6>
@@ -58,7 +57,6 @@
         </v-flex>
       </v-layout>
     </v-form>
-  </v-flex>
 </template>
 
 <style>

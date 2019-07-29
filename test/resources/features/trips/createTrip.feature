@@ -2,7 +2,7 @@ Feature: Create Trip
   Description: The purpose of this feature is to test the api endpoint related to creating trips
 
   Scenario: Create a trip successfully
-  # TODO: Implement, (expect 201)
+    Given I am authenticated
 
   Scenario: Create a trip for a user as an admin
   # TODO: Implement, (expect 201)
