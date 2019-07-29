@@ -38,7 +38,7 @@
 
                     <v-flex xs12 md4 offset-md2>
 
-                    <v-btn @click="openCreateAlbum">Create new album</v-btn>
+                    <v-btn @click="openCreateAlbumDialogue">Create new album</v-btn>
 
                     </v-flex>
 
@@ -64,12 +64,12 @@
 
         <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn ma-3 flat v-on:click="toggleUploadDialogue()">Cancel</v-btn>
-            <v-btn ma-3 color="primary" flat v-on:click="uploadMedia(rawFiles)">Upload Media</v-btn>
+            <v-btn ma-3 flat v-on:click="closeUploadDialogue()">Cancel</v-btn>
+            <v-btn ma-3 color="primary" flat v-on:click="uploadMediaAndClearMediaBox(rawFiles, selectedAlbums)">Upload Media</v-btn>
         </v-card-actions>
 
         <v-dialog v-model="createAlbumDialogActive" width="800">
-            <AlbumCreate :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"></AlbumCreate>
+            <AlbumCreate :createNewAlbum="createNewAlbum" :openCreateAlbumDialogue="openCreateAlbumDialogue" :closeCreateAlbumDialogue="closeCreateAlbumDialogue"></AlbumCreate>
         </v-dialog>
 
     </v-card>
@@ -124,8 +124,14 @@
 
         props: {
             uploadMedia: Function,
-            toggleUploadDialogue: Function,
-            allAlbums: Array
+            openUploadDialogue: Function,
+            closeUploadDialogue: Function,
+            openCreateAlbumDialogue: Function,
+            closeCreateAlbumDialogue: Function,
+            allAlbums: Array,
+            createNewAlbum: Function,
+            toggleCreateAlbumDialogue: Function,
+            createAlbumDialogActive: Boolean
         },
 
         // local variables
@@ -134,7 +140,6 @@
                 files: [],
                 rawFiles: [],
                 selectedAlbumNames: [],
-                createAlbumDialogActive: false
             };
         },
 
@@ -197,12 +202,13 @@
                 });
             },
 
-            /**
-             * allows user to create album using dialog
-             */
-            openCreateAlbum() {
-                this.createAlbumDialogActive = !this.createAlbumDialogActive;
-            },
+
+            uploadMediaAndClearMediaBox(rawFiles, selectedAlbums) {
+                this.uploadMedia(rawFiles, selectedAlbums);
+                this.rawFiles = [];
+                this.files = [];
+                this.selectedAlbumNames = [];
+            }
         },
 
         mounted: function () {
@@ -247,7 +253,6 @@
             selectedAlbums() {
                 let selectedAlbums = [];
                 for (let i = 0; i < this.allAlbums.length; i++) {
-                    console.log(this)
                     if (this.selectedAlbumNames.includes(this.allAlbums[i].name)) {
                         selectedAlbums.push(this.allAlbums[i]);
                     }
