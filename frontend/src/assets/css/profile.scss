@@ -1,0 +1,73 @@
+@import "./theme.scss";
+
+// Variables
+$profile-image-size: 250px;
+
+/*
+---------- Profile Details ----------
+*/
+.chip-list {
+  display: flex;
+}
+
+li {
+  list-style: none;
+}
+
+.traveller-name {
+  font-size: 36px;
+  padding-bottom: 5px;
+}
+
+.profile-heading-section {
+  margin: 30px 0px;
+}
+
+.field-title {
+  line-height: 0px;
+  color: grey;
+  margin-top: 40px;
+}
+
+.profile-image {
+  height: $profile-image-size !important;
+}
+
+.profile-container {
+  height: $profile-image-size !important;
+  width: $profile-image-size !important;
+  margin: auto;
+  overflow: hidden !important;
+  border-radius: $profile-image-size !important;
+}
+
+/*
+---------- Profile Edit ----------
+*/
+.upload-section {
+  padding: 30px 10px;
+
+  .choose-file-button {
+    background-color: #f5f5f5;
+    color: rgba(0, 0, 0, 0.87);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+
+    align-items: center;
+    border-radius: 2px;
+    display: inline-flex;
+    height: 36px;
+    flex: 0 0 auto;
+    font-size: 14px;
+    font-weight: 500;
+    justify-content: center;
+    margin: 6px 0px;
+    min-width: 88px;
+    outline: 0;
+    text-transform: uppercase;
+    text-decoration: none;
+    position: relative;
+    vertical-align: middle;
+  }
+}

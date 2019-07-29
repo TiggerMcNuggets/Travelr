@@ -92,26 +92,26 @@
 </template>
 
 <script>
-import { rules } from "../form_rules";
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import SelectDataRepository from "../../repository/SelectDataRepository";
-let destinationRepository = RepositoryFactory.get("destination");
+  import { rules } from "../form_rules";
+  import SelectDataRepository from "../../repository/SelectDataRepository";
+  import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
 
-export default {
-  props: {
-    createDestinationCallback: Function,
-    prefillData: Object
-  },
+  export default {
+    mixins: [StoreDestinationsMixin],
+    props: {
+      createDestinationCallback: Function,
+      prefillData: Object
+    },
 
-  data() {
-    return {
-      destination: {},
-      userId: this.$route.params.id,
-      isError: false,
-      typeList: [],
-      ...rules
-    };
-  },
+    data() {
+      return {
+        destination: {},
+        userId: this.$route.params.id,
+        isError: false,
+        typeList: [],
+        ...rules
+      };
+    },
 
   /**
    * Populates the select form elements when the component mounts.
@@ -119,6 +119,7 @@ export default {
   mounted() {
     this.populateSelects();
   },
+
 
   methods: {
     /**
@@ -129,27 +130,26 @@ export default {
       this.typeList = travellerTypes.data;
     },
 
-    /**
-     * Sends a request to the API to create a destination based on the data entered into the form.
-     * Checks for an error and logs result if unsuccessful.
-     */
-    createDestination: function() {
-      if (this.$refs.form.validate()) {
-        destinationRepository
-          .createDestination(this.userId, this.destination)
-          .then(res => {
-            this.$refs.form.reset();
-            this.isError = false;
-            this.$emit("close-map-info-window");
-            this.createDestinationCallback(res.data.id);
-          })
-          .catch(err => {
-            console.log(err);
-            this.isError = true;
-            console.log("error creating destination");
-          });
-      }
-    },
+      /**
+       * Sends a request to the API to create a destination based on the data entered into the form.
+       * Checks for an error and logs result if unsuccessful.
+       */
+      createDestination: function () {
+        if (this.$refs.form.validate()) {
+          this._postDestination(this.userId, this.destination)
+                  .then(res => {
+                    this.$refs.form.reset();
+                    this.isError = false;
+                    this.$emit('close-map-info-window');
+                    this.createDestinationCallback(res.data.id);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                    this.isError = true;
+                    console.log("error creating destination");
+                  })
+        }
+      },
 
     /**
      * Resets the form values to blank.
