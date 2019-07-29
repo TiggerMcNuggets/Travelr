@@ -114,7 +114,6 @@
   let destinationRepository = RepositoryFactory.get("destination");
   import { rules } from "../form_rules";
   import RollbackMixin from "../mixins/RollbackMixin.vue";
-  import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
   import SelectDataRepository from "../../repository/SelectDataRepository";
   import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
   import PageHeader from "../common/header/PageHeader";
