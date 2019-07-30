@@ -45,9 +45,10 @@
 
     <v-dialog v-model="viewMediaDialogActive" :width="clickedImageWidth">
       <MediaDialog
-        :clickedImage.sync="clickedImage"
+        :clickedImage="clickedImage ? clickedImage : {}"
         :closeMediaDialog="() => viewMediaDialogActive = false"
         :updateMedia="updateMedia"
+        :deleteMedia="deleteMedia"
       />
     </v-dialog>
   </v-container>
@@ -358,6 +359,14 @@ export default {
     updateMedia(clickedImage) {
       mediaRepository
         .updateMedia(this.$route.params.id, clickedImage.id, clickedImage)
+        .then(res => {
+          this.getAllAlbums();
+        });
+    },
+
+    deleteMedia(clickedImage) {
+      mediaRepository
+        .deleteMedia(this.$route.params.id, this.activeAlbumMetadata.id, clickedImage.id)
         .then(res => {
           this.getAllAlbums();
         });

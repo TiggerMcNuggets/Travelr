@@ -13,7 +13,7 @@ export const updateMedia = async (userId, mediaId,payload) => {
 };
 
 export const deleteMedia = async (userId, albumId, mediaId) => {
-  return Repository.delete(`/users/${userId}/albums${albumId}/media/${mediaId}`);
+  return Repository.delete(`/users/${userId}/albums/${albumId}/media/${mediaId}`);
 };
 
 export const moveMediaToAlbum = async (userId, albumId, mediaId, payload) => {
@@ -36,6 +36,10 @@ export const createAlbum = async (userId, payload) => {
   return Repository.post(`/users/${userId}/albums`, payload);
 };
 
+export const updateMediaAlbums = async (userId, mediaId, payload) => {
+  return Repository.put(`/users/${userId}/media/${mediaId}`, payload);
+};
+
 export default {
   getUserAlbums,
   getSingleImage,
@@ -45,5 +49,6 @@ export default {
   deleteAlbum,
   getAlbumContent,
   uploadMediaToAlbum,
-  createAlbum
+  createAlbum,
+  updateMediaAlbums
 };

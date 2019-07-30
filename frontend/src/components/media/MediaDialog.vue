@@ -6,7 +6,10 @@
       <div>
         <v-layout d-flex>
           <h5 class="headline mb-0">Description</h5>
-          <v-icon v-if="editCaption" @click="() => {updateMedia(clickedImage); editCaption = false;}">save</v-icon>
+          <v-icon
+            v-if="editCaption"
+            @click="() => {updateMedia(clickedImage); editCaption = false;}"
+          >save</v-icon>
           <v-icon v-else @click="editCaption = true">edit</v-icon>
         </v-layout>
         <div v-if="editCaption">
@@ -21,14 +24,18 @@
     <v-card-actions>
       <v-select
         style="width: 20%"
-        v-model="value"
+        v-model="selectedAlbums"
         :items="albums"
         label="Add/Remove Albums"
+        item-text="name"
+        item-value="id"
+        return-object
         multiple
+        v-on:change="updateAlbums"
       >
         <template v-slot:selection="{ item, index }">
           <v-chip v-if="index === 0">
-            <span>{{ item }}</span>
+            <span>{{ item.name }}</span>
           </v-chip>
           <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span>
         </template>
@@ -39,6 +46,11 @@
         @on="updatePhotoVisability()"
         :label="`Public Photo`"
       ></v-switch>
+      <v-btn
+        color="error"
+        outline
+        @click="() => {deleteMedia(clickedImage); closeMediaDialog();}"
+      >Delete</v-btn>
     </v-card-actions>
     <v-card-actions>
       <v-btn color="error" outline @click="closeMediaDialog">Close</v-btn>
@@ -57,6 +69,7 @@ import {
   updateDestinationPhoto,
   addExistingPhoto
 } from "../../repository/DestinationPhotoRepository";
+import { constants } from "fs";
 
 let mediaRepository = RepositoryFactory.get("media");
 
@@ -66,15 +79,17 @@ export default {
   props: {
     clickedImage: Object,
     closeMediaDialog: Function,
-    updateMedia: Function
+    updateMedia: Function,
+    deleteMedia: Function
   },
 
   // local variables
   data() {
     return {
-      value: "",
+      selectedAlbums: [],
       albums: [],
-      editCaption: false
+      editCaption: false,
+      value: ""
     };
   },
 
@@ -90,6 +105,35 @@ export default {
   },
 
   methods: {
+    updateAlbums(albums) {
+      let requestBody = { id: this.clickedImage.id, albums: [] };
+
+      requestBody.albums = albums.map(item => item.id);
+      mediaRepository
+        .updateMediaAlbums(
+          this.$route.params.id,
+          this.clickedImage.id,
+          requestBody
+        )
+        .then(res => {
+          console.log(res);
+        });
+    }
+  },
+
+  mounted: function() {
+    this.selectedAlbums = this.clickedImage.albums
+      ? this.clickedImage.albums
+      : [];
+  },
+
+  watch: {
+    clickedImage: function(newImage, oldImage) {
+      if (newImage !== oldImage)
+        this.selectedAlbums = this.clickedImage.albums
+          ? this.clickedImage.albums
+          : [];
+    }
   },
 
   /**
@@ -98,11 +142,9 @@ export default {
   created: function() {
     this.isPublic = this.clickedImage.is_public;
     mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
-      let albums = [];
-      for (let i = 0; i < res.data.length; i++) {
-        albums.push(res.data[i].name);
-      }
-      this.albums = albums;
+      this.albums = res.data.map(item => {
+        return { id: item.id, name: item.name };
+      });
     });
   }
 };
