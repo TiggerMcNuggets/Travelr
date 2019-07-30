@@ -60,7 +60,7 @@
                           <v-btn
                                   icon
                                   @click="downloadTrip()"
-                                  fab flat small color="primary lighten-1"
+                                  flat small color="primary lighten-1"
                                   v-on="on"
                           >
                               <v-icon >calendar_today</v-icon>
@@ -72,11 +72,12 @@
                           v-else-if="!canDownloadTrip"
                           icon
                           disabled
+                          flat
                           @click="downloadTrip()">
                       <v-icon >calendar_today</v-icon>
                   </v-btn>
                   <v-btn v-else
-                          @click="downloadTrip()" fab small dark color="indigo">
+                          @click="downloadTrip()" flat fab small dark color="primary lighten-1">
                       <v-icon >calendar_today</v-icon>
                   </v-btn>
 
@@ -102,7 +103,7 @@
                                 v-on:click="toggleExpanded(i)">{{getDepthData(destination.depth).number}}</span>
                     </template>
                         <v-card
-                            :color="getDepthData(destination.depth).color"
+                            color="whitesmoke"
                         >
                         <v-container class="container-custom-padding">
                             <v-card-title>
