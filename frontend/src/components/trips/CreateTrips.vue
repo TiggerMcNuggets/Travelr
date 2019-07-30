@@ -209,7 +209,11 @@ import {
   noSameDestinationNameConsecutiveRule,
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
+import {deepCopy} from "../../tools/deepCopy"
 import {isDemotable, isPromotable, getDepthData} from "./trips_destinations_util";
+
+
+import StoreTripsMixin from '../mixins/StoreTripsMixin'
 import RollbackMixin from '../mixins/RollbackMixin';
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 let tripRepository = RepositoryFactory.get("trip");
@@ -217,14 +221,16 @@ let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
-  mixins: [RollbackMixin],
+  mixins: [
+          RollbackMixin,
+          StoreTripsMixin
+  ],
   components: {
     UndoRedoButtons,
     draggable: draggable
   },
   props: {
     toggleShowCreateTrip: Function,
-    regetTrips: Function,
     passedTrip: String,
     updateViewTripPage: Function,
     checkpointCreateTrip: Function
@@ -242,6 +248,7 @@ export default {
             departureDate: null,
             arrivalDateMenu: false,
             departureDateMenu: false,
+            depth: 0,
             destination: {name: null}
           },
       trip: {
@@ -366,7 +373,7 @@ export default {
      */
     addDestinationToTrip: function() {
       let newDestinations = this.trip.destinations;
-      newDestinations.push(this.emptyDest);
+      newDestinations.push(deepCopy(this.emptyDest));
       this.trip.destinations = newDestinations;
     },
 
@@ -392,11 +399,42 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        tripRepository
-          .createTripForUser(trip, this.id)
+        this._postTrip(this.id, trip)
           .then(res => {
-            this.checkpointCreateTrip(res.data.id);
-            this.regetTrips();
+            this.toggleShowCreateTrip();
+            this.checkpointCreateTrip(res.data.id)
+          })
+          .catch(e => {
+            console.log(e);
+          });
+      }
+    },
+
+    /**
+     * Checks if the update trip form passes validation
+     * If it does then updates trip and updates the view trip page
+     */
+    updateTrip: function() {
+      if (this.$refs.form.validate()) {
+        const trip = this.tripAssembler();
+        this._putTrip(this.id, parseInt(this.passedTrip), trip)
+          .then(() => {
+              const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
+              this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                      url: url,
+                      body: trip
+                  },
+                  {
+                      url: url,
+                      body: this.rollbackPreviousBody
+                  }
+              );
+
+              // Update previous body to be used for the next checkpoints reaction
+              this.rollbackSetPreviousBody({...trip});
+              this.updateViewTripPage();
           })
           .catch(e => {
             console.log(e);
@@ -412,12 +450,14 @@ export default {
       let trip = { name: this.trip.name, destinations: [] };
       this.trip.destinations.forEach((destination, index) => {
         trip.destinations.push({
+          depth: destination.depth,
           ordinal: index,
           destination: {...destination.destination}, 
           arrivalDate: moment(destination.arrivalDate).unix(),
           departureDate: moment(destination.departureDate).unix()
         });
       });
+      console.log("dests", trip.destinations);
       return trip;
     },
     /**

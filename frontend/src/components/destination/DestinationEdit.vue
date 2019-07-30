@@ -1,22 +1,9 @@
 
 
 <template>
-  <v-card>
-    <div class="outer-container">
+  <v-container fluid>
       <v-form ref="form" lazy-validation>
-        <div class="container">
-          <div class="section">
-            <div class="dest-name">
-              <h2 class="headline">Edit Destination</h2>
-              <undo-redo-buttons
-                :canRedo="rollbackCanRedo()"
-                :canUndo="rollbackCanUndo()"
-                :undo="undo"
-                :redo="redo"
-              ></undo-redo-buttons>
-            </div>
-          </div>
-          <v-divider class="photo-header-divider"></v-divider>
+          <PageHeader title="Edit Destination" :undo="undo" :redo="redo" :canRedo="rollbackCanRedo" :canUndo="rollbackCanUndo" enableBackButton />
           <v-layout>
             <v-flex xs12 md6>
               <v-text-field
@@ -98,11 +85,9 @@
             <v-btn color="red" @click="routeBackToPrevPage">CANCEL</v-btn>
             <v-btn @click="updateDestination">UPDATE DESTINATION</v-btn>
           </div>
-        </div>
         <v-alert :value="isError" type="error">This destination is already available to you</v-alert>
       </v-form>
-    </div>
-  </v-card>
+  </v-container>
 </template>
 
 <style>
@@ -125,19 +110,21 @@
 
 
 <script>
-import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import { rules } from "../form_rules";
-import RollbackMixin from "../mixins/RollbackMixin.vue";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
-import SelectDataRepository from "../../repository/SelectDataRepository";
-let destinationRepository = RepositoryFactory.get("destination");
+  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  let destinationRepository = RepositoryFactory.get("destination");
+  import { rules } from "../form_rules";
+  import RollbackMixin from "../mixins/RollbackMixin.vue";
+  import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
+  import SelectDataRepository from "../../repository/SelectDataRepository";
+  import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
+  import PageHeader from "../common/header/PageHeader";
 
-export default {
-  mixins: [RollbackMixin],
-
-  components: {
-    UndoRedoButtons: UndoRedoButtons
-  },
+  export default {
+    mixins: [RollbackMixin, StoreDestinationsMixin],
+    components: {
+      UndoRedoButtons,
+      PageHeader
+    },
 
   data() {
     return {
@@ -171,45 +158,48 @@ export default {
         });
     },
 
-    /**
-     * Updates a destination by through a request to the API based on the updated data in the form.
-     * This function will first check if the data is valid and only submit successfully if it is.
-     * A checkpoint is pushed to the undo redo stack containing information for the action and reaction
-     */
-    updateDestination: function() {
-      if (this.$refs.form.validate()) {
-        const userId = this.$route.params.id;
-        const destId = this.$route.params.dest_id;
+      /**
+       * Updates a destination by through a request to the API based on the updated data in the form.
+       * This function will first check if the data is valid and only submit successfully if it is.
+       * A checkpoint is pushed to the undo redo stack containing information for the action and reaction
+       */
+      updateDestination: function() {
+        if (this.$refs.form.validate()) {
+          const userId = this.$route.params.id;
+          const destId = this.$route.params.dest_id;
 
-        // Call the update request
-        destinationRepository
-          .updateDestination(userId, destId, this.destination)
-          .then(() => {
-            const url = `/users/${userId}/destinations/${destId}`;
+          // Call the update request
+          this._putDestination(
+                          userId,
+                          destId,
+                          this.destination
+                  )
+                  .then(() => {
+                    const url = `/users/${userId}/destinations/${destId}`;
 
-            // Pushes checkpoint containing type of action, action body, and reaction body
-            this.rollbackCheckpoint(
-              "PUT",
-              {
-                url: url,
-                body: { ...this.destination }
-              },
-              {
-                url: url,
-                body: this.rollbackPreviousBody
-              }
-            );
+                    // Pushes checkpoint containing type of action, action body, and reaction body
+                    this.rollbackCheckpoint(
+                            'PUT',
+                            {
+                              url: url,
+                              body: {...this.destination}
+                            },
+                            {
+                              url: url,
+                              body: this.rollbackPreviousBody
+                            }
+                    );
 
-            // Update previous body to be used for the next checkpoints reaction
-            this.rollbackSetPreviousBody(this.destination);
-            this.isError = false;
-          })
-          .catch(e => {
-            console.error(e);
-            this.isError = true;
-          });
-      }
-    },
+                    // Update previous body to be used for the next checkpoints reaction
+                    this.rollbackSetPreviousBody(this.destination);
+                    this.isError = false;
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                    this.isError = true;
+                  });
+        }
+      },
 
     /**
      * Undoes the last action and calls setDestination() afterwards

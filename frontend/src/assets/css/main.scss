@@ -1,6 +1,10 @@
 @import "theme.scss";
 @import "header.scss";
 @import "dashboard.scss";
+@import "profile.scss";
+@import "login.scss";
+
+@import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
 h1 {
   align-self: flex-end;
@@ -17,4 +21,8 @@ main {
 
 .theme--light.application {
   background-color: white;
+}
+
+.no-underline {
+  text-decoration: none;
 }
