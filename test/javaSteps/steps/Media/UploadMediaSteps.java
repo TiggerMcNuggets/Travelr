@@ -1,7 +1,7 @@
 package javaSteps.steps.Media;
 
 import akka.http.javadsl.model.MediaType;
-import akka.protobuf.ByteString;
+import akka.util.ByteString;
 import akka.stream.javadsl.FileIO;
 import akka.stream.javadsl.Source;
 import cucumber.api.java.bs.A;
@@ -22,7 +22,6 @@ public class UploadMediaSteps {
 
     // Singleton object that holds shared values across features
     private StateSingleton state = StateSingleton.getInstance();
-
 
 
     @When("I want to upload media")
@@ -49,9 +48,8 @@ public class UploadMediaSteps {
                 "form-data"));
 
 
-        state.getRequest().bodyMultipart(partList,
-                play.libs.Files.singletonTemporaryFileCreator(),
-                );
+        state.getRequest().bodyMultipart( ,partList);
 
 
+    }
 }
