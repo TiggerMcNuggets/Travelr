@@ -117,7 +117,6 @@ public class MediaController extends Controller {
             GetAlbumsRes response = new GetAlbumsRes(request, albums);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response.getGetAlbumRes());
-
             return ok(jsonResponse);
         });
     }

@@ -10,6 +10,7 @@ public class MediaRes {
     private String filename;
     private Boolean is_public;
     private String type;
+    private String caption;
 
     /**
      *
@@ -20,6 +21,7 @@ public class MediaRes {
         this.filename = media.uriString;
         this.is_public = media.is_public;
         this.type = media.mediaType;
+        this.caption = media.caption;
     }
 
     /**
@@ -50,6 +52,10 @@ public class MediaRes {
         return type;
     }
 
-
-
+    /**
+     * @return String return the caption
+     */
+    public String getCaption() {
+        return caption;
+    }
 }

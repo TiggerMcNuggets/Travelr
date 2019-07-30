@@ -5,6 +5,7 @@ import models.Album;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Media;
 import play.mvc.Http;
 
 public class GetAlbumsRes {

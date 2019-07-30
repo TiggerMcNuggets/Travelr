@@ -4,8 +4,15 @@
 
     <v-card-title primary-title>
       <div>
-        <h5 class="headline mb-0">Image Name</h5>
-        <div>Description/Other meta info</div>
+        <v-layout d-flex>
+          <h5 class="headline mb-0">Description</h5>
+          <v-icon v-if="editCaption" @click="() => {updateMedia(clickedImage); editCaption = false;}">save</v-icon>
+          <v-icon v-else @click="editCaption = true">edit</v-icon>
+        </v-layout>
+        <div v-if="editCaption">
+          <v-text-field v-model="clickedImage.caption" :counter="250" label="Caption"></v-text-field>
+        </div>
+        <div v-else>{{ clickedImage.caption ? clickedImage.caption : "No Description" }}</div>
       </div>
     </v-card-title>
 
@@ -58,14 +65,16 @@ export default {
 
   props: {
     clickedImage: Object,
-    closeMediaDialog: Function
+    closeMediaDialog: Function,
+    updateMedia: Function
   },
 
   // local variables
   data() {
     return {
       value: "",
-      albums: []
+      albums: [],
+      editCaption: false
     };
   },
 
@@ -80,7 +89,8 @@ export default {
     }
   },
 
-  methods: {},
+  methods: {
+  },
 
   /**
    * Initialises the application on component creation.

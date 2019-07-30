@@ -1,12 +1,12 @@
 <template>
   <v-container fluid>
     <PageHeader
-            v-if="viewingAlbum"
-            :title="activeAlbumMetadata.name"
-            disableUndoRedo
-            enableBackButton
-            :backButtonOverride="navigateBack"
-            :options="albumOptions"
+      v-if="viewingAlbum"
+      :title="activeAlbumMetadata.name"
+      disableUndoRedo
+      enableBackButton
+      :backButtonOverride="navigateBack"
+      :options="albumOptions"
     />
     <PageHeader v-else title="Media" disableUndoRedo :options="normalOptions"/>
 
@@ -23,245 +23,255 @@
     </v-layout>
 
     <v-dialog v-model="uploadDialogActive" width="800">
-      <MediaUpload :uploadMedia="uploadMedia" :openUploadDialog="openUploadDialog"
-                   :closeUploadDialog="closeUploadDialog" :allAlbums="this.organisedMedia.albums"
-                   :createNewAlbum="createNewAlbum" :openCreateAlbumDialog="openCreateAlbumDialog"
-                   :closeCreateAlbumDialog="closeCreateAlbumDialog" :activeAlbumMetadata="activeAlbumMetadata"></MediaUpload>
+      <MediaUpload
+        :uploadMedia="uploadMedia"
+        :openUploadDialog="openUploadDialog"
+        :closeUploadDialog="closeUploadDialog"
+        :allAlbums="this.organisedMedia.albums"
+        :createNewAlbum="createNewAlbum"
+        :openCreateAlbumDialog="openCreateAlbumDialog"
+        :closeCreateAlbumDialog="closeCreateAlbumDialog"
+        :activeAlbumMetadata="activeAlbumMetadata"
+      ></MediaUpload>
     </v-dialog>
 
     <v-dialog v-if="!viewingAlbum" v-model="createAlbumDialogActive" width="500">
-      <AlbumCreate :createNewAlbum="createNewAlbum" :openCreateAlbumDialog="openCreateAlbumDialog"
-                   :closeCreateAlbumDialog="closeCreateAlbumDialog"></AlbumCreate>
+      <AlbumCreate
+        :createNewAlbum="createNewAlbum"
+        :openCreateAlbumDialog="openCreateAlbumDialog"
+        :closeCreateAlbumDialog="closeCreateAlbumDialog"
+      ></AlbumCreate>
     </v-dialog>
 
     <v-dialog v-model="viewMediaDialogActive" :width="clickedImageWidth">
       <MediaDialog
-              :clickedImage.sync="clickedImage"
-              :closeMediaDialog="() => viewMediaDialogActive = false"
+        :clickedImage.sync="clickedImage"
+        :closeMediaDialog="() => viewMediaDialogActive = false"
+        :updateMedia="updateMedia"
       />
     </v-dialog>
   </v-container>
 </template>
 
 <script>
-  import MediaFilter from "../components/media/MediaFilter";
-  import MediaGrid from "../components/media/MediaGrid";
-  import PageHeader from "../components/common/header/PageHeader";
-  import MediaUpload from "../components/media/MediaUpload";
-  import AlbumCreate from "../components/media/AlbumCreate";
-  import MediaDialog from "../components/media/MediaDialog";
+import MediaFilter from "../components/media/MediaFilter";
+import MediaGrid from "../components/media/MediaGrid";
+import PageHeader from "../components/common/header/PageHeader";
+import MediaUpload from "../components/media/MediaUpload";
+import AlbumCreate from "../components/media/AlbumCreate";
+import MediaDialog from "../components/media/MediaDialog";
 
-  import base_url from "../repository/BaseUrl";
-  import {deepCopy} from "../tools/deepCopy";
-  import {RepositoryFactory} from "../repository/RepositoryFactory";
+import base_url from "../repository/BaseUrl";
+import { deepCopy } from "../tools/deepCopy";
+import { RepositoryFactory } from "../repository/RepositoryFactory";
 
-  let mediaRepository = RepositoryFactory.get("media");
+let mediaRepository = RepositoryFactory.get("media");
 
-  export default {
-    name: "Media",
+export default {
+  name: "Media",
 
-    data() {
+  data() {
+    return {
+      activeFilter: "Albums",
+      allMedia: [],
+      activeMedia: [],
+      uploadDialogActive: false,
+      createAlbumDialogActive: false,
+      viewMediaDialogActive: false,
+      viewingAlbum: false,
+      activeAlbumMetadata: null,
+      userId: null,
+      isMyProfile: false,
+      isAdminUser: false,
+      clickedImageWidth: 0,
+      clickedImage: {}
+    };
+  },
+
+  components: {
+    MediaFilter,
+    MediaGrid,
+    PageHeader,
+    MediaUpload,
+    AlbumCreate,
+    MediaDialog
+  },
+
+  computed: {
+    /**
+     * Media Flow:
+     *   1. Fetch Media from the backend, store in  'allMedia'
+     *   2. Deep copy  'allMedia'  to  'activeMedia'
+     *   3. Organise  'activeMedia'  into separate media categories stored in  'organisedMedia'
+     *   4. Count each media item and store the counts in  'mediaCounts'
+     *   *** READY STATE ***
+     *   5. When a user clicks on an album,  'activeMedia'  is updated to the album content.
+     *      This triggers a recalculation for steps 3 and 4 and everything cascades nicely.
+     */
+
+    /**
+     * Traverses the array of albums fetched from the server and organises them into
+     * media categories (photos, videos, albums). This is done so that filtering is trivial.
+     * This is recomputed every time activeMedia is updated.
+     */
+    organisedMedia: function() {
+      let organisedMedia = {
+        all: [],
+        photos: [],
+        videos: [],
+        albums: []
+      };
+
+      let viewingAlbum = this.viewingAlbum;
+
+      this.activeMedia.forEach(function(album) {
+        if (!viewingAlbum) organisedMedia.all.push(album);
+        if (!viewingAlbum) organisedMedia.albums.push(album);
+
+        album.content.forEach(function(media) {
+          organisedMedia.all.push(media);
+
+          if (media.type === "Photo") {
+            organisedMedia.photos.push(media);
+          } else if (media.type === "Video") {
+            organisedMedia.videos.push(media);
+          }
+        });
+      });
+
+      return organisedMedia;
+    },
+
+    /**
+     * Calculates the number of media items and albums to be displayed in the side filter area.
+     * This is recomputed every time organisedMedia is updated.
+     */
+    mediaCounts: function() {
+      let albumCount = 0;
+      // If we're not currently viewing an album, set album count to the number of albums
+      if (!this.viewingAlbum) {
+        albumCount = this.activeMedia.length;
+      }
+
       return {
-        activeFilter: "Albums",
-        allMedia: [],
-        activeMedia: [],
-        uploadDialogActive: false,
-        createAlbumDialogActive: false,
-        viewMediaDialogActive: false,
-        viewingAlbum: false,
-        activeAlbumMetadata: null,
-        userId: null,
-        isMyProfile: false,
-        isAdminUser: false,
-        clickedImageWidth: 0,
-        clickedImage: {}
+        all:
+          this.organisedMedia.photos.length +
+          this.organisedMedia.videos.length +
+          albumCount,
+        albums: albumCount,
+        photos: this.organisedMedia.photos.length,
+        videos: this.organisedMedia.videos.length
       };
     },
 
-    components: {
-      MediaFilter,
-      MediaGrid,
-      PageHeader,
-      MediaUpload,
-      AlbumCreate,
-      MediaDialog
-    },
+    /**../../store/index
+     * Filters the currently displayed media (organisedMedia) to only display whichever category the user selects
+     * This is recomputed every time organisedMedia is updated.
+     *
+     *  Note,  'filteredMedia'  is simply a function to provide code clarity, it simply filters and returns
+     *  the media the user has requested to see. This function is semi-redundant as  'organisedMedia'  performs
+     *  a similar function, however I believe it makes things more readable.
+     */
+    filteredMedia: function() {
+      let media = [];
 
-    computed: {
-      /**
-       * Media Flow:
-       *   1. Fetch Media from the backend, store in  'allMedia'
-       *   2. Deep copy  'allMedia'  to  'activeMedia'
-       *   3. Organise  'activeMedia'  into separate media categories stored in  'organisedMedia'
-       *   4. Count each media item and store the counts in  'mediaCounts'
-       *   *** READY STATE ***
-       *   5. When a user clicks on an album,  'activeMedia'  is updated to the album content.
-       *      This triggers a recalculation for steps 3 and 4 and everything cascades nicely.
-       */
+      switch (this.activeFilter) {
+        case "All":
+          media = this.organisedMedia.albums.concat(
+            this.organisedMedia.photos,
+            this.organisedMedia.videos
+          );
+          break;
 
-      /**
-       * Traverses the array of albums fetched from the server and organises them into
-       * media categories (photos, videos, albums). This is done so that filtering is trivial.
-       * This is recomputed every time activeMedia is updated.
-       */
-      organisedMedia: function () {
-        let organisedMedia = {
-          all: [],
-          photos: [],
-          videos: [],
-          albums: []
-        };
+        case "Albums":
+          media = this.organisedMedia.albums;
+          break;
 
-        let viewingAlbum = this.viewingAlbum;
+        case "Photos":
+          media = this.organisedMedia.photos;
+          break;
 
-        this.activeMedia.forEach(function (album) {
-          if (!viewingAlbum) organisedMedia.all.push(album);
-          if (!viewingAlbum) organisedMedia.albums.push(album);
+        case "Videos":
+          media = this.organisedMedia.videos;
+          break;
 
-          album.content.forEach(function (media) {
-            organisedMedia.all.push(media);
-
-            if (media.type === "Photo") {
-              organisedMedia.photos.push(media);
-            } else if (media.type === "Video") {
-              organisedMedia.videos.push(media);
-            }
-          });
-        });
-
-        return organisedMedia;
-      },
-
-      /**
-       * Calculates the number of media items and albums to be displayed in the side filter area.
-       * This is recomputed every time organisedMedia is updated.
-       */
-      mediaCounts: function () {
-        let albumCount = 0;
-        // If we're not currently viewing an album, set album count to the number of albums
-        if (!this.viewingAlbum) {
-          albumCount = this.activeMedia.length;
-        }
-
-        return {
-          all:
-            this.organisedMedia.photos.length +
-            this.organisedMedia.videos.length +
-            albumCount,
-          albums: albumCount,
-          photos: this.organisedMedia.photos.length,
-          videos: this.organisedMedia.videos.length
-        };
-      },
-
-      /**../../store/index
-       * Filters the currently displayed media (organisedMedia) to only display whichever category the user selects
-       * This is recomputed every time organisedMedia is updated.
-       *
-       *  Note,  'filteredMedia'  is simply a function to provide code clarity, it simply filters and returns
-       *  the media the user has requested to see. This function is semi-redundant as  'organisedMedia'  performs
-       *  a similar function, however I believe it makes things more readable.
-       */
-      filteredMedia: function () {
-        let media = [];
-
-        switch (this.activeFilter) {
-          case "All":
-            media = this.organisedMedia.albums.concat(
-              this.organisedMedia.photos,
-              this.organisedMedia.videos
-            );
-            break;
-
-          case "Albums":
-            media = this.organisedMedia.albums;
-            break;
-
-          case "Photos":
-            media = this.organisedMedia.photos;
-            break;
-
-          case "Videos":
-            media = this.organisedMedia.videos;
-            break;
-
-          default:
-            // Show all (albums + media)
-            media = this.organisedMedia.albums.concat(
-              this.organisedMedia.photos,
-              this.organisedMedia.videos
-            );
-        }
-
-        return media;
-      },
-
-      /**
-       * Options used in the header component when viewing all albums.
-       */
-      normalOptions() {
-        return [
-          {action: this.openUploadDialog, icon: "add_photo_alternate"},
-          {action: this.openCreateAlbumDialog, icon: "add_to_photos"}
-        ];
-      },
-
-      /**
-       * Options used in the header component when viewing an album.
-       */
-      albumOptions() {
-        return [
-          {action: this.openUploadDialog, icon: "add_photo_alternate"},
-        ];
+        default:
+          // Show all (albums + media)
+          media = this.organisedMedia.albums.concat(
+            this.organisedMedia.photos,
+            this.organisedMedia.videos
+          );
       }
+
+      return media;
     },
 
-    methods: {
-      /**
-       * Updates the active filter to the provided parameter
-       */
-      changeFilter(filter) {
-        this.activeFilter = filter;
-      },
+    /**
+     * Options used in the header component when viewing all albums.
+     */
+    normalOptions() {
+      return [
+        { action: this.openUploadDialog, icon: "add_photo_alternate" },
+        { action: this.openCreateAlbumDialog, icon: "add_to_photos" }
+      ];
+    },
 
-      /**
-       * Opens visibility of the media upload dialog.
-       */
-      openUploadDialog() {
-        this.uploadDialogActive = true;
-      },
+    /**
+     * Options used in the header component when viewing an album.
+     */
+    albumOptions() {
+      return [{ action: this.openUploadDialog, icon: "add_photo_alternate" }];
+    }
+  },
 
-      /**
-       * Closes visibility of the media upload dialog.
-       */
-      closeUploadDialog() {
-        this.uploadDialogActive = false;
-      },
+  methods: {
+    /**
+     * Updates the active filter to the provided parameter
+     */
+    changeFilter(filter) {
+      this.activeFilter = filter;
+    },
 
-      /**
-       * Opens the visibility of the album creation dialog.
-       */
-      openCreateAlbumDialog() {
-        this.createAlbumDialogActive = true;
-      },
+    /**
+     * Opens visibility of the media upload dialog.
+     */
+    openUploadDialog() {
+      this.uploadDialogActive = true;
+    },
 
-      /**
-       * Closes visibility of the album creation dialog..
-       */
-      closeCreateAlbumDialog() {
-        this.createAlbumDialogActive = false;
-      },
-      
-      /**
-       * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
-       */
-      getAllAlbums: function () {
-        mediaRepository
+    /**
+     * Closes visibility of the media upload dialog.
+     */
+    closeUploadDialog() {
+      this.uploadDialogActive = false;
+    },
+
+    /**
+     * Opens the visibility of the album creation dialog.
+     */
+    openCreateAlbumDialog() {
+      this.createAlbumDialogActive = true;
+    },
+
+    /**
+     * Closes visibility of the album creation dialog..
+     */
+    closeCreateAlbumDialog() {
+      this.createAlbumDialogActive = false;
+    },
+
+    /**
+     * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
+     */
+    getAllAlbums: function() {
+      mediaRepository
         .getUserAlbums(this.userId)
         .then(response => {
           this.allMedia = response.data;
           if (this.viewingAlbum) {
-            this.activeMedia = [deepCopy(this.allMedia[this.activeAlbumMetadata.id - 1])];
+            this.activeMedia = [
+              deepCopy(this.allMedia[this.activeAlbumMetadata.id - 1])
+            ];
           } else {
             this.activeMedia = deepCopy(this.allMedia);
           }
@@ -269,68 +279,69 @@
         .catch(err => {
           console.log(err);
         });
-      },
+    },
 
-      /**
-       * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
-       */
-      createNewAlbum: function (newAlbumName) {
-        mediaRepository
-        .createAlbum(this.userId, {name: newAlbumName})
+    /**
+     * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
+     */
+    createNewAlbum: function(newAlbumName) {
+      mediaRepository
+        .createAlbum(this.userId, { name: newAlbumName })
         .then(() => {
           this.getAllAlbums();
         })
         .catch(err => {
           console.log(err);
         });
-      },
+    },
 
-      /**
-       * Handles opening of media grid elements. If an album element is clicked on, the media inside the album is
-       * displayed. If a media element is clicked on, a media viewing dialog is displayed.
-       */
-      openElement(item) {
-        // Trying to open an album
-        if (item.content) {
-          this.viewingAlbum = true;
-          this.activeFilter = "All";
-          this.activeMedia = [item];
-          this.activeAlbumMetadata = item;
-        } else {
-          // Trying to open an photo/video/media
-          const myImage = new Image();
-          myImage.src =
-            base_url +
-            `/api/users/${this.$route.params.id}/media/${item.filename}`;
-          this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
-          this.clickedImage = item;
-          this.viewMediaDialogActive = true;
-        }
-      },
+    /**
+     * Handles opening of media grid elements. If an album element is clicked on, the media inside the album is
+     * displayed. If a media element is clicked on, a media viewing dialog is displayed.
+     */
+    openElement(item) {
+      // Trying to open an album
+      if (item.content) {
+        this.viewingAlbum = true;
+        this.activeFilter = "All";
+        this.activeMedia = [item];
+        this.activeAlbumMetadata = item;
+      } else {
+        // Trying to open an photo/video/media
+        const myImage = new Image();
+        myImage.src =
+          base_url +
+          `/api/users/${this.$route.params.id}/media/${item.filename}`;
+        this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+        this.clickedImage = item;
+        this.viewMediaDialogActive = true;
+      }
+    },
 
-      /**
-       * This method overrides the default router.go(-1) functionality provided by the PageHeader component.
-       * It simply updates the user's grid back to viewing all of their albums.
-       */
-      navigateBack() {
-        this.viewingAlbum = false;
-        this.activeFilter = "Albums";
-        this.activeMedia = deepCopy(this.allMedia);
-        this.activeAlbumMetadata = null;
-      },
+    /**
+     * This method overrides the default router.go(-1) functionality provided by the PageHeader component.
+     * It simply updates the user's grid back to viewing all of their albums.
+     */
+    navigateBack() {
+      this.viewingAlbum = false;
+      this.activeFilter = "Albums";
+      this.activeMedia = deepCopy(this.allMedia);
+      this.activeAlbumMetadata = null;
+    },
 
-      /**
-       * Uploads the given media files the backend.
-       */
-      uploadMedia(files, albums) {
-        for (let i = 0; i < files.length; i++) {
-          let file = files[i];
-          for (let i = 0; i < albums.length; i++) {
-            let formData = new FormData();
-            formData.append("picture", file);
+    /**
+     * Uploads the given media files the backend.
+     */
+    uploadMedia(files, albums) {
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        for (let i = 0; i < albums.length; i++) {
+          let formData = new FormData();
+          formData.append("picture", file);
 
-            let album = albums[i];
-            mediaRepository.uploadMediaToAlbum(this.userId, album.id, formData)
+          let album = albums[i];
+          mediaRepository
+            .uploadMediaToAlbum(this.userId, album.id, formData)
             .then(() => {
               this.getAllAlbums();
             })
@@ -338,25 +349,33 @@
               this.uploadError = true;
               this.errorText = error.response.data;
             });
-          }
         }
-
-        this.closeUploadDialog();
       }
+
+      this.closeUploadDialog();
     },
 
-    mounted() {
-      this.userId = this.$route.params.id;
-      this.destId = this.$route.params.dest_id;
-
-      if (!this.userId) {
-        this.userId = this.$store.getters.getUser.id;
-      }
-
-      this.isMyProfile = this.$store.getters.getUser.id == this.userId;
-      this.isAdminUser = this.$store.getters.getIsUserAdmin;
-
-      this.getAllAlbums();
+    updateMedia(clickedImage) {
+      mediaRepository
+        .updateMedia(this.$route.params.id, clickedImage.id, clickedImage)
+        .then(res => {
+          this.getAllAlbums();
+        });
     }
-  };
+  },
+
+  mounted() {
+    this.userId = this.$route.params.id;
+    this.destId = this.$route.params.dest_id;
+
+    if (!this.userId) {
+      this.userId = this.$store.getters.getUser.id;
+    }
+
+    this.isMyProfile = this.$store.getters.getUser.id == this.userId;
+    this.isAdminUser = this.$store.getters.getIsUserAdmin;
+
+    this.getAllAlbums();
+  }
+};
 </script>
