@@ -40,12 +40,12 @@
           <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span>
         </template>
       </v-select>
-      <v-switch :label="`Profile Photo`"></v-switch>
       <v-switch
         v-model="clickedImage.is_public"
         @on="updatePhotoVisability()"
         :label="`Public Photo`"
       ></v-switch>
+      <v-btn color="error" outline @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
       <v-btn
         color="error"
         outline
@@ -65,6 +65,7 @@ import base_url from "../../repository/BaseUrl";
 import { store } from "../../store/index";
 
 let mediaRepository = RepositoryFactory.get("media");
+let userRespository = RepositoryFactory.get("user");
 
 export default {
   store,
@@ -109,6 +110,19 @@ export default {
         .then(res => {
           console.log(res);
         });
+    },
+
+    /**
+     * Sets the user's profile photo as the selected
+     */
+    setProfilePhoto() {
+      userRespository
+        .setProfilePic(this.$route.params.id, {
+          photo_filename: this.clickedImage.filename
+        })
+        .then(res => {
+          store.dispatch("fetchMe");
+        });
     }
   },
 
@@ -132,6 +146,7 @@ export default {
    */
   created: function() {
     this.isPublic = this.clickedImage.is_public;
+    this.user = store.getters.getUser;
     mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
       this.albums = res.data.map(item => {
         return { id: item.id, name: item.name };

@@ -99,7 +99,7 @@ export default {
       formData.append("picture", this.file);
 
       uploadProfilePic(this.id, formData).then(() => {
-        window.location = "/user/" + this.$route.params.id + "/edit";
+        store.dispatch("fetchMe")
       });
     },
 

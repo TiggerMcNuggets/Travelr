@@ -37,6 +37,8 @@ public class PhotoController extends Controller {
 
     private String profilePhotosFilepath;
 
+    private String mediaFilepath;
+
     @Inject
     FormFactory formFactory;
 
@@ -45,6 +47,7 @@ public class PhotoController extends Controller {
         String rootPath = System.getProperty("user.home");
         personalPhotosFilepath = rootPath + config.getString("personalPhotosFilePath");
         profilePhotosFilepath = rootPath + config.getString("profilePhotosFilePath");
+        mediaFilepath = rootPath + config.getString("mediaFilePath");
         this.personalPhotoRepository = personalPhotoRepository;
     }
 
@@ -160,8 +163,8 @@ public class PhotoController extends Controller {
             }
             String fileName = fh.getHashedImage(picture.getFilename());
             Files.TemporaryFile file = picture.getRef();
-            fh.makeDirectory(this.profilePhotosFilepath);
-            file.copyTo(Paths.get(this.profilePhotosFilepath + fileName), true);
+            fh.makeDirectory(this.mediaFilepath);
+            file.copyTo(Paths.get(this.mediaFilepath + fileName), true);
 
             return personalPhotoRepository.setUserProfilePic(id, fileName).thenApplyAsync(photoName -> {
                 if (photoName != null) {
@@ -190,9 +193,9 @@ public class PhotoController extends Controller {
 
         try {
         if (fileName != null) {
-            fh.makeDirectory(this.profilePhotosFilepath);
-            Path sourceDirectory = Paths.get(this.personalPhotosFilepath + fileName);
-            Path targetDirectory = Paths.get((this.profilePhotosFilepath + fileName));
+            fh.makeDirectory(this.mediaFilepath);
+            Path sourceDirectory = Paths.get(this.mediaFilepath + fileName);
+            Path targetDirectory = Paths.get((this.mediaFilepath + fileName));
             java.nio.file.Files.copy(sourceDirectory, targetDirectory);
         }
         } catch (IOException e) {
@@ -217,7 +220,7 @@ public class PhotoController extends Controller {
     public CompletionStage<Result> getProfilePic(long id) {
         return personalPhotoRepository.getUserProfilePic(id).thenApplyAsync(fileName -> {
             try {
-                File file = new File(this.profilePhotosFilepath + fileName);
+                File file = new File(this.mediaFilepath + fileName);
                 return ok(file);
             } catch (Exception e) {
                 System.err.println(e);
