@@ -15,10 +15,10 @@
         <MediaFilter :changeFilter="changeFilter" :mediaCounts="mediaCounts"></MediaFilter>
       </v-flex>
       <v-flex xs10 v-if="viewingAlbum">
-        <MediaGrid :filteredMedia="filteredMedia" :openElement="openElement"></MediaGrid>
+        <MediaGrid :filteredMedia="filteredMedia" :openElement="openElement" :getAllAlbums="getAllAlbums" :openEditAlbumDialog="openEditAlbumDialog"></MediaGrid>
       </v-flex>
       <v-flex xs12 v-else>
-        <MediaGrid :filteredMedia="filteredMedia" :openElement="openElement"></MediaGrid>
+        <MediaGrid :filteredMedia="filteredMedia" :openElement="openElement" :getAllAlbums="getAllAlbums" :openEditAlbumDialog="openEditAlbumDialog"></MediaGrid>
       </v-flex>
     </v-layout>
 
@@ -38,9 +38,16 @@
     <v-dialog v-if="!viewingAlbum" v-model="createAlbumDialogActive" width="500">
       <AlbumCreate
         :createNewAlbum="createNewAlbum"
-        :openCreateAlbumDialog="openCreateAlbumDialog"
         :closeCreateAlbumDialog="closeCreateAlbumDialog"
-      ></AlbumCreate>
+      />
+    </v-dialog>
+
+    <v-dialog v-if="!viewingAlbum" v-model="editAlbumDialogActive" width="500">
+      <AlbumEdit
+        :editAlbum="editNewAlbum"
+        :closeEditAlbumDialog="closeEditAlbumDialog"
+        :albumId="editAlbumId"
+      />
     </v-dialog>
 
     <v-dialog v-model="viewMediaDialogActive" :width="clickedImageWidth">
@@ -60,6 +67,7 @@ import MediaGrid from "../components/media/MediaGrid";
 import PageHeader from "../components/common/header/PageHeader";
 import MediaUpload from "../components/media/MediaUpload";
 import AlbumCreate from "../components/media/AlbumCreate";
+import AlbumEdit from "../components/media/AlbumEdit";
 import MediaDialog from "../components/media/MediaDialog";
 
 import base_url from "../repository/BaseUrl";
@@ -78,6 +86,7 @@ export default {
       activeMedia: [],
       uploadDialogActive: false,
       createAlbumDialogActive: false,
+      editAlbumDialogActive: false,
       viewMediaDialogActive: false,
       viewingAlbum: false,
       activeAlbumMetadata: null,
@@ -85,7 +94,8 @@ export default {
       isMyProfile: false,
       isAdminUser: false,
       clickedImageWidth: 0,
-      clickedImage: {}
+      clickedImage: {},
+      editAlbumId: null,
     };
   },
 
@@ -95,6 +105,7 @@ export default {
     PageHeader,
     MediaUpload,
     AlbumCreate,
+    AlbumEdit,
     MediaDialog
   },
 
@@ -255,10 +266,25 @@ export default {
     },
 
     /**
-     * Closes visibility of the album creation dialog..
+     * Closes visibility of the album creation dialog.
      */
     closeCreateAlbumDialog() {
       this.createAlbumDialogActive = false;
+    },
+
+    /**
+     * Opens visibility of the album editing dialog.
+     */
+    openEditAlbumDialog(albumId) {
+      this.editAlbumDialogActive = true;
+      this.editAlbumId = albumId;
+    },
+
+    /**
+     * Closes visibility of the album editing dialog.
+     */
+    closeEditAlbumDialog() {
+      this.editAlbumDialogActive = false;
     },
 
     /**
@@ -291,6 +317,20 @@ export default {
         .then(() => {
           this.getAllAlbums();
           this.closeCreateAlbumDialog();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    /**
+     * Updates the album for a given user and album id
+     */
+    editNewAlbum: function(newAlbumName, albumId) {
+      mediaRepository
+        .updateAlbum(this.userId, albumId, { name: newAlbumName })
+        .then(() => {
+          this.getAllAlbums();
         })
         .catch(err => {
           console.log(err);

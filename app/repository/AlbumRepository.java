@@ -109,7 +109,7 @@ public class AlbumRepository {
      * @param req The request object
      * @return
      */
-    public CompletableFuture<Album> updateAlbum(Long userId, Long albumId, boolean isAdmin, CreateAlbumReq req) {
+    public CompletableFuture<Album> updateAlbum(Long albumId, Long userId, boolean isAdmin, CreateAlbumReq req) {
         return supplyAsync(() -> {
             Album album = Album.find.findAlbumById(albumId);
 
@@ -133,6 +133,6 @@ public class AlbumRepository {
             }
 
             return album;
-        });
+        }, executionContext);
     }
 }

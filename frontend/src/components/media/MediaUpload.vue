@@ -70,8 +70,7 @@
     </v-card-actions>
 
     <v-dialog v-model="createAlbumDialogActive" width="800">
-      <AlbumCreate :createNewAlbum="createNewAlbum" :openCreateAlbumDialog="openCreateAlbumDialog"
-                   :closeCreateAlbumDialog="closeCreateAlbumDialog"></AlbumCreate>
+      <AlbumCreate :createNewAlbum="createNewAlbum" :closeCreateAlbumDialog="closeCreateAlbumDialog" />
     </v-dialog>
 
   </v-card>

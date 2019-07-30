@@ -1,9 +1,9 @@
 <template>
   <v-container v-bind="{ [`grid-list-xl`]: true }" fluid pt-2 pl-0 pr-0>
     <v-layout row wrap>
-      <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 md3 @click="openElement(item)">
-        <AlbumElement v-if="item.content" :album="item" :getImgFromUrl="getImgFromUrl" :fillerImageURL="fillerImageURL"></AlbumElement>
-        <MediaElement v-else :media="item" :getImgFromUrl="getImgFromUrl" :fillerImageURL="fillerImageURL"></MediaElement>
+      <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 md3>
+        <AlbumElement v-if="item.content" :album="item" :getImgFromUrl="getImgFromUrl" :fillerImageURL="fillerImageURL" :getAllAlbums="getAllAlbums" :openEditAlbumDialog="openEditAlbumDialog" :openElement="() => openElement(item)"></AlbumElement>
+        <MediaElement v-else :media="item" :getImgFromUrl="getImgFromUrl" :fillerImageURL="fillerImageURL" :openElement="() => openElement(item)"></MediaElement>
       </v-flex>
     </v-layout>
   </v-container>
@@ -20,7 +20,9 @@
 		props: {
 			filteredMedia: Array,
 			viewingAlbum: Boolean,
-			openElement: Function
+            openElement: Function,
+            getAllAlbums: Function,
+            openEditAlbumDialog: Function
 		},
 
 		components: {
