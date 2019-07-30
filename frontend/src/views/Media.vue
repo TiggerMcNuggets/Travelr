@@ -32,6 +32,13 @@
         :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"
       ></AlbumCreate>
     </v-dialog>
+
+    <v-dialog v-model="viewMediaDialogActive" :width="clickedImageWidth">
+      <MediaDialog
+        :clickedImage.sync="clickedImage"
+        :closeMediaDialogue="() => viewMediaDialogActive = false"
+      />
+    </v-dialog>
   </v-container>
 </template>
 
@@ -41,7 +48,9 @@ import MediaGrid from "../components/media/MediaGrid";
 import PageHeader from "../components/common/header/PageHeader";
 import MediaUpload from "../components/photos/PhotoUpload";
 import AlbumCreate from "../components/media/AlbumCreate";
+import MediaDialog from "../components/media/MediaDialog";
 
+import base_url from "../repository/BaseUrl";
 import { deepCopy } from "../tools/deepCopy";
 import { RepositoryFactory } from "../repository/RepositoryFactory";
 import { temp } from "../components/media/temp";
@@ -58,11 +67,14 @@ export default {
       activeMedia: [],
       uploadDialogActive: false,
       createAlbumDialogActive: false,
+      viewMediaDialogActive: false,
       viewingAlbum: false,
       activeAlbumMetadata: null,
       userId: null,
       isMyProfile: false,
-      isAdminUser: false
+      isAdminUser: false,
+      clickedImageWidth: 0,
+      clickedImage: {}
     };
   },
 
@@ -71,7 +83,8 @@ export default {
     MediaGrid,
     PageHeader,
     MediaUpload,
-    AlbumCreate
+    AlbumCreate,
+    MediaDialog
   },
 
   computed: {
@@ -259,8 +272,13 @@ export default {
         this.activeAlbumMetadata = item;
       } else {
         // Trying to open an photo/video/media
-        // TODO: Implement this
-        console.log("IMPLEMENT ME!");
+        const myImage = new Image();
+        myImage.src =
+          base_url +
+          `/api/users${this.$route.params.id}/media/${item.filename}`;
+        this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+        this.clickedImage = item;
+        this.viewMediaDialogActive = true;
       }
     },
 

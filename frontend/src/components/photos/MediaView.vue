@@ -1,5 +1,4 @@
 <template>
-    <!-- <v-dialog v-model="imageDialog" :width="clickedImageWidth"> -->
     <v-dialog v-model="imageDialog" width="70%">
       <v-card>
         <v-img :src="clickedImageURL"></v-img>
@@ -116,18 +115,12 @@ export default {
    * Initialises the application on component creation.
    */
   created: function() {
-      console.log(this.isPublic);
       this.isPublic = this.clickedImage.is_public;
       this.imageDialog = this.dialog;
-      console.log(this.isPublic);
-      console.log(this.clickedImage);
       mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
           let albums = []
           for (let i = 0; i < res.data.length; i++) {
-              console.log(i);
-              console.log(res.data[i].name);
               albums.push(res.data[i].name);
-              console.log(res.data[i].name);
           }
           this.albums = albums;
       })
