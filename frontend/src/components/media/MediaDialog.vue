@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card>
     <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
 
@@ -74,7 +74,8 @@ export default {
     clickedImage: Object,
     closeMediaDialog: Function,
     updateMedia: Function,
-    deleteMedia: Function
+    deleteMedia: Function,
+    getAllAlbums: Function
   },
 
   // local variables
@@ -93,23 +94,49 @@ export default {
         base_url +
         `/api/users/${this.$route.params.id}/media/${this.clickedImage.filename}`
       );
+    },
+
+    notSelectedAlbums() {
+      return this.albums.filter((album) => {
+          for (let a of this.selectedAlbums) {
+              if (a.id === album.id) return false;
+          }
+          return true;
+      })
     }
   },
 
   methods: {
-    updateAlbums(albums) {
-      let requestBody = { id: this.clickedImage.id, albums: [] };
+    async updateAlbums() {
+        for (let album of this.selectedAlbums) {
+            try {
+                await mediaRepository
+                    .moveMediaToAlbum(
+                        this.$route.params.id,
+                        album.id,
+                        this.clickedImage.id,
+                        // requestBody
+                    )
+            } catch(e) {
+                console.log(e);
+            }
+        }
 
-      requestBody.albums = albums.map(item => item.id);
-      mediaRepository
-        .updateMediaAlbums(
-          this.$route.params.id,
-          this.clickedImage.id,
-          requestBody
-        )
-        .then(res => {
-          console.log(res);
-        });
+        for (let album of this.notSelectedAlbums) {
+            try {
+                await mediaRepository
+                    .deleteMedia(
+                        this.$route.params.id,
+                        album.id,
+                        this.clickedImage.id,
+                    )
+            } catch(e) {
+                console.log(e);
+            }
+            console.log("here");
+            this.getAllAlbums();
+
+        }
     },
 
     /**
@@ -127,6 +154,8 @@ export default {
   },
 
   mounted: function() {
+      console.log("mounted");
+      console.log(this.clickedImage);
     this.selectedAlbums = this.clickedImage.albums
       ? this.clickedImage.albums
       : [];
@@ -135,6 +164,8 @@ export default {
   watch: {
     clickedImage: function(newImage, oldImage) {
       if (newImage !== oldImage)
+          console.log("here");
+      console.log(this.clickedImage);
         this.selectedAlbums = this.clickedImage.albums
           ? this.clickedImage.albums
           : [];
@@ -150,7 +181,8 @@ export default {
     mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
       this.albums = res.data.map(item => {
         return { id: item.id, name: item.name };
-      });
+      }).filter((a) => a.name.toLowerCase() !== "all");
+
     });
   }
 };

@@ -106,7 +106,6 @@ public class MediaController extends Controller {
      *
      * @param request  the http request
      * @param user_id  the id of the user who wants to see the album content
-     * @param album_id id of the album
      * @return json representation of accessible content in the album
      */
     @Authorization.RequireAuth
