@@ -135,10 +135,10 @@
                                 <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate ||
                                                 destination.arrivalDate == null || destination.departureDate == null)" top>
                                         <template v-slot:activator="{ on }">
-                                            <v-avatar v-on="on">
-                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                            <v-btn v-on="on" fab flat small>
+                                                <v-icon v-if="(!destination.arrivalDate || !destination.departureDate ||
                                                 destination.arrivalDate == null || destination.departureDate == null)">info</v-icon>
-                                            </v-avatar>
+                                            </v-btn>
                                         </template>
                                         <span>Missing Date(s)</span>
                                     </v-tooltip>
