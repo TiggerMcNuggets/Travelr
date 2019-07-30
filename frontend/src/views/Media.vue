@@ -206,7 +206,7 @@ export default {
      * Toggles the visibility of the media upload dialogue.
      */
     toggleUploadDialogue() {
-      this.uploadDialogActive = !this.uploadDialogActive;
+      this.uploadDmethodsialogActive = !this.uploadDialogActive;
     },
 
     /**
