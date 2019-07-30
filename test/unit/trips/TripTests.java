@@ -52,6 +52,10 @@ public class TripTests extends BaseUnitWithUser {
         Http.RequestBuilder requestBuilder = new Http.RequestBuilder();
 
         requestBuilder.uri((String.format("http://localhost:9000/api/users/%s/trips/%s/toggle_deleted", user.getId(), trip.getId())));
-
     }
+
+
+
+
+
 }
