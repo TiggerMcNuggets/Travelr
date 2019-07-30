@@ -3,7 +3,6 @@ import Router from "vue-router";
 import { store } from "../store/index";
 
 // Components
-import ProfilePhotos from "../components/profile/PersonalPhotos";
 import Trips from "../components/trips/Trips";
 import Profile from "../components/profile/Profile";
 import userSearch from "../components/userSearch/userSearch";

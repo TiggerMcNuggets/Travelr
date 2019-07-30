@@ -77,44 +77,6 @@
       :showSuggestTravellerTypes="showSuggestTravellerTypes"
       :close="toggleShowSuggestTravellerTypes"
     />
-    <MediaView
-      :clickedImageWidth.sync="clickedImageWidth"
-      :clickedImageURL.sync="clickedImageURL"
-      :clickedImage.sync="clickedImage"
-      :publicPhotoSwitch.sync="publicPhotoSwitch"
-      :imageDialog.sync="dialog"
-      :closeMediaDialog="closeMediaDialog"
-    />
-    <!-- <v-dialog v-model="dialog" :width="clickedImageWidth">
-      <v-card>
-        <v-img :src="clickedImageURL"></v-img>
-
-        <v-card-title primary-title>
-          <div>
-            <h5 class="headline mb-0">Image Name</h5>
-            <div>Description/Other meta info</div>
-          </div>
-        </v-card-title>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-switch
-            v-if="clickedImage.is_public"
-            disabled
-            v-model="publicPhotoSwitch"
-            :label="`Public Photo`"
-          ></v-switch>
-          <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-          <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-        </v-card-actions>
-        <v-card-actions>
-          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-
     <v-dialog v-model="chooseExistingDialog" width="800">
       <PhotoSelect v-bind="{closeDialog, setDestinationImages}"/>
     </v-dialog>
@@ -154,7 +116,6 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
 import PhotoSelect from "../photos/PhotoSelect";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
-import MediaView from "../photos/MediaView";
 import { store } from "../../store/index";
 import {
   storeDestinationImage,
@@ -173,7 +134,6 @@ export default {
     PhotoSelect,
     SuggestTravellerTypes,
     PageHeader,
-    MediaView
   },
 
   // local variables

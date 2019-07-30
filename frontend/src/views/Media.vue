@@ -404,7 +404,7 @@ export default {
     updateMedia(clickedImage) {
       mediaRepository
         .updateMedia(this.$route.params.id, clickedImage.id, clickedImage)
-        .then(res => {
+        .then(() => {
           this.getAllAlbums();
         });
     },
@@ -412,7 +412,7 @@ export default {
     deleteMedia(clickedImage) {
       mediaRepository
         .deleteMedia(this.$route.params.id, this.activeAlbumMetadata.id, clickedImage.id)
-        .then(res => {
+        .then(() => {
           this.getAllAlbums();
         });
     }

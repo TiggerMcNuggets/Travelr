@@ -63,13 +63,6 @@
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
 import { store } from "../../store/index";
-import {
-  storeDestinationImage,
-  getImages,
-  updateDestinationPhoto,
-  addExistingPhoto
-} from "../../repository/DestinationPhotoRepository";
-import { constants } from "fs";
 
 let mediaRepository = RepositoryFactory.get("media");
 
@@ -97,9 +90,7 @@ export default {
     mediaURL() {
       return (
         base_url +
-        `/api/users/${this.$route.params.id}/media/${
-          this.clickedImage.filename
-        }`
+        `/api/users/${this.$route.params.id}/media/${this.clickedImage.filename}`
       );
     }
   },

@@ -52,7 +52,7 @@
 
     <div class="selected-albums">
       <v-layout row wrap>
-        <v-flex v-for="item in selectedAlbums" xs12 sm6 class="album-element">
+        <v-flex v-for="item in selectedAlbums" v-bind:key="item.id" xs12 sm6 class="album-element">
           <AlbumElement v-if="item.content" :album="item" :getImgFromUrl="getImgFromUrl"></AlbumElement>
         </v-flex>
       </v-layout>
