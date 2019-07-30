@@ -290,6 +290,7 @@ export default {
         .createAlbum(this.userId, { name: newAlbumName })
         .then(() => {
           this.getAllAlbums();
+          this.closeCreateAlbumDialog();
         })
         .catch(err => {
           console.log(err);
