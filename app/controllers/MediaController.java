@@ -42,7 +42,8 @@ public class MediaController extends Controller {
     FormFactory formFactory;
 
     @Inject
-    public MediaController(Config config, PersonalPhotoRepository personalPhotoRepository, MediaRepository mediaRepository, AlbumRepository albumRepository) {
+    public MediaController(Config config, PersonalPhotoRepository personalPhotoRepository,
+            MediaRepository mediaRepository, AlbumRepository albumRepository) {
         String rootPath = System.getProperty("user.home");
         MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
         this.mediaRepository = mediaRepository;
@@ -64,7 +65,7 @@ public class MediaController extends Controller {
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
         return albumRepository.list(album_id, ((user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
-            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType");
+            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
             return ok(Ebean.json().toJson(media, pathProperties));
         });
     }
@@ -92,11 +93,8 @@ public class MediaController extends Controller {
             return mediaRepository.add(user_id, album_id, fileName).thenApplyAsync(media_id -> {
                 if (media_id != null) {
                     return ok("File uploaded with Media ID " + media_id);
-                } else if (media_id == null) {
-                    return badRequest("Duplicate Media.");
-                } else {
-                    return badRequest("Error adding reference to the database.");
                 }
+                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
             });
         } else {
             return CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
@@ -124,7 +122,6 @@ public class MediaController extends Controller {
         });
     }
 
-
     /**
      * creates a new album
      *
@@ -137,7 +134,8 @@ public class MediaController extends Controller {
 
         // middleware stack
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
-        if (middlewareRes != null) return middlewareRes;
+        if (middlewareRes != null)
+            return middlewareRes;
 
         Form<CreateAlbumReq> createAlbumForm = formFactory.form(CreateAlbumReq.class).bindFromRequest(request);
 
@@ -163,11 +161,12 @@ public class MediaController extends Controller {
 
     /**
      * Updates a media that belongs to a user
-     * @param request the http request
+     * 
+     * @param request  the http request
      * @param media_id the id of the media item
      * @return 200 with string if all ok
      *
-     * this function may need added authorisation checks!!
+     *         this function may need added authorisation checks!!
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUserMedia(Http.Request request, Long user_id, Long media_id) {
@@ -191,18 +190,19 @@ public class MediaController extends Controller {
 
     /**
      * adds an existing media item to an existing album
-     * @param request the http request
+     * 
+     * @param request  the http request
      * @param album_id the id of the existing album
      * @param media_id the id of the existing
      * @return
      *
-     * will need security measures added
+     *         will need security measures added
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.addMediaToAlbum(album_id, media_id).thenApplyAsync(updated_album_id -> {
-            //not found check, repository checks that both album and media exist
-            if(updated_album_id != null) {
+            // not found check, repository checks that both album and media exist
+            if (updated_album_id != null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
@@ -212,7 +212,8 @@ public class MediaController extends Controller {
 
     /**
      * Deletes an existing album
-     * @param request the http request
+     * 
+     * @param request  the http request
      * @param album_id the id of the existing album
      * @return 200 if deletion successful otherwise 404 not found.
      */
@@ -220,15 +221,16 @@ public class MediaController extends Controller {
     public CompletionStage<Result> deleteAlbum(Http.Request request, Long user_id, Long album_id) {
         // middleware stack
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user_id);
-        if (middlewareRes != null) return middlewareRes;
+        if (middlewareRes != null)
+            return middlewareRes;
 
-        if(user_id != Album.find.findAlbumById(album_id).getUser().getId()) {
+        if (user_id != Album.find.findAlbumById(album_id).getUser().getId()) {
             return CompletableFuture.completedFuture(unauthorized(APIResponses.FORBIDDEN_ALBUM_DELETION));
         }
 
         return albumRepository.remove(album_id).thenApplyAsync(deleted_album_id -> {
-            //not found check, repository checks that both album and media exist
-            if(deleted_album_id == null) {
+            // not found check, repository checks that both album and media exist
+            if (deleted_album_id == null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
@@ -238,15 +240,16 @@ public class MediaController extends Controller {
 
     /**
      * Deletes an existing album
-     * @param request the http request
+     * 
+     * @param request  the http request
      * @param album_id the id of the existing album
      * @return 200 if deletion successful otherwise 404 not found.
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.remove(album_id, media_id).thenApplyAsync(deleted_media_id -> {
-            //not found check, repository checks that both album and media exist
-            if(deleted_media_id == null) {
+            // not found check, repository checks that both album and media exist
+            if (deleted_media_id == null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
@@ -256,6 +259,7 @@ public class MediaController extends Controller {
 
     /**
      * Gets a raw image from the file system and sends this as response data.
+     * 
      * @param filename The file name of the image to get.
      * @return The raw image file which corresponds to the filename given.
      */
@@ -308,4 +312,3 @@ public class MediaController extends Controller {
         });
     }
 }
-
