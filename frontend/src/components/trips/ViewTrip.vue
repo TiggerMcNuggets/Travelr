@@ -204,7 +204,7 @@
                                             <v-btn
                                                     v-on="on"
                                                     v-on:click="deleteDestination(i)"
-                                                    fab flat small dark>
+                                                    fab flat small>
                                                 <v-icon>delete</v-icon>
                                             </v-btn>
                                         </template>
@@ -215,7 +215,7 @@
                                             <v-btn
                                                     v-on="on"
                                                     v-on:click="toggleExpanded(i)"
-                                                    fab flat small dark>
+                                                    fab flat small>
                                                 <v-icon>visibility_off</v-icon>
                                             </v-btn>
                                         </template>
@@ -226,7 +226,7 @@
                                             <v-btn
                                                     v-on="on"
                                                     v-on:click="viewDestination(destination.id)"
-                                                    fab small dark flat>
+                                                    fab small flat>
                                                 <v-icon>explore</v-icon>
                                             </v-btn>
                                         </template>
@@ -282,7 +282,7 @@ import TripMap from "./TripMap.vue";
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
 import PageHeader from "../common/header/PageHeader";
 import dateTime from "../common/dateTime/dateTime.js";
-import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
+import {noSameDestinationNameConsecutiveRule, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
 import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let tripRepository = RepositoryFactory.get("trip")
@@ -330,7 +330,7 @@ export default {
 
     computed: {
         noSameDestinationNameConsecutiveRule() {
-            return noSameDestinationNameConsecutiveRule_name(this.trip.destinations);
+            return noSameDestinationNameConsecutiveRule(this.trip.destinations);
         },
         arrivalBeforeDepartureAndDestinationsOneAfterTheOther() {
             return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
