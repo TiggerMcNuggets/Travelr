@@ -37,11 +37,10 @@ public class TripService {
             trip.setName(tripDTO.name);
 
             for(TripDestination td: trip.getDestinations()) {
-                System.out.println(td.delete());
+                td.delete();
             }
             trip.setDestinations(new ArrayList<>());
             trip.save();
-            System.out.println(trip.destinations.size());
 
 
             ArrayList<TripDestination> newTripDestinations = new ArrayList<>();

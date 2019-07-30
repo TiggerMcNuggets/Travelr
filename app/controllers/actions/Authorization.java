@@ -41,7 +41,6 @@ public class Authorization {
                     return delegate.call(req.addAttr(Attrs.USER, user.get()).addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0));
                 }
             }
-
             return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
         }
     }
@@ -162,17 +161,6 @@ public class Authorization {
         if (userIdByToken == userIdById) return null;
         return CompletableFuture.completedFuture(Results.forbidden("Not admin and id from token does not match user id parameter"));
     }
-
-//    /**
-//     * @param tripId the trip id
-//     * @return 404: no trip found, null: no errors
-//     */
-//    public static CompletionStage<Result> doesTripExist(Long tripId) {
-////        Trip trip = Trip.find.findOne(tripId);
-////        if (trip != null) return null;
-////        return CompletableFuture.completedFuture(Results.notFound("No trip with given id found"));
-//    }
-
 
     /**
      *

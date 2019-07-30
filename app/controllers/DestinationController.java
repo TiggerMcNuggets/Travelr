@@ -78,8 +78,6 @@ public class DestinationController extends Controller {
         Destination destination = Destination.find.findByIdIncludeDeleted(destId);
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
 
-        System.out.println("destination is public?: " + destination.isPublic);
-
         if (!destination.isPublic || (destination.isPublic && destinationRepository.isDestinationUsed(destId))) {
             CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, userId, destination.user.id);
             if (authorisedToView != null) return authorisedToView;
