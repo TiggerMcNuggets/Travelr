@@ -83,6 +83,7 @@ export default {
     return {
       activeFilter: "Albums",
       allMedia: [],
+      mediaMap: {},
       activeMedia: [],
       uploadDialogActive: false,
       createAlbumDialogActive: false,
@@ -295,9 +296,12 @@ export default {
         .getUserAlbums(this.userId)
         .then(response => {
           this.allMedia = response.data;
+          response.data.forEach(item => {
+            this.mediaMap[item.id] = item;
+          })
           if (this.viewingAlbum) {
             this.activeMedia = [
-              deepCopy(this.allMedia[this.activeAlbumMetadata.id - 1])
+              deepCopy(this.mediaMap[this.activeAlbumMetadata.id])
             ];
           } else {
             this.activeMedia = deepCopy(this.allMedia);
