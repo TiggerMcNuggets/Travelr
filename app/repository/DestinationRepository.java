@@ -136,7 +136,7 @@ public class DestinationRepository {
                 mergeDestinations(destination, sameDestinations);
             }
 
-            destination.setIsPublic(true);
+            destination.setPublic(true);
             destination.update();
 
             return destinationId;
@@ -160,7 +160,6 @@ public class DestinationRepository {
         // Transfer destination in trips
         boolean destinationTaken = false;
         for (TripDestination tripDestination : tripDestinations) {
-            tripDestination.setDestination(destination);
             destinationTaken = true;
             tripDestination.save();
         }
@@ -207,7 +206,7 @@ public class DestinationRepository {
             dest.setDeleted(!dest.deleted);
 
             dest.update();
-            return dest.getDeleted();
+            return dest.isDeleted();
         }, context);
     }
 

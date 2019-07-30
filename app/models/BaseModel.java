@@ -25,7 +25,11 @@ public class BaseModel extends Model {
     this.id = id;
   }
 
-  public boolean getDeleted() { return deleted; }
+  public boolean isDeleted() {
+    return deleted;
+  }
 
-  public void setDeleted(boolean deleted) { this.deleted = deleted; }
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
+  }
 }
