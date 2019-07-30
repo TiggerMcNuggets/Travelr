@@ -1,46 +1,15 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
 
-  <v-card>
-  <v-container class="outer-container" height="100%" style="margin-left: 0px; margin-top: -20px;">
-      <div class="section">
-        <v-btn class="upload-toggle-button" fab small dark color="indigo" @click="$router.go(-1)">
-          <v-icon dark>keyboard_arrow_left</v-icon>
-        </v-btn>
-        <div v-if="hasMissingDates && canDownloadTrip">
-        <v-tooltip bottom>
-            <template v-slot:activator="{on}">
-                <v-btn
-                @click="downloadTrip()"
-                class="upload-toggle-button" fab small dark color="indigo"
-                v-on="on"
-                >
-                <v-icon >calendar_today</v-icon>
-                </v-btn>
-            </template>
-            <span>This Calander Has Missing Destinations</span>
-        </v-tooltip>
-        </div>
-        <div v-else-if="!canDownloadTrip">
-            <v-btn
-            icon
-            disabled
-            @click="downloadTrip()"
-            class="upload-toggle-button"
-            >
-            <v-icon >calendar_today</v-icon>
-            </v-btn>
-        </div>
-        <div v-else>
-            <v-btn
-            @click="downloadTrip()"
-            class="upload-toggle-button" fab small dark color="indigo"
-            >
-            <v-icon >calendar_today</v-icon>
-            </v-btn>
-        </div>
-      </div>
+  <v-container fluid>
 
-    <v-divider class="photo-header-divider"/>
+      <PageHeader
+              :title="trip.name"
+              :undo="undo"
+              :redo="redo"
+              :canRedo="rollbackCanRedo"
+              :canUndo="rollbackCanUndo"
+              enableBackButton/>
+
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">
@@ -51,6 +20,67 @@
               label="Trip Name"
               required
       ></v-text-field>
+          <v-layout flex>
+              <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                      <v-btn
+                              v-on:click="validateForm"
+                              icon
+                              v-on="on">
+                          <v-icon color="primary lighten-1">check_circle</v-icon>
+                      </v-btn>
+                  </template>
+                  <span>Validate</span>
+              </v-tooltip>
+              <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                      <v-btn
+                              v-on:click="addTripDestination"
+                              icon
+                              v-on="on">
+                          <v-icon color="primary lighten-1">add_circle</v-icon>
+                      </v-btn>
+                  </template>
+                  <span>Add Destination</span>
+              </v-tooltip>
+              <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                      <v-btn
+                              icon
+                              v-on:click="updateTrip"
+                              v-on="on">
+                          <v-icon color="primary lighten-1">send</v-icon>
+                      </v-btn>
+                  </template>
+                  <span>Update trip</span>
+              </v-tooltip>
+
+                  <v-tooltip v-if="hasMissingDates && canDownloadTrip" bottom>
+                      <template v-slot:activator="{on}">
+                          <v-btn
+                                  icon
+                                  @click="downloadTrip()"
+                                  fab flat small color="primary lighten-1"
+                                  v-on="on"
+                          >
+                              <v-icon >calendar_today</v-icon>
+                          </v-btn>
+                      </template>
+                      <span>This calendar has missing destinations</span>
+                  </v-tooltip>
+                  <v-btn
+                          v-else-if="!canDownloadTrip"
+                          icon
+                          disabled
+                          @click="downloadTrip()">
+                      <v-icon >calendar_today</v-icon>
+                  </v-btn>
+                  <v-btn v-else
+                          @click="downloadTrip()" fab small dark color="indigo">
+                      <v-icon >calendar_today</v-icon>
+                  </v-btn>
+
+          </v-layout>
         <v-timeline align-top dense>
         <draggable
                 class="list-group"
@@ -199,49 +229,10 @@
         </draggable>
         </v-timeline>
       </v-form>
-
-      <v-layout flex>
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                         v-on:click="validateForm"
-                         icon
-                         v-on="on">
-                      <v-icon color="primary lighten-1">check_circle</v-icon>
-                  </v-btn>
-              </template>
-              <span>Validate</span>
-          </v-tooltip>
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                          v-on:click="addTripDestination"
-                          icon
-                          v-on="on">
-                      <v-icon color="primary lighten-1">add_circle</v-icon>
-                  </v-btn>
-              </template>
-              <span>Add Destination</span>
-          </v-tooltip>
-          <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                  <v-btn
-                          icon
-                          v-on:click="updateTrip"
-                          v-on="on">
-                      <v-icon color="primary lighten-1">send</v-icon>
-                  </v-btn>
-              </template>
-              <span>Update trip</span>
-          </v-tooltip>
-
-      </v-layout>
+      <TripMap
+              :destinations="trip.destinations"
+              class="trip-map"/>
     </v-container>
-    <TripMap
-        :destinations="trip.destinations"
-        class="trip-map"/>
-    </v-card>
-
 </template>
 
 <style>
@@ -276,6 +267,8 @@ import tripRepo from "../../repository/TripRepository";
 import { store } from "../../store/index";
 import draggable from 'vuedraggable';
 import TripMap from "./TripMap.vue";
+import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
+import PageHeader from "../common/header/PageHeader";
 import dateTime from "../common/dateTime/dateTime.js";
 import {noSameDestinationNameConsecutiveRule_name, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
 import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
@@ -287,7 +280,9 @@ export default {
   store,
   components: {
     draggable,
-    TripMap
+    TripMap,
+    UndoRedoButtons,
+    PageHeader
   },
     mixins: [RollbackMixin],
   // local variables
