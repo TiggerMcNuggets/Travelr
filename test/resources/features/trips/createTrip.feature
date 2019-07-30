@@ -411,7 +411,7 @@ Feature: Create Trip
     And I send the request
     Then I will receive the response code 403
 
-  Scenario: Create a trip successfully
+  Scenario: Create a trip with invalid destinations
     Given I am authenticated
     And The destinations are
       | name         | latitude | longitude | type     | district   | country    |
@@ -467,6 +467,5 @@ Feature: Create Trip
     }
     """
     And I send the request
-    Then I will receive the response code 404
+    Then I will receive the response code 201
 
-# TODO: Add scenarios for creating trips related to trips within trips story
