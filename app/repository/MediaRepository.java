@@ -36,20 +36,18 @@ public class MediaRepository {
     public CompletionStage<Long> add(Long id, Long album_id, String imageFileName) {
         return supplyAsync(() -> {
             User traveller = User.find.findById(id);
-            if (traveller == null)
-                return null; // bad user
-            ExpressionList<Media> query = Media.find.query().where().eq("user_id", id);
-            List<Media> mediaList = query.findList();
+            if (traveller == null) return null; // bad user
 
             Media media = new Media(traveller, imageFileName);
             Album album = Album.find.findAlbumById(album_id);
+            Album defaultAlbum = traveller.getDefaultAlbum();
 
-            if (album == null)
-                return null; // album does not exist
+            if (album == null) return null; // album does not exist
 
             album.addMedia(media);
             media.addAlbum(album);
-            traveller.addMediaToDefaultAlbum(media);
+            defaultAlbum.addMedia(media);
+            defaultAlbum.save();
             album.save();
             media.save();
             return media.id;

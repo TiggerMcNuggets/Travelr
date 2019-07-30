@@ -230,14 +230,9 @@ public class User extends BaseModel {
         save();
     }
 
-    public void addMediaToDefaultAlbum(Media media) {
-        this.defaultAlbum.addMedia(media);
-    }
-
     public void setEmail(String email) {
         this.email = email.toLowerCase();
     }
-
 
     public void setPassword(String password) {
         this.password = getSha512(password);
@@ -253,7 +248,12 @@ public class User extends BaseModel {
     }
 
     public Album getDefaultAlbum() {
-        return defaultAlbum;
+        for(Album albumObj: this.getAlbums()) {
+            if (albumObj.getPermanent()) {
+                return albumObj;
+            }
+        }
+        return null;
     }
 
     public List<Album> getAlbums() {
@@ -273,7 +273,7 @@ public class User extends BaseModel {
         Date date = new Date();
         this.timestamp = date.getTime() / 1000;
         this.albums = new ArrayList<>();
-        this.defaultAlbum = new Album(this, "All", true);
+        this.defaultAlbum =  new Album(this, "All", true);
         this.albums.add(defaultAlbum);
     }
 
@@ -287,7 +287,7 @@ public class User extends BaseModel {
         Date date = new Date();
         this.timestamp = date.getTime() / 1000;
         this.albums = new ArrayList<>();
-        this.defaultAlbum = new Album(this, "All", true);
+        this.defaultAlbum =  new Album(this, "All", true);
         this.albums.add(defaultAlbum);
     }
 
