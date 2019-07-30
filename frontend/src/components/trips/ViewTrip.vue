@@ -83,7 +83,8 @@
                                         label="Select an existing destination"
                                         :rules="noSameDestinationNameConsecutiveRule"
                                         return-object
-                                ></v-combobox>
+                                >
+                                </v-combobox>
                                 <v-btn
                                     v-on:click="toggleHiddenDestinations(destination)"
                                     fab flat small>
@@ -101,6 +102,16 @@
                                         fab flat small>
                                     <v-icon>arrow_downward</v-icon>
                                 </v-btn>
+                                <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                                destination.arrivalDate == null || destination.departureDate == null)" top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-avatar v-on="on">
+                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                                destination.arrivalDate == null || destination.departureDate == null)">info</v-icon>
+                                            </v-avatar>
+                                        </template>
+                                        <span>Missing Date(s)</span>
+                                    </v-tooltip>
                             </v-card-title>
                             <v-container v-if="destination.expanded">
                             <v-menu
@@ -504,15 +515,17 @@ export default {
             trip.destinations = ordered_dests;
             // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
             for (let i = 0; i < trip.destinations.length; i++) {
-
                 trip.destinations[i].expanded = false;
-
-                if (trip.destinations[i].arrivalDate != null) {
-                    trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-                }
-                if (trip.destinations[i].arrivalDate != null) {
-                    trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
-                }
+            if (trip.destinations[i].arrivalDate) {
+                trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+            } else {
+                    trip.destinations[i].arrivalDate = null;
+            }
+            if (trip.destinations[i].departureDate) {
+                trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+            } else {
+                    trip.destinations[i].departureDate = null;
+            }
             }
             this.trip = trip;
         });
@@ -560,9 +573,13 @@ export default {
 
                 if (trip.destinations[i].arrivalDate !== 0) {
                     trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+                } else {
+                    trip.destinations[i].arrivalDate = null;
                 }
                 if (trip.destinations[i].departureDate !== 0) {
                     trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+                } else {
+                    trip.destinations[i].departureDate = null;
                 }
             }
             if (numOfMissingDates === trip.destinations.length) {
