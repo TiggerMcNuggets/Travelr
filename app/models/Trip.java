@@ -1,41 +1,70 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import finders.TripFinder;
 import play.data.validation.Constraints;
-import javax.validation.constraints.NotNull;
-
 import javax.persistence.*;
 import java.util.List;
 
-
+/**
+ * Ebean entity model for Trip table.
+ */
 @Entity
 public class Trip extends BaseModel {
 
-    private static final long tripID = 1L;
-
     public static final TripFinder find = new TripFinder();
 
-    @JsonIgnore
     @ManyToOne
     public User user;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     public List<TripDestination> destinations;
 
     @Constraints.Required
     public String name;
 
-    @NotNull
-    @JsonIgnore
-    @Column(columnDefinition = "boolean default 0")
-    public boolean deleted;
+    public String description;
 
-    public Trip(String name, User user) {
+    @Column(columnDefinition = "boolean default 0")
+    public boolean published;
+
+    public Trip(String name, String description, User user) {
         this.name = name;
+        this.description = description;
         this.user = user;
+    }
+
+    // GETTERS AND SETTERS
+
+    public List<TripDestination> getDestinations() {
+        return destinations;
+    }
+
+    public void setDestinations(List<TripDestination> destinations) {
+        this.destinations = destinations;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 }
 
