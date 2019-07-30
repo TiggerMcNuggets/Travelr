@@ -24,6 +24,10 @@ public class Destination extends BaseModel {
     @Constraints.Required
     public String name;
 
+    @Constraints.Required
+    @OneToOne(cascade = CascadeType.REMOVE)
+    public Album album;
+
     @NotNull
     @Constraints.Required
     public Double latitude;
@@ -67,6 +71,7 @@ public class Destination extends BaseModel {
         this.type = request.type;
         this.district = request.district;
         this.country = request.country;
+        this.album = request.album;
         this.user = user;
         this.isPublic = request.isPublic;
         this.defaultAlbum = new Album(user, request.name + " Album", true);
@@ -74,13 +79,14 @@ public class Destination extends BaseModel {
     }
 
     // USED IN TEST DATA
-    public Destination(String name, Double lat, Double lon, String type, String district, String country, User user) {
+    public Destination(String name, Double lat, Double lon, String type, String district, String country, User user, Album album) {
         this.name = name;
         this.latitude = lat;
         this.longitude = lon;
         this.type = type;
         this.district = district;
         this.country = country;
+        this.album = album;
         this.user = user;
         this.isPublic = false;
         this.defaultAlbum = new Album(user, name + " Album", true);

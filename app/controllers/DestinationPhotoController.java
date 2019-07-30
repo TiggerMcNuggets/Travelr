@@ -80,37 +80,37 @@ public class DestinationPhotoController extends Controller {
         }
     }
 
-    /**
-     * Uploads a destination photo to the server file system.
-     * @param request The request containing the image data to upload.
-     * @param id The id of the traveller/user uploading the image.
-     * @param destId The id of the destination uploading the image of.
-     * @return A result whether the image upload was successful or not.
-     */
-    @Authorization.RequireAuth
-    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long destId) {
-        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
-        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-        if (picture != null) {
-            if (!fh.isValidFile(picture.getFilename())) {
-                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
-            }
-            String fileName = fh.getHashedImage(picture.getFilename());
-            Files.TemporaryFile file = picture.getRef();
-            FileHelper fh = new FileHelper();
-            fh.makeDirectory(this.destinationPhotoFilepath);
-            file.copyTo(Paths.get(this.destinationPhotoFilepath + fileName), true);
-            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync(photo_id -> {
-                if (photo_id != null) {
-                    return ok("File uploaded with Photo ID " + photo_id);
-                } else {
-                    return badRequest("Error adding reference to the database.");
-                }
-            });
-        } else {
-            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
-        }
-    }
+//    /**
+//     * Uploads a destination photo to the server file system.
+//     * @param request The request containing the image data to upload.
+//     * @param id The id of the traveller/user uploading the image.
+//     * @param destId The id of the destination uploading the image of.
+//     * @return A result whether the image upload was successful or not.
+//     */
+//    @Authorization.RequireAuth
+//    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long id, Long destId) {
+//        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
+//        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+//        if (picture != null) {
+//            if (!fh.isValidFile(picture.getFilename())) {
+//                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+//            }
+//            String fileName = fh.getHashedImage(picture.getFilename());
+//            Files.TemporaryFile file = picture.getRef();
+//            FileHelper fh = new FileHelper();
+//            fh.makeDirectory(this.destinationPhotoFilepath);
+//            file.copyTo(Paths.get(this.destinationPhotoFilepath + fileName), true);
+//            return destinationPhotoRepository.add(id, destId, fileName).thenApplyAsync(photo_id -> {
+//                if (photo_id != null) {
+//                    return ok("File uploaded with Photo ID " + photo_id);
+//                } else {
+//                    return badRequest("Error adding reference to the database.");
+//                }
+//            });
+//        } else {
+//            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
+//        }
+//    }
 
     /**
      * sets existing photo to user profile pic

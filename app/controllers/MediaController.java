@@ -309,5 +309,46 @@ public class MediaController extends Controller {
 
             return ok(APIResponses.SUCCESSFUL_ALBUM_UPDATE);
         });
+    },
+
+//    /**
+//     * Uploads destination media to the server file system.
+//     * @param request The request containing the image data to upload.
+//     * @param id The id of the traveller/user uploading the image.
+//     * @param destId The id of the destination uploading the image of.
+//     * @return A result whether the image upload was successful or not.
+//     */
+
+    /**
+     * Uploads destination media to the server file system.
+     * @param request The request containing the image data to upload.
+     * @param user_id The id of the traveller/user uploading the media.
+     * @param album_id The id of the album to add the media to.
+     * @param destId destId The id of the destination the media relates to.
+     * @return
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> uploadDestinationPhoto(Http.Request request, Long user_id, Long album_id, Long destId) {
+        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+        if (picture != null) {
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
+            String fileName = fh.getHashedImage(picture.getFilename());
+            Files.TemporaryFile file = picture.getRef();
+            FileHelper fh = new FileHelper();
+            fh.makeDirectory(this.MEDIA_FILEPATH);
+            file.copyTo(Paths.get(this.MEDIA_FILEPATH + fileName), true);
+            return mediaRepository.addDestinationMedia(user_id, album_id, destId, fileName).thenApplyAsync(dest_media_id -> {
+                if (dest_media_id != null) {
+                    return ok("File uploaded with Photo ID " + dest_media_id);
+                } else {
+                    return notFound(APIResponses.ALBUM_OR_MEDIA_OR_DESTINATION_NOT_FOUND);
+                }
+            });
+        } else {
+            return  CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
+        }
     }
 }

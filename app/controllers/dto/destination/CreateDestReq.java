@@ -1,6 +1,7 @@
 package controllers.dto.Destination;
 
 import controllers.dto.TravellerType.CreateTravellerTypeReq;
+import models.Album;
 import play.data.validation.Constraints;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public class CreateDestReq {
     public String district;
     @Constraints.Required
     public String country;
+    @Constraints.Required
+    public Album album;
     @Constraints.Required
     public boolean isPublic;
 
@@ -85,5 +88,13 @@ public class CreateDestReq {
 
     public void setTravellerTypes(List<CreateTravellerTypeReq> travellerTypes) {
         this.travellerTypes = travellerTypes;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
     }
 }
