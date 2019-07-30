@@ -206,7 +206,7 @@ export default {
      * Toggles the visibility of the media upload dialogue.
      */
     toggleUploadDialogue() {
-      this.uploadDmethodsialogActive = !this.uploadDialogActive;
+      this.uploadDialogActive = !this.uploadDialogActive;
     },
 
     /**
@@ -237,7 +237,7 @@ export default {
     createNewAlbum: function(newAlbumName) {
       mediaRepository
         .createAlbum(this.userId, { name: newAlbumName })
-        .then(response => {
+        .then(() => {
           this.getAllAlbums();
           this.toggleCreateAlbumDialogue();
         })
@@ -280,7 +280,7 @@ export default {
      */
     uploadMedia(files) {
       let TEMP_ALBUM_ID = 6;
-      console.log(files);
+
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         let formData = new FormData();
@@ -288,11 +288,8 @@ export default {
 
         mediaRepository
           .uploadMediaToAlbum(this.userId, TEMP_ALBUM_ID, formData)
-          .then(result => {
-            console.log(result.data);
-            // mediaRepository.getAlbumContent(this.userId, TEMP_ALBUM_ID).then(result => {
+          .then(() => {
             this.getAllAlbums();
-            // });
           })
           .catch(error => {
             this.uploadError = true;

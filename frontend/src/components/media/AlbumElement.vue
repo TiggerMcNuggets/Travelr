@@ -62,7 +62,7 @@
     computed: {
 
       /**
-       * Computes the thumbnails to be showen in the 2x2 grid album preview.
+       * Computes the thumbnails to be shown in the 2x2 grid album preview.
        * Fills the empty spaces with a specified filler image.
        */
       albumThumbnails: function () {
@@ -78,7 +78,6 @@
           thumbnails.push(this.fillerImageURL);
         }
 
-        console.log(thumbnails);
         return thumbnails;
       }
     }
