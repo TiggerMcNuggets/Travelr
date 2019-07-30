@@ -46,11 +46,7 @@
         :label="`Public Photo`"
       ></v-switch>
       <v-btn color="error" outline @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
-      <v-btn
-        color="error"
-        outline
-        @click="() => {deleteMedia(clickedImage); closeMediaDialog();}"
-      >Delete</v-btn>
+      <v-btn color="error" outline @click="() => {openConfirmDelete()}">Delete</v-btn>
     </v-card-actions>
     <v-card-actions>
       <v-btn color="error" outline @click="closeMediaDialog">Close</v-btn>
@@ -74,7 +70,7 @@ export default {
     clickedImage: Object,
     closeMediaDialog: Function,
     updateMedia: Function,
-    deleteMedia: Function
+    openConfirmDelete: Function
   },
 
   // local variables
@@ -91,7 +87,9 @@ export default {
     mediaURL() {
       return (
         base_url +
-        `/api/users/${this.$route.params.id}/media/${this.clickedImage.filename}`
+        `/api/users/${this.$route.params.id}/media/${
+          this.clickedImage.filename
+        }`
       );
     }
   },

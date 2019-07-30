@@ -15,10 +15,20 @@
         <MediaFilter :changeFilter="changeFilter" :mediaCounts="mediaCounts"></MediaFilter>
       </v-flex>
       <v-flex xs10 v-if="viewingAlbum">
-        <MediaGrid :filteredMedia="filteredMedia" :openElement="openElement" :getAllAlbums="getAllAlbums" :openEditAlbumDialog="openEditAlbumDialog"></MediaGrid>
+        <MediaGrid
+          :filteredMedia="filteredMedia"
+          :openElement="openElement"
+          :getAllAlbums="getAllAlbums"
+          :openEditAlbumDialog="openEditAlbumDialog"
+        ></MediaGrid>
       </v-flex>
       <v-flex xs12 v-else>
-        <MediaGrid :filteredMedia="filteredMedia" :openElement="openElement" :getAllAlbums="getAllAlbums" :openEditAlbumDialog="openEditAlbumDialog"></MediaGrid>
+        <MediaGrid
+          :filteredMedia="filteredMedia"
+          :openElement="openElement"
+          :getAllAlbums="getAllAlbums"
+          :openEditAlbumDialog="openEditAlbumDialog"
+        ></MediaGrid>
       </v-flex>
     </v-layout>
 
@@ -55,7 +65,17 @@
         :clickedImage="clickedImage ? clickedImage : {}"
         :closeMediaDialog="() => viewMediaDialogActive = false"
         :updateMedia="updateMedia"
-        :deleteMedia="deleteMedia"
+        :openConfirmDelete="() => {confirmDeletionDialogActive = true}
+        "
+      />
+    </v-dialog>
+
+    <v-dialog v-model="confirmDeletionDialogActive" width="500">
+      <ConfirmDelete
+        title="Confirm Delete"
+        text="Would you like to delete this media from all albums?"
+        :confirm="() => {deleteAndCloseDialog(true)}"
+        :cancel="() => {deleteAndCloseDialog(false)}"
       />
     </v-dialog>
   </v-container>
@@ -69,6 +89,7 @@ import MediaUpload from "../components/media/MediaUpload";
 import AlbumCreate from "../components/media/AlbumCreate";
 import AlbumEdit from "../components/media/AlbumEdit";
 import MediaDialog from "../components/media/MediaDialog";
+import ConfirmDelete from "../components/common/ConfirmDialog";
 
 import base_url from "../repository/BaseUrl";
 import { deepCopy } from "../tools/deepCopy";
@@ -88,6 +109,7 @@ export default {
       uploadDialogActive: false,
       createAlbumDialogActive: false,
       editAlbumDialogActive: false,
+      confirmDeletionDialogActive: false,
       viewMediaDialogActive: false,
       viewingAlbum: false,
       activeAlbumMetadata: null,
@@ -96,7 +118,7 @@ export default {
       isAdminUser: false,
       clickedImageWidth: 0,
       clickedImage: {},
-      editAlbumObject: {},
+      editAlbumObject: {}
     };
   },
 
@@ -107,7 +129,8 @@ export default {
     MediaUpload,
     AlbumCreate,
     AlbumEdit,
-    MediaDialog
+    MediaDialog,
+    ConfirmDelete
   },
 
   computed: {
@@ -238,6 +261,12 @@ export default {
   },
 
   methods: {
+    deleteAndCloseDialog(deleteAll) {
+      this.confirmDeletionDialogActive = false;
+      this.deleteMedia(this.clickedImage, deleteAll);
+      this.viewMediaDialogActive = false;
+    },
+
     /**
      * Updates the active filter to the provided parameter
      */
@@ -298,7 +327,7 @@ export default {
           this.allMedia = response.data;
           response.data.forEach(item => {
             this.mediaMap[item.id] = item;
-          })
+          });
           if (this.viewingAlbum) {
             this.activeMedia = [
               deepCopy(this.mediaMap[this.activeAlbumMetadata.id])
@@ -409,9 +438,14 @@ export default {
         });
     },
 
-    deleteMedia(clickedImage) {
+    deleteMedia(clickedImage, deleteAll) {
       mediaRepository
-        .deleteMedia(this.$route.params.id, this.activeAlbumMetadata.id, clickedImage.id)
+        .deleteMedia(
+          this.$route.params.id,
+          this.activeAlbumMetadata.id,
+          clickedImage.id,
+          deleteAll
+        )
         .then(() => {
           this.getAllAlbums();
         });
