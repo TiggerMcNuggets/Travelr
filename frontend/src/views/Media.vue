@@ -279,7 +279,7 @@ export default {
      * Uploads the given media files the backend.
      */
     uploadMedia(files) {
-      let TEMP_ALBUM_ID = 6;
+      let TEMP_ALBUM_ID = 1;
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];

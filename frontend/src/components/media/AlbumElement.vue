@@ -71,7 +71,7 @@
         let requiredFillerImages = 4 - numberOfThumbnails;
 
         for (let i = 0; i < numberOfThumbnails; i++) {
-          thumbnails.push(this.getImgFromUrl(this.album.content[i].name))
+          thumbnails.push(this.getImgFromUrl(this.album.content[i].filename))
         }
 
         for (let i = 0; i < requiredFillerImages; i++) {
