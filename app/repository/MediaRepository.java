@@ -46,8 +46,10 @@ public class MediaRepository {
 
             if (album == null)
                 return null; // album does not exist
+
             album.addMedia(media);
             media.addAlbum(album);
+            traveller.addMediaToDefaultAlbum(media);
             album.save();
             media.save();
             return media.id;

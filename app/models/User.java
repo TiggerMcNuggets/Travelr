@@ -230,6 +230,10 @@ public class User extends BaseModel {
         save();
     }
 
+    public void addMediaToDefaultAlbum(Media media) {
+        this.defaultAlbum.addMedia(media);
+    }
+
     public void setEmail(String email) {
         this.email = email.toLowerCase();
     }
