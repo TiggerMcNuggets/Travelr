@@ -76,16 +76,6 @@
                         >
                         <v-container class="container-custom-padding">
                             <v-card-title>
-                                    <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate ||
-                                                destination.arrivalDate == null || destination.departureDate == null)" top>
-                                        <template v-slot:activator="{ on }">
-                                            <v-avatar v-on="on">
-                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate ||
-                                                destination.arrivalDate == null || destination.departureDate == null)">info</v-icon>
-                                            </v-avatar>
-                                        </template>
-                                        <span>Missing Date(s)</span>
-                                    </v-tooltip>
                                 <v-combobox
                                         :items="userDestinations"
                                         item-text="name"
@@ -112,6 +102,16 @@
                                         fab flat small>
                                     <v-icon>arrow_downward</v-icon>
                                 </v-btn>
+                                <v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                                destination.arrivalDate == null || destination.departureDate == null)" top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-avatar v-on="on">
+                                                <v-icon color="gray" v-if="(!destination.arrivalDate || !destination.departureDate ||
+                                                destination.arrivalDate == null || destination.departureDate == null)">info</v-icon>
+                                            </v-avatar>
+                                        </template>
+                                        <span>Missing Date(s)</span>
+                                    </v-tooltip>
                             </v-card-title>
                             <v-container v-if="destination.expanded">
                             <v-menu
@@ -518,9 +518,13 @@ export default {
                 trip.destinations[i].expanded = false;
             if (trip.destinations[i].arrivalDate) {
                 trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+            } else {
+                    trip.destinations[i].arrivalDate = null;
             }
             if (trip.destinations[i].departureDate) {
                 trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+            } else {
+                    trip.destinations[i].departureDate = null;
             }
             }
             this.trip = trip;
@@ -569,9 +573,13 @@ export default {
 
                 if (trip.destinations[i].arrivalDate !== 0) {
                     trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+                } else {
+                    trip.destinations[i].arrivalDate = null;
                 }
                 if (trip.destinations[i].departureDate !== 0) {
                     trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+                } else {
+                    trip.destinations[i].departureDate = null;
                 }
             }
             if (numOfMissingDates === trip.destinations.length) {
