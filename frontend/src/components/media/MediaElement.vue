@@ -5,7 +5,7 @@
     <v-img
 
             :src="getImgFromUrl(media.filename)"
-            lazy-src="https://picsum.photos/id/11/100/60"
+            :lazy-src="fillerImageURL"
             height="300px"
     >
       <template v-slot:placeholder>
@@ -32,8 +32,9 @@
 
 		props: {
 			media: Object,
-      getImgFromUrl: Function
-		},
+      getImgFromUrl: Function,
+      fillerImageURL: String
+    },
 
 		data() {
 			return {}
