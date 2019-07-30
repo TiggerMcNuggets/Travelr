@@ -13,7 +13,7 @@
                   <h2
                     v-if="isMyProfile"
                     class="headline font-weight-light tile-heading text--white"
-                  >Photos</h2>
+                  >Media</h2>
                   <h2 v-else class="font-weight-light tile-heading">User Photos</h2>
                 </v-card-title>
               </v-img>
@@ -123,7 +123,7 @@ export default {
      * @param id
      */
     goToUserPhotos(id) {
-      const endpoint = "/user/" + id + "/photos";
+      const endpoint = "/user/" + id + "/media";
       this.$router.push(endpoint);
     },
 
