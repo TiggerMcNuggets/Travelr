@@ -235,7 +235,7 @@
       var dropzone = document.getElementById("dropzone");
 
       this.makeDroppable(dropzone, files => {
-        this.rawFiles = files;
+        this.rawFiles = Array.from(files);
         for (let i = 0; i < files.length; i++) {
           let file = files[i];
           var reader = new FileReader();
