@@ -43,12 +43,14 @@ public class UploadMediaSteps {
         List<Http.MultipartFormData.Part<Source<ByteString, ?>>> partList = new ArrayList<>();
 
 
-        partList.add(new Http.MultipartFormData.FilePart<>("picture", "test.jpg", "image/jpg",
-                FileIO.fromPath(new_media.toPath()),
-                "form-data"));
+        partList.add(new Http.MultipartFormData.FilePart("picture", "test.jpg", "image/jpg",
+                FileIO.fromPath(new_media.toPath())));
+//                new_media.getTotalSpace(),
+//                "form-data"));
 
 
-        state.getRequest().bodyMultipart( ,partList);
+        state.getRequest().bodyRaw(partList, play.libs.Files.singletonTemporaryFileCreator(),
+                state.getApplication().asScala().materializer());
 
 
     }
