@@ -103,7 +103,7 @@
     </div>
     <v-divider></v-divider>
     <v-btn class="button" color="error" v-on:click="processSelected()">Add</v-btn>
-    <v-btn class="button" outline color="error" @click="closeDialogue()">Cancel</v-btn> -->
+    <v-btn class="button" outline color="error" @click="closeDialog()">Cancel</v-btn> -->
   </v-card>
 </template>
 
@@ -196,7 +196,7 @@ export default {
   },
 
   // props methods being passed in from parent.
-  props: ['closeDialogue', "setDestinationImages"],
+  props: ['closeDialog', "setDestinationImages"],
 
   methods: {
     /**

@@ -9,9 +9,9 @@
       <v-layout row wrap>
         <v-flex xs12 ml-3 mr-3>
           <v-text-field
-            label="Title"
-            v-model="newAlbumName"
-            maxlength="50"
+                  label="Title"
+                  v-model="newAlbumName"
+                  maxlength="50"
           ></v-text-field>
         </v-flex>
       </v-layout>
@@ -21,34 +21,33 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn ma-3 flat v-on:click="closeCreateAlbumDialogue()">Cancel</v-btn>
+      <v-btn ma-3 flat v-on:click="closeCreateAlbumDialog()">Cancel</v-btn>
       <v-btn ma-3 color="primary" flat v-on:click="createNewAlbumAndClearText(newAlbumName)">Create Album</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-	export default {
-		props: {
-			openCreateAlbumDialogue: Function,
-            closeCreateAlbumDialogue: Function,
+  export default {
+    props: {
+      openCreateAlbumDialog: Function,
+      closeCreateAlbumDialog: Function,
       createNewAlbum: Function
-		},
+    },
 
-		data() {
-			return {
-				publicSwitch: false,
+    data() {
+      return {
+        publicSwitch: false,
         newAlbumName: ""
-			};
-		},
+      };
+    },
 
-		methods: {
-            createNewAlbumAndClearText(newAlbumName){
-                this.createNewAlbum(newAlbumName);
-                this.newAlbumName = "";
-            }
+    methods: {
+      createNewAlbumAndClearText(newAlbumName) {
+        this.createNewAlbum(newAlbumName);
+        this.newAlbumName = "";
+      }
+    }
 
-		}
-
-	};
+  };
 </script>

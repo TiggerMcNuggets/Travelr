@@ -39,7 +39,7 @@
   } from "../../repository/PersonalPhotosRepository";
 
   export default {
-    name: "MediaDialogue",
+    name: "MediaDialog",
 
     props: {},
 

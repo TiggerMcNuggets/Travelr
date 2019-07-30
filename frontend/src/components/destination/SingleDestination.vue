@@ -62,7 +62,7 @@
 
             <v-img
               @click.stop="dialog = true"
-              v-on:click="setDialogueContent(item)"
+              v-on:click="setDialogContent(item)"
               class="personal-photo-element"
               :src="getImgUrl(item)"
             ></v-img>
@@ -83,7 +83,7 @@
       :clickedImage.sync="clickedImage"
       :publicPhotoSwitch.sync="publicPhotoSwitch"
       :imageDialog.sync="dialog"
-      :closeMediaDialogue="closeMediaDialogue"
+      :closeMediaDialog="closeMediaDialog"
     />
     <!-- <v-dialog v-model="dialog" :width="clickedImageWidth">
       <v-card>
@@ -116,7 +116,7 @@
     </v-dialog> -->
 
     <v-dialog v-model="chooseExistingDialog" width="800">
-      <PhotoSelect v-bind="{closeDialogue, setDestinationImages}"/>
+      <PhotoSelect v-bind="{closeDialog, setDestinationImages}"/>
     </v-dialog>
   </v-container>
 </template>
@@ -257,7 +257,7 @@ export default {
     /**
      * Sets the selected existing photos to be added to destination photos which have been selected from the dialog to
      * choose existing photos. Takes each photo filename which has been selected and calls the API to add it to the users destination photos.
-     * Closes the dialogue once done.
+     * Closes the dialog once done.
      * @param selectedImages The photo details for all the photos selected by the user.
      */
     setDestinationImages(selectedImages) {
@@ -270,7 +270,7 @@ export default {
           });
         });
       }
-      this.closeDialogue();
+      this.closeDialog();
     },
 
     /**
@@ -283,14 +283,14 @@ export default {
     /**
      * Closes the choose existing photo dialog.
      */
-    closeDialogue() {
+    closeDialog() {
       this.chooseExistingDialog = false;
     },
 
     /**
      * Closes the choose existing photo dialog.
      */
-    closeMediaDialogue() {
+    closeMediaDialog() {
       this.dialog = false;
     },
 
@@ -352,7 +352,7 @@ export default {
      * Sets the width of the dialog based on the image width.
      * @param selectedImage The image which has been clicked on.
      */
-    setDialogueContent(selectedImage = "") {
+    setDialogContent(selectedImage = "") {
       this.dialog = true;
       this.clickedImage = selectedImage;
       this.publicPhotoSwitch = selectedImage.is_public;

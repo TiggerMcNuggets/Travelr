@@ -52,7 +52,7 @@
 
               <v-img
                 @click.stop="dialog = true"
-                v-on:click="setDialogueContent(item)"
+                v-on:click="setDialogContent(item)"
                 class="personal-photo-element"
                 :src="getImgUrl(item)"
               ></v-img>
@@ -201,7 +201,7 @@ export default {
      * Sets the width of the dialog based on image width.
      * @param selectedImage
      */
-    setDialogueContent(selectedImage = "") {
+    setDialogContent(selectedImage = "") {
       this.dialog = true;
       this.clickedImage = selectedImage;
       this.publicPhotoSwitch = selectedImage.is_public;

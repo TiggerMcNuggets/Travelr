@@ -34,7 +34,7 @@
       ></v-switch>
     </v-card-actions>
     <v-card-actions>
-      <v-btn color="error" outline @click="closeMediaDialogue">Close</v-btn>
+      <v-btn color="error" outline @click="closeMediaDialog">Close</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -51,7 +51,6 @@ import {
   addExistingPhoto
 } from "../../repository/DestinationPhotoRepository";
 
-let destinationRepository = RepositoryFactory.get("destination");
 let mediaRepository = RepositoryFactory.get("media");
 
 export default {
@@ -59,7 +58,7 @@ export default {
 
   props: {
     clickedImage: Object,
-    closeMediaDialogue: Function
+    closeMediaDialog: Function
   },
 
   // local variables
@@ -78,10 +77,6 @@ export default {
           this.clickedImage.filename
         }`
       );
-    },
-
-    isPublic() {
-      updateDestinationPhoto(this.clickedImage);
     }
   },
 

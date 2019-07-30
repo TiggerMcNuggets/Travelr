@@ -18,7 +18,7 @@
 
     <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn ma-3 flat v-on:click="toggleUploadDialogue()">Cancel</v-btn>
+        <v-btn ma-3 flat v-on:click="closeMediaUploadDialog()">Cancel</v-btn>
         <v-btn ma-3 color="primary" flat v-on:click="uploadMedia(rawFiles)">Upload Media</v-btn>
     </v-card-actions>
   </v-card>
@@ -52,7 +52,7 @@ export default {
 
   props: {
     uploadMedia: Function,
-    toggleUploadDialogue: Function
+    closeMediaUploadDialog: Function
   },
 
   // local variables
