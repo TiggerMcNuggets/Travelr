@@ -112,6 +112,8 @@ public class Authorization {
                                 .addAttr(Attrs.USER, user.get())
                                 .addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0)
                                 .addAttr(Attrs.ACCESS_USER, accessUser));
+                    } else {
+                        return CompletableFuture.completedFuture(forbidden("You do not have authorization to access on behalf of this user"));
                     }
                 }
             }
