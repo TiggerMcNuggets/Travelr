@@ -5,7 +5,7 @@
     <v-card-title primary-title>
       <div>
         <v-layout d-flex>
-          <h5 class="headline mb-0">Description</h5>
+          <h5 class="headline mb-0 mr-2">Description</h5>
           <v-icon
             v-if="editCaption"
             @click="() => {updateMedia(clickedImage); editCaption = false;}"
@@ -23,7 +23,6 @@
 
     <v-card-actions>
       <v-select
-        style="width: 20%"
         v-model="selectedAlbums"
         :items="albums"
         label="Add/Remove Albums"
@@ -40,15 +39,17 @@
           <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span>
         </template>
       </v-select>
+      <v-spacer></v-spacer>
       <v-switch
         v-model="clickedImage.is_public"
         @on="updatePhotoVisability()"
         :label="`Public Photo`"
       ></v-switch>
-      <v-btn color="error" outline @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
-      <v-btn color="error" outline @click="() => {openConfirmDelete()}">Delete</v-btn>
     </v-card-actions>
     <v-card-actions>
+      <v-btn color="error" @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
+      <v-btn color="error" @click="() => {openConfirmDelete()}">Delete</v-btn>
+      <v-spacer></v-spacer>
       <v-btn color="error" outline @click="closeMediaDialog">Close</v-btn>
     </v-card-actions>
   </v-card>

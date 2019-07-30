@@ -10,8 +10,8 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn ma-3 color="error" outline v-on:click="cancel()">Cancel</v-btn>
-      <v-btn ma-3 color="error" flat v-on:click="confirm()">Confirm</v-btn>
+      <v-btn ma-3 color="error" v-on:click="cancel()">No</v-btn>
+      <v-btn ma-3 color="error" v-on:click="confirm()">Yes</v-btn>
     </v-card-actions>
   </v-card>
 </template>
