@@ -36,6 +36,10 @@ export const createAlbum = async (userId, payload) => {
   return Repository.post(`/users/${userId}/albums`, payload);
 };
 
+export const updateAlbum = async (userId, albumId, payload) => {
+  return Repository.put(`/users/${userId}/albums/${albumId}`, payload);
+};
+
 export const updateMediaAlbums = async (userId, mediaId, payload) => {
   return Repository.put(`/users/${userId}/media/${mediaId}`, payload);
 };
@@ -50,5 +54,6 @@ export default {
   getAlbumContent,
   uploadMediaToAlbum,
   createAlbum,
+  updateAlbum,
   updateMediaAlbums
 };
