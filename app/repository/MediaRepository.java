@@ -8,6 +8,7 @@ import models.User;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -112,8 +113,9 @@ public class MediaRepository {
      *
      * @return the media id which was deleted.
      */
-    public CompletableFuture<Long> remove(Long album_id, Long media_id) {
+    public CompletableFuture<Long> remove(Long album_id, Long media_id, Integer removeAll) {
         return supplyAsync(() -> {
+
             Album album = Album.find.findAlbumById(album_id);
             if (album == null)
                 return null; // album does not exist
@@ -122,21 +124,34 @@ public class MediaRepository {
             if (media == null)
                 return null; // media does not exist
 
+            if (removeAll == 1) {
+
+                // Remove media from all albums
+                for (Album al : media.getAlbums()) {
+                    al.removeMedia(media);
+                    al.update();
+                }
+
+                media.setAlbums(new ArrayList<>());
+                media.update();
+
+            } else {
+                album.removeMedia(media);
+                album.update();
+
+                media.removeAlbum(album);
+                media.update();
+            }
+
             if (media.fileCanBeDeleted()) {
                 File file = new File(MEDIA_FILEPATH + media.getUriString());
                 if (file.delete()) {
-                    album.removeMedia(media);
-                    album.save();
-                    return media.id;
-                } else {
-                    return null;
+                    System.out.println("File has been removed");
                 }
+                media.delete();
             }
 
-            album.removeMedia(media);
-            album.save();
-
-            return media.id;
+            return media.getId();
         }, executionContext);
     }
 

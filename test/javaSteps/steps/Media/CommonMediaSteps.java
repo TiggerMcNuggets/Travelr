@@ -47,10 +47,14 @@ public class CommonMediaSteps {
     }
 
     private void createMediaInAlbum(Map<String, String> mediaInfo, User user) {
-        state.setMedia(new Media(user, mediaInfo.get("uriString")));
+        if (state.getMedia() == null || state.getMedia().getUriString() != mediaInfo.get("uriString")) {
+            state.setMedia(new Media(user, mediaInfo.get("uriString")));
+            state.getMedia().insert();
+        }
         state.getAlbum().addMedia(state.getMedia());
         state.getMedia().addAlbum(state.getAlbum());
-        state.getMedia().insert();
+        state.getMedia().update();
+        state.getAlbum().update();
     }
 
     @Then("The album is")
@@ -70,6 +74,4 @@ public class CommonMediaSteps {
         // By not inserting, the album does not exist
         // Album needed to be created to pass id into request uri
     }
-
-
 }

@@ -16,4 +16,27 @@ Feature: Delete Media
       """
       Media deleted
       """
-#    And The media does not exist in the album // Problem since the state doesn't seem to update the album ???
+    And The media does not exist in the album
+
+  Scenario: Delete media from multiple albums
+    Given I am authenticated
+    And I own the album
+      | name        |
+      | First Album |
+    And the album contains the media
+      | uriString    |
+      | test.jpg     |
+    And I own the album
+      | name         |
+      | Second Album |
+    And the album contains the media
+      | uriString    |
+      | test.jpg     |
+    When I want to delete the media in all albums
+    And I send the request
+    Then I will receive the response code 200
+    And I will receive the response body text
+      """
+      Media deleted
+      """
+    And The media does not exist
