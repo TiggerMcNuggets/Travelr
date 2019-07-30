@@ -20,7 +20,7 @@ public class DeleteDestinationSteps {
     @Then("The destination does not exist")
     public void the_destination_does_not_exist() {
         Destination destination = Destination.find.findByIdIncludeDeleted(state.getDestination().getId());
-        Assert.assertTrue(destination.getDeleted());
+        Assert.assertTrue(destination.isDeleted());
     }
 
     @Then("The destination does exist")

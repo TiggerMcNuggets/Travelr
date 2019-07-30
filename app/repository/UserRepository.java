@@ -162,7 +162,7 @@ public class UserRepository {
     public CompletableFuture<Boolean> toggleUserDeleted(Long id) {
         return supplyAsync(() -> {
             User user = User.find.findByIdIncludeDeleted(id);
-            user.setDeleted(!user.getDeleted());
+            user.setDeleted(!user.isDeleted());
             user.save();
             return user.deleted;
         }, context);

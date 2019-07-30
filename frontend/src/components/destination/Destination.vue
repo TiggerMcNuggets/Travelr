@@ -165,7 +165,6 @@ import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import DestinationCreate from "./DestinationCreate";
 import PageHeader from "../common/header/PageHeader";
-import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 
 // mixins
 import RollbackMixin from "../mixins/RollbackMixin.vue";
@@ -182,7 +181,6 @@ export default {
   components: {
     PageHeader,
     DestinationCreate,
-    UndoRedoButtons,
   },
 
   data() {

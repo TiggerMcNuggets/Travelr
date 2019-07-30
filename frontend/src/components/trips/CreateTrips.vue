@@ -33,20 +33,41 @@
             >
               <v-card class="destination-form-padding">
                 <v-layout>
+                    <v-flex align-self-center>
+                            <v-btn
+                                    :disabled="!isPromotable(trip.destinations, index)"
+                                    icon
+                                    v-on:click="promote(index)">
+                                <v-icon color="primary lighten-1">arrow_upward</v-icon>
+                            </v-btn>
+                            <v-btn
+                                :disabled="!isDemotable(trip.destinations, index)"
+                                icon
+                                v-on:click="demote(index)">
+                                <v-icon color="primary lighten-1">arrow_downward</v-icon>
+                            </v-btn>
+                    </v-flex>
                   <v-flex xs12 md4 class="create-trip-item">
                     <v-combobox
-                      :rules="noSameDestinationNameConsecutiveRule"
-                      :items="userDestinations.map(dest => dest.name)"
-                      v-model="destination.title"
-                      label="Select an existing destination"
-                    ></v-combobox>
-                    <v-btn
-                      flat
-                      small
-                      color="error"
-                      v-if="index > 1"
-                      v-on:click="deleteDestination(index)"
-                    >Remove</v-btn>
+                        :items="userDestinations"
+                        item-text="name"
+                        v-model="destination.destination"
+                        label="Select an existing destination"
+                        :rules="noSameDestinationNameConsecutiveRule"
+                        return-object
+                ></v-combobox>
+                      <v-chip
+                              :color="getDepthData(destination.depth).color"
+                              pill>
+                          {{destination.depth + 1}}
+                      </v-chip>
+                      <v-btn
+                              flat
+                              small
+                              color="error"
+                              v-if="index > 1"
+                              v-on:click="deleteDestination(index)"
+                      >Remove</v-btn>
                   </v-flex>
 
                   <v-flex xs12 md4 class="create-trip-item">
@@ -188,6 +209,8 @@ import {
   noSameDestinationNameConsecutiveRule,
   arrivalBeforeDepartureAndDestinationsOneAfterTheOther
 } from "../form_rules";
+import {deepCopy} from "../../tools/deepCopy"
+import {isDemotable, isPromotable, getDepthData} from "./trips_destinations_util";
 
 
 import StoreTripsMixin from '../mixins/StoreTripsMixin'
@@ -220,31 +243,43 @@ export default {
       tripToDisplay: null,
       draggableEnabled: true,
       dialogName: "Create a new trip",
+      emptyDest: {
+            arrivalDate: null,
+            departureDate: null,
+            arrivalDateMenu: false,
+            departureDateMenu: false,
+            depth: 0,
+            destination: {name: null}
+          },
       trip: {
         name: "",
-        destinations: [
-          {
-            title: null,
+        destinations: [{
+            depth: 0,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
-            departureDateMenu: false
-          },
-          {
-            title: null,
+            departureDateMenu: false,
+            destination: {name: null}
+          }, {
+            depth: 0,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
-            departureDateMenu: false
-          }
-        ]
+            departureDateMenu: false,
+            destination: {name: null}
+          },]
       },
       userDestinations: [],
       ...rules,
       id: this.$route.params.id,
       tripID: this.$route.params.trip_id,
       isAdminUser: false,
-      isMyProfile: false
+      isMyProfile: false,
+
+        // utils
+        getDepthData: getDepthData,
+        isPromotable: isPromotable,
+        isDemotable: isDemotable,
     };
   },
   computed: {
@@ -265,6 +300,22 @@ export default {
     }
   },
   methods: {
+
+      /**
+       * Increases the depth of destination at given index
+       */
+      promote(index) {
+          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
+      },
+
+      /**
+       * Decreases the depth of destination at given index
+       */
+      demote(index) {
+          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
+      },
+
+
     /**
      * Gets the list of valid destinations available to a user
      */
@@ -272,6 +323,7 @@ export default {
       return destinationRepository
         .getDestinations(this.id)
         .then(res => {
+          console.log(res.data);
           this.userDestinations = res.data;
         })
         .catch(e => {
@@ -320,15 +372,8 @@ export default {
      * Adds a template empty destination object to the form
      */
     addDestinationToTrip: function() {
-      const template = {
-        name: null,
-        arrivalDate: null,
-        departureDate: null,
-        arrivalDateMenu: false,
-        departureDateMenu: false
-      };
       let newDestinations = this.trip.destinations;
-      newDestinations.push(template);
+      newDestinations.push(deepCopy(this.emptyDest));
       this.trip.destinations = newDestinations;
     },
 
@@ -356,8 +401,8 @@ export default {
         const trip = this.tripAssembler();
         this._postTrip(this.id, trip)
           .then(res => {
+            this.toggleShowCreateTrip();
             this.checkpointCreateTrip(res.data.id)
-            // this.regetTrips();
           })
           .catch(e => {
             console.log(e);
@@ -404,18 +449,15 @@ export default {
     tripAssembler: function() {
       let trip = { name: this.trip.name, destinations: [] };
       this.trip.destinations.forEach((destination, index) => {
-        const destById = this.userDestinations.find(
-          dest => {
-              return destination.title === dest.name
-          }
-        );
         trip.destinations.push({
-          id: destById.id,
+          depth: destination.depth,
           ordinal: index,
+          destination: {...destination.destination}, 
           arrivalDate: moment(destination.arrivalDate).unix(),
           departureDate: moment(destination.departureDate).unix()
         });
       });
+      console.log("dests", trip.destinations);
       return trip;
     },
     /**
@@ -445,7 +487,6 @@ export default {
             const destToAdd = {};
             const currentDest = tripById.destinations[i];
             destToAdd.title = currentDest.name;
-            console.log("current dest arrival date", currentDest.arrivalDate);
             destToAdd.arrivalDate =
                 currentDest.arrivalDate === null
                     ? null

@@ -24,6 +24,7 @@ public class StateSingleton {
     private User user;
     private Destination destination;
 
+
     /**
      * Private constructor to avoid illegal initialisation of new objects
      * The first instance needs application's dependencies injected which
