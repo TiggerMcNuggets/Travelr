@@ -245,10 +245,18 @@ public class MediaController extends Controller {
      * @return 200 if deletion successful otherwise 404 not found.
      */
     @Authorization.RequireAuth
+<<<<<<< HEAD
+    public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id, Integer removeAll) {
+
+        return mediaRepository.remove(album_id, media_id, removeAll).thenApplyAsync(deleted_media_id -> {
+            //not found check, repository checks that both album and media exist
+            if(deleted_media_id == null) {
+=======
     public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.remove(album_id, media_id).thenApplyAsync(deleted_media_id -> {
             // not found check, repository checks that both album and media exist
             if (deleted_media_id == null) {
+>>>>>>> 6b563005ce947e1a16c856b0f1a7652e6d443753
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }

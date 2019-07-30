@@ -105,9 +105,16 @@ public class Media extends BaseModel {
         this.albums.remove(album);
     }
 
+    public List<Album> getAlbums() {
+        return albums;
+    }
+
+    public void setAlbums(List<Album> albums) {
+        this.albums = albums;
+    }
+
     public String getCaption() {
         return caption;
-
     }
 
     public Boolean fileCanBeDeleted() {
