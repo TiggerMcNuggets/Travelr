@@ -1,5 +1,5 @@
 <template>
-  <v-card flat tile hover class="media-element">
+  <v-card flat tile hover class="media-element" @click="openElement">
     <v-icon v-if="!media.is_public" class="lock-icon" left>lock</v-icon>
     <div v-if="!media.is_public" class="triangle"></div>
     <v-img
@@ -31,9 +31,10 @@
 		name: "MediaElement",
 
 		props: {
-			media: Object,
-      getImgFromUrl: Function,
-      fillerImageURL: String
+		    media: Object,
+            getImgFromUrl: Function,
+            fillerImageURL: String,
+            openElement: Function
     },
 
 		data() {
