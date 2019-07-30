@@ -1,6 +1,10 @@
 package controllers.dto.Media;
 
+import models.Album;
 import models.Media;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class creates the response to return when a list of media is requested for albums
@@ -11,6 +15,7 @@ public class MediaRes {
     private Boolean is_public;
     private String type;
     private String caption;
+    private List<AlbumRes> albums;
 
     /**
      *
@@ -22,6 +27,15 @@ public class MediaRes {
         this.is_public = media.is_public;
         this.type = media.mediaType;
         this.caption = media.caption;
+        this.makeAlbumResList(media.albums);
+    }
+
+    public void makeAlbumResList(List<Album> albums) {
+        this.albums = new ArrayList<>();
+        for (Album album: albums) {
+            AlbumRes albumRes = new AlbumRes(album);
+            this.albums.add(albumRes);
+        }
     }
 
     /**
@@ -57,5 +71,12 @@ public class MediaRes {
      */
     public String getCaption() {
         return caption;
+    }
+
+    /**
+     * @return List<AlbumRes> return the albums
+     */
+    public List<AlbumRes> getAlbums() {
+        return albums;
     }
 }

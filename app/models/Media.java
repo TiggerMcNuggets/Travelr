@@ -73,6 +73,8 @@ public class Media extends BaseModel {
         return uriString;
     }
 
+
+
     public void setUriString(String uriString) {
         this.uriString = uriString;
     }

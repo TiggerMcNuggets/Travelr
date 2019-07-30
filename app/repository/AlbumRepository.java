@@ -1,6 +1,7 @@
 package repository;
 
 import controllers.dto.Media.CreateAlbumReq;
+import controllers.dto.Media.UpdateMediaAlbumsReq;
 import io.ebean.Expr;
 import io.ebean.ExpressionList;
 import io.ebean.Ebean;
@@ -135,4 +136,37 @@ public class AlbumRepository {
             return album;
         });
     }
+
+//    /**
+//     * Updates an album
+//     * @param userId The user's id
+//     * @param req The request object
+//     * @return
+//     */
+//    public CompletableFuture<Media> moveMedia(Long userId, Long mediaId, UpdateMediaAlbumsReq req) {
+//        return supplyAsync(() -> {
+//            User user = User.find.findById(userId);
+//            if (user == null) return null;
+//
+////            user.resetAlbums();
+//            Media media = Media.find.findMediaById(mediaId);
+//            List<Album> userAlbums = user.getAlbums();
+//
+//
+//            for(Album album: media.albums) {
+//                if (!album.isPermanent && album in userAlbums) {
+//                    media.albums.remove(album);
+//                }
+//            }
+//
+//            for(Long albumId : req.albumsIds) {
+//                Album album = Album.find.findAlbumById(albumId);
+//                media.addAlbum(album);
+//            }
+//            media.save();
+//
+//
+//            return media;
+//        });
+//    }
 }

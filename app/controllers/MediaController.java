@@ -106,7 +106,6 @@ public class MediaController extends Controller {
      *
      * @param request  the http request
      * @param user_id  the id of the user who wants to see the album content
-     * @param album_id id of the album
      * @return json representation of accessible content in the album
      */
     @Authorization.RequireAuth
@@ -310,4 +309,26 @@ public class MediaController extends Controller {
             return ok(APIResponses.SUCCESSFUL_ALBUM_UPDATE);
         });
     }
+
+
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateMediaAlbums(Http.Request request, Long userId, Long media_id) {
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+        Form<UpdateMediaAlbumsReq> updateMediaAlbumsForm = formFactory.form(UpdateMediaAlbumsReq.class).bindFromRequest(request);
+
+        if (updateMediaAlbumsForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error updating media albums"));
+        }
+
+        UpdateMediaAlbumsReq req = updateMediaAlbumsForm.get();
+
+        return albumRepository.moveMedia(userId, media_id, req).thenApplyAsync(media -> {
+            return ok("Updated Albums Succesfully");
+        });
+
+
+    }
+
 }

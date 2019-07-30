@@ -1,5 +1,6 @@
 package models;
 
+import ch.qos.logback.core.pattern.util.AlmostAsIsEscapeUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import controllers.dto.User.CreateUserReq;
 import finders.UserFinder;
@@ -248,12 +249,18 @@ public class User extends BaseModel {
         }
     }
 
+
+
+    public void addAlbum(Album album) {
+        this.albums.add(album);
+    }
+
     public Album getDefaultAlbum() {
         return defaultAlbum;
     }
 
     public List<Album> getAlbums() {
-        return albums;
+        return this.albums;
     }
 
     public User(CreateUserReq request) {
