@@ -455,7 +455,6 @@ export default {
             const destToAdd = {};
             const currentDest = tripById.destinations[i];
             destToAdd.title = currentDest.name;
-            console.log("current dest arrival date", currentDest.arrivalDate);
             destToAdd.arrivalDate =
                 currentDest.arrivalDate === null
                     ? null

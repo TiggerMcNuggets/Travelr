@@ -360,10 +360,7 @@ export default {
           base_url +
           `/api/users/${this.$route.params.id}/media/${item.filename}`;
         this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
-        console.log("Ciao");
-          console.log(item);
-
-          this.clickedImage = item;
+        this.clickedImage = item;
         this.viewMediaDialogActive = true;
       }
     },

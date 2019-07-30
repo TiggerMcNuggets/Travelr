@@ -133,7 +133,6 @@ export default {
             } catch(e) {
                 console.log(e);
             }
-            console.log("here");
             this.getAllAlbums();
 
         }
@@ -154,8 +153,6 @@ export default {
   },
 
   mounted: function() {
-      console.log("mounted");
-      console.log(this.clickedImage);
     this.selectedAlbums = this.clickedImage.albums
       ? this.clickedImage.albums
       : [];
@@ -164,8 +161,6 @@ export default {
   watch: {
     clickedImage: function(newImage, oldImage) {
       if (newImage !== oldImage)
-          console.log("here");
-      console.log(this.clickedImage);
         this.selectedAlbums = this.clickedImage.albums
           ? this.clickedImage.albums
           : [];
