@@ -166,7 +166,7 @@ Feature: Create Trip
     }
     """
     And I send the request
-    Then I will receive the response code 400
+    Then I will receive the response code 201
 
   Scenario: Create a trip with missing name field
     Given I am authenticated
