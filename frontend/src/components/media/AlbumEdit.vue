@@ -1,5 +1,5 @@
 <template>
-  <AlbumForm title="Edit Album" :closeAlbumDialog="closeEditAlbumDialog" :submitAlbum="editAlbumHandler"/>
+  <AlbumForm title="Edit Album" :album="album" :closeAlbumDialog="closeEditAlbumDialog" :submitAlbum="editAlbumHandler"/>
 </template>
  
 <script>
@@ -8,7 +8,7 @@
     props: {
       closeEditAlbumDialog: Function,
       editAlbum: Function,
-      albumId: Number,
+      album: Object,
     },
     components: {
       AlbumForm
@@ -19,7 +19,7 @@
        * @param name The album name
        */
       editAlbumHandler(name) {
-        this.editAlbum(name, this.albumId);
+        this.editAlbum(name, this.album.id);
       }
     }
   };

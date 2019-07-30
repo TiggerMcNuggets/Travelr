@@ -46,7 +46,7 @@
       <AlbumEdit
         :editAlbum="editNewAlbum"
         :closeEditAlbumDialog="closeEditAlbumDialog"
-        :albumId="editAlbumId"
+        :album="editAlbumObject"
       />
     </v-dialog>
 
@@ -96,7 +96,7 @@ export default {
       isAdminUser: false,
       clickedImageWidth: 0,
       clickedImage: {},
-      editAlbumId: null,
+      editAlbumObject: {},
     };
   },
 
@@ -276,9 +276,9 @@ export default {
     /**
      * Opens visibility of the album editing dialog.
      */
-    openEditAlbumDialog(albumId) {
+    openEditAlbumDialog(album) {
       this.editAlbumDialogActive = true;
-      this.editAlbumId = albumId;
+      this.editAlbumObject = album;
     },
 
     /**

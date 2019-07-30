@@ -141,7 +141,7 @@ let mediaRepository = RepositoryFactory.get("media");
        * Opens the edit album modal
        */
       openEditAlbumDialogHandler() {
-        this.openEditAlbumDialog(this.album.id);
+        this.openEditAlbumDialog(this.album);
       }
     }
   }

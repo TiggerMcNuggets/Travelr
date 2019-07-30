@@ -7,11 +7,7 @@
     <v-card-text>
       <v-layout row wrap>
         <v-flex xs12 ml-3 mr-3>
-          <v-text-field
-                  label="Title"
-                  v-model="name"
-                  maxlength="50"
-          ></v-text-field>
+          <v-text-field label="Title" v-model="name" maxlength="50"></v-text-field>
         </v-flex>
       </v-layout>
     </v-card-text>
@@ -27,28 +23,39 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      title: String,
-      closeAlbumDialog: Function,
-      submitAlbum: Function,
-    },
- 
-    data() {
-      return {
-        name: ""
-      };
-    },
-    methods: {
-      /**
-       * Either edits or creates the album (depending on what submitAlbum is set to)
-       * and then clears the text field
-       */
-      clearNameAndSubmit() {
-        this.submitAlbum(this.name);
-        this.name = "";
-        this.closeAlbumDialog();
-      }
-    } 
-  };
+export default {
+  props: {
+    title: String,
+    closeAlbumDialog: Function,
+    submitAlbum: Function,
+    album: Object
+  },
+
+  data() {
+    return {
+      name: ""
+    };
+  },
+
+  mounted() {
+    this.name = this.album ? this.album.name : "";
+  },
+
+  watch: {
+    album: function(newAlbum, oldAlbum) {
+      if (newAlbum !== oldAlbum) this.name = this.album ? this.album.name : "";
+    }
+  },
+
+  methods: {
+    /**
+     * Either edits or creates the album (depending on what submitAlbum is set to)
+     * and then clears the text field
+     */
+    clearNameAndSubmit() {
+      this.submitAlbum(this.name);
+      this.closeAlbumDialog();
+    }
+  }
+};
 </script>
