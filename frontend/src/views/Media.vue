@@ -301,7 +301,7 @@
           const myImage = new Image();
           myImage.src =
             base_url +
-            `/api/users${this.$route.params.id}/media/${item.filename}`;
+            `/api/users/${this.$route.params.id}/media/${item.filename}`;
           this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
           this.clickedImage = item;
           this.viewMediaDialogActive = true;
