@@ -23,14 +23,11 @@
     </v-layout>
 
     <v-dialog v-model="uploadDialogActive" width="800">
-      <MediaUpload :uploadMedia="uploadMedia" :toggleUploadDialogue="toggleUploadDialogue"></MediaUpload>
+      <MediaUpload :uploadMedia="uploadMedia" :openUploadDialogue="openUploadDialogue" :closeUploadDialogue="closeUploadDialogue" :allAlbums="this.organisedMedia.albums" :createNewAlbum="createNewAlbum" :openCreateAlbumDialogue="openCreateAlbumDialogue" :closeCreateAlbumDialogue="closeCreateAlbumDialogue"></MediaUpload>
     </v-dialog>
 
     <v-dialog v-model="createAlbumDialogActive" width="500">
-      <AlbumCreate
-        :createNewAlbum="createNewAlbum"
-        :toggleCreateAlbumDialogue="toggleCreateAlbumDialogue"
-      ></AlbumCreate>
+      <AlbumCreate :createNewAlbum="createNewAlbum" :openCreateAlbumDialogue="openCreateAlbumDialogue" :closeCreateAlbumDialogue="closeCreateAlbumDialogue"></AlbumCreate>
     </v-dialog>
 
     <v-dialog v-model="viewMediaDialogActive" :width="clickedImageWidth">
@@ -207,13 +204,16 @@ export default {
     }
   },
 
-  methods: {
-    /**
-     * Updates the active filter to the provided parameter
-     */
-    changeFilter(filter) {
-      this.activeFilter = filter;
-    },
+			/**
+			 * Options used in the header component.
+			 */
+			options() {
+				return [
+					{action: this.openUploadDialogue, icon: "add_photo_alternate"},
+					{action: this.openCreateAlbumDialogue, icon: "add_to_photos"}
+				];
+			}
+		},
 
     /**
      * Toggles the visibility of the media upload dialogue.
@@ -222,18 +222,38 @@ export default {
       this.uploadDialogActive = !this.uploadDialogActive;
     },
 
-    /**
-     * Toggles the visibility of the album creation dialogue.
-     */
-    toggleCreateAlbumDialogue() {
-      this.createAlbumDialogActive = !this.createAlbumDialogActive;
-    },
+      /**
+       * Opens visibility of the media upload dialogue.
+       */
+			openUploadDialogue() {
+				this.uploadDialogActive = true;
+			},
 
-    /**
-     * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
-     */
-    getAllAlbums: function() {
-      mediaRepository
+            /**
+             * closes visibility of the media upload dialogue.
+             */
+            closeUploadDialogue() {
+                this.uploadDialogActive = false;
+            },
+
+      /**
+       * Opens the visibility of the album creation dialogue.
+       */
+			openCreateAlbumDialogue() {
+				this.createAlbumDialogActive = true;
+      },
+            /**
+             * Closes the visibility of the album creation dialogue.
+             */
+            closeCreateAlbumDialogue() {
+                this.createAlbumDialogActive = false;
+            },
+
+      /**
+       * Fetches all albums for a given user id. Sets the all media variable to the response if successful.
+       */
+      getAllAlbums: function() {
+        mediaRepository
         .getUserAlbums(this.userId)
         .then(response => {
           this.allMedia = response.data;
@@ -250,9 +270,9 @@ export default {
     createNewAlbum: function(newAlbumName) {
       mediaRepository
         .createAlbum(this.userId, { name: newAlbumName })
-        .then(response => {
+        .then(() => {
           this.getAllAlbums();
-          this.toggleCreateAlbumDialogue();
+          this.closeCreateAlbumDialogue();
         })
         .catch(err => {
           console.log(err);
@@ -293,29 +313,44 @@ export default {
       this.activeAlbumMetadata = null;
     },
 
-    /**
-     * Uploads the given media files the backend.
-     */
-    uploadMedia(files) {
-      let TEMP_ALBUM_ID = 6;
-      console.log(files);
-      for (let i = 0; i < files.length; i++) {
-        let file = files[i];
-        let formData = new FormData();
-        formData.append("picture", file);
+      /**
+       * Uploads the given media files the backend.
+       */
+      uploadMedia(files, albums) {
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
 
-        mediaRepository
-          .uploadMediaToAlbum(this.userId, TEMP_ALBUM_ID, formData)
-          .then(result => {
-            console.log(result.data);
-            // mediaRepository.getAlbumContent(this.userId, TEMP_ALBUM_ID).then(result => {
-            this.getAllAlbums();
-            // });
-          })
-          .catch(error => {
-            this.uploadError = true;
-            this.errorText = error.response.data;
-          });
+
+            for (let i = 0; i < albums.length; i++) {
+                let formData = new FormData();
+                formData.append("picture", file);
+
+                let album = albums[i];
+                mediaRepository.uploadMediaToAlbum(this.userId, album.id, formData)
+                    .then((result) => {
+                        console.log(result.data);
+                        mediaRepository.getAlbumContent(this.userId, album.id).then(result => {
+                            this.getAllAlbums();
+                        });
+                    })
+                    .catch(error => {
+                        this.uploadError = true;
+                        this.errorText = error.response.data;
+                    });
+            }
+        }
+
+        this.closeUploadDialogue();
+      },
+
+    },
+
+    mounted() {
+      this.userId = this.$route.params.id;
+      this.destId = this.$route.params.dest_id;
+
+      if (!this.userId) {
+        this.userId = this.$store.getters.getUser.id;
       }
 
       this.toggleUploadDialogue();

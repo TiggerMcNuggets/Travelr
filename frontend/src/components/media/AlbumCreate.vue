@@ -21,8 +21,8 @@
 
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn ma-3 flat v-on:click="toggleCreateAlbumDialogue()">Cancel</v-btn>
-      <v-btn ma-3 color="primary" flat v-on:click="createNewAlbum(newAlbumName)">Create Album</v-btn>
+      <v-btn ma-3 flat v-on:click="closeCreateAlbumDialogue()">Cancel</v-btn>
+      <v-btn ma-3 color="primary" flat v-on:click="createNewAlbumAndClearText(newAlbumName)">Create Album</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -30,7 +30,8 @@
 <script>
 	export default {
 		props: {
-			toggleCreateAlbumDialogue: Function,
+			openCreateAlbumDialogue: Function,
+            closeCreateAlbumDialogue: Function,
       createNewAlbum: Function
 		},
 
@@ -42,6 +43,10 @@
 		},
 
 		methods: {
+            createNewAlbumAndClearText(newAlbumName){
+                this.createNewAlbum(newAlbumName);
+                this.newAlbumName = "";
+            }
 
 		}
 

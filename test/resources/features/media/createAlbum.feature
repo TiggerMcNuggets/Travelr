@@ -15,11 +15,11 @@ Feature: CreateAlbum
     And I will receive the response body
       """
       {
-        "id": 1
+        "id": 2
       }
       """
     When I check the album
-    Then The album id is 1
+    Then The album id is 2
 
   Scenario: Create an album successfully for a user as an admin
     Given I am authenticated
@@ -39,13 +39,30 @@ Feature: CreateAlbum
     And I will receive the response body
       """
       {
-        "id": 1
+        "id": 3
       }
       """
     When I check the album
-    Then The album id is 1
+    Then The album id is 3
 #    And The album belongs to the user TODO: implement this step when users are connected to albums
-#
+
+
+  Scenario: Create an album successfully
+    Given I am authenticated
+    And I own the album
+    | name    |
+    | January |
+    When I want to create an album
+    And The body is
+      """
+      {
+        "name": "January"
+      }
+      """
+    And I send the request
+    Then I will receive the response code 400
+
+
   Scenario: Create an album when I am not logged in
     Given I am not authenticated
     When I want to create an album

@@ -8,15 +8,12 @@
 
         <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
         <div v-if="!album.public" class="triangle"></div>
-
-        <!--:src="getImgFromUrl(album.content[n].filename)"-->
-
         <div class="grid-4-container">
           <v-img
-                  v-for="n in 4"
-                  :key="n"
-                  src=""
-                  lazy-src="https://picsum.photos/id/11/100/60"
+                  v-for="(thumbnail, id) in albumThumbnails"
+                  :key="id"
+                  :src="thumbnail"
+                  :lazy-src="fillerImageURL"
                   :height="145">
 
             <template v-slot:placeholder>
@@ -49,20 +46,40 @@
 </style>
 
 <script>
-	export default {
-		name: "Album",
+  export default {
+    name: "Album",
 
-		props: {
-			album: Object,
-      getImgFromUrl: Function
-		},
+    props: {
+      album: Object,
+      getImgFromUrl: Function,
+      fillerImageURL: String
+    },
 
-		data() {
-			return {}
-		},
+    data() {
+      return {}
+    },
 
-		methods: {
+    computed: {
 
+      /**
+       * Computes the thumbnails to be shown in the 2x2 grid album preview.
+       * Fills the empty spaces with a specified filler image.
+       */
+      albumThumbnails: function () {
+        let thumbnails = [];
+        let numberOfThumbnails = this.album.content.length < 4 ? this.album.content.length : 4;
+        let requiredFillerImages = 4 - numberOfThumbnails;
+
+        for (let i = 0; i < numberOfThumbnails; i++) {
+          thumbnails.push(this.getImgFromUrl(this.album.content[i].filename))
+        }
+
+        for (let i = 0; i < requiredFillerImages; i++) {
+          thumbnails.push(this.fillerImageURL);
+        }
+
+        return thumbnails;
+      }
     }
-	}
+  }
 </script>
