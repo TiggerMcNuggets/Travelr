@@ -295,7 +295,6 @@ export default {
         })
         .catch(error => {
           this.uploadError = true;
-          this.errorText = error.response.data;
         });
       this.$refs.file.value = "";
     },
