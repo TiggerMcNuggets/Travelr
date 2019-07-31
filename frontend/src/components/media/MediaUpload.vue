@@ -262,7 +262,9 @@
       albumNames() {
         let albumNames = [];
         for (let i = 0; i < this.allAlbums.length; i++) {
-          albumNames.push(this.allAlbums[i].name);
+          if (!this.allAlbums[i].isPermanant) {
+            albumNames.push(this.allAlbums[i].name);
+          }
         }
         return albumNames;
       },
@@ -273,12 +275,13 @@
       selectedAlbums() {
         let selectedAlbums = [];
         for (let i = 0; i < this.allAlbums.length; i++) {
-          if (this.selectedAlbumNames.includes(this.allAlbums[i].name)) {
+          if (this.selectedAlbumNames.includes(this.allAlbums[i].name) && !this.allAlbums[i].isPermanant) {
             selectedAlbums.push(this.allAlbums[i]);
           }
         }
         return selectedAlbums;
-      },
+      }
+
     },
 
   };
