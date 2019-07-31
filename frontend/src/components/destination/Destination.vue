@@ -16,6 +16,7 @@
         <v-tab :key="1" ripple>Browse</v-tab>
 
         <v-tab-item :key="1">
+        <div class="scrollable list-height">
           <li
             class="destination-list-element"
             v-for="item in destinationsFiltered"
@@ -74,11 +75,12 @@
               </div>
             </v-card>
           </li>
+        </div>
         </v-tab-item>
       </v-tabs>
 
       <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="updateDestinationList" />
+        <destination-create :createDestinationCallback="createDestinationCallback"/>
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -147,30 +149,45 @@ ul {
   padding-top: 20px;
   list-style-type: none;
 }
-</style>
 
+.blue-background {
+  background-color: rgb(63,81,181);
+}
+
+.list-height {
+  max-height: 800px;
+  min-height: 500px;
+}
+</style>
 
 <script>
 import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import RollbackMixin from "../mixins/RollbackMixin.vue";
 import DestinationCreate from "./DestinationCreate";
 import PageHeader from "../common/header/PageHeader";
+
+// mixins
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
+
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
-  mixins: [RollbackMixin],
+  mixins: [
+    RollbackMixin,
+    StoreDestinationsMixin
+  ],
   components: {
     PageHeader,
-    DestinationCreate
+    DestinationCreate,
   },
 
   data() {
     return {
+      userId: this.$route.params.id,
       dialog: false,
       showEditDestination: false,
-      destinations: [],
       isMyProfile: false,
       ownerId: null,
       active: null,
@@ -223,10 +240,9 @@ export default {
      * Initialises the application and checks if the user is displaying thier destinations or viewing someone elses.
      * Gets the destination list information to display.
      */
-
     init() {
       this.checkIfProfileOwner();
-      this.getDestinationList();
+      this._getDestinations(this.userId);
     },
 
     /**
@@ -238,20 +254,20 @@ export default {
     },
 
     /**
-     * Redirects the user to the destinations edit page.
-     * @param id The id of the destination to redirect to.
-     */
-    editDestination(id) {
-      this.$router.push("/user/" + this.userId + "/destinations/edit/" + id);
-    },
-
-    /**
      * Redirects the user to the single destination page based on a given id
      * @param id The id of the single destination which was clicked.
      */
     viewDestination(id) {
       this.$router.push("/user/" + this.userId + "/destinations/" + id);
     },
+
+    /**
+     * Redirects the user to the destinations edit page.
+     * @param id The id of the destination to redirect to.
+     */
+    editDestination(id) {
+      this.$router.push("/user/" + this.userId + "/destinations/edit/" + id);
+    },    
 
     /**
      * Toggles the dialog to create a new destination.
@@ -273,7 +289,7 @@ export default {
      */
     deleteDestination: function(destId) {
       this.clearAlerts();
-      destinationRepository.deleteDestination(this.userId, destId).then(() => {
+      this._deleteDestination(this.userId, destId).then(() => {
         const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
         this.rollbackCheckpoint(
           "DELETE",
@@ -284,42 +300,9 @@ export default {
             url: url
           }
         );
-        this.getDestinationList();
       });
     },
 
-    /**
-     * Refreshes the destination list
-     */
-    updateDestinationList: function(destId) {
-      this.clearAlerts();
-      const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
-      this.rollbackCheckpoint(
-        "POST",
-        {
-          url: url
-        },
-        {
-          url: url
-        }
-      );
-      this.getDestinationList();
-      this.dialog = false;
-    },
-
-    /**
-     * Sets the list of destinations by request to the API
-     */
-    getDestinationList: function() {
-      destinationRepository
-        .getDestinations(this.userId)
-        .then(response => {
-          this.destinations = response.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
 
     /**
      * Makes a destination public and checks for error.
@@ -373,6 +356,49 @@ export default {
     },
 
     /**
+     * Callback for creating a new destination
+     * Allows the main list of destinations to undo the creation of the new one
+     * and closes the dialog
+     */
+    createDestinationCallback: function(destId) {
+      this.clearAlerts();
+      const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
+      this.rollbackCheckpoint(
+            'POST',
+            {
+                url: url,
+            },
+            {
+                url: url,
+            }
+      );
+      this.dialog = false;
+    },
+
+    /**
+     * Undoes the last action and gets destinations afterwards
+     */
+    undo: function() {
+      const actions = [() => this._getDestinations(this.userId), this.clearAlerts];
+      try {
+        this.rollbackUndo(actions);
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    },
+
+    /**
+     * Redoes the last action and gets destinations afterwards
+     */
+    redo: function() {
+      const actions = [() => this._getDestinations(this.userId), this.clearAlerts];
+      try {
+        this.rollbackRedo(actions);
+      } catch (err) {
+        this.undoRedoError = true;
+      }
+    },
+    /**
      * Checks if the id of the page being viewed belongs to the signed in user.
      */
     checkIfProfileOwner() {
@@ -389,29 +415,6 @@ export default {
       window.console.log(evt);
     },
 
-    /**
-     * Undoes the last action and gets destinations afterwards
-     */
-    undo: function() {
-      const actions = [this.getDestinationList, this.clearAlerts];
-      try {
-        this.rollbackUndo(actions);
-      } catch (err) {
-        this.undoRedoError = true;
-      }
-    },
-
-    /**
-     * Redoes the last action and gets destinations afterwards
-     */
-    redo: function() {
-      const actions = [this.getDestinationList, this.clearAlerts];
-      try {
-        this.rollbackRedo(actions);
-      } catch (err) {
-        this.undoRedoError = true;
-      }
-    }
   },
 
   /**

@@ -29,6 +29,7 @@ public class StateSingleton {
     private Media media;
 
 
+
     /**
      * Private constructor to avoid illegal initialisation of new objects
      * The first instance needs application's dependencies injected which

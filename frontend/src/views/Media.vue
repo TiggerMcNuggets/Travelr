@@ -54,8 +54,10 @@
       <MediaDialog
         :clickedImage="clickedImage ? clickedImage : {}"
         :closeMediaDialog="() => viewMediaDialogActive = false"
+        :selectedAlbum="filteredMedia"
         :updateMedia="updateMedia"
         :deleteMedia="deleteMedia"
+        :getAllAlbums="getAllAlbums"
       />
     </v-dialog>
   </v-container>
@@ -298,7 +300,7 @@ export default {
           this.allMedia = response.data;
           response.data.forEach(item => {
             this.mediaMap[item.id] = item;
-          })
+          });
           if (this.viewingAlbum) {
             this.activeMedia = [
               deepCopy(this.mediaMap[this.activeAlbumMetadata.id])
@@ -392,6 +394,7 @@ export default {
               this.getAllAlbums();
             })
             .catch(error => {
+                console.log(error);
               this.uploadError = true;
               this.errorText = error.response.data;
             });
@@ -400,6 +403,8 @@ export default {
 
       this.closeUploadDialog();
     },
+
+
 
     updateMedia(clickedImage) {
       mediaRepository

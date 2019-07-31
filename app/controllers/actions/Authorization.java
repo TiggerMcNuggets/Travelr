@@ -41,7 +41,6 @@ public class Authorization {
                     return delegate.call(req.addAttr(Attrs.USER, user.get()).addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0));
                 }
             }
-
             return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
         }
     }
@@ -81,6 +80,62 @@ public class Authorization {
         }
     }
 
+    @With(RequireAuthOrAdminAction.class)
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface RequireAuthOrAdmin {
+    }
+
+    /**
+     * Authorization checks if the User the request is being sent for is the user
+     * that is authorized (or if the user is Admin)
+     *
+     */
+    public static class RequireAuthOrAdminAction extends Action<RequireAuth> {
+        public CompletionStage<Result> call(Http.Request req) {
+            String authToken;
+            try {
+                authToken = req.header(SecurityController.AUTH_TOKEN_HEADER).get();
+            } catch (Exception e) {
+                return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
+            }
+            if(authToken != null) {
+                Optional<User> user = models.User.find.findByAuthToken(authToken);
+                if (user.isPresent()) {
+
+                    // The id that the request is being sent for
+                    Long userIdOfRequest = getIdFromPath(req.uri());
+                    User accessUser = User.find.byId(userIdOfRequest);
+
+                    if(accessUser != null && (accessUser.getId() == user.get().getId() || user.get().isAdmin())) {
+                        return delegate.call(req
+                                .addAttr(Attrs.USER, user.get())
+                                .addAttr(Attrs.IS_USER_ADMIN, user.get().accountType > 0)
+                                .addAttr(Attrs.ACCESS_USER, accessUser));
+                    }
+                }
+            }
+
+            return CompletableFuture.completedFuture(unauthorized(APIResponses.NOT_LOGGED_IN_ACCESS_DENIED));
+        }
+    }
+
+    private static Long getIdFromPath(String path) {
+        String output;
+
+        output = path.substring(path.indexOf("/api/users/") + 11);
+        output = output.substring(0, output.indexOf("/"));
+
+        try {
+            return Long.parseLong(output);
+        } catch (NumberFormatException e) {
+            System.out.println("To use this auth function the route must have api/users/:userid/");
+            return null;
+        }
+
+    }
+
+
     /**
      * Checks a user with given user id exists
      * @param id
@@ -104,17 +159,6 @@ public class Authorization {
         if (userIdByToken == userIdById) return null;
         return CompletableFuture.completedFuture(Results.forbidden("Not admin and id from token does not match user id parameter"));
     }
-
-    /**
-     * @param tripId the trip id
-     * @return 404: no trip found, null: no errors
-     */
-    public static CompletionStage<Result> doesTripExist(Long tripId) {
-        Trip trip = Trip.find.findOne(tripId);
-        if (trip != null) return null;
-        return CompletableFuture.completedFuture(Results.notFound("No trip with given id found"));
-    }
-
 
     /**
      *
