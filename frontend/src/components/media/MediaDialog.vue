@@ -138,6 +138,7 @@ export default {
         }
         this.getAllAlbums();
       }
+      this.getAllAlbums();
     },
 
     /**
@@ -158,14 +159,31 @@ export default {
     this.selectedAlbums = this.clickedImage.albums
       ? this.clickedImage.albums
       : [];
+
+    mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
+      this.albums = res.data
+        .map(item => {
+          return { id: item.id, name: item.name };
+        })
+        .filter(a => a.name.toLowerCase() !== "all");
+    });
   },
 
   watch: {
     clickedImage: function(newImage, oldImage) {
-      if (newImage !== oldImage)
+      if (newImage !== oldImage) {
         this.selectedAlbums = this.clickedImage.albums
           ? this.clickedImage.albums
           : [];
+      }
+
+      mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
+        this.albums = res.data
+          .map(item => {
+            return { id: item.id, name: item.name };
+          })
+          .filter(a => a.name.toLowerCase() !== "all");
+      });
     }
   },
 
@@ -175,13 +193,6 @@ export default {
   created: function() {
     this.isPublic = this.clickedImage.is_public;
     this.user = store.getters.getUser;
-    mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
-      this.albums = res.data
-        .map(item => {
-          return { id: item.id, name: item.name };
-        })
-        .filter(a => a.name.toLowerCase() !== "all");
-    });
   }
 };
 </script>
