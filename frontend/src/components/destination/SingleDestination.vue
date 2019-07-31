@@ -42,7 +42,6 @@
         </label>
         <div>
           <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
-          <!--<v-btn v-on:click="uploadExisting()">Choose Existing</v-btn>-->
         </div>
       </div>
       <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
