@@ -425,9 +425,6 @@ export default {
      * Uploads the given media files the backend.
      */
     uploadMedia(files, albums) {
-      console.log("here@!!!!!!!!!");
-      console.log(this.$store.getters.getUser);
-
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         if (albums.length === 0) {
