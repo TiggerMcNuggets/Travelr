@@ -154,9 +154,9 @@ public class Destination extends BaseModel {
         this.user = user;
     }
 
-    public boolean getIsPublic() { return isPublic; }
-
-    public void setIsPublic(boolean isPublic) { this.isPublic = isPublic; }
+    public boolean isPublic() {
+        return isPublic;
+    }
 
     public Album getDefaultAlbum() {
         return defaultAlbum;
@@ -164,6 +164,10 @@ public class Destination extends BaseModel {
 
     public void setDefaultAlbum(Album defaultAlbum) {
         this.defaultAlbum = defaultAlbum;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }
 

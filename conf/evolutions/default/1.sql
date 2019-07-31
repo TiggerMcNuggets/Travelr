@@ -107,6 +107,8 @@ create table trip (
   id                            bigint auto_increment not null,
   user_id                       bigint,
   name                          varchar(255),
+  description                   varchar(255),
+  published                     boolean default 0 not null,
   deleted                       boolean default false not null,
   constraint pk_trip primary key (id)
 );
@@ -115,10 +117,11 @@ create table trip_destination (
   id                            bigint auto_increment not null,
   trip_id                       bigint,
   destination_id                bigint,
-  arrival_date                  integer,
-  departure_date                integer,
-  name                          varchar(255),
+  depth                         integer not null,
   ordinal                       integer not null,
+  custom_name                   varchar(255),
+  arrival_date                  integer not null,
+  departure_date                integer not null,
   deleted                       boolean default false not null,
   constraint pk_trip_destination primary key (id)
 );

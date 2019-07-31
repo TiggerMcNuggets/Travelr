@@ -65,8 +65,9 @@
         :clickedImage="clickedImage ? clickedImage : {}"
         :closeMediaDialog="() => viewMediaDialogActive = false"
         :updateMedia="updateMedia"
-        :openConfirmDelete="() => {confirmDeletionDialogActive = true}
-        "
+        :deleteMedia="deleteMedia"
+        :getAllAlbums="getAllAlbums"
+        :openConfirmDelete="() => {confirmDeletionDialogActive = true}"
       />
     </v-dialog>
 
@@ -421,6 +422,7 @@ export default {
               this.getAllAlbums();
             })
             .catch(error => {
+              console.log(error);
               this.uploadError = true;
               this.errorText = error.response.data;
             });

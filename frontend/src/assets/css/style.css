@@ -133,3 +133,7 @@
     margin-top: 1em;
     width: 49%;
   }
+
+  .scrollable {
+    overflow-y: scroll;
+  }

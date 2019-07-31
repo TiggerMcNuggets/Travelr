@@ -19,11 +19,8 @@ export const deleteMedia = async (userId, albumId, mediaId, deleteAll) => {
   );
 };
 
-export const moveMediaToAlbum = async (userId, albumId, mediaId, payload) => {
-  return Repository.patch(
-    `/users/${userId}/albums${albumId}/media/${mediaId}`,
-    payload
-  );
+export const moveMediaToAlbum = async (userId, albumId, mediaId) => {
+  return Repository.put(`/users/${userId}/albums/${albumId}/media/${mediaId}`);
 };
 
 export const deleteAlbum = async (userId, albumId) => {

@@ -171,7 +171,7 @@
       },
 
       triggerCallback(e, callback) {
-        var files;
+        let files;
         if (e.dataTransfer) {
           files = e.dataTransfer.files;
         } else if (e.target) {
@@ -181,7 +181,7 @@
       },
 
       makeDroppable(ele, callback) {
-        var input = document.createElement("input");
+        let input = document.createElement("input");
         input.setAttribute("type", "file");
         input.setAttribute("multiple", true);
         input.style.display = "none";
@@ -232,13 +232,13 @@
     },
 
     mounted: function () {
-      var dropzone = document.getElementById("dropzone");
+      let dropzone = document.getElementById("dropzone");
 
       this.makeDroppable(dropzone, files => {
         this.rawFiles = Array.from(files);
         for (let i = 0; i < files.length; i++) {
           let file = files[i];
-          var reader = new FileReader();
+          let reader = new FileReader();
 
           reader.onload = e => {
             this.files.push(e.target.result);
@@ -262,7 +262,9 @@
       albumNames() {
         let albumNames = [];
         for (let i = 0; i < this.allAlbums.length; i++) {
-          albumNames.push(this.allAlbums[i].name);
+          if (!this.allAlbums[i].isPermanant) {
+            albumNames.push(this.allAlbums[i].name);
+          }
         }
         return albumNames;
       },
@@ -273,12 +275,13 @@
       selectedAlbums() {
         let selectedAlbums = [];
         for (let i = 0; i < this.allAlbums.length; i++) {
-          if (this.selectedAlbumNames.includes(this.allAlbums[i].name)) {
+          if (this.selectedAlbumNames.includes(this.allAlbums[i].name) && !this.allAlbums[i].isPermanant) {
             selectedAlbums.push(this.allAlbums[i]);
           }
         }
         return selectedAlbums;
-      },
+      }
+
     },
 
   };

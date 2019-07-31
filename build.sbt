@@ -4,8 +4,6 @@ version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.12.8"
 
-
-
 lazy val myProject = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 libraryDependencies += guice
@@ -33,6 +31,11 @@ javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
 
 
 libraryDependencies += javaJdbc % Test
+
+// Dependecy for iCal4j
+// https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
+libraryDependencies += "org.mnode.ical4j" % "ical4j" % "3.0.0"
+
 
 // Dependencies for cucumber tests
 libraryDependencies ++= Seq (

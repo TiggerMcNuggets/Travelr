@@ -78,7 +78,7 @@ public class DestinationController extends Controller {
         Destination destination = Destination.find.findByIdIncludeDeleted(destId);
         if (destination == null) return  CompletableFuture.completedFuture(notFound(APIResponses.DESTINATION_NOT_FOUND));
 
-        if (!destination.getIsPublic() || (destination.getIsPublic() && destinationRepository.isDestinationUsed(destId))) {
+        if (!destination.isPublic || (destination.isPublic && destinationRepository.isDestinationUsed(destId))) {
             CompletionStage<Result> authorisedToView = Authorization.isUserAuthorisedToViewTrip(request, userId, destination.user.id);
             if (authorisedToView != null) return authorisedToView;
         }
@@ -201,7 +201,7 @@ public class DestinationController extends Controller {
 
             Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
             Boolean isDestinationOwner = (destination.getUser().getId() == userId);
-            if(!destination.getIsPublic() && !isAdmin && !isDestinationOwner) {
+            if(!destination.isPublic && !isAdmin && !isDestinationOwner) {
                 return CompletableFuture.completedFuture(Results.forbidden(APIResponses.FORBIDDEN_DESTINATION_EDIT));
             }
 
@@ -311,7 +311,7 @@ public class DestinationController extends Controller {
                 return forbidden("Forbidden: There are other users using the destination");
             }
 
-            destination.setIsPublic(false);
+            destination.setPublic(false);
             destination.save();
             return created("Destination is now private");
         });
