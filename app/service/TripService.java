@@ -78,8 +78,6 @@ public class TripService {
 
             Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
 
-            trip.setName(tripDTO.name);
-
             ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
 
             for(TripDestinationDTO destDTO : tripDTO.destinations) {
