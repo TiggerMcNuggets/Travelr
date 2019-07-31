@@ -2,7 +2,6 @@
   <v-card>
     <v-layout justify-space-around>
     <v-icon @click="clickedImage--">mdi-minus</v-icon>
-        {{ clickedImage }}
         <v-icon @click="clickedImage++">mdi-plus</v-icon>
       </v-layout>
 
