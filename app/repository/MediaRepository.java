@@ -8,13 +8,14 @@ import models.User;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+import org.apache.commons.io.FileUtils;
 import com.typesafe.config.Config;
-
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class MediaRepository {
@@ -30,28 +31,58 @@ public class MediaRepository {
     }
 
     /**
-     * Adds a new personal photo for a user.
+     * Adds a new media for a user.
      * 
      * @param id user id
      */
     public CompletionStage<Long> add(Long id, Long album_id, String imageFileName) {
         return supplyAsync(() -> {
             User traveller = User.find.findById(id);
-            if (traveller == null) return null; // bad user
+            if (traveller == null)
+                return null; // bad user
 
-            Media media = new Media(traveller, imageFileName);
+            ExpressionList<Media> query = Media.find.query().where().eq("user_id", id);
+            List<Media> photoList = query.findList();
+
+            File file2 = new File(this.MEDIA_FILEPATH + imageFileName);
+            Media mediaToAdd = mediaToAdd = new Media(traveller, imageFileName);
+            Boolean found = false;
+            for (Media media : photoList) {
+                File file1 = new File(this.MEDIA_FILEPATH + media.getUriString());
+                try {
+                    if (FileUtils.contentEquals(file1, file2)) {
+                        System.err.println("Duplicate Photo");
+                        found = true;
+                        mediaToAdd = media;
+                        break;
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error");
+                    return null;
+                }
+            }
+
             Album album = Album.find.findAlbumById(album_id);
             Album defaultAlbum = traveller.getDefaultAlbum();
 
-            if (album == null) return null; // album does not exist
+            if (album == null)
+                return null; // album does not exist
 
-            album.addMedia(media);
-            media.addAlbum(album);
-            defaultAlbum.addMedia(media);
-            defaultAlbum.save();
-            album.save();
-            media.save();
-            return media.id;
+            if (found) {
+                album.addMedia(mediaToAdd);
+                album.update();
+                mediaToAdd.addAlbum(album);
+                mediaToAdd.update();
+            } else {
+                album.addMedia(mediaToAdd);
+                mediaToAdd.addAlbum(album);
+                defaultAlbum.addMedia(mediaToAdd);
+                defaultAlbum.save();
+                album.save();
+                mediaToAdd.save();
+            }
+
+            return mediaToAdd.id;
         }, executionContext);
     }
 
