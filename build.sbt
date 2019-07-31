@@ -15,6 +15,7 @@ libraryDependencies += "org.glassfish.jaxb" % "jaxb-runtime" % "2.3.2"
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.40"
 libraryDependencies += "io.ebean.test" % "ebean-test-config" % "11.36.1" % "test"
+libraryDependencies += "commons-io" % "commons-io" % "2.5"
 
 
 // Use Play Evolutions
