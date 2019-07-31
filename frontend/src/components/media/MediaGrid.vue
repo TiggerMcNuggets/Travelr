@@ -32,7 +32,7 @@
 
 		data() {
 			return {
-        fillerImageURL: 'https://scontent.fwlg1-1.fna.fbcdn.net/v/t1.15752-9/67622453_448347632682894_4713729652491812864_n.png?_nc_cat=100&_nc_oc=AQmwt1aVyhkq6u08MMigxwz83vbJyhYCz4IRAn-rq6R-6BUFm0EC-74ZEgPGe_lO5_c&_nc_ht=scontent.fwlg1-1.fna&oh=485a6544f41ab5fdeac3ff4bbd486a8d&oe=5DAACB1C',
+        fillerImageURL: 'https://scontent.fwlg1-1.fna.fbcdn.net/v/t1.15752-9/67378175_348500139423638_1827459196619063296_n.png?_nc_cat=110&_nc_oc=AQk_S4fCW-LL3HlYKvsLYrv3qvB1o1FSUcC7wRMsRw0PNysZF8yNa7EAsOalje3gDeg&_nc_ht=scontent.fwlg1-1.fna&oh=d80948deee840eaf09db4ad4b37ee3c4&oe=5DED9897',
       }
 		},
 

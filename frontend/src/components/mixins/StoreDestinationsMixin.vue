@@ -28,7 +28,7 @@
                 try {
                     await this.$store.dispatch('getDestinations', {userId});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                 }
             },
 
@@ -42,7 +42,7 @@
                 try {
                     return await this.$store.dispatch('postDestination', {userId, destination});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                     return e;
                 }
             },
@@ -58,7 +58,7 @@
                 try {
                     await this.$store.dispatch('putDestination', {userId, destinationId, destination});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                 }
             },
 
@@ -72,7 +72,7 @@
                 try {
                     await this.$store.dispatch('deleteDestination',{userId, destinationId});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                 }
             },
 
