@@ -20,7 +20,6 @@ export default {
          * @param {number} payload.userId The id of the user
          */
         async getTrips({ commit }, payload) {
-            console.log("payload", payload);
             const trips = await TripRepository.getUserTrips(payload.userId);
             commit("setTrips", trips.data);
         },
