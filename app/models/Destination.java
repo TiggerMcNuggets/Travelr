@@ -45,6 +45,10 @@ public class Destination extends BaseModel {
     @Constraints.Required
     public String country;
 
+    @NotNull
+    @Constraints.Required
+    public Album defaultAlbum;
+
     @ManyToOne
     @JsonIgnore
     public User user;
@@ -65,6 +69,8 @@ public class Destination extends BaseModel {
         this.country = request.country;
         this.user = user;
         this.isPublic = request.isPublic;
+        this.defaultAlbum = new Album(user, request.name + " Album", true);
+
     }
 
     // USED IN TEST DATA
@@ -77,6 +83,7 @@ public class Destination extends BaseModel {
         this.country = country;
         this.user = user;
         this.isPublic = false;
+        this.defaultAlbum = new Album(user, name + " Album", true);
     }
 
 
@@ -149,6 +156,14 @@ public class Destination extends BaseModel {
 
     public boolean isPublic() {
         return isPublic;
+    }
+
+    public Album getDefaultAlbum() {
+        return defaultAlbum;
+    }
+
+    public void setDefaultAlbum(Album defaultAlbum) {
+        this.defaultAlbum = defaultAlbum;
     }
 
     public void setPublic(boolean aPublic) {

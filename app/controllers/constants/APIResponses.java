@@ -11,5 +11,13 @@ public class APIResponses {
     public static final String TRAVELLER_NOT_FOUND = "Traveller not found";
     public static final String NOT_LOGGED_IN_ACCESS_DENIED = "Not Logged In: Access Denied";
     public static final String FORBIDDEN_DESTINATION_EDIT = "Permission denied: Trying to edit a public destination and not admin";
+    public static final String ALBUM_OR_MEDIA_NOT_FOUND = "The existing album or existing media was not found";
+    public static final String FORBIDDEN_ALBUM_DELETION = "The album does not belong to you";
+    public static final String SUCCESSFUL_ALBUM_DELETION = "Album deleted";
+    public static final String SUCCESSFUL_MEDIA_DELETION = "Media deleted";
+    public static final String FORBIDDEN_ALBUM_UPDATE = FORBIDDEN_ALBUM_DELETION;
+    public static final String SUCCESSFUL_ALBUM_UPDATE = "Album updated";
+    public static final String DUPLICATE_ALBUM_NAME = "Duplicate album name";
+
 
 }

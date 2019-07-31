@@ -12,7 +12,7 @@
         <v-list class="pa-0">
           <v-list-tile avatar>
             <v-list-tile-avatar>
-              <img :src="getImgUrl">
+              <img :src="url">
             </v-list-tile-avatar>
 
             <v-list-tile-content>
@@ -99,7 +99,8 @@ export default {
     return {
       mini: true,
       right: null,
-      traveller: {}
+      url: ""
+      // traveller: {}
     };
   },
   computed: {
@@ -115,6 +116,11 @@ export default {
             name: "Dashboard",
             icon: "dashboard",
             link: "/user/" + store.getters.getUser.id + "/dashboard"
+          },
+          {
+            name: "Media",
+            icon: "insert_photo",
+            link: "/user/" + store.getters.getUser.id + "/media"
           },
           {
             name: "Profile",
@@ -147,19 +153,8 @@ export default {
       return menuOptions;
     },
 
-    /**
-     * Gets the src of the profile picture
-     * @returns {string} The src of the profile picture.
-     */
-    getImgUrl() {
-      if (
-        !this.traveller.userProfilePhoto ||
-        this.traveller.userProfilePhoto == "defaultPic.png"
-      ) {
-        return DefaultPic;
-      } else {
-        return base_url + "/api/travellers/profile-photo/" + this.traveller.id;
-      }
+    traveller() {
+      return store.getters.getUser;
     },
 
     /**
@@ -167,6 +162,20 @@ export default {
      */
     loggedIn() {
       return store.getters.isLoggedIn;
+    }
+  },
+
+  watch: {
+    traveller: function(newImage, oldImage) {
+      if (newImage !== oldImage)
+        if (
+        !this.traveller.userProfilePhoto ||
+        this.traveller.userProfilePhoto == "defaultPic.png"
+      ) {
+        this.url = DefaultPic;
+      } else {
+        this.url = base_url + "/api/travellers/profile-photo/" + this.traveller.id + "?" + new Date().getTime();
+      }
     }
   },
 
@@ -187,7 +196,14 @@ export default {
   },
 
   created() {
-    this.traveller = store.getters.getUser;
+      if (
+        !this.traveller.userProfilePhoto ||
+        this.traveller.userProfilePhoto == "defaultPic.png"
+      ) {
+        this.url = DefaultPic;
+      } else {
+        this.url = base_url + "/api/travellers/profile-photo/" + this.traveller.id + "?" + new Date().getTime();
+      }
   }
 };
 </script>
