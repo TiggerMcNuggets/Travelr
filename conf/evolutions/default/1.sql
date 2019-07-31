@@ -26,9 +26,11 @@ create table destination (
   type                          varchar(255) not null,
   district                      varchar(255) not null,
   country                       varchar(255) not null,
+  default_album_id              bigint,
   user_id                       bigint,
   is_public                     boolean default false not null,
   deleted                       boolean default false not null,
+  constraint uq_destination_default_album_id unique (default_album_id),
   constraint pk_destination primary key (id)
 );
 
@@ -168,6 +170,8 @@ alter table album_media add constraint fk_album_media_album foreign key (album_i
 create index ix_album_media_media on album_media (media_id);
 alter table album_media add constraint fk_album_media_media foreign key (media_id) references media (id) on delete restrict on update restrict;
 
+alter table destination add constraint fk_destination_default_album_id foreign key (default_album_id) references album (id) on delete restrict on update restrict;
+
 create index ix_destination_user_id on destination (user_id);
 alter table destination add constraint fk_destination_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -239,6 +243,8 @@ drop index if exists ix_album_media_album;
 
 alter table album_media drop constraint if exists fk_album_media_media;
 drop index if exists ix_album_media_media;
+
+alter table destination drop constraint if exists fk_destination_default_album_id;
 
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;

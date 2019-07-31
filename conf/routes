@@ -52,6 +52,8 @@ DELETE      /api/users/:id/albums/:album_id/media/:media_id    controllers.Media
 POST        /api/users/:id/media/:media_id                     controllers.MediaController.updateUserMedia(request: Request, id: Long, media_id: Long)
 GET         /api/users/:id/media/:filename                     controllers.MediaController.getImageFromDatabase(request: Request, id: Long, filename: String)
 GET         /api/users/:id/albums                              controllers.MediaController.getUsersAlbums(request: Request, id: Long)
+POST        /api/users/:id/destinations/:dest_id/media         controllers.MediaController.uploadDestinationMedia(request: Request, id: Long, dest_id: Long)
+
 
 # Destinations (Old)
 PUT         /api/destinations/:id               controllers.DestinationController.updateUserDestination(request: Request, id: Long)

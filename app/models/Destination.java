@@ -45,8 +45,8 @@ public class Destination extends BaseModel {
     @Constraints.Required
     public String country;
 
-    @NotNull
     @Constraints.Required
+    @OneToOne
     public Album defaultAlbum;
 
     @ManyToOne
@@ -69,7 +69,6 @@ public class Destination extends BaseModel {
         this.country = request.country;
         this.user = user;
         this.isPublic = request.isPublic;
-        this.defaultAlbum = new Album(user, request.name + " Album", true);
 
     }
 

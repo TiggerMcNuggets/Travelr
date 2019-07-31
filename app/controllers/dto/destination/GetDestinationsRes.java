@@ -28,6 +28,8 @@ public class GetDestinationsRes {
 
     public List<TravellerType> travellerTypes;
 
+    public Long albumId;
+
 
     public GetDestinationsRes(Destination destination) {
         this.name = destination.name;
@@ -40,6 +42,7 @@ public class GetDestinationsRes {
         this.ownerId = destination.getUser().getId();
         this.id = destination.id;
         this.travellerTypes = destination.travellerTypes;
+        this.albumId = destination.defaultAlbum.id;
     }
 
 }

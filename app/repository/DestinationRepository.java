@@ -2,11 +2,7 @@ package repository;
 
 import controllers.dto.Destination.CreateDestReq;
 import controllers.dto.TravellerType.CreateTravellerTypeReq;
-import models.Destination;
-import models.TravellerType;
-import models.DestinationPhoto;
-import models.TripDestination;
-import models.User;
+import models.*;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -51,7 +47,9 @@ public class DestinationRepository {
     public CompletableFuture<Long> add(CreateDestReq request, Long userId) {
         return supplyAsync(() -> {
 
-            Destination destination = new Destination(request, User.find.byId(userId));
+            User user = User.find.byId(userId);
+
+            Destination destination = new Destination(request, user);
 
             ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
             if (request.travellerTypes != null) {
@@ -72,7 +70,16 @@ public class DestinationRepository {
                 return null;
             }
 
+            Album album = new Album(user,destination.getName() + "," + destination.getCountry(), true);
+            album.insert();
+
+            destination.setDefaultAlbum(album);
+
+
             destination.insert();
+
+
+
             return destination.id;
         }, context);
     }
