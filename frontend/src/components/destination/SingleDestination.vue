@@ -287,7 +287,7 @@ export default {
 
       storeDestinationImage(this.userId, this.destId, formData)
         .then(() => {
-          getImages(this.userId, this.destination.albumId).then(result => {
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
             this.uploadExisting = true;
             console.log(result);
             this.files = this.groupImages(result.data);
@@ -384,10 +384,11 @@ export default {
       .getDestination(this.userId, this.destId)
       .then(response => {
         this.destination = response.data;
+          console.log(this.destination);
           // Gets all the images to display on the page.
-          getImages(this.userId, this.destination.albumId).then(result => {
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
               console.log("here")
-              console.log(this.destination)
+
               this.files = this.groupImages(result.data);
           });
       })

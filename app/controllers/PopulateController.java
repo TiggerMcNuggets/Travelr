@@ -87,71 +87,73 @@ public class PopulateController extends Controller {
             new UserNationality(admin, nationality, true).insert();
         }
 
+        Album album1 = new Album(user2, "fun", true);
         Destination dest1 = new Destination("Christchurch", -43.522, 172.581, "City", "Canterbury", "New Zealand", user1);
         dest1.setTravellerTypes(travellerTypes);
+        dest1.setDefaultAlbum(album1);
 
-        Destination dest2 = new Destination("Big River", -45.160, 168.291, "City", "Auckland", "country", user1);
-        dest2.setTravellerTypes(travellerTypes);
-
-        Destination dest3 = new Destination("Nice Park", -25.777, 125.198, "City", "NSW", "Australia", user1);
-        dest3.setTravellerTypes(travellerTypes);
-
-        Destination dest4 = new Destination("Slum", -14.152, -58.905, "City", "Alaska", "USA", user1);
-        dest4.setTravellerTypes(travellerTypes);
-
-        Destination dest5 = new Destination("Nice View", 15.693, 9.764, "Mountain", "Mckenzie", "New Zealand", user1);
-        dest5.setTravellerTypes(travellerTypes);
-
-        Destination dest6 = new Destination("Ski", 41.522, 13.287, "Mountain", "Nigeria", "South Africa", user1);
-        dest6.setTravellerTypes(travellerTypes);
-
-        Destination dest7 = new Destination("Boating Beach", 40.779, -98.072, "River", "Slumville", "Brazil", user1);
-        dest7.setTravellerTypes(travellerTypes);
-        dest7.isPublic = true;
-
-        Destination dest8 = new Destination("Big Mountain", 17.585, -98.688, "Natural Wonder", "Texas", "America", user1);
-        dest8.setTravellerTypes(travellerTypes);
-        dest8.isPublic = true;
-
-        Destination dest9 = new Destination("Westfield Riccarton", 50.958, -70.967, "Shopping Mall", "South Auckland", "Wukanda", user1);
-        dest9.setTravellerTypes(travellerTypes);
-        dest9.isPublic = true;
-
-        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "City", "Wellington", "New Zealand", user2);
-        dest10.setTravellerTypes(travellerTypes);
-        dest10.isPublic = true;
+//        Destination dest2 = new Destination("Big River", -45.160, 168.291, "City", "Auckland", "country", user1);
+//        dest2.setTravellerTypes(travellerTypes);
+//
+//        Destination dest3 = new Destination("Nice Park", -25.777, 125.198, "City", "NSW", "Australia", user1);
+//        dest3.setTravellerTypes(travellerTypes);
+//
+//        Destination dest4 = new Destination("Slum", -14.152, -58.905, "City", "Alaska", "USA", user1);
+//        dest4.setTravellerTypes(travellerTypes);
+//
+//        Destination dest5 = new Destination("Nice View", 15.693, 9.764, "Mountain", "Mckenzie", "New Zealand", user1);
+//        dest5.setTravellerTypes(travellerTypes);
+//
+//        Destination dest6 = new Destination("Ski", 41.522, 13.287, "Mountain", "Nigeria", "South Africa", user1);
+//        dest6.setTravellerTypes(travellerTypes);
+//
+//        Destination dest7 = new Destination("Boating Beach", 40.779, -98.072, "River", "Slumville", "Brazil", user1);
+//        dest7.setTravellerTypes(travellerTypes);
+//        dest7.isPublic = true;
+//
+//        Destination dest8 = new Destination("Big Mountain", 17.585, -98.688, "Natural Wonder", "Texas", "America", user1);
+//        dest8.setTravellerTypes(travellerTypes);
+//        dest8.isPublic = true;
+//
+//        Destination dest9 = new Destination("Westfield Riccarton", 50.958, -70.967, "Shopping Mall", "South Auckland", "Wukanda", user1);
+//        dest9.setTravellerTypes(travellerTypes);
+//        dest9.isPublic = true;
+//
+//        Destination dest10 = new Destination("Ski Slopes", 52.778, 88.796, "City", "Wellington", "New Zealand", user2);
+//        dest10.setTravellerTypes(travellerTypes);
+//        dest10.isPublic = true;
 
 
 
         dest1.insert();
-        dest2.insert();
-        dest3.insert();
-        dest4.insert();
-        dest5.insert();
-        dest6.insert();
-        dest7.insert();
-        dest8.insert();
-        dest9.insert();
-        dest10.insert();
+//        dest2.insert();
+//        dest3.insert();
+//        dest4.insert();
+//        dest5.insert();
+//        dest6.insert();
+//        dest7.insert();
+//        dest8.insert();
+//        dest9.insert();
+//        dest10.insert();
 
 
         Trip trip = new Trip("John's Trip", "The trip I am taking to go around the world", user2);
 
         TripDestination td1 = new TripDestination("Boating Beach" , 0, 0, 1563334001, 1563835201, dest1);
         TripDestination td2 = new TripDestination("Westfield Riccarton" , 1, 0, 1563434001, 1563835201, dest1);
-        TripDestination td3 = new TripDestination("Boating Beach" , 2, 1, 1563534001, 1563835201, dest2);
-        TripDestination td4 = new TripDestination("Westfield Riccarton" , 3, 1, 1563634001, 1563835201, dest3);
-        TripDestination td5 = new TripDestination("Boating Beach" , 4, 0, 1563734001, 1563835201, dest4);
-        TripDestination td6 = new TripDestination("Westfield Riccarton" , 5, 0, 1563834001, 1563835201, dest5);
+//        TripDestination td3 = new TripDestination("Boating Beach" , 2, 1, 1563534001, 1563835201, dest2);
+//        TripDestination td4 = new TripDestination("Westfield Riccarton" , 3, 1, 1563634001, 1563835201, dest3);
+//        TripDestination td5 = new TripDestination("Boating Beach" , 4, 0, 1563734001, 1563835201, dest4);
+//        TripDestination td6 = new TripDestination("Westfield Riccarton" , 5, 0, 1563834001, 1563835201, dest5);
 
         ArrayList<TripDestination> tdList = new ArrayList<>();
 
         tdList.add(td1);
         tdList.add(td2);
-        tdList.add(td3);
-        tdList.add(td4);
-        tdList.add(td5);
-        tdList.add(td6);
+//        tdList.add(td3);
+//        tdList.add(td4);
+//        tdList.add(td5);
+//        tdList.add(td6);
 
         trip.setDestinations(tdList);
 
