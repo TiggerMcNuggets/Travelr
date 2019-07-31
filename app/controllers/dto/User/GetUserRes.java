@@ -18,6 +18,10 @@ public class GetUserRes {
     private List<TravellerType> travellerTypes;
     private String userProfilePhoto;
 
+
+
+    private Long defaultAlbumId;
+
     public GetUserRes(User user) {
         this.id = user.id;
         this.firstName = user.firstName;
@@ -28,6 +32,7 @@ public class GetUserRes {
         this.travellerTypes = user.travellerTypes;
         this.setNationalities(user.nationalities);
         this.userProfilePhoto = user.userProfilePhoto;
+        this.defaultAlbumId = user.getDefaultAlbum().getId();
 
     }
 
@@ -71,5 +76,9 @@ public class GetUserRes {
     }
 
     public String getUserProfilePhoto() {return userProfilePhoto;}
+
+    public Long getDefaultAlbumId() {
+        return defaultAlbumId;
+    }
 
 }

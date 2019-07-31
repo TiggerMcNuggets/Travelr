@@ -76,7 +76,7 @@ public class MediaRepository {
             } else {
                 album.addMedia(mediaToAdd);
                 mediaToAdd.addAlbum(album);
-                if (album.id != defaultAlbum.id) {
+                if (!album.id.equals(defaultAlbum.id)) {
                     defaultAlbum.addMedia(mediaToAdd);
                     defaultAlbum.save();
                 }
