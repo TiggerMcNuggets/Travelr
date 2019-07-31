@@ -1,16 +1,16 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card>
     <v-layout justify-space-around>
-    <v-icon @click="clickedImage--">mdi-minus</v-icon>
-        <v-icon @click="clickedImage++">mdi-plus</v-icon>
-      </v-layout>
+      <v-icon @click="clickedImage--">mdi-minus</v-icon>
+      <v-icon @click="clickedImage++">mdi-plus</v-icon>
+    </v-layout>
 
     <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
 
     <v-card-title primary-title>
       <div>
         <v-layout d-flex>
-          <h5 class="headline mb-0">Description</h5>
+          <h5 class="headline mb-0 mr-2">Description</h5>
           <v-icon
             v-if="editCaption"
             @click="() => {updateMedia(clickedImage); editCaption = false;}"
@@ -28,7 +28,6 @@
 
     <v-card-actions>
       <v-select
-        style="width: 20%"
         v-model="selectedAlbums"
         :items="albums"
         label="Add/Remove Albums"
@@ -45,19 +44,17 @@
           <span v-if="index === 1" class="grey--text caption">(+{{ value.length - 1 }} others)</span>
         </template>
       </v-select>
+      <v-spacer></v-spacer>
       <v-switch
         v-model="clickedImage.is_public"
         @on="updatePhotoVisability()"
         :label="`Public Photo`"
       ></v-switch>
-      <v-btn color="error" outline @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
-      <v-btn
-        color="error"
-        outline
-        @click="() => {deleteMedia(clickedImage); closeMediaDialog();}"
-      >Delete</v-btn>
     </v-card-actions>
     <v-card-actions>
+      <v-btn color="error" @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
+      <v-btn color="error" @click="() => {openConfirmDelete()}">Delete</v-btn>
+      <v-spacer></v-spacer>
       <v-btn color="error" outline @click="closeMediaDialog">Close</v-btn>
     </v-card-actions>
   </v-card>
@@ -78,8 +75,8 @@ export default {
   props: {
     clickedImage: Object,
     closeMediaDialog: Function,
-    selectedAlbums: Array,
     updateMedia: Function,
+    openConfirmDelete: Function,
     deleteMedia: Function,
     getAllAlbums: Function
   },
@@ -87,10 +84,10 @@ export default {
   // local variables
   data() {
     return {
-      selectedAlbum: [],
       albums: [],
       editCaption: false,
-      value: ""
+      value: "",
+      selectedAlbums: []
     };
   },
 
@@ -98,50 +95,49 @@ export default {
     mediaURL() {
       return (
         base_url +
-        `/api/users/${this.$route.params.id}/media/${this.clickedImage.filename}`
+        `/api/users/${this.$route.params.id}/media/${
+          this.clickedImage.filename
+        }`
       );
     },
 
     notSelectedAlbums() {
-      return this.albums.filter((album) => {
-          for (let a of this.selectedAlbums) {
-              if (a.id === album.id) return false;
-          }
-          return true;
-      })
+      return this.albums.filter(album => {
+        for (let a of this.selectedAlbums) {
+          if (a.id === album.id) return false;
+        }
+        return true;
+      });
     }
   },
 
   methods: {
     async updateAlbums() {
-        for (let album of this.selectedAlbums) {
-            try {
-                await mediaRepository
-                    .moveMediaToAlbum(
-                        this.$route.params.id,
-                        album.id,
-                        this.clickedImage.id,
-                        // requestBody
-                    )
-            } catch(e) {
-                console.log(e);
-            }
+      for (let album of this.selectedAlbums) {
+        try {
+          await mediaRepository.moveMediaToAlbum(
+            this.$route.params.id,
+            album.id,
+            this.clickedImage.id
+            // requestBody
+          );
+        } catch (e) {
+          console.log(e);
         }
+      }
 
-        for (let album of this.notSelectedAlbums) {
-            try {
-                await mediaRepository
-                    .deleteMedia(
-                        this.$route.params.id,
-                        album.id,
-                        this.clickedImage.id,
-                    )
-            } catch(e) {
-                console.log(e);
-            }
-            this.getAllAlbums();
-
+      for (let album of this.notSelectedAlbums) {
+        try {
+          await mediaRepository.deleteMedia(
+            this.$route.params.id,
+            album.id,
+            this.clickedImage.id
+          );
+        } catch (e) {
+          console.log(e);
         }
+        this.getAllAlbums();
+      }
     },
 
     /**
@@ -180,10 +176,11 @@ export default {
     this.isPublic = this.clickedImage.is_public;
     this.user = store.getters.getUser;
     mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
-      this.albums = res.data.map(item => {
-        return { id: item.id, name: item.name };
-      }).filter((a) => a.name.toLowerCase() !== "all");
-
+      this.albums = res.data
+        .map(item => {
+          return { id: item.id, name: item.name };
+        })
+        .filter(a => a.name.toLowerCase() !== "all");
     });
   }
 };
