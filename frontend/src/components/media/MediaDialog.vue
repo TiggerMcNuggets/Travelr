@@ -1,5 +1,17 @@
 <template>
   <v-card>
+    <v-layout justify-space-around>
+    <v-icon @click="clickedImage--">mdi-minus</v-icon>
+        {{ clickedImage }}
+        <v-icon @click="clickedImage++">mdi-plus</v-icon>
+      </v-layout>
+      <v-carousel v-model="clickedImage">
+        <v-carousel-item
+        v-for="image in selectedAlbum"
+        :key="image.id"
+        >
+        <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
+
     <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
 
     <v-card-title primary-title>
@@ -73,6 +85,7 @@ export default {
   props: {
     clickedImage: Object,
     closeMediaDialog: Function,
+    selectedAlbums: Array,
     updateMedia: Function,
     deleteMedia: Function
   },
@@ -80,7 +93,7 @@ export default {
   // local variables
   data() {
     return {
-      selectedAlbums: [],
+      selectedAlbum: [],
       albums: [],
       editCaption: false,
       value: ""
