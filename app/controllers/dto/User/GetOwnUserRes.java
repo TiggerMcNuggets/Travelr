@@ -19,6 +19,7 @@ public class GetOwnUserRes {
     private String email;
     private int accountType;
     private String userProfilePhoto;
+    private Long defaultAlbumId;
 
     public GetOwnUserRes(User user) {
         this.id = user.id;
@@ -32,6 +33,7 @@ public class GetOwnUserRes {
         this.email = user.email;
         this.accountType = user.accountType;
         this.userProfilePhoto = user.userProfilePhoto;
+        this.defaultAlbumId = user.getDefaultAlbum().getId();
 
     }
 
@@ -91,4 +93,8 @@ public class GetOwnUserRes {
     }
 
     public String getUserProfilePhoto() {return userProfilePhoto;}
+
+    public Long getDefaultAlbumId() {
+        return defaultAlbumId;
+    }
 }
