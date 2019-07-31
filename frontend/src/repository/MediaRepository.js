@@ -13,7 +13,7 @@ export const updateMedia = async (userId, mediaId, payload) => {
 };
 
 export const deleteMedia = async (userId, albumId, mediaId, deleteAll) => {
-  const deleteAllQuery = deleteAll ? "?removeAll=1" : "";
+  const deleteAllQuery = deleteAll ? "?removeAll=1" : "?removeAll=0";
   return Repository.delete(
     `/users/${userId}/albums/${albumId}/media/${mediaId}${deleteAllQuery}`
   );
