@@ -57,7 +57,7 @@ public class AlbumRepository {
 
             boolean duplicateName = false;
             for (Album al : Album.find.findAllByUserId(userId)) {
-                if (al.getName().equals(name)) {
+                if (al.getName().toLowerCase().equals(name.toLowerCase())) {
                     duplicateName = true;
                 }
             }
@@ -122,7 +122,7 @@ public class AlbumRepository {
             // Bad Request check
             boolean badRequest = false;
             for (Album al : Album.find.findAllByUserId(userId)) {
-                if (al.getName().equals(req.getName()) && !al.getId().equals(albumId)) {
+                if (al.getName().toLowerCase().equals(req.getName().toLowerCase()) && !al.getId().equals(albumId)) {
                     badRequest = true;
                 }
             }

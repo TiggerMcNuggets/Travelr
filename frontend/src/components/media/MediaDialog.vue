@@ -1,5 +1,17 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card>
+    <v-layout justify-space-around>
+    <v-icon @click="clickedImage--">mdi-minus</v-icon>
+        {{ clickedImage }}
+        <v-icon @click="clickedImage++">mdi-plus</v-icon>
+      </v-layout>
+      <v-carousel v-model="clickedImage">
+        <v-carousel-item
+        v-for="image in selectedAlbum"
+        :key="image.id"
+        >
+        <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
+
     <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
 
     <v-card-title primary-title>
@@ -73,14 +85,16 @@ export default {
   props: {
     clickedImage: Object,
     closeMediaDialog: Function,
+    selectedAlbums: Array,
     updateMedia: Function,
-    deleteMedia: Function
+    deleteMedia: Function,
+    getAllAlbums: Function
   },
 
   // local variables
   data() {
     return {
-      selectedAlbums: [],
+      selectedAlbum: [],
       albums: [],
       editCaption: false,
       value: ""
@@ -93,23 +107,48 @@ export default {
         base_url +
         `/api/users/${this.$route.params.id}/media/${this.clickedImage.filename}`
       );
+    },
+
+    notSelectedAlbums() {
+      return this.albums.filter((album) => {
+          for (let a of this.selectedAlbums) {
+              if (a.id === album.id) return false;
+          }
+          return true;
+      })
     }
   },
 
   methods: {
-    updateAlbums(albums) {
-      let requestBody = { id: this.clickedImage.id, albums: [] };
+    async updateAlbums() {
+        for (let album of this.selectedAlbums) {
+            try {
+                await mediaRepository
+                    .moveMediaToAlbum(
+                        this.$route.params.id,
+                        album.id,
+                        this.clickedImage.id,
+                        // requestBody
+                    )
+            } catch(e) {
+                console.log(e);
+            }
+        }
 
-      requestBody.albums = albums.map(item => item.id);
-      mediaRepository
-        .updateMediaAlbums(
-          this.$route.params.id,
-          this.clickedImage.id,
-          requestBody
-        )
-        .then(res => {
-          console.log(res);
-        });
+        for (let album of this.notSelectedAlbums) {
+            try {
+                await mediaRepository
+                    .deleteMedia(
+                        this.$route.params.id,
+                        album.id,
+                        this.clickedImage.id,
+                    )
+            } catch(e) {
+                console.log(e);
+            }
+            this.getAllAlbums();
+
+        }
     },
 
     /**
@@ -150,7 +189,8 @@ export default {
     mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
       this.albums = res.data.map(item => {
         return { id: item.id, name: item.name };
-      });
+      }).filter((a) => a.name.toLowerCase() !== "all");
+
     });
   }
 };
