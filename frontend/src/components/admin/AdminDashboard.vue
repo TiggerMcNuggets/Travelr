@@ -27,6 +27,12 @@ import PageHeader from "../common/header/PageHeader";
 export default {
   name: "AdminDashboard",
 
+  data() {
+    return {
+      active: null
+    };
+  },
+
   components: {
     PageHeader,
     AdminCreateProfile,

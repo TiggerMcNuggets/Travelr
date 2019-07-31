@@ -75,7 +75,6 @@ export default {
   props: {
     clickedImage: Object,
     closeMediaDialog: Function,
-    selectedAlbums: Array,
     updateMedia: Function,
     openConfirmDelete: Function,
     deleteMedia: Function,
@@ -85,10 +84,10 @@ export default {
   // local variables
   data() {
     return {
-      selectedAlbum: [],
       albums: [],
       editCaption: false,
-      value: ""
+      value: "",
+      selectedAlbums: []
     };
   },
 

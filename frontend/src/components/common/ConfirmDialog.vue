@@ -25,7 +25,9 @@ export default {
     cancel: Function
   },
 
-  data() {},
+  data() {
+    return {};
+  },
 
   methods: {}
 };
