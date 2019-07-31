@@ -7,9 +7,11 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Media.*;
+import finders.DestinationFinder;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.Album;
+import models.Destination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -33,6 +35,8 @@ public class MediaController extends Controller {
     private final MediaRepository mediaRepository;
 
     private final AlbumRepository albumRepository;
+
+    private DestinationFinder destinationFinder;
 
     private final FileHelper fh = new FileHelper();
 
@@ -91,6 +95,40 @@ public class MediaController extends Controller {
             fh.makeDirectory(this.MEDIA_FILEPATH);
             file.copyTo(Paths.get(this.MEDIA_FILEPATH + fileName), true);
             return mediaRepository.add(user_id, album_id, fileName).thenApplyAsync(media_id -> {
+                if (media_id != null) {
+                    return ok("File uploaded with Media ID " + media_id);
+                }
+                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
+            });
+        } else {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
+        }
+    }
+
+    /**
+     * Uploads a media item to the server file system.
+     *
+     * @param request  The request containing the image data to upload
+     * @param id  The id of the traveller/user uploading the image
+     * @param dest_id The id of the album to add the media to.
+     * @return A result whether the image upload was successful or not.
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> uploadDestinationMedia(Http.Request request, Long id, Long dest_id) {
+        Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
+        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+        Destination destination = Destination.find.findById(dest_id);
+        Album destinationAlbum = destination.getDefaultAlbum();
+        Long album_id = destinationAlbum.getId();
+        if (picture != null) {
+            if (!fh.isValidFile(picture.getFilename())) {
+                return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
+            }
+            String fileName = fh.getHashedImage(picture.getFilename());
+            Files.TemporaryFile file = picture.getRef();
+            fh.makeDirectory(this.MEDIA_FILEPATH);
+            file.copyTo(Paths.get(this.MEDIA_FILEPATH + fileName), true);
+            return mediaRepository.add(id, album_id, fileName).thenApplyAsync(media_id -> {
                 if (media_id != null) {
                     return ok("File uploaded with Media ID " + media_id);
                 }

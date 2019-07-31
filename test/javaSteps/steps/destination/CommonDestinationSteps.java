@@ -3,6 +3,7 @@ package javaSteps.steps.destination;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import javaSteps.models.StateSingleton;
+import models.Album;
 import models.Destination;
 import models.User;
 import org.junit.Assert;
@@ -70,6 +71,10 @@ public class CommonDestinationSteps {
                 destInfo.get("country"),
                 user)
         );
+
+        Album album = new Album(state.getUser(), "name", true);
+        album.insert();
+        state.getDestination().setDefaultAlbum(Album.find.findAlbumById(album.getId()));
         state.getDestination().insert();
     }
 }

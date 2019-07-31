@@ -8,6 +8,8 @@ import controllers.dto.Photo.ChooseProfilePicReq;
 import controllers.dto.Photo.UpdatePhotoReq;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
+import models.Album;
+import models.Destination;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -60,6 +62,9 @@ public class DestinationPhotoController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+        Destination destination = Destination.find.findById(dest_id);
+        Album destinationAlbum = destination.getDefaultAlbum();
+        Long album_id = destinationAlbum.getId();
         return destinationPhotoRepository.list(id, user.id == id || isAdmin, dest_id).thenApplyAsync(photos -> {
             PathProperties pathProperties = PathProperties.parse("id,photo_filename,is_public");
             return ok(Ebean.json().toJson(photos, pathProperties));

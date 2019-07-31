@@ -260,7 +260,7 @@ export default {
       this.file = this.$refs.file.files[0];
     },
 
-    /**
+    /**files
      * Toggles the upload section for the photos
      */
     toggleShowUploadPhoto: function() {
@@ -286,14 +286,14 @@ export default {
 
       storeDestinationImage(this.userId, this.destId, formData)
         .then(() => {
-          getImages(this.userId, this.destId).then(result => {
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
             this.uploadExisting = true;
+            console.log(result);
             this.files = this.groupImages(result.data);
           });
         })
         .catch(error => {
           this.uploadError = true;
-          this.errorText = error.response.data;
         });
       this.$refs.file.value = "";
     },
@@ -304,7 +304,7 @@ export default {
      * @returns {string} A url of where to find the photo to set as src
      */
     getImgUrl(item) {
-      return base_url + "/api/destinations/photo/" + item.photo_filename;
+      return base_url + "/api/users/" + this.userId + "/media/" + item.uriString;
     },
 
     /**
@@ -377,16 +377,18 @@ export default {
     this.isMyProfile = store.getters.getUser.id == this.userId;
     this.isAdminUser = store.getters.getIsUserAdmin;
 
-    // Gets all the images to display on the page.
-    getImages(this.userId, this.destId).then(result => {
-      this.files = this.groupImages(result.data);
-    });
-
     // Gets the information relating to selected destination.
     destinationRepository
       .getDestination(this.userId, this.destId)
       .then(response => {
         this.destination = response.data;
+          console.log(this.destination);
+          // Gets all the images to display on the page.
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+              console.log("here")
+
+              this.files = this.groupImages(result.data);
+          });
       })
       .catch(err => {
         console.log(err);

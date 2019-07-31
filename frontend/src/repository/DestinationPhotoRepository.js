@@ -3,12 +3,12 @@ import Repository from "./Repository";
 
 // Basic fetch POST function to upload the image to the server.
 export const storeDestinationImage = async (user_id, dest_id, data) => {
-    return Repository.post(`/users/${user_id}/destinations/${dest_id}/photo`, data);
+    return Repository.post(`/users/${user_id}/destinations/${dest_id}/media`, data);
 };
 
 // Gets the image file names from the server associated with a destination using fetch.
-export const getImages = async (user_id, dest_id) => {
-    return Repository.get(`/users/${user_id}/destinations/${dest_id}/photo`);
+export const getImages = async (user_id, album_id) => {
+    return Repository.get(`/users/${user_id}/albums/${album_id}`);
 };
 
 export const updateDestinationPhoto = async (payload) => {
