@@ -54,7 +54,6 @@
       <MediaDialog
         :clickedImage="clickedImage ? clickedImage : {}"
         :closeMediaDialog="() => viewMediaDialogActive = false"
-        :selectedAlbum="filteredMedia"
         :updateMedia="updateMedia"
         :deleteMedia="deleteMedia"
         :getAllAlbums="getAllAlbums"

@@ -5,12 +5,6 @@
         {{ clickedImage }}
         <v-icon @click="clickedImage++">mdi-plus</v-icon>
       </v-layout>
-      <v-carousel v-model="clickedImage">
-        <v-carousel-item
-        v-for="image in selectedAlbum"
-        :key="image.id"
-        >
-        <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
 
     <v-img v-if="clickedImage.filename" :src="mediaURL"></v-img>
 
