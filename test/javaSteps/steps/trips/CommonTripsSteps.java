@@ -25,6 +25,15 @@ public class CommonTripsSteps {
         }
     }
 
+    @Given("They own the trip")
+    public void they_own_the_trip(List<Map<String, String>> dataTable) {
+        for (Map<String, String> tripData : dataTable) {
+            Trip newTrip = new Trip(tripData.get("name"), tripData.get("description"), state.getUser());
+            newTrip.insert();
+            state.setTrip(newTrip);
+        }
+    }
+
     @Given("The trip contains the trip destinations")
     public void the_trip_contains_the_trip_destinations(List<Map<String, String>> dataTable) {
         for (Map<String, String> destinationData : dataTable) {
@@ -60,4 +69,5 @@ public class CommonTripsSteps {
         Trip trip = Trip.find.query().where().eq("user", state.getUser()).findOne();
         Assert.assertNotNull(trip);
     }
+
 }
