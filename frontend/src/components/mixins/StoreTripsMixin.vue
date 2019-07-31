@@ -29,7 +29,7 @@
                 try {
                     await this.$store.dispatch('getTrips', {userId});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                 }
             },
 
@@ -43,7 +43,7 @@
                 try {
                     return await this.$store.dispatch('postTrip', {userId, trip});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                     return e;
                 }
             },
@@ -59,7 +59,7 @@
                 try {
                     await this.$store.dispatch('putTrip', {userId, tripId, trip});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                 }
             },
 
@@ -73,7 +73,7 @@
                 try {
                     await this.$store.dispatch('deleteTrip',{userId, tripId});
                 } catch (e) {
-                    print(e);
+                    console.log(e);
                 }
             },
 
