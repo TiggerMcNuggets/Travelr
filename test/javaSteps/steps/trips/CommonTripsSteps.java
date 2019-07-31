@@ -25,6 +25,14 @@ public class CommonTripsSteps {
         }
     }
 
+    @Given("I do not own the trip")
+    public void i_do_not_own_the_trip() {
+        state.setTrip(new Trip("A New Trip", "Going Somewhere", state.getUser()));
+        state.getTrip().setId(10L);
+        // By not inserting, the trip does not exist
+        // Trip needed to be created to pass id into request uri
+    }
+
     @Given("They own the trip")
     public void they_own_the_trip(List<Map<String, String>> dataTable) {
         for (Map<String, String> tripData : dataTable) {

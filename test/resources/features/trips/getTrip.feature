@@ -205,9 +205,32 @@ Scenario: Get a trip when not logged in
 
 
 Scenario:Get another user's trip as a normal user
-  # TODO: Implement, (expect 403)
+  Given I am authenticated
+  And The user exists
+    | first | last  | email               | dob |
+    | John  | Smith | johnsmith@email.com | 1   |
+  And The destinations are
+    | name         | latitude | longitude | type     | district   | country    |
+    | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    | Small River  | 3.0      | 3.0       | River    | Otago      | New Zealand|
+  And They own the trip
+    | name         | description |
+    | My First Trip| A trip      |
+  And The trip contains the trip destinations
+    | ordinal | customName | arrivalDate | departureDate | destinationId| depth |
+    |   1     | Place One  | 1           | 2             | 1            | 0     |
+    |   2     | Place Two  | 2           | 3             | 2            | 0     |
+    |   3     | Place Three| 3           | 4             | 3            | 0     |
+  When I want to get the trip
+  And I send the request
+  Then I will receive the response code 403
 
 Scenario: Get a trip that does not exist
-  # TODO: Implement, (expect 404)
+  Given I am authenticated
+  And I do not own the trip
+  When I want to get the trip
+  And I send the request
+  Then I will receive the response code 404
 
 # TODO: Add scenarios for creating trips related to trips within trips story
