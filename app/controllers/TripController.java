@@ -88,6 +88,10 @@ public class TripController extends Controller {
             return CompletableFuture.completedFuture(badRequest());
         }
 
+        if (dto.getDestinations().size() < 2) {
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
         User user = request.attrs().get(Attrs.USER);
 
 
