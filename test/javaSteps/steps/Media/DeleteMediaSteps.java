@@ -15,13 +15,13 @@ public class DeleteMediaSteps {
     @When("I want to delete the media in the album")
     public void i_want_to_delete_the_media_in_the_album() {
         state.getRequest().method("DELETE");
-        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/albums/%s/media/%s", state.getUser().getId(), state.getAlbum().getId(), state.getMedia().getId()));
+        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/albums/%s/media/%s?removeAll=0", state.getUser().getId(), state.getAlbum().getId(), state.getMedia().getId()));
     }
 
     @When("I want to delete the media in all albums")
     public void iWantToDeleteTheMediaInAllAlbums() {
         state.getRequest().method("DELETE");
-        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/albums/%s/media/%s?remove_all=1", state.getUser().getId(), state.getAlbum().getId(), state.getMedia().getId()));
+        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/albums/%s/media/%s?removeAll=1", state.getUser().getId(), state.getAlbum().getId(), state.getMedia().getId()));
     }
 
     @Then("The media does not exist in the album")

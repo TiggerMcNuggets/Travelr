@@ -41,7 +41,8 @@ Feature: GetTraveller
         ],
         "email": "j@j.s",
         "accountType": 0,
-        "userProfilePhoto": "defaultPic.png"
+        "userProfilePhoto": "defaultPic.png",
+        "defaultAlbumId": 1
       }
       """
 
@@ -102,7 +103,8 @@ Feature: GetTraveller
             "name": "Thrill-Seeker"
           }
         ],
-        "userProfilePhoto": "defaultPic.png"
+        "userProfilePhoto": "defaultPic.png",
+        "defaultAlbumId": 2
       }
       """
 
