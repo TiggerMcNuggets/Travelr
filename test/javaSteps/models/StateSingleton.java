@@ -9,6 +9,9 @@ import play.Application;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This singleton class allows shared data between steps
  * Note: This singleton only keeps its state within its scenario
@@ -28,6 +31,8 @@ public class StateSingleton {
     private Album album;
     private Media media;
 
+
+    private ArrayList<Destination> destinationList;
 
 
     /**
