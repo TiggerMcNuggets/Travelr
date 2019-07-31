@@ -113,6 +113,11 @@ public class CommonSteps  {
         state.getUser().update();
     }
 
+    @Then("The content type will be {string}")
+    public void the_content_type_will_be(String string) {
+        Assert.assertTrue(string.equals(state.getResult().contentType().toString()));
+    }
+
     private User createTestUser() {
         User user = new User("Test", "User", "test.user@testuser.com", 1);
         user.insert();

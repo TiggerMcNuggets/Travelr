@@ -1,6 +1,7 @@
 Feature: Create Trip
   Description: The purpose of this feature is to test the api endpoint related to creating trips
 
+
   Scenario: Create a trip successfully
     Given I am authenticated
     And The destinations are
