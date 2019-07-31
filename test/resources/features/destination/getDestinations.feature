@@ -22,7 +22,8 @@ Feature: GetDestinations
           "country": "France",
           "isPublic": false,
           "ownerId": 2,
-          "travellerTypes": []
+          "travellerTypes": [],
+          "defaultAlbumId":2
         }
       ]
       """
@@ -68,7 +69,8 @@ Feature: GetDestinations
           "ownerId":2,
           "isPublic":true,
           "id":1,
-          "travellerTypes":[]
+          "travellerTypes":[],
+          "defaultAlbumId":2
         }
       ]
       """
