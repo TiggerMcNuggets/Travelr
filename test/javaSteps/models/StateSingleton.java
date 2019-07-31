@@ -1,7 +1,9 @@
 package javaSteps.models;
 
 import com.google.inject.Inject;
+import models.Album;
 import models.Destination;
+import models.Media;
 import models.User;
 import play.Application;
 import play.mvc.Http;
@@ -26,6 +28,9 @@ public class StateSingleton {
     private Result result;
     private User user;
     private Destination destination;
+    private Album album;
+    private Media media;
+
 
     private ArrayList<Destination> destinationList;
 
@@ -89,5 +94,21 @@ public class StateSingleton {
 
     public void setDestination(Destination destination) {
         this.destination = destination;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
+    public Media getMedia() {
+        return media;
+    }
+
+    public void setMedia(Media media) {
+        this.media = media;
     }
 }

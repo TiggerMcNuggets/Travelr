@@ -323,7 +323,6 @@ export default {
       return destinationRepository
         .getDestinations(this.id)
         .then(res => {
-          console.log(res.data);
           this.userDestinations = res.data;
         })
         .catch(e => {
@@ -457,7 +456,6 @@ export default {
           departureDate: moment(destination.departureDate).unix()
         });
       });
-      console.log("dests", trip.destinations);
       return trip;
     },
     /**

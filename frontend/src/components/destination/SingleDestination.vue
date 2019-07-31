@@ -1,5 +1,3 @@
-
-
 <template>
   <v-container fluid>
     <PageHeader :title="destination.name" disableUndoRedo enableBackButton :options="options"/>
@@ -64,7 +62,7 @@
 
             <v-img
               @click.stop="dialog = true"
-              v-on:click="setDialogueContent(item)"
+              v-on:click="setDialogContent(item)"
               class="personal-photo-element"
               :src="getImgUrl(item)"
             ></v-img>
@@ -79,39 +77,8 @@
       :showSuggestTravellerTypes="showSuggestTravellerTypes"
       :close="toggleShowSuggestTravellerTypes"
     />
-
-    <v-dialog v-model="dialog" :width="clickedImageWidth">
-      <v-card>
-        <v-img :src="clickedImageURL"></v-img>
-
-        <v-card-title primary-title>
-          <div>
-            <h5 class="headline mb-0">Image Name</h5>
-            <div>Description/Other meta info</div>
-          </div>
-        </v-card-title>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-switch
-            v-if="clickedImage.is_public"
-            disabled
-            v-model="publicPhotoSwitch"
-            :label="`Public Photo`"
-          ></v-switch>
-          <v-switch v-else v-model="publicPhotoSwitch" :label="`Public Photo`"></v-switch>
-          <v-btn color="primary" flat @click="updatePhotoVisability()">Apply changes</v-btn>
-        </v-card-actions>
-        <v-card-actions>
-          <v-btn color="primary" flat @click="dialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="chooseExistingDialog" width="800">
-      <PhotoSelect v-bind="{closeDialogue, setDestinationImages}"/>
+      <PhotoSelect v-bind="{closeDialog, setDestinationImages}"/>
     </v-dialog>
   </v-container>
 </template>
@@ -166,7 +133,7 @@ export default {
   components: {
     PhotoSelect,
     SuggestTravellerTypes,
-    PageHeader
+    PageHeader,
   },
 
   // local variables
@@ -250,7 +217,7 @@ export default {
     /**
      * Sets the selected existing photos to be added to destination photos which have been selected from the dialog to
      * choose existing photos. Takes each photo filename which has been selected and calls the API to add it to the users destination photos.
-     * Closes the dialogue once done.
+     * Closes the dialog once done.
      * @param selectedImages The photo details for all the photos selected by the user.
      */
     setDestinationImages(selectedImages) {
@@ -263,7 +230,7 @@ export default {
           });
         });
       }
-      this.closeDialogue();
+      this.closeDialog();
     },
 
     /**
@@ -276,8 +243,15 @@ export default {
     /**
      * Closes the choose existing photo dialog.
      */
-    closeDialogue() {
+    closeDialog() {
       this.chooseExistingDialog = false;
+    },
+
+    /**
+     * Closes the choose existing photo dialog.
+     */
+    closeMediaDialog() {
+      this.dialog = false;
     },
 
     /**
@@ -338,7 +312,7 @@ export default {
      * Sets the width of the dialog based on the image width.
      * @param selectedImage The image which has been clicked on.
      */
-    setDialogueContent(selectedImage = "") {
+    setDialogContent(selectedImage = "") {
       this.dialog = true;
       this.clickedImage = selectedImage;
       this.publicPhotoSwitch = selectedImage.is_public;

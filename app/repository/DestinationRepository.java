@@ -55,6 +55,7 @@ public class DestinationRepository {
 
             ArrayList<TravellerType> travellerTypes = new ArrayList<TravellerType>();
             if (request.travellerTypes != null) {
+
                 for (CreateTravellerTypeReq travellerTypeReq : request.travellerTypes) {
                     travellerTypes.add(TravellerType.find.byId(travellerTypeReq.id));
                 }

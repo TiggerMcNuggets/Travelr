@@ -1,4 +1,22 @@
--- !Ups
+# --- Created by Ebean DDL
+# To stop Ebean DDL generation, remove this comment and start using Evolutions
+
+# --- !Ups
+
+create table album (
+  id                            bigint auto_increment not null,
+  user_id                       bigint,
+  name                          varchar(255),
+  is_permanent                  boolean,
+  deleted                       boolean default false not null,
+  constraint pk_album primary key (id)
+);
+
+create table album_media (
+  album_id                      bigint not null,
+  media_id                      bigint not null,
+  constraint pk_album_media primary key (album_id,media_id)
+);
 
 create table destination (
   id                            bigint auto_increment not null,
@@ -42,6 +60,23 @@ create table destination_photo (
   is_public                     boolean default 0 not null,
   deleted                       boolean default false not null,
   constraint pk_destination_photo primary key (id)
+);
+
+create table media (
+  id                            bigint auto_increment not null,
+  is_public                     boolean default 0 not null,
+  caption                       varchar(250),
+  uri_string                    varchar(255) not null,
+  media_type                    varchar(255) not null,
+  user_id                       bigint,
+  deleted                       boolean default false not null,
+  constraint pk_media primary key (id)
+);
+
+create table media_album (
+  media_id                      bigint not null,
+  album_id                      bigint not null,
+  constraint pk_media_album primary key (media_id,album_id)
 );
 
 create table nationality (
@@ -124,6 +159,15 @@ create table user_nationality (
   constraint pk_user_nationality primary key (id)
 );
 
+create index ix_album_user_id on album (user_id);
+alter table album add constraint fk_album_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_album_media_album on album_media (album_id);
+alter table album_media add constraint fk_album_media_album foreign key (album_id) references album (id) on delete restrict on update restrict;
+
+create index ix_album_media_media on album_media (media_id);
+alter table album_media add constraint fk_album_media_media foreign key (media_id) references media (id) on delete restrict on update restrict;
+
 create index ix_destination_user_id on destination (user_id);
 alter table destination add constraint fk_destination_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -151,6 +195,15 @@ alter table destination_photo add constraint fk_destination_photo_user_id foreig
 create index ix_destination_photo_destination_id on destination_photo (destination_id);
 alter table destination_photo add constraint fk_destination_photo_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
+create index ix_media_user_id on media (user_id);
+alter table media add constraint fk_media_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_media_album_media on media_album (media_id);
+alter table media_album add constraint fk_media_album_media foreign key (media_id) references media (id) on delete restrict on update restrict;
+
+create index ix_media_album_album on media_album (album_id);
+alter table media_album add constraint fk_media_album_album foreign key (album_id) references album (id) on delete restrict on update restrict;
+
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -176,7 +229,16 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
--- !Downs
+# --- !Downs
+
+alter table album drop constraint if exists fk_album_user_id;
+drop index if exists ix_album_user_id;
+
+alter table album_media drop constraint if exists fk_album_media_album;
+drop index if exists ix_album_media_album;
+
+alter table album_media drop constraint if exists fk_album_media_media;
+drop index if exists ix_album_media_media;
 
 alter table destination drop constraint if exists fk_destination_user_id;
 drop index if exists ix_destination_user_id;
@@ -205,6 +267,15 @@ drop index if exists ix_destination_photo_user_id;
 alter table destination_photo drop constraint if exists fk_destination_photo_destination_id;
 drop index if exists ix_destination_photo_destination_id;
 
+alter table media drop constraint if exists fk_media_user_id;
+drop index if exists ix_media_user_id;
+
+alter table media_album drop constraint if exists fk_media_album_media;
+drop index if exists ix_media_album_media;
+
+alter table media_album drop constraint if exists fk_media_album_album;
+drop index if exists ix_media_album_album;
+
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
@@ -229,6 +300,10 @@ drop index if exists ix_user_nationality_user_id;
 alter table user_nationality drop constraint if exists fk_user_nationality_nationality_id;
 drop index if exists ix_user_nationality_nationality_id;
 
+drop table if exists album;
+
+drop table if exists album_media;
+
 drop table if exists destination;
 
 drop table if exists destination_traveller_type;
@@ -238,6 +313,10 @@ drop table if exists destination_edit_request;
 drop table if exists destination_edit_request_traveller_type;
 
 drop table if exists destination_photo;
+
+drop table if exists media;
+
+drop table if exists media_album;
 
 drop table if exists nationality;
 

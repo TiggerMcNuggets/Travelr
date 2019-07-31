@@ -8,6 +8,8 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
+import io.ebean.Ebean;
+import io.ebean.text.PathProperties;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -71,6 +73,7 @@ public class UserController extends Controller {
             return ok(jsonResponse);
         });
     }
+
 
     /**
      * Creates a new user

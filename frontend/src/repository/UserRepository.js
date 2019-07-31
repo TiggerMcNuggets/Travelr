@@ -65,5 +65,10 @@ export default {
      */
     toggleUserDeleted(userId) {
         return Repository.put(`/travellers/${userId}/toggle_deleted`);
+    },
+
+    // Sets the user profile picture to a selected photo
+    setProfilePic(id, payload) {
+        return Repository.put(`/travellers/${id}/setphoto`, payload);
     }
 }

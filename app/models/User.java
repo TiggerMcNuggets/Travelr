@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +45,9 @@ public class User extends BaseModel {
     @NotNull
     @Constraints.Required
     public int dateOfBirth;
+
+    @NotNull
+    public Album defaultAlbum;
 
     @NotNull
     @Constraints.Required
@@ -84,6 +88,8 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<DestinationPhoto> destinationPhotos;
 
+    @OneToMany(cascade=CascadeType.ALL)
+    public List<Album> albums;
 
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
@@ -233,7 +239,6 @@ public class User extends BaseModel {
         this.email = email.toLowerCase();
     }
 
-
     public void setPassword(String password) {
         this.password = getSha512(password);
     }
@@ -245,6 +250,19 @@ public class User extends BaseModel {
         catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Album getDefaultAlbum() {
+        for(Album albumObj: this.getAlbums()) {
+            if (albumObj.getPermanent()) {
+                return albumObj;
+            }
+        }
+        return null;
+    }
+
+    public List<Album> getAlbums() {
+        return albums;
     }
 
     public User(CreateUserReq request) {
@@ -259,6 +277,9 @@ public class User extends BaseModel {
         this.accountType = request.accountType;
         Date date = new Date();
         this.timestamp = date.getTime() / 1000;
+        this.albums = new ArrayList<>();
+        this.defaultAlbum =  new Album(this, "All", true);
+        this.albums.add(defaultAlbum);
     }
 
     public User(String first, String last, String email, int dob) {
@@ -270,6 +291,9 @@ public class User extends BaseModel {
         this.gender = "Male";
         Date date = new Date();
         this.timestamp = date.getTime() / 1000;
+        this.albums = new ArrayList<>();
+        this.defaultAlbum =  new Album(this, "All", true);
+        this.albums.add(defaultAlbum);
     }
 
 }
