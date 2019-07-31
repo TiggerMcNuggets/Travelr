@@ -405,27 +405,39 @@ export default {
       this.activeAlbumMetadata = null;
     },
 
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          this.getAllAlbums();
+        })
+        .catch(error => {
+          console.log(error);
+          this.uploadError = true;
+          this.errorText = error.response.data;
+        });
+    },
+
     /**
      * Uploads the given media files the backend.
      */
     uploadMedia(files, albums) {
+      console.log("here@!!!!!!!!!");
+      console.log(this.$store.getters.getUser);
+
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        for (let i = 0; i < albums.length; i++) {
-          let formData = new FormData();
-          formData.append("picture", file);
+        if (albums.length === 0) {
+          let albumId = this.$store.getters.getUser.defaultAlbumId;
+          this.uploadToAlbum(albumId, file);
+        }
 
-          let album = albums[i];
-          mediaRepository
-            .uploadMediaToAlbum(this.userId, album.id, formData)
-            .then(() => {
-              this.getAllAlbums();
-            })
-            .catch(error => {
-              console.log(error);
-              this.uploadError = true;
-              this.errorText = error.response.data;
-            });
+        for (let i = 0; i < albums.length; i++) {
+          let albumId = albums[i].id;
+          this.uploadToAlbum(albumId, file);
         }
       }
 
