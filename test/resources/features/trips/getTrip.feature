@@ -22,17 +22,72 @@ Scenario: Get a trip successfully
   And I will receive the response body
       """
       {
-        "id": 1,
-        "name": "Eiffel Tower",
-        "latitude": 5.0,
-        "longitude": 5.0,
-        "type": "Landmark",
-        "district": "Paris",
-        "country": "France",
-        "isPublic": false,
-        "ownerId": 2,
-        "travellerTypes": []
-      }
+       "id":1,
+       "name":"My First Trip",
+       "description":"A trip",
+       "user":{
+          "firstName":"Test",
+          "lastName":"User",
+          "id":2
+       },
+       "destinations":[
+          {
+             "id":1,
+             "depth":0,
+             "customName":"Place One",
+             "ordinal":1,
+             "arrivalDate":1,
+             "departureDate":2,
+             "destination":{
+                "id":1,
+                "name":"Eiffel Tower",
+                "latitude":5.0,
+                "longitude":5.0,
+                "type":"Landmark",
+                "district":"Paris",
+                "country":"France",
+                "googleId":null
+             }
+          },
+          {
+             "id":2,
+             "depth":0,
+             "customName":"Place Two",
+             "ordinal":2,
+             "arrivalDate":2,
+             "departureDate":3,
+             "destination":{
+                "id":2,
+                "name":"Big River",
+                "latitude":3.0,
+                "longitude":3.0,
+                "type":"River",
+                "district":"Canterbury",
+                "country":"New Zealand",
+                "googleId":null
+             }
+          },
+          {
+             "id":3,
+             "depth":0,
+             "customName":"Place Three",
+             "ordinal":3,
+             "arrivalDate":3,
+             "departureDate":4,
+             "destination":{
+                "id":3,
+                "name":"Small River",
+                "latitude":3.0,
+                "longitude":3.0,
+                "type":"River",
+                "district":"Otago",
+                "country":"New Zealand",
+                "googleId":null
+             }
+          }
+       ],
+       "published":false
+    }
       """
 
 Scenario: Get another user's trip as an admin
