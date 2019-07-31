@@ -41,7 +41,8 @@ Feature: GetTravellers
               "name":"Thrill-Seeker"
             }
           ],
-          "userProfilePhoto":"defaultPic.png"
+          "userProfilePhoto":"defaultPic.png",
+          "defaultAlbumId": 1
         }
       ]
       """
