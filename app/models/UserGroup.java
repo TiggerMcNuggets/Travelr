@@ -59,10 +59,10 @@ public class UserGroup extends BaseModel {
 
     /**
      * Adds a new member to the user group.
-     * @param new_member The new member to add.
+     * @param newMember The new member to add.
      */
-    public void addMember(User new_member) {
-        groupMembers.add(new_member);
+    public void addMember(User newMember) {
+        groupMembers.add(newMember);
     }
 
 
@@ -84,10 +84,10 @@ public class UserGroup extends BaseModel {
 
     /**
      * Promotes a group member to owner.
-     * @param new_owner The group member to promote
+     * @param newOwner The group member to promote
      */
-    public void addOwner(User new_owner) {
-        owners.add(new_owner);
+    public void addOwner(User newOwner) {
+        owners.add(newOwner);
     }
 
 
