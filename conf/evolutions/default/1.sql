@@ -152,6 +152,26 @@ create table user_traveller_type (
   constraint pk_user_traveller_type primary key (user_id,traveller_type_id)
 );
 
+create table user_group (
+  id                            bigint auto_increment not null,
+  name                          varchar(250),
+  description                   varchar(300),
+  deleted                       boolean default false not null,
+  constraint pk_user_group primary key (id)
+);
+
+create table user_group_members (
+  user_group_id                 bigint not null,
+  user_id                       bigint not null,
+  constraint pk_user_group_members primary key (user_group_id,user_id)
+);
+
+create table user_group_owners (
+  user_group_id                 bigint not null,
+  user_id                       bigint not null,
+  constraint pk_user_group_owners primary key (user_group_id,user_id)
+);
+
 create table user_nationality (
   id                            bigint auto_increment not null,
   user_id                       bigint,
@@ -225,6 +245,18 @@ alter table user_traveller_type add constraint fk_user_traveller_type_user forei
 
 create index ix_user_traveller_type_traveller_type on user_traveller_type (traveller_type_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_traveller_type foreign key (traveller_type_id) references traveller_type (id) on delete restrict on update restrict;
+
+create index ix_user_group_members_user_group on user_group_members (user_group_id);
+alter table user_group_members add constraint fk_user_group_members_user_group foreign key (user_group_id) references user_group (id) on delete restrict on update restrict;
+
+create index ix_user_group_members_user on user_group_members (user_id);
+alter table user_group_members add constraint fk_user_group_members_user foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_user_group_owners_user_group on user_group_owners (user_group_id);
+alter table user_group_owners add constraint fk_user_group_owners_user_group foreign key (user_group_id) references user_group (id) on delete restrict on update restrict;
+
+create index ix_user_group_owners_user on user_group_owners (user_id);
+alter table user_group_owners add constraint fk_user_group_owners_user foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 create index ix_user_nationality_user_id on user_nationality (user_id);
 alter table user_nationality add constraint fk_user_nationality_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -300,6 +332,18 @@ drop index if exists ix_user_traveller_type_user;
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_traveller_type;
 drop index if exists ix_user_traveller_type_traveller_type;
 
+alter table user_group_members drop constraint if exists fk_user_group_members_user_group;
+drop index if exists ix_user_group_members_user_group;
+
+alter table user_group_members drop constraint if exists fk_user_group_members_user;
+drop index if exists ix_user_group_members_user;
+
+alter table user_group_owners drop constraint if exists fk_user_group_owners_user_group;
+drop index if exists ix_user_group_owners_user_group;
+
+alter table user_group_owners drop constraint if exists fk_user_group_owners_user;
+drop index if exists ix_user_group_owners_user;
+
 alter table user_nationality drop constraint if exists fk_user_nationality_user_id;
 drop index if exists ix_user_nationality_user_id;
 
@@ -337,6 +381,12 @@ drop table if exists trip_destination;
 drop table if exists user;
 
 drop table if exists user_traveller_type;
+
+drop table if exists user_group;
+
+drop table if exists user_group_members;
+
+drop table if exists user_group_owners;
 
 drop table if exists user_nationality;
 

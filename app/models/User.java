@@ -91,6 +91,12 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL)
     public List<Album> albums;
 
+    @ManyToMany(cascade = CascadeType.REMOVE, mappedBy = "groupMembers")
+    public List<UserGroup> groups = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.REMOVE, mappedBy = "owners")
+    public List<UserGroup> owned_groups = new ArrayList<>();
+
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
 
