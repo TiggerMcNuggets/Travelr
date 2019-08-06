@@ -9,6 +9,9 @@ import java.util.List;
 @Entity
 public class UserGroup extends BaseModel {
 
+    /**
+     * The user group finder
+     */
     public static final UserGroupFinder find = new UserGroupFinder();
 
     /**
