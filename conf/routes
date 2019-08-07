@@ -75,7 +75,8 @@ POST        /api/destinations/edit_requests/:requestId/deny          controllers
 
 # Groups
 POST        /api/users/:userId/groups                                controllers.UserGroupController.createUserGroup(request: Request, userId: Long)
-
+#GET         /api/groups                                              controllers.UserGroupController.getAllGroups()
+GET         /api/users/:userId/groups/:groupId                       controllers.UserGroupController.getSingleGroupe(request: Request, userId: Long, groupId: Long)
 
 # Trips (trips within trips)
 

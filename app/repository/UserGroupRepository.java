@@ -1,6 +1,7 @@
 package repository;
 
 import controllers.dto.UserGroup.User.CreateUserGroupReq;
+import finders.UserGroupFinder;
 import models.*;
 
 import javax.inject.Inject;
@@ -13,6 +14,8 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class UserGroupRepository {
 
     private DatabaseExecutionContext context;
+
+    private UserGroupFinder userGroupFinder = new UserGroupFinder();
 
     @Inject
     public UserGroupRepository(DatabaseExecutionContext context) {
@@ -38,5 +41,13 @@ public class UserGroupRepository {
             return userGroup.id;
 
         }, context);
+    }
+
+    /**
+     * Gets all userGroups
+     * @return completable future of list of userGroups
+     */
+    public CompletableFuture<List<UserGroup>> getAllGroups() {
+        return supplyAsync(() -> userGroupFinder.findAll(), context);
     }
 }
