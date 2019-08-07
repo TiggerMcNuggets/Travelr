@@ -225,7 +225,7 @@
                                         <template v-slot:activator="{ on }">
                                             <v-btn
                                                     v-on="on"
-                                                    v-on:click="viewDestination(destination.id)"
+                                                    v-on:click="viewDestination(destination.destination.id)"
                                                     fab small flat>
                                                 <v-icon>explore</v-icon>
                                             </v-btn>
