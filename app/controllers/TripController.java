@@ -533,32 +533,30 @@ public class TripController extends Controller {
         Destination dest2 = new Destination("second", 2.0, 2.0, "type2", "district2", "country2", user);
         dest2.insert();
 
-        TripDestinationLeaf tdf1 = new TripDestinationLeaf(dest1);
-        TripDestinationLeaf tdf2 = new TripDestinationLeaf(dest2);
+        TripDestinationLeaf tdf1 = new TripDestinationLeaf("sdfsdf", user, dest1);
+        TripDestinationLeaf tdf2 = new TripDestinationLeaf("abcabc", user, dest2);
 
-        TripComposite tc = new TripComposite("trip");
+        TripComposite tc = new TripComposite("DFLKDJ", user);
         tc.add(tdf1);
         tc.add(tdf2);
-
-        tc.save();
 
 
         Destination dest3 = new Destination("third", 3.0, 3.0, "type3", "district3", "country3", user);
         dest3.insert();
 
-        TripDestinationLeaf tdf3 = new TripDestinationLeaf(dest3);
+        TripDestinationLeaf tdf3 = new TripDestinationLeaf("eifsjdf", user, dest3);
 
-        TripComposite tc2 = new TripComposite("secondttt");
+        TripComposite tc2 = new TripComposite("erer", user);
+        tc2.add(tc);
         tc2.add(tdf3);
         tc2.save();
+        tc.save();
 
-        TripComposite trip= TripComposite.find.byId(tc2.getId());
-        System.out.println(trip.getTripNodes().size());
-        for (TripNode tripNode : trip.getTripNodes()) {
-            System.out.println(tripNode.getName());
-        }
-
-
+//        TripComposite trip= TripComposite.find.byId(tc2.getId());
+//        System.out.println(trip.getTripNodes().size());
+//        for (TripNode tripNode : trip.getTripNodes()) {
+//            System.out.println(tripNode.getName());
+//        }
 
         return ok();
     }

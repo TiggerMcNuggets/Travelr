@@ -10,18 +10,13 @@ import java.util.List;
 
 @Entity
 public class TripComposite extends TripNode {
-    private String name;
 
     @OneToMany(cascade= CascadeType.ALL,orphanRemoval=true)
     private List<TripNode> tripNodes;
 
-    public TripComposite(String name) {
-        this.name = name;
+    public TripComposite(String name, User user) {
+        super(name, user);
         tripNodes = new ArrayList<>();
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void add(TripNode node) {

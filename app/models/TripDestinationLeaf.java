@@ -8,15 +8,16 @@ public class TripDestinationLeaf extends TripNode {
     @ManyToOne
     private Destination destination;
 
-    public TripDestinationLeaf(Destination destination) {
+    public TripDestinationLeaf(String name, User user, Destination destination) {
+        super(name, user);
         this.destination = destination;
-    }
-
-    public String getName() {
-        return destination.getName();
     }
 
     public Destination getDestination() {
         return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 }
