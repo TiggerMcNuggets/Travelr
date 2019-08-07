@@ -1,10 +1,9 @@
 package models;
 
-import finders.UserGroupFinder;
-import play.data.validation.Constraints;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.ebean.Finder;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 public class UserGroup extends BaseModel {
@@ -12,131 +11,85 @@ public class UserGroup extends BaseModel {
     /**
      * The user group finder
      */
-    public static final UserGroupFinder find = new UserGroupFinder();
+    public static final Finder<Long, UserGroup> find = new Finder<>(UserGroup.class);
 
     /**
-     * The name of the user group
+     * The group member
      */
-    @Column(length = 250)
-    @Constraints.Required
-    public String name;
+    @JsonIgnore
+    @ManyToOne
+    public User user;
 
     /**
-     * The description of the user group
+     * The associated user group
      */
-    @Column(length = 300)
-    public String description;
-
+    @ManyToOne
+    public Group_ group;
 
     /**
-     * The members of the group
+     *
      */
-    @ManyToMany(cascade= CascadeType.ALL)
-    @JoinTable(name="user_group_members")
-    public List<User> groupMembers;
+    @Column(columnDefinition = "boolean not null default false")
+    public boolean isOwner;
 
 
     /**
-     * The owners of the group.
+     * Basic constructor for a user group
+     * @param user The new member of the user group
+     * @param group The user group
+     * @param isOwner if the member is an owner of the user group
      */
-    @ManyToMany
-    @JoinTable(name="user_group_owners")
-    public List<User> owners;
-
-    /**
-     * The constructor for the user group
-     * @param owner The initial owner of the group - its creator
-     * @param name The name of the group
-     * @param description The optional description of the user group.
-     */
-    public UserGroup(User owner, String name, String description) {
-        this.groupMembers.add(owner);
-        this.owners.add(owner);
-
-        this.name = name;
-        this.description = description;
+    public UserGroup(User user, Group_ group, boolean isOwner) {
+        this.user = user;
+        this.group = group;
+        this.isOwner = isOwner;
     }
 
     /**
-     * Adds a new member to the user group.
-     * @param newMember The new member to add.
+     * Gets the group user
+     * @return the group user
      */
-    public void addMember(User newMember) {
-        groupMembers.add(newMember);
-    }
-
-
-    /**
-     * Removes a member from the user group.
-     * @param member The group member to remove.
-     */
-    public void removeMember(User member) {
-        groupMembers.remove(member);
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Returns a list of all the group members
-     * @return the group members
+     * Sets the group user
+     * @param user the group user
      */
-    public List<User> getGroupMembers() {
-        return groupMembers;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
-     * Promotes a group member to owner.
-     * @param newOwner The group member to promote
+     * Gets the user group
+     * @return the user group
      */
-    public void addOwner(User newOwner) {
-        owners.add(newOwner);
-    }
-
-
-    /**
-     * Removes group members ownership
-     * @param member The group member to demote.
-     */
-    public void removeOwner(User member) {
-        owners.remove(member);
+    public Group_ getGroup() {
+        return group;
     }
 
     /**
-     * Returns a list of all the owners of the group
-     * @return a list of all the owners of the group
+     * Sets the user group to the group specified
+     * @param group the user group
      */
-    public List<User> getOwners() {
-        return owners;
+    public void setGroup(Group_ group) {
+        this.group = group;
     }
 
     /**
-     * Gets the group name
-     * @return the group name
+     * Returns if the user is an owner of the group
+     * @return if the user is an owner
      */
-    public String getName() {
-        return name;
+    public boolean isOwner() {
+        return isOwner;
     }
 
     /**
-     * Sets the group name
-     * @param name the group name
+     * Sets the user owner status
+     * @param ownerPermissions the new owner permission
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setOwner(boolean ownerPermissions) {
+        isOwner = ownerPermissions;
     }
-
-    /**
-     * Gets the group description
-     * @return the group description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the group description
-     * @param description the group description
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
 }
