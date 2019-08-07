@@ -75,6 +75,12 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<UserNationality> nationalities;
 
+    /**
+     * Groups which the user belongs to
+     */
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
+    public List<UserGroup> userGroups;
+
     @ManyToMany(cascade=CascadeType.ALL)
     public List<TravellerType> travellerTypes;
 
