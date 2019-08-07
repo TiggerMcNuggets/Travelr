@@ -1,5 +1,6 @@
 package repository;
 
+import controllers.dto.UserGroup.User.CreateUserGroupReq;
 import models.*;
 
 import javax.inject.Inject;
@@ -19,4 +20,23 @@ public class UserGroupRepository {
     }
 
 
+
+    /**
+     * Creates a new group for the user provided
+     * @param request CreateUserGroupReq with name and description
+     * @param user The user who the group is being created for
+     * @return the groups Id
+     */
+    public CompletableFuture<Long> createNewGroup(CreateUserGroupReq request, User user) {
+        return supplyAsync(() -> {
+            Grouping group = new Grouping(request.name, request.description);
+
+            UserGroup userGroup = new UserGroup(user, group, true);
+
+            userGroup.insert();
+
+            return userGroup.id;
+
+        }, context);
+    }
 }

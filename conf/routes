@@ -73,6 +73,9 @@ POST        /api/destinations/edit_requests                          controllers
 POST        /api/destinations/edit_requests/:requestId/accept        controllers.DestinationEditRequestController.acceptRequest(request: Request, requestId: Long)
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
+# Groups
+POST        /api/users/:userId/groups                                controllers.UserGroupController.createUserGroup(request: Request, userId: Long)
+
 
 # Trips (trips within trips)
 
