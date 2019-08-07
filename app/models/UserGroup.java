@@ -27,7 +27,7 @@ public class UserGroup extends BaseModel {
     public Group_ group;
 
     /**
-     *
+     * Whether the user is an owner or not
      */
     @Column(columnDefinition = "boolean not null default false")
     public boolean isOwner;
