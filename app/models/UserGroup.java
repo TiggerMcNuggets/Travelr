@@ -24,7 +24,7 @@ public class UserGroup extends BaseModel {
      * The associated user group
      */
     @ManyToOne
-    public Group_ group;
+    public Grouping group;
 
     /**
      * Whether the user is an owner or not
@@ -39,7 +39,7 @@ public class UserGroup extends BaseModel {
      * @param group The user group
      * @param isOwner if the member is an owner of the user group
      */
-    public UserGroup(User user, Group_ group, boolean isOwner) {
+    public UserGroup(User user, Grouping group, boolean isOwner) {
         this.user = user;
         this.group = group;
         this.isOwner = isOwner;
@@ -65,7 +65,7 @@ public class UserGroup extends BaseModel {
      * Gets the user group
      * @return the user group
      */
-    public Group_ getGroup() {
+    public Grouping getGroup() {
         return group;
     }
 
@@ -73,7 +73,7 @@ public class UserGroup extends BaseModel {
      * Sets the user group to the group specified
      * @param group the user group
      */
-    public void setGroup(Group_ group) {
+    public void setGroup(Grouping group) {
         this.group = group;
     }
 

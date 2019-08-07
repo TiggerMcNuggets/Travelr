@@ -4,16 +4,13 @@ import io.ebean.Finder;
 import play.data.validation.Constraints;
 import javax.persistence.*;
 
-/**
- * Note: The underscore ensures the table name does not interfere with built in SQL statement 'group'
- */
 @Entity
-public class Group_ extends BaseModel {
+public class Grouping extends BaseModel {
 
     /**
      * The user group finder
      */
-    public static final Finder<Long, Group_> find = new Finder<>(Group_.class);
+    public static final Finder<Long, Grouping> find = new Finder<>(Grouping.class);
 
     /**
      * The name of the user group
@@ -34,7 +31,7 @@ public class Group_ extends BaseModel {
      * @param name The name of the group
      * @param description The optional description of the user group.
      */
-    public Group_(String name, String description) {
+    public Grouping(String name, String description) {
         this.name = name;
         this.description = description;
     }

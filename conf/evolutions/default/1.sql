@@ -64,12 +64,12 @@ create table destination_photo (
   constraint pk_destination_photo primary key (id)
 );
 
-create table group_ (
+create table grouping (
   id                            bigint auto_increment not null,
   name                          varchar(250),
   description                   varchar(300),
   deleted                       boolean default false not null,
-  constraint pk_group_ primary key (id)
+  constraint pk_grouping primary key (id)
 );
 
 create table media (
@@ -247,7 +247,7 @@ create index ix_user_group_user_id on user_group (user_id);
 alter table user_group add constraint fk_user_group_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
 create index ix_user_group_group_id on user_group (group_id);
-alter table user_group add constraint fk_user_group_group_id foreign key (group_id) references group_ (id) on delete restrict on update restrict;
+alter table user_group add constraint fk_user_group_group_id foreign key (group_id) references grouping (id) on delete restrict on update restrict;
 
 create index ix_user_nationality_user_id on user_nationality (user_id);
 alter table user_nationality add constraint fk_user_nationality_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -349,7 +349,7 @@ drop table if exists destination_edit_request_traveller_type;
 
 drop table if exists destination_photo;
 
-drop table if exists group_;
+drop table if exists grouping;
 
 drop table if exists media;
 
