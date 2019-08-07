@@ -64,14 +64,6 @@ create table destination_photo (
   constraint pk_destination_photo primary key (id)
 );
 
-create table group2 (
-  id                            bigint auto_increment not null,
-  name                          varchar(255),
-  description                   varchar(255),
-  deleted                       boolean default false not null,
-  constraint pk_group2 primary key (id)
-);
-
 create table group_ (
   id                            bigint auto_increment not null,
   name                          varchar(250),
@@ -356,8 +348,6 @@ drop table if exists destination_edit_request;
 drop table if exists destination_edit_request_traveller_type;
 
 drop table if exists destination_photo;
-
-drop table if exists group2;
 
 drop table if exists group_;
 
