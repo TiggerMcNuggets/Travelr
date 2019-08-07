@@ -13,8 +13,7 @@ import dto.trip.TripDTO;
 import dto.shared.CreatedDTO;
 import io.ebean.Ebean;
 
-import models.Trip;
-import models.User;
+import models.*;
 import net.fortuna.ical4j.model .Calendar;
 import play.data.Form;
 import play.data.FormFactory;
@@ -520,5 +519,47 @@ public class TripController extends Controller {
             e.printStackTrace();
             return CompletableFuture.completedFuture(internalServerError());
         }
+    }
+
+    public Result test() throws Exception {
+//        User user = new User("first", "last", "emaill@email.email", 1);
+//        user.insert();
+
+        User user = User.find.findById(1L);
+
+        Destination dest1 = new Destination("name", 1.0, 1.0, "type", "district", "country", user);
+        dest1.insert();
+
+        Destination dest2 = new Destination("second", 2.0, 2.0, "type2", "district2", "country2", user);
+        dest2.insert();
+
+        TripDestinationLeaf tdf1 = new TripDestinationLeaf(dest1);
+        TripDestinationLeaf tdf2 = new TripDestinationLeaf(dest2);
+
+        TripComposite tc = new TripComposite("trip");
+        tc.add(tdf1);
+        tc.add(tdf2);
+
+        tc.save();
+
+
+        Destination dest3 = new Destination("third", 3.0, 3.0, "type3", "district3", "country3", user);
+        dest3.insert();
+
+        TripDestinationLeaf tdf3 = new TripDestinationLeaf(dest3);
+
+        TripComposite tc2 = new TripComposite("secondttt");
+        tc2.add(tdf3);
+        tc2.save();
+
+        TripComposite trip= TripComposite.find.byId(tc2.getId());
+        System.out.println(trip.getTripNodes().size());
+        for (TripNode tripNode : trip.getTripNodes()) {
+            System.out.println(tripNode.getName());
+        }
+
+
+
+        return ok();
     }
 }

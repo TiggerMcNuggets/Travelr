@@ -73,7 +73,7 @@ POST        /api/destinations/edit_requests                          controllers
 POST        /api/destinations/edit_requests/:requestId/accept        controllers.DestinationEditRequestController.acceptRequest(request: Request, requestId: Long)
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
-
+GET        /api/test controllers.TripController.test()
 # Trips (trips within trips)
 
 POST        /api/users/:userId/trips                        controllers.TripController.createTrip(request: Request, userId: Long)

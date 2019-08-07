@@ -128,6 +128,16 @@ create table trip_destination (
   constraint pk_trip_destination primary key (id)
 );
 
+create table trip_node (
+  dtype                         varchar(31) not null,
+  id                            bigint auto_increment not null,
+  trip_composite_id             bigint,
+  deleted                       boolean default false not null,
+  name                          varchar(255),
+  destination_id                bigint,
+  constraint pk_trip_node primary key (id)
+);
+
 create table user (
   id                            bigint auto_increment not null,
   first_name                    varchar(150) not null,
@@ -220,6 +230,12 @@ alter table trip_destination add constraint fk_trip_destination_trip_id foreign 
 create index ix_trip_destination_destination_id on trip_destination (destination_id);
 alter table trip_destination add constraint fk_trip_destination_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
+create index ix_trip_node_trip_composite_id on trip_node (trip_composite_id);
+alter table trip_node add constraint fk_trip_node_trip_composite_id foreign key (trip_composite_id) references trip_node (id) on delete restrict on update restrict;
+
+create index ix_trip_node_destination_id on trip_node (destination_id);
+alter table trip_node add constraint fk_trip_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
+
 create index ix_user_traveller_type_user on user_traveller_type (user_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_user foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -294,6 +310,12 @@ drop index if exists ix_trip_destination_trip_id;
 alter table trip_destination drop constraint if exists fk_trip_destination_destination_id;
 drop index if exists ix_trip_destination_destination_id;
 
+alter table trip_node drop constraint if exists fk_trip_node_trip_composite_id;
+drop index if exists ix_trip_node_trip_composite_id;
+
+alter table trip_node drop constraint if exists fk_trip_node_destination_id;
+drop index if exists ix_trip_node_destination_id;
+
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_user;
 drop index if exists ix_user_traveller_type_user;
 
@@ -333,6 +355,8 @@ drop table if exists traveller_type;
 drop table if exists trip;
 
 drop table if exists trip_destination;
+
+drop table if exists trip_node;
 
 drop table if exists user;
 
