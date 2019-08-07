@@ -7,11 +7,10 @@ import com.google.inject.Inject;
 
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
-import dto.trip.CreateTripDTO;
 import controllers.constants.APIResponses;
 import dto.trip.TripDTO;
 import dto.shared.CreatedDTO;
-import io.ebean.Ebean;
+import dto.trip.NodeDTO;
 
 import models.*;
 import net.fortuna.ical4j.model .Calendar;
@@ -29,6 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -533,10 +533,10 @@ public class TripController extends Controller {
         Destination dest2 = new Destination("second", 2.0, 2.0, "type2", "district2", "country2", user);
         dest2.insert();
 
-        TripDestinationLeaf tdf1 = new TripDestinationLeaf("sdfsdf", user, dest1);
-        TripDestinationLeaf tdf2 = new TripDestinationLeaf("abcabc", user, dest2);
+        DestinationNode tdf1 = new DestinationNode("sdfsdf", user, dest1);
+        DestinationNode tdf2 = new DestinationNode("abcabc", user, dest2);
 
-        TripComposite tc = new TripComposite("DFLKDJ", user);
+        TripNode tc = new TripNode("DFLKDJ", user);
         tc.add(tdf1);
         tc.add(tdf2);
 
@@ -544,20 +544,30 @@ public class TripController extends Controller {
         Destination dest3 = new Destination("third", 3.0, 3.0, "type3", "district3", "country3", user);
         dest3.insert();
 
-        TripDestinationLeaf tdf3 = new TripDestinationLeaf("eifsjdf", user, dest3);
+        DestinationNode tdf3 = new DestinationNode("eifsjdf", user, dest3);
 
-        TripComposite tc2 = new TripComposite("erer", user);
+        TripNode tc2 = new TripNode("erer", user);
         tc2.add(tc);
         tc2.add(tdf3);
         tc2.save();
         tc.save();
 
-//        TripComposite trip= TripComposite.find.byId(tc2.getId());
-//        System.out.println(trip.getTripNodes().size());
-//        for (TripNode tripNode : trip.getTripNodes()) {
+        List<Node> tNodes = Node.find.query().where().eq("parent", tc2).findList();
+
+        List<NodeDTO> nodeDTOS = new ArrayList<>();
+
+        for (Node node : tNodes) {
+            System.out.println(node.getClass());
+            nodeDTOS.add(new NodeDTO(node));
+        }
+
+
+//        TripNode trip= TripNode.find.byId(tc2.getId());
+//        System.out.println(trip.getNodes().size());
+//        for (Node tripNode : trip.getNodes()) {
 //            System.out.println(tripNode.getName());
 //        }
 
-        return ok();
+        return ok(Json.toJson(nodeDTOS));
     }
 }

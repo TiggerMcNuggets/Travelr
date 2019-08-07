@@ -1,66 +1,31 @@
 package models;
 
+import io.ebean.Finder;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Inheritance
-public abstract class TripNode extends BaseModel {
+public class TripNode extends Node {
 
-    private String name;
-
-    private int arrivalDate;
-
-    private int departureDate;
-
-    @ManyToOne
-    private TripComposite parent;
-
-    @ManyToOne
-    private User user;
+    @OneToMany(cascade= CascadeType.ALL,orphanRemoval=true)
+    private List<Node> nodes;
 
     public TripNode(String name, User user) {
-        this.name = name;
-        this.user = user;
+        super(name, user);
+        nodes = new ArrayList<>();
     }
 
-
-    // Getters and Setters
-
-    public String getName() {
-        return name;
+    public void add(Node node) {
+        nodes.add(node);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public static Finder<Long, TripNode> find = new Finder<>(TripNode.class);
 
-    public TripComposite getParent() {
-        return parent;
-    }
-
-    public void setParent(TripComposite parent) {
-        this.parent = parent;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public int getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(int arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-    public int getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(int departureDate) {
-        this.departureDate = departureDate;
+    public List<Node> getNodes() {
+        return nodes;
     }
 }

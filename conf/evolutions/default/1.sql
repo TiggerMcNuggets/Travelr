@@ -89,6 +89,20 @@ create table nationality (
   constraint pk_nationality primary key (id)
 );
 
+create table node (
+  dtype                         varchar(31) not null,
+  id                            bigint auto_increment not null,
+  name                          varchar(255),
+  arrival_date                  integer not null,
+  departure_date                integer not null,
+  ordinal                       integer not null,
+  parent_id                     bigint,
+  user_id                       bigint,
+  deleted                       boolean default false not null,
+  destination_id                bigint,
+  constraint pk_node primary key (id)
+);
+
 create table personal_photo (
   id                            bigint auto_increment not null,
   user_id                       bigint,
@@ -126,19 +140,6 @@ create table trip_destination (
   departure_date                integer not null,
   deleted                       boolean default false not null,
   constraint pk_trip_destination primary key (id)
-);
-
-create table trip_node (
-  dtype                         varchar(31) not null,
-  id                            bigint auto_increment not null,
-  name                          varchar(255),
-  arrival_date                  integer not null,
-  departure_date                integer not null,
-  parent_id                     bigint,
-  user_id                       bigint,
-  deleted                       boolean default false not null,
-  destination_id                bigint,
-  constraint pk_trip_node primary key (id)
 );
 
 create table user (
@@ -221,6 +222,15 @@ alter table media_album add constraint fk_media_album_media foreign key (media_i
 create index ix_media_album_album on media_album (album_id);
 alter table media_album add constraint fk_media_album_album foreign key (album_id) references album (id) on delete restrict on update restrict;
 
+create index ix_node_parent_id on node (parent_id);
+alter table node add constraint fk_node_parent_id foreign key (parent_id) references node (id) on delete restrict on update restrict;
+
+create index ix_node_user_id on node (user_id);
+alter table node add constraint fk_node_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_node_destination_id on node (destination_id);
+alter table node add constraint fk_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
+
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -232,15 +242,6 @@ alter table trip_destination add constraint fk_trip_destination_trip_id foreign 
 
 create index ix_trip_destination_destination_id on trip_destination (destination_id);
 alter table trip_destination add constraint fk_trip_destination_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
-
-create index ix_trip_node_parent_id on trip_node (parent_id);
-alter table trip_node add constraint fk_trip_node_parent_id foreign key (parent_id) references trip_node (id) on delete restrict on update restrict;
-
-create index ix_trip_node_user_id on trip_node (user_id);
-alter table trip_node add constraint fk_trip_node_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
-
-create index ix_trip_node_destination_id on trip_node (destination_id);
-alter table trip_node add constraint fk_trip_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
 create index ix_user_traveller_type_user on user_traveller_type (user_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_user foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -304,6 +305,15 @@ drop index if exists ix_media_album_media;
 alter table media_album drop constraint if exists fk_media_album_album;
 drop index if exists ix_media_album_album;
 
+alter table node drop constraint if exists fk_node_parent_id;
+drop index if exists ix_node_parent_id;
+
+alter table node drop constraint if exists fk_node_user_id;
+drop index if exists ix_node_user_id;
+
+alter table node drop constraint if exists fk_node_destination_id;
+drop index if exists ix_node_destination_id;
+
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
@@ -315,15 +325,6 @@ drop index if exists ix_trip_destination_trip_id;
 
 alter table trip_destination drop constraint if exists fk_trip_destination_destination_id;
 drop index if exists ix_trip_destination_destination_id;
-
-alter table trip_node drop constraint if exists fk_trip_node_parent_id;
-drop index if exists ix_trip_node_parent_id;
-
-alter table trip_node drop constraint if exists fk_trip_node_user_id;
-drop index if exists ix_trip_node_user_id;
-
-alter table trip_node drop constraint if exists fk_trip_node_destination_id;
-drop index if exists ix_trip_node_destination_id;
 
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_user;
 drop index if exists ix_user_traveller_type_user;
@@ -357,6 +358,8 @@ drop table if exists media_album;
 
 drop table if exists nationality;
 
+drop table if exists node;
+
 drop table if exists personal_photo;
 
 drop table if exists traveller_type;
@@ -364,8 +367,6 @@ drop table if exists traveller_type;
 drop table if exists trip;
 
 drop table if exists trip_destination;
-
-drop table if exists trip_node;
 
 drop table if exists user;
 

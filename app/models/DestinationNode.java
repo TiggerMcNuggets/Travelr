@@ -4,11 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class TripDestinationLeaf extends TripNode {
+public class DestinationNode extends Node {
     @ManyToOne
     private Destination destination;
 
-    public TripDestinationLeaf(String name, User user, Destination destination) {
+    public DestinationNode(String name, User user, Destination destination) {
         super(name, user);
         this.destination = destination;
     }
