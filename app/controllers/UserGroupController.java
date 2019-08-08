@@ -2,12 +2,14 @@ package controllers;
 
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import models.UserGroup;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserGroupRepository;
 
 import javax.inject.Inject;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class UserGroupController extends Controller {
@@ -58,6 +60,10 @@ public class UserGroupController extends Controller {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user_id);
         if (middlewareRes != null)
             return middlewareRes;
+
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", user_id).eq("group_id", group_id).findOne();
+        if (userGroup != null && !userGroup.isOwner())
+            return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
 
         return userGroupRepository.remove(group_id).thenApplyAsync(deleted_user_id -> {
             //not found check, repository checks that both album and media exist
