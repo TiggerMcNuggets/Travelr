@@ -1,5 +1,6 @@
 package models;
 
+import finders.NodeFinder;
 import io.ebean.Finder;
 
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public abstract class Node extends BaseModel {
     @ManyToOne
     private User user;
 
-    public static final Finder<Long, Node> find = new Finder<>(Node.class);
+    public static final NodeFinder find = new NodeFinder();
 
     public Node(String name, User user) {
         this.name = name;

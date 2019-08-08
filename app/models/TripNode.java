@@ -1,5 +1,6 @@
 package models;
 
+import finders.TripNodeFinder;
 import io.ebean.Finder;
 
 import javax.persistence.CascadeType;
@@ -23,7 +24,7 @@ public class TripNode extends Node {
         nodes.add(node);
     }
 
-    public static Finder<Long, TripNode> find = new Finder<>(TripNode.class);
+    public static TripNodeFinder find = new TripNodeFinder();
 
     public List<Node> getNodes() {
         return nodes;

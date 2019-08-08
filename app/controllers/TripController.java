@@ -3,10 +3,13 @@ package controllers;
 
 import com.google.inject.Inject;
 
+import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import dto.shared.CreatedDTO;
 import dto.trip.*;
 
 import models.*;
+import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -17,6 +20,7 @@ import service.TripService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 
@@ -197,6 +201,29 @@ public class TripController extends Controller {
 //        }
 //    }
 
+        /**
+     * Create a trip endpoint
+     *
+     * @param request
+     * @return
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> createTrip(Http.Request request, Long userId) {
+
+        Form<CreateTripDTO> createTripForm = formFactory.form(CreateTripDTO.class).bindFromRequest(request);
+
+        if (createTripForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        User user = request.attrs().get(Attrs.ACCESS_USER);
+
+        CreateTripDTO dto = createTripForm.get();
+
+        return tripService.createTrip(dto, user).thenApplyAsync((tripId) -> created(Json.toJson(new CreatedDTO(tripId))));
+    }
+
+
     /**
      * Get all trips for a given user
      *
@@ -217,6 +244,17 @@ public class TripController extends Controller {
         });
     }
 
+    /**
+     * Fetches a trip by Id
+     * The three parts of the response are root, trip, and navigation.
+     * Root: Is the first level root trip which it belongs to
+     * Trip: Is the trip that was fetched by the Id
+     * Navigation: Is the list of nodes which make up the breadcrumbs
+     * @param request the request object
+     * @param tripId the Id of the trip being fetched
+     * @param userId the User who the request is being sent for (used in middleware)
+     * @returna GetTripResponse object
+     */
     public CompletionStage<Result> fetchTrip(Http.Request request, Long tripId, Long userId) {
 
         CompletionStage<TripNode> tripStage = tripService.getTripById(tripId);
@@ -267,7 +305,11 @@ public class TripController extends Controller {
     }
 
 
-
+    /**
+     * TEST FUNCTION DELETE BEFORE MASTER MERGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * @return
+     * @throws Exception
+     */
     public Result test() throws Exception {
 
         User user = User.find.findById(1L);
@@ -307,5 +349,20 @@ public class TripController extends Controller {
         }
 
         return ok(Json.toJson(nodeDTOS));
+    }
+
+    /**
+     * //     * Soft Deletes a trip
+     * //     * @param req the http request
+     * //     * @param userId the id of the user
+     * //     * @param tripId the id of the destination
+     * //
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
+
+        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+            return ok(Json.toJson(deleted));
+        });
     }
 }

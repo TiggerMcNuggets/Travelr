@@ -1,13 +1,17 @@
 package service;
 
 import dto.trip.CreateTripDTO;
+import javassist.NotFoundException;
 import models.*;
 import repository.DatabaseExecutionContext;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -135,10 +139,17 @@ public class TripService {
      */
     public CompletableFuture<Boolean> toggleTripDeleted(Long id) {
         return supplyAsync(() -> {
-            Trip trip = Trip.find.findByIdIncludeDeleted(id);
-            trip.setDeleted(!trip.isDeleted());
-            trip.update();
-            return trip.isDeleted();
+            Optional<TripNode> tripNodeOptional = TripNode.find.findByIdIncludeDeleted(id);
+
+            if(tripNodeOptional.isPresent()) {
+                TripNode tripNode = tripNodeOptional.get();
+                tripNode.setDeleted(!tripNode.isDeleted());
+                tripNode.update();
+                return tripNode.isDeleted();
+            }
+
+            return false;
+
         }, context);
     }
 }
