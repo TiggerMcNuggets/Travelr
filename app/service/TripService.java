@@ -58,10 +58,11 @@ public class TripService {
 
     /**
      * Gets the children for a given trip Id
+     * Ordered by ordinal to remove as much logic as possible from frontend
      * @param tripId
      * @return
      */
-    public CompletableFuture<List<Node>> getChildByTripId(Long tripId) {
+    public CompletableFuture<List<Node>> getChildrenByTripId(Long tripId) {
         return supplyAsync(() -> {
 
             List<Node> tNodes = Node.find.query().where().eq("parent.id", tripId).orderBy().asc("ordinal").findList();

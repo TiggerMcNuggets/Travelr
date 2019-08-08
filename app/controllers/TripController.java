@@ -265,14 +265,19 @@ public class TripController extends Controller {
 
         CompletionStage<Optional<TripNode>> tripStage = tripService.getTripById(tripId);
 
-        CompletionStage<List<Node>> childrenStage = tripService.getChildByTripId(tripId);
+        CompletionStage<List<Node>> childrenStage = tripService.getChildrenByTripId(tripId);
 
         CompletionStage<List<TripNode>> navigationStage = tripService.getNavigationForTrip(tripId);
 
+
+        /**
+         * Wait for trip and children to be fetched.
+         * Then create TripDTO
+         */
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
             if(!tripNodeOptional.isPresent()) {
-                throw new NotFoundException();
+                throw new NotFoundException("Trip not found");
             }
 
             TripNode trip = tripNodeOptional.get();
@@ -296,6 +301,11 @@ public class TripController extends Controller {
             return dto;
         });
 
+
+        /**
+         * Wait for TripDTO and navigation to be ready
+         * Then create and return GetTripResponse
+         */
         return tripDtoStage.thenCombineAsync(navigationStage, (tripDto, navigation) -> {
 
             List<NavigationDTO> navigationDTOS = new ArrayList<>();
@@ -314,21 +324,100 @@ public class TripController extends Controller {
 
             return ok(Json.toJson(response));
         }).handle((result, ex)-> {
-
-            // If Error
-            if(ex != null) {
-                if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
-                    return notFound();
-                }
-
-                logger.error(ex.getMessage());
-                ex.printStackTrace();
-                return status(500);
-            }
-            // Else result
-            return result;
+            return handleTrips(result, ex);
         });
     }
+
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> updateTrip(Http.Request request, Long tripId, Long userId) {
+
+        Form<GetTripDTO> updateTripForm = formFactory.form(GetTripDTO.class).bindFromRequest(request);
+        GetTripDTO tripDTO = updateTripForm.get();
+
+        User user = request.attrs().get(Attrs.ACCESS_USER);
+
+        if (updateTripForm.hasErrors()) {
+            logger.error("Trip object is not valid");
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        CompletionStage<Optional<TripNode>> tripStage = tripService.getTripById(tripId);
+
+        CompletionStage<List<Node>> childrenStage = tripService.getChildrenByTripId(tripId);
+
+        /**
+         * Wait for trip and children to be fetched.
+         * Then update the trip
+         */
+        return tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+            if(!tripNodeOptional.isPresent()) {
+                throw new NotFoundException("Trip not found");
+            }
+
+            TripNode trip = tripNodeOptional.get();
+
+            TripNode.db().beginTransaction();
+
+            trip.setName(tripDTO.name);
+
+            ArrayList<Long> newNodeIds = new ArrayList<>();
+
+            for(NodeDTO node : tripDTO.getNodes()) {
+                if(node.id == null) {
+                    if(node.type.equals("trip")) {
+                        TripNode newNode = new TripNode(node.name, user);
+                        newNode.insert();
+                        node.id = newNode.getId();
+
+                    } else {
+
+                        Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+
+                        if(!destination.isPresent()) {
+                            throw new NotFoundException("Destination not found");
+                        }
+
+                        DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
+                        newNode.insert();
+                        node.id = newNode.getId();
+                    }
+
+                }
+                newNodeIds.add(node.id);
+            }
+
+            for(Node oldNode : children)
+
+
+
+
+            return ok();
+        }).handle((result, ex)-> {
+            return handleTrips(result, ex);
+        });
+    }
+
+    /**
+     * Function for handling the async code within trips
+     * @param result the result of the async code passed in
+     * @param ex any errors thrown by the code
+     * @return the result unless there is an error
+     */
+    private Result handleTrips(Result result, Throwable ex) {
+        if(ex != null) {
+            if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
+                return notFound(ex.getMessage());
+            }
+
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+            return status(500);
+        }
+
+        return result;
+    }
+
+
 
     /**
      * //     * Soft Deletes a trip
