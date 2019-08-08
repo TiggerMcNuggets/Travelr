@@ -80,8 +80,10 @@ public class UserGroupController extends Controller {
 
 
     public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
-        return userGroupRepository.getOneGroup(groupId).thenApplyAsync(group -> {
-            System.out.println(group.getUser().getFirstName());
+        return userGroupRepository.getOneGroup(groupId).thenApplyAsync(UserGroups -> {
+            for (UserGroup user: UserGroups) {
+                user.getUser();
+            }
             return ok();
         });
     }

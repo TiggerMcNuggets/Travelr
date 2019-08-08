@@ -55,7 +55,8 @@ public class UserGroupRepository {
      * Gets a single user group
      * @return completable future of list of userGroups
      */
-    public CompletableFuture<UserGroup> getOneGroup(Long id) {
-        return supplyAsync(() ->  UserGroup.find.byId(id), context);
+    public CompletableFuture<List<UserGroup>> getOneGroup(Long id) {
+            return supplyAsync(() -> UserGroup.find.query().where().eq("group_id",id).findList(), context);
+//        return supplyAsync(() ->  UserGroup.find.byId(id), context);
     }
 }
