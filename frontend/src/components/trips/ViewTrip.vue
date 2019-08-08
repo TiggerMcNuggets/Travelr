@@ -106,7 +106,6 @@
                     class="trip-timeline-item-width white--text mb-5"
                 >
                     <v-card v-if="node.type.toLowerCase() === 'destination'">
-                        <h3>{{node.name}}</h3>
                         <v-combobox
                                 :items="userDestinations"
                                 item-text="name"
@@ -116,6 +115,32 @@
                         >
                         </v-combobox>
                         <h3>arrival time: {{node.arrivalDate}}</h3>
+                        <v-menu
+                        v-model="arrivalDateMenu"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                        >
+                        <template v-slot:activator="{ on }">
+                        <v-text-field
+                        v-model="node.arrivalDate"
+                        label="Arrival date"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                        class="date-margin"
+                        ></v-text-field>
+                        </template>
+                        <v-date-picker
+                        v-model="node.arrivalDate"
+                        @input="arrivalDateMenu = false"
+                        ></v-date-picker>
+                        </v-menu>
+
                         <h3>departure time: {{node.departureDate}}</h3>
                         <h3>destination name: {{node.destination.name}}</h3>
 
@@ -360,6 +385,7 @@ export default {
         getDepthData: getDepthData,
         isPromotable: isPromotable,
         isDemotable: isDemotable,
+        arrivalDateMenu: false,
 
         // rules
         ...rules,
@@ -378,7 +404,7 @@ export default {
         },
         notHiddenTrips() {
             return this.trip.destinations.filter((d) => !d.hidden);
-        }
+        },
     },
   methods: {
 
@@ -581,6 +607,43 @@ export default {
             });
     },
 
+      getDateInFormat: function(dateInt) {
+          return dateTime.convertTimestampToString(dateInt)
+      },
+
+      tripWithDates: function(trip) {
+          // trip.destinations = trip.destinations.sort(function(a, b){
+          //     return a.ordinal - b.ordinal;
+          // });
+          this.hasMissingDates = false;
+          let numOfMissingDates = 0;
+          // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
+          for (let i = 0; i < trip.nodes.length; i++) {
+              if (trip.nodes[i].type === "destination"){
+                  if (trip.nodes[i].arrivalDate === 0) {
+                      this.hasMissingDates = true;
+                      numOfMissingDates++;
+                  }
+
+                  if (trip.nodes[i].arrivalDate !== 0) {
+                      trip.nodes[i].arrivalDate = dateTime.convertTimestampToString(trip.nodes[i].arrivalDate);
+                  } else {
+                      trip.nodes[i].arrivalDate = null;
+                  }
+                  if (trip.nodes[i].departureDate !== 0) {
+                      trip.nodes[i].departureDate = dateTime.convertTimestampToString(trip.nodes[i].departureDate);
+                  } else {
+                      trip.nodes[i].departureDate = null;
+                  }
+              }
+
+          }
+          if (numOfMissingDates === trip.nodes.length) {
+              this.canDownloadTrip = false;
+          }
+          return trip;
+      },
+
     // getTrip: function() {
     //     return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
     //         let trip = result.data;
@@ -642,8 +705,16 @@ export default {
       if (!this.isMyProfile && !this.isAdmin) {
         this.$router.go(-1);
       }
-      this._getTrip(this.userId, this.tripId).then(()=> this.trip = this.selected_trip)
+      this._getTrip(this.userId, this.tripId).then(()=> {
+          this.trip = this.selected_trip
+          this.trip.trip = this.tripWithDates(this.trip.trip);
+
+
+
+      });
       // this._getTrip(this.userId, this.tripId).then((trip) => this.rollbackSetPreviousBody(tripAssembler(trip)));
+
+
   }
 };
 </script>
