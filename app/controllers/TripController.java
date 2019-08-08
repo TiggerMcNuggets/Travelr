@@ -8,7 +8,10 @@ import controllers.actions.Authorization;
 import dto.shared.CreatedDTO;
 import dto.trip.*;
 
+import exceptions.NotFoundException;
 import models.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -20,6 +23,7 @@ import service.TripService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -28,6 +32,8 @@ public class TripController extends Controller {
 
     @Inject
     FormFactory formFactory;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
 
     @Inject
@@ -257,13 +263,19 @@ public class TripController extends Controller {
      */
     public CompletionStage<Result> fetchTrip(Http.Request request, Long tripId, Long userId) {
 
-        CompletionStage<TripNode> tripStage = tripService.getTripById(tripId);
+        CompletionStage<Optional<TripNode>> tripStage = tripService.getTripById(tripId);
 
         CompletionStage<List<Node>> childrenStage = tripService.getChildByTripId(tripId);
 
         CompletionStage<List<TripNode>> navigationStage = tripService.getNavigationForTrip(tripId);
 
-        CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (trip, children) -> {
+        CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+
+            if(!tripNodeOptional.isPresent()) {
+                throw new NotFoundException();
+            }
+
+            TripNode trip = tripNodeOptional.get();
 
             GetTripDTO dto = new GetTripDTO();
 
@@ -301,9 +313,37 @@ public class TripController extends Controller {
             response.setRoot(rootNodeDTO);
 
             return ok(Json.toJson(response));
+        }).handle((result, ex)-> {
+
+            // If Error
+            if(ex != null) {
+                if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
+                    return notFound();
+                }
+
+                logger.error(ex.getMessage());
+                ex.printStackTrace();
+                return status(500);
+            }
+            // Else result
+            return result;
         });
     }
 
+    /**
+     * //     * Soft Deletes a trip
+     * //     * @param req the http request
+     * //     * @param userId the id of the user
+     * //     * @param tripId the id of the destination
+     * //
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
+
+        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+            return ok(Json.toJson(deleted));
+        });
+    }
 
     /**
      * TEST FUNCTION DELETE BEFORE MASTER MERGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -321,17 +361,22 @@ public class TripController extends Controller {
         dest2.insert();
 
         DestinationNode tdf1 = new DestinationNode("Custom Destination 1 Name", user, dest1);
+        tdf1.setOrdinal(1);
         DestinationNode tdf2 = new DestinationNode("Custom Destination 2 Name", user, dest2);
+        tdf2.setOrdinal(0);
 
         TripNode tc = new TripNode("Level 1 Inner Trip", user);
         tc.add(tdf1);
         tc.add(tdf2);
+        tc.setOrdinal(1);
 
 
         Destination dest3 = new Destination("Destination 3", 3.0, 3.0, "type3", "district3", "country3", user);
         dest3.insert();
 
+
         DestinationNode tdf3 = new DestinationNode("Custom Destination 3 Name", user, dest3);
+        tdf3.setOrdinal(0);
 
         TripNode tc2 = new TripNode("Root Trip", user);
         tc2.add(tc);
@@ -349,20 +394,5 @@ public class TripController extends Controller {
         }
 
         return ok(Json.toJson(nodeDTOS));
-    }
-
-    /**
-     * //     * Soft Deletes a trip
-     * //     * @param req the http request
-     * //     * @param userId the id of the user
-     * //     * @param tripId the id of the destination
-     * //
-     */
-    @Authorization.RequireAuthOrAdmin
-    public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
-
-        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
-            return ok(Json.toJson(deleted));
-        });
     }
 }

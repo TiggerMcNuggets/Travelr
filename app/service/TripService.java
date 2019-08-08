@@ -46,10 +46,10 @@ public class TripService {
      * @param tripId
      * @return
      */
-    public CompletableFuture<TripNode> getTripById(Long tripId) {
+    public CompletableFuture<Optional<TripNode>> getTripById(Long tripId) {
         return supplyAsync(() -> {
 
-            TripNode trip =  TripNode.find.byId(tripId);
+            Optional<TripNode> trip = Optional.ofNullable(TripNode.find.byId(tripId));
 
             return trip;
 
@@ -64,7 +64,7 @@ public class TripService {
     public CompletableFuture<List<Node>> getChildByTripId(Long tripId) {
         return supplyAsync(() -> {
 
-            List<Node> tNodes = Node.find.query().where().eq("parent.id", tripId).findList();
+            List<Node> tNodes = Node.find.query().where().eq("parent.id", tripId).orderBy().asc("ordinal").findList();
 
             return tNodes;
 
