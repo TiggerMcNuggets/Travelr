@@ -22,6 +22,10 @@ public class CommonUserGroupSteps {
         state.setGroup(group);
     }
 
+    /**
+     * Creates a user group and adds you to it, but not as an owner.
+     * @param dataTable The data to create a user group.
+     */
     @Given("I do not own the user group")
     public void i_do_not_own_the_user_group(List<Map<String, String>> dataTable) {
         Map<String, String> groupInfo = dataTable.get(0);
