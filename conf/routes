@@ -89,3 +89,5 @@ GET         /api/users/:user_id/trips/:trip_id/iCal  controllers.TripController.
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)
 GET     /*file                                  controllers.FrontendController.assetOrDefault(file)
+
+POST        /api/email          controllers.MailController.sendEmailGivenTrip()
