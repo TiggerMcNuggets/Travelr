@@ -44,6 +44,31 @@ public class UserGroupController extends Controller {
     }
 
 
+    /**
+     * Delete a group of users
+     * @param request the http request
+     * @param user_id the user id
+     * @param group_id the group id
+     * @return whether the deletion of the group was successful in the form of a request
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> deleteGroup(Http.Request request, Long user_id, Long group_id) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user_id);
+        if (middlewareRes != null)
+            return middlewareRes;
+
+        return userGroupRepository.remove(group_id).thenApplyAsync(deleted_user_id -> {
+            //not found check, repository checks that both album and media exist
+            if(deleted_user_id == null) {
+                return notFound(APIResponses.GROUP_NOT_FOUND);
+            }
+            return ok(APIResponses.SUCCESSFUL_GROUP_DELETION);
+        });
+    }
+
+
 
 
 
