@@ -22,6 +22,17 @@ public class CommonUserGroupSteps {
         state.setGroup(group);
     }
 
+    @Given("I do not own the user group")
+    public void i_do_not_own_the_user_group(List<Map<String, String>> dataTable) {
+        Map<String, String> groupInfo = dataTable.get(0);
+        Grouping group = new Grouping(groupInfo.get("name"), groupInfo.get("description"));
+        group.insert();
+        state.setGroup(group);
+
+        UserGroup userGroup = new UserGroup(state.getUser(), group, false);
+        userGroup.insert();
+    }
+
     /**
      * Creates a group with specified data and adds the signed in user as an owner
      * @param dataTable The details of the group to create
