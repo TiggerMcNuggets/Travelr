@@ -312,6 +312,7 @@ import dateTime from "../common/dateTime/dateTime.js";
 import {noSameDestinationNameConsecutiveRule, arrivalBeforeDepartureAndDestinationsOneAfterTheOther, rules} from "../form_rules";
 import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import {deepCopy} from "../../tools/deepCopy";
 let tripRepository = RepositoryFactory.get("trip")
 let destinationRepository = RepositoryFactory.get("destination");
 
@@ -357,9 +358,9 @@ export default {
         canDownloadTrip: true,
 
         // define functions to make them visible to the script
-        getDepthData: getDepthData,
-        isPromotable: isPromotable,
-        isDemotable: isDemotable,
+        // getDepthData: getDepthData,
+        // isPromotable: isPromotable,
+        // isDemotable: isDemotable,
 
         // rules
         ...rules,
@@ -376,11 +377,13 @@ export default {
                 this.trip.destinations
             );
         },
-        notHiddenTrips() {
-            return this.trip.destinations.filter((d) => !d.hidden);
-        }
     },
   methods: {
+
+    setOrdinal: function(nodes) {
+        const n = deepCopy(nodes);
+        return n.map((node, i) => ({...node, ordinal: i}))
+    },
 
     /**
      * Downloads the trip from the database as an ics.
@@ -418,11 +421,9 @@ export default {
      * Action performed as soon a destination ends being dragged,
      * reattaches the sub list stored on start drag at the right index.
      */
-    endDrag(event) {
-        // const copy = JSON.parse(JSON.stringify(this.trip.destinations));
-        // copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
-        // this.draggedSublist = [];
-        // this.trip.destinations = this.setOrdinal(copy);
+    endDrag() {
+        // resets the ordinal for each destination within the trip
+            this.$set(this.trip.trip, "nodes", this.setOrdinal(this.trip.trip.nodes));
     },
 
     /**
@@ -448,42 +449,32 @@ export default {
     // });
     // },
 
-    /**
-     * Ensures the list of destinations ordinal value is up to date
-     */
-    setOrdinal(destinations) {
-        const copy = JSON.parse(JSON.stringify(destinations));
-        copy.forEach((d, i) => {
-            d.ordinal = i;
-        });
-        return copy
-    },
+    // /**
+    //  * Increases the depth of destination at given index
+    //  */
+    // promote(index) {
+    //     this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
+    // },
+    //
+    // /**
+    //  * Decreases the depth of destination at given index
+    //  */
+    // demote(index) {
+    //     this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
+    // },
 
-    /**
-     * Increases the depth of destination at given index
-     */
-    promote(index) {
-        this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
-    },
+    // /**
+    //  * Hides or shows all the children of a destination
+    //  */
+    // toggleHiddenDestinations(parent) {
+    //     let i = parent.ordinal + 1;
+    //     const destsLength = this.trip.destinations.length;
+    //     while (i < destsLength && this.trip.destinations[i].depth > parent.depth) {
+    //         this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
+    //         i = i + 1;
+    //     }
+    // },
 
-    /**
-     * Decreases the depth of destination at given index
-     */
-    demote(index) {
-        this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
-    },
-
-    /**
-     * Hides or shows all the children of a destination
-     */
-    toggleHiddenDestinations(parent) {
-        let i = parent.ordinal + 1;
-        const destsLength = this.trip.destinations.length;
-        while (i < destsLength && this.trip.destinations[i].depth > parent.depth) {
-            this.$set(this.trip.destinations[i], "hidden", !(this.trip.destinations[i].hidden));
-            i = i + 1;
-        }
-    },
 
     /**
      * Checks if the update trip form passes validation
@@ -491,7 +482,6 @@ export default {
      */
     updateTrip() {
         if (this.$refs.form.validate()) {
-
             const trip = tripAssembler(this.trip);
             const userId = this.userId;
             const tripId = parseInt(this.trip.id);
@@ -529,42 +519,43 @@ export default {
         this.$router.push("/user/"+this.userId+"/destinations/"+dest_id);
     },
 
-    /**
-     * Invoked by child component create-trip once the trip has been modified, is passed as prop
-     */
-    updateViewTripPage: function() {
-        tripRepo.getTrip(this.userId, this.tripId).then((result) => {
-            let trip = result.data;
-            // Sorts the destinations ensure they are in the order of their ordinal
-            let ordered_dests = trip.destinations.sort(function(a, b){
-                return a.ordinal - b.ordinal;
-            });
-            trip.destinations = ordered_dests;
-            // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
-            for (let i = 0; i < trip.destinations.length; i++) {
-                trip.destinations[i].expanded = false;
-            if (trip.destinations[i].arrivalDate) {
-                trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-            } else {
-                    trip.destinations[i].arrivalDate = null;
-            }
-            if (trip.destinations[i].departureDate) {
-                trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
-            } else {
-                    trip.destinations[i].departureDate = null;
-            }
-            }
-            this.trip = trip;
-        });
-    },
+    // /**
+    //  * Invoked by child component create-trip once the trip has been modified, is passed as prop
+    //  */
+    // updateViewTripPage: function() {
+    //     tripRepo.getTrip(this.userId, this.tripId).then((result) => {
+    //         let trip = result.data;
+    //         // Sorts the destinations ensure they are in the order of their ordinal
+    //         let ordered_dests = trip.destinations.sort(function(a, b){
+    //             return a.ordinal - b.ordinal;
+    //         });
+    //         trip.destinations = ordered_dests;
+    //         // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
+    //         for (let i = 0; i < trip.destinations.length; i++) {
+    //             trip.destinations[i].expanded = false;
+    //         if (trip.destinations[i].arrivalDate) {
+    //             trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+    //         } else {
+    //                 trip.destinations[i].arrivalDate = null;
+    //         }
+    //         if (trip.destinations[i].departureDate) {
+    //             trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+    //         } else {
+    //                 trip.destinations[i].departureDate = null;
+    //         }
+    //         }
+    //         this.trip = trip;
+    //     });
+    // },
+
 
     /**
      * Deletes the given destination from the created/modified trip
      */
     deleteDestination: function(index) {
-        let newDestinations = JSON.parse(JSON.stringify(this.trip.destinations));
-        newDestinations.splice(index, 1);
-        this.trip.destinations = this.setOrdinal(newDestinations);
+        let newNodes = deepCopy(this.trip.trip.nodes);
+        newNodes.splice(index, 1);
+        this.trip.trip.nodes = this.setOrdinal(newNodes);
     },
 
     /**
@@ -581,12 +572,10 @@ export default {
             });
     },
 
+
     // getTrip: function() {
     //     return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
     //         let trip = result.data;
-    //         trip.destinations = trip.destinations.sort(function(a, b){
-    //             return a.ordinal - b.ordinal;
-    //         });
     //         this.hasMissingDates = false;
     //         let numOfMissingDates = 0;
     //         // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
@@ -635,15 +624,15 @@ export default {
   },
 
 
-    created: function() {
-      this.getDestinations();
-      this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
-      // If the person viewing the trip is not admin and does not own the trip then takes them back to the page they were on
-      if (!this.isMyProfile && !this.isAdmin) {
+  created: function() {
+    this.getDestinations();
+    this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
+    // If the person viewing the trip is not admin and does not own the trip then takes them back to the page they were on
+    if (!this.isMyProfile && !this.isAdmin) {
         this.$router.go(-1);
-      }
-      this._getTrip(this.userId, this.tripId).then(()=> this.trip = this.selected_trip)
-      // this._getTrip(this.userId, this.tripId).then((trip) => this.rollbackSetPreviousBody(tripAssembler(trip)));
+    }
+    this._getTrip(this.userId, this.tripId).then(()=> this.trip = this.selected_trip)
+    // this._getTrip(this.userId, this.tripId).then((trip) => this.rollbackSetPreviousBody(tripAssembler(trip)));
   }
 };
 </script>
