@@ -1,8 +1,13 @@
 package controllers;
 
+import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.UserGroup.UpdateUserGroupReq;
+import models.Grouping;
 import models.UserGroup;
+import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -13,6 +18,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class UserGroupController extends Controller {
+
+    @Inject
+    FormFactory formFactory;
 
     private final UserGroupRepository userGroupRepository;
 
@@ -37,7 +45,6 @@ public class UserGroupController extends Controller {
             return middlewareRes;
 
         return userGroupRepository.remove(group_id, member_id).thenApplyAsync(deleted_user_id -> {
-            //not found check, repository checks that both album and media exist
             if(deleted_user_id == null) {
                 return notFound(APIResponses.GROUP_MEMBER_NOT_FOUND);
             }
@@ -66,11 +73,55 @@ public class UserGroupController extends Controller {
             return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
 
         return userGroupRepository.remove(group_id).thenApplyAsync(deleted_user_id -> {
-            //not found check, repository checks that both album and media exist
             if(deleted_user_id == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
             }
             return ok(APIResponses.SUCCESSFUL_GROUP_DELETION);
+        });
+    }
+
+    /**
+     * Updates a user group
+     * @param request the http request
+     * @param user_id the user id
+     * @param group_id the group id to update
+     * @return whether the update was successful or not
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserGroup(Http.Request request, Long user_id, Long group_id) {
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, user_id);
+        if (middlewareRes != null) return middlewareRes;
+
+        Form<UpdateUserGroupReq> updateUserGroupForm = formFactory.form(UpdateUserGroupReq.class).bindFromRequest(request);
+
+        if (updateUserGroupForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error updating user group"));
+        }
+
+
+        UpdateUserGroupReq req = updateUserGroupForm.get();
+        boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+
+        // Bad Request check
+        for (Grouping grouping : Grouping.find.all()) {
+            if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(grouping)) {
+                return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
+            }
+        }
+
+        return userGroupRepository.updateUserGroup(user_id, group_id, isAdmin, req).thenApplyAsync(grouping -> {
+
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", user_id).eq("group_id", group_id).findOne();
+
+            if (grouping == null) {
+                return notFound(APIResponses.GROUP_NOT_FOUND);
+            }
+            else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
+                return forbidden(APIResponses.FORBIDDEN);
+            }
+
+            return ok(APIResponses.SUCCESSFUL_GROUP_UPDATE);
         });
     }
 
