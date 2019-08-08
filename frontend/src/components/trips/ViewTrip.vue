@@ -3,7 +3,7 @@
   <v-container fluid>
 
       <PageHeader
-              :title="selected_trip.trip.name"
+              :title="trip.trip.name"
               :undo="undo"
               :redo="redo"
               :canRedo="rollbackCanRedo"
@@ -13,7 +13,7 @@
       <v-form lazy-validation
               ref="form"
               v-model="isFormValid">
-          <v-breadcrumbs :items="selected_trip.navigation">
+          <v-breadcrumbs :items="trip.navigation">
               <template v-slot:item="props">
                   <v-breadcrumbs-item>
 
@@ -23,7 +23,7 @@
               </template>
           </v-breadcrumbs>
       <v-text-field
-              v-model="selected_trip.trip.name"
+              v-model="trip.trip.name"
               :rules="nameRules"
               :counter="60"
               label="Trip Name"
@@ -101,23 +101,24 @@
             <transition-group type="transition" :name="!drag ? 'flip-list' : null">
 
                 <v-timeline-item
-                    v-for="(node, i) in selected_trip.trip.nodes"
+                    v-for="(node, i) in trip.trip.nodes"
                     :key="i"
                     class="trip-timeline-item-width white--text mb-5"
                 >
                     <v-card v-if="node.type.toLowerCase() === 'destination'">
                         <h3>{{node.name}}</h3>
-                        <h3>arrival time: {{node.arrivalDate}}</h3>
-                        <h3>departure time: {{node.departureDate}}</h3>
-                        <h3>destination name: {{node.destination.name}}</h3>
                         <v-combobox
                                 :items="userDestinations"
                                 item-text="name"
-                                v-model="node.destination"
+                                v-model="node.name"
                                 label="Select an existing destination"
                                 return-object
                         >
                         </v-combobox>
+                        <h3>arrival time: {{node.arrivalDate}}</h3>
+                        <h3>departure time: {{node.departureDate}}</h3>
+                        <h3>destination name: {{node.destination.name}}</h3>
+
 
                     </v-card>
                     <v-card v-else>
@@ -338,7 +339,7 @@ export default {
         tripId:  this.$route.params.trip_id,
         userId:  this.$route.params.id,
         is_inset: true,
-        trip: !this.selected_trip ? {
+        trip: {
             "root": {
                 user: {},
                 "id": 1,
@@ -350,7 +351,7 @@ export default {
                 nodes: []
             },
             "navigation": []
-        } : this.selected_trip,
+        },
         userDestinations: [],
         shouldDisplayDialog: false,
         canDownloadTrip: true,
@@ -633,20 +634,6 @@ export default {
     },
   },
 
-    watch: {
-        /**
-         * Reset back to viewing mode on destination change
-         */
-        selectedTripChange: {
-            handler: function(newValue, oldValue) {
-                if(oldValue.trip.nodes.size() !== newValue.trip.nodes.size()) {
-                    this.trip = this.selected_trip;
-                }
-            },
-            deep: true
-        }
-    },
-
 
     created: function() {
       this.getDestinations();
@@ -655,7 +642,7 @@ export default {
       if (!this.isMyProfile && !this.isAdmin) {
         this.$router.go(-1);
       }
-      this._getTrip(this.userId, this.tripId)
+      this._getTrip(this.userId, this.tripId).then(()=> this.trip = this.selected_trip)
       // this._getTrip(this.userId, this.tripId).then((trip) => this.rollbackSetPreviousBody(tripAssembler(trip)));
   }
 };
