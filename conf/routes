@@ -77,7 +77,7 @@ GET        /api/test controllers.TripController.test()
 # Trips (trips within trips)
 
 #POST        /api/users/:userId/trips                        controllers.TripController.createTrip(request: Request, userId: Long)
-#GET         /api/users/:userId/trips                        controllers.TripController.getUserTrips(request: Request, userId: Long)
+GET         /api/users/:userId/trips                        controllers.TripController.getUserTrips(request: Request, userId: Long)
 GET         /api/users/:userId/trips/:tripId                controllers.TripController.fetchTrip(request: Request, tripId: Long, userId: Long)
 #PUT         /api/users/:userId/trips/:tripId                controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
 #DELETE      /api/users/:userId/trips/:tripId                controllers.TripController.deleteTrip(request: Request, tripId: Long, userId: Long)

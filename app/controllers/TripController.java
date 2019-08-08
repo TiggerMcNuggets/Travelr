@@ -197,6 +197,26 @@ public class TripController extends Controller {
 //        }
 //    }
 
+    /**
+     * Get all trips for a given user
+     *
+     * @param request
+     * @param userId
+     * @return
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> getUserTrips(Http.Request request, Long userId) {
+        return tripService.getTripsForUser(userId).thenApplyAsync(trips -> {
+            ArrayList<TripSimpleDTO> tripDTOS = new ArrayList<>();
+
+            for (TripNode trip : trips) {
+                tripDTOS.add(new TripSimpleDTO(trip));
+            }
+
+            return ok(Json.toJson(tripDTOS));
+        });
+    }
+
     public CompletionStage<Result> fetchTrip(Http.Request request, Long tripId, Long userId) {
 
         CompletionStage<TripNode> tripStage = tripService.getTripById(tripId);
