@@ -1,18 +1,11 @@
 package unit.trips;
 
-import dto.trip.TripDTO;
 import models.Destination;
 import models.Trip;
-import models.User;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import play.mvc.Http;
-import service.TripService;
-import unit.common.BaseUnit;
 import unit.common.BaseUnitWithUser;
-
-import javax.inject.Inject;
 
 import static org.junit.Assert.*;
 
