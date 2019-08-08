@@ -74,6 +74,7 @@ POST        /api/destinations/edit_requests/:requestId/accept        controllers
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
 # Groups
+DELETE /users/:user_id/group/:group_id/member/:member_id             controllers.UserGroupController.deleteGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
 
 # Trips (trips within trips)
 

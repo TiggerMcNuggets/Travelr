@@ -19,5 +19,10 @@ public class APIResponses {
     public static final String SUCCESSFUL_ALBUM_UPDATE = "Album updated";
     public static final String DUPLICATE_ALBUM_NAME = "Duplicate album name";
 
+    // Groups
+    public static final String SUCCESSFUL_GROUP_MEMBER_DELETION = "Group member removed";
+    public static final String GROUP_MEMBER_NOT_FOUND = "Group member not found";
+
+
 
 }
