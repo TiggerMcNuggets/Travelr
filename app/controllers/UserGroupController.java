@@ -46,7 +46,7 @@ public class UserGroupController extends Controller {
      * @param request from http
      * @return 201 with json object of new userGroupId if successfull
      */
-    @Authorization.RequireAuthOrAdmin
+//    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> createUserGroup(Http.Request request, Long userId) {
         // Turns the post data into a form object
         Form<CreateUserGroupReq> userGroupRequestForm = formFactory.form(CreateUserGroupReq.class).bindFromRequest(request);
@@ -79,9 +79,12 @@ public class UserGroupController extends Controller {
     }
 
 
-//    public CompletionStage<Result> getSingleGroupe(Http.Request request, Long userId) {
-//
-//    }
+    public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
+        return userGroupRepository.getOneGroup(groupId).thenApplyAsync(group -> {
+            System.out.println(group.getUser().getFirstName());
+            return ok();
+        });
+    }
 
 //    public CompletionStage<Result> getAllGroups() {
 //        return userGroupRepository.getAllGroups().thenApplyAsync(groups -> {

@@ -50,4 +50,12 @@ public class UserGroupRepository {
     public CompletableFuture<List<UserGroup>> getAllGroups() {
         return supplyAsync(() -> userGroupFinder.findAll(), context);
     }
+
+    /**
+     * Gets a single user group
+     * @return completable future of list of userGroups
+     */
+    public CompletableFuture<UserGroup> getOneGroup(Long id) {
+        return supplyAsync(() ->  UserGroup.find.byId(id), context);
+    }
 }
