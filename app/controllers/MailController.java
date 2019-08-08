@@ -1,37 +1,43 @@
 package controllers;
 
-import com.google.inject.Inject;
-import play.Application;
-import play.data.FormFactory;
+import com.fasterxml.jackson.databind.JsonNode;
 import play.libs.Json;
+import play.libs.ws.WSAuthScheme;
+import play.libs.ws.WSClient;
+import play.libs.ws.WSRequest;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
 
-import static play.test.Helpers.route;
+import javax.inject.Inject;
+import java.util.concurrent.CompletionStage;
 
 public class MailController extends Controller {
-    private Application application;
+    private WSClient ws;
 
     @Inject
-    FormFactory formFactory;
+    public MailController(WSClient ws) {
+        this.ws = ws;
+    }
 
-    public Result sendEmailGivenTrip() {
-        Http.RequestBuilder emailRequest = new Http.RequestBuilder();
-        emailRequest.method("POST");
-        emailRequest.uri("https://api.mailgun.net/v3/sandboxc7b3b2d7b248471d9e3c50aa8687d1c4.mailgun.org");
+    public CompletionStage<Result> sendEmailGivenTrip() {
         String reqParameters;
+
         reqParameters = "{" +
-            "\"api\": \"369f89d26186533f02492395d4086aef-73ae490d-9c3ed2ca\"," +
-            "\"from\": \"frd15@uclive.ac.nz\"," +
-            "\"to\": \"frd15@uclive.ac.nz\"," +
-            "\"subject\": \"hello\"," +
+            "\"from\": \"rsh134@uclive.ac.nz\"," +
+            "\"to\": \"rsh134@uclive.ac.nz\"," +
+            "\"subject\": \"JAVATEST\"," +
             "\"text\": \"testing\"" +
         "}";
-        emailRequest.bodyJson(Json.parse(reqParameters));
-        emailRequest.header("api", "369f89d26186533f02492395d4086aef-73ae490d-9c3ed2ca");
-        Result result = route(application, emailRequest);
-        return result;
 
+        JsonNode body = Json.parse(reqParameters);
+        WSRequest request = ws.url("https://api.mailgun.net/v3/sandboxc7b3b2d7b248471d9e3c50aa8687d1c4.mailgun.org");
+        request.addHeader("api", "369f89d26186533f02492395d4086aef-73ae490d-9c3ed2ca");
+        request.setAuth("api:", "369f89d26186533f02492395d4086aef-73ae490d-9c3ed2ca", WSAuthScheme.BASIC);
+
+        CompletionStage<WSResponse> asyncResponse = request.post(body);
+        return asyncResponse.thenApplyAsync(response -> {
+            return ok();
+        });
     }
 }
