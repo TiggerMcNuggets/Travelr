@@ -14,8 +14,6 @@ public class UserGroupRepository {
 
     private DatabaseExecutionContext context;
 
-    private UserGroupFinder userGroupFinder = new UserGroupFinder();
-
     @Inject
     public UserGroupRepository(DatabaseExecutionContext context) {
         this.context = context;
