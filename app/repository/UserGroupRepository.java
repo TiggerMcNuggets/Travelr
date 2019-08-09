@@ -41,21 +41,4 @@ public class UserGroupRepository {
 
         }, context);
     }
-
-    /**
-     * Gets all userGroups
-     * @return completable future of list of userGroups
-     */
-    public CompletableFuture<List<UserGroup>> getAllGroups() {
-        return supplyAsync(() -> userGroupFinder.findAll(), context);
-    }
-
-    /**
-     * Gets a single user group
-     * @return completable future of list of userGroups
-     */
-    public CompletableFuture<List<UserGroup>> getOneGroup(Long id) {
-            return supplyAsync(() -> UserGroup.find.query().where().eq("group_id",id).findList(), context);
-//        return supplyAsync(() ->  UserGroup.find.byId(id), context);
-    }
 }

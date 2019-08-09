@@ -67,27 +67,4 @@ public class UserGroupController extends Controller {
 
     }
 
-
-    public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
-        return userGroupRepository.getOneGroup(groupId).thenApplyAsync(UserGroups -> {
-            for (UserGroup user: UserGroups) {
-                user.getUser();
-            }
-            return ok();
-        });
-    }
-
-//    public CompletionStage<Result> getAllGroups() {
-//        return userGroupRepository.getAllGroups().thenApplyAsync(groups -> {
-//
-//            GetUserGroupRes response = new GetUserGroupRes(groups);
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode jsonResponse = mapper.valueToTree(response.getGetUserRes());
-//
-//            return ok(jsonResponse);
-//
-//        });
-//    }
-
-
 }
