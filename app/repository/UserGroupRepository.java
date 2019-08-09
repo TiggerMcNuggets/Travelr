@@ -1,7 +1,6 @@
 package repository;
 
 import controllers.dto.UserGroup.CreateUserGroupReq;
-import finders.UserGroupFinder;
 import models.*;
 
 import javax.inject.Inject;

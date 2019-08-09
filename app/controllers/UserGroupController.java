@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.CreateUserGroupReq;
 import controllers.dto.UserGroup.CreateUserGroupRes;
+import models.Grouping;
 import models.User;
 import models.UserGroup;
 import play.data.Form;
@@ -15,6 +16,7 @@ import play.mvc.Result;
 import repository.UserGroupRepository;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -22,6 +24,8 @@ public class UserGroupController extends Controller {
 
     @Inject
     FormFactory formFactory;
+
+
 
     private final UserGroupRepository userGroupRepository;
 
@@ -55,10 +59,12 @@ public class UserGroupController extends Controller {
         CreateUserGroupReq req = userGroupRequestForm.get();
 
         //Group Name Take Check
+        System.out.println(Grouping.find.findByName(req.name));
+        if (Grouping.find.findByName(req.name) != null) {
+            return CompletableFuture.completedFuture(badRequest("Already a grouping with this name"));
+        }
+
         return userGroupRepository.createNewGroup(req, user).thenApplyAsync(id -> {
-            if (id == null) {
-                return badRequest("Group name is already taken");
-            }
             CreateUserGroupRes response = new CreateUserGroupRes(id);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
