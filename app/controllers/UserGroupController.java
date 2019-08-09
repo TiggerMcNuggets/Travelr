@@ -2,17 +2,9 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import controllers.actions.Attrs;
-import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.Destination.CreateDestReq;
-import controllers.dto.Destination.CreateDestRes;
-import controllers.dto.Destination.GetDestinationsRes;
-import controllers.dto.UserGroup.User.CreateUserGroupReq;
-import controllers.dto.UserGroup.User.CreateUserGroupRes;
-import io.ebean.Ebean;
-import models.Destination;
+import controllers.dto.UserGroup.CreateUserGroupReq;
+import controllers.dto.UserGroup.CreateUserGroupRes;
 import models.User;
 import models.UserGroup;
 import play.data.Form;
@@ -20,12 +12,9 @@ import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Results;
-import repository.DestinationRepository;
 import repository.UserGroupRepository;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 

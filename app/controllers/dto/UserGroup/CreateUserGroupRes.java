@@ -1,4 +1,4 @@
-package controllers.dto.UserGroup.User;
+package controllers.dto.UserGroup;
 
 
 public class CreateUserGroupRes {

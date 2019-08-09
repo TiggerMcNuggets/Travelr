@@ -1,11 +1,10 @@
 package repository;
 
-import controllers.dto.UserGroup.User.CreateUserGroupReq;
+import controllers.dto.UserGroup.CreateUserGroupReq;
 import finders.UserGroupFinder;
 import models.*;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
