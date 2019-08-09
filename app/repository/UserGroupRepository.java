@@ -25,13 +25,13 @@ public class UserGroupRepository {
 
     /**
      * Deletes a group member
-     * @param group_id The group id
-     * @param member_id The id of the group member to be removed
+     * @param groupId The group id
+     * @param memberId The id of the group member to be removed
      * @return The id of the deleted group member otherwise null if not found.
      */
-    public CompletableFuture<Long> remove(Long group_id, Long member_id) {
+    public CompletableFuture<Long> remove(Long groupId, Long memberId) {
         return supplyAsync(() -> {
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", member_id).eq("group_id", group_id).findOne();
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("group_id", groupId).findOne();
             if (userGroup != null) {
                 userGroup.delete();
                 return userGroup.user.getId();
@@ -42,17 +42,17 @@ public class UserGroupRepository {
 
     /**
      * Deletes a group and all its members
-     * @param group_id The group id
+     * @param groupId The group id
      * @return The id of the deleted group otherwise null if not found.
      */
-    public CompletableFuture<Long> remove(Long group_id) {
+    public CompletableFuture<Long> remove(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", group_id).findList();;
+            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", groupId).findList();;
             for (UserGroup userGroup : userGroupsToBeDeleted) {
                 userGroup.delete();
             }
 
-            Grouping groupToBeDeleted = Grouping.find.byId(group_id);
+            Grouping groupToBeDeleted = Grouping.find.byId(groupId);
 
             if (groupToBeDeleted != null) {
                 groupToBeDeleted.delete();
