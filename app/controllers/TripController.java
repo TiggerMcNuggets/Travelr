@@ -341,126 +341,29 @@ public class TripController extends Controller {
             return CompletableFuture.completedFuture(badRequest());
         }
 
-        CompletionStage<Optional<TripNode>> tripStage = tripService.getTripById(tripId);
+        return tripService.updateTrip(tripId, tripDTO, user).thenApplyAsync(trip -> {
 
-        CompletionStage<List<Node>> childrenStage = tripService.getChildrenByTripId(tripId);
-
-        /**
-         * Wait for trip and children to be fetched.
-         * Then update the trip
-         */
-        return tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+            List<Node> children = tripService.getChildrenByTripId(tripId).join();
 
 
-            /**
-             * Check Trip Exists
-             */
-            if(!tripNodeOptional.isPresent()) {
-                throw new NotFoundException("Trip not found");
-            }
+            GetTripDTO dto = new GetTripDTO();
 
-            TripNode trip = tripNodeOptional.get();
-
-//            TripNode.db().beginTransaction(); TODO ADAM
-
-            trip.setName(tripDTO.name);
-
-
-            /**
-             * Get Updated Ids
-             */
-            ArrayList<Long> newNodeIds = new ArrayList<>();
-
-            if(tripDTO.getNodes() == null) {
-                tripDTO.setNodes(new ArrayList<>());
-            }
-
-            for(NodeDTO node : tripDTO.getNodes()) {
-                if(node.id == null) {
-                    if(node.type.equals("trip")) {
-                        TripNode newNode = new TripNode(node.name, user);
-                        newNode.save();
-                        trip.add(newNode);
-                        node.id = newNode.getId();
-
-                    } else {
-
-                        Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
-
-                        if(!destination.isPresent()) {
-                            throw new NotFoundException("Destination not found");
-                        }
-
-                        DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
-                        newNode.save();
-                        trip.add(newNode);
-                        node.id = newNode.getId();
-                    }
-
-                }
-                newNodeIds.add(node.id);
-            }
-
-            for(Node oldNode : children) {
-                if (!newNodeIds.contains(oldNode.getId())) {
-                    oldNode.delete();
-                }
-            }
-
-            for (NodeDTO node : tripDTO.getNodes()) {
-                if (node.type.toLowerCase().equals("trip")) {
-                    Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.id));
-                    if (!tNodeOptional.isPresent()) {
-                        throw new NotFoundException("Trip node not found");
-                    }
-                    TripNode tNode = tNodeOptional.get();
-                    tNode.setName(node.name);
-                    tNode.setOrdinal(node.ordinal);
-                    tNode.update();
-                } else {
-                    Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.id));
-                    if (!dNodeOptional.isPresent()) {
-                        throw new NotFoundException("Destination node not found");
-                    }
-                    DestinationNode dNode = dNodeOptional.get();
-                    dNode.setName(node.name);
-                    dNode.setOrdinal(node.ordinal);
-                    dNode.setArrivalDate(node.arrivalDate);
-                    dNode.setDepartureDate(node.departureDate);
-                    Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(dNode.getDestination().getId()));
-                    if (!destinationOptional.isPresent()) {
-                        throw new NotFoundException("Destination for destination node not found");
-                    }
-                    dNode.setDestination(destinationOptional.get());
-                    dNode.update();
-                }
-            }
-
-            trip.save();
-
-//            TripNode.db().commitTransaction(); TODO ADAM
-
-            return tripService.getChildrenByTripId(trip.getId()).thenApplyAsync(tripChildren -> {
-
-                GetTripDTO dto = new GetTripDTO();
-
-                // Trip Details
-                dto.setName(trip.getName());
-                dto.setId(trip.getId());
-
-                List<NodeDTO> childrenDTO = new ArrayList<>();
-
-                for (Node node : tripChildren) {
-                    childrenDTO.add(new NodeDTO(node));
-                }
-
-                dto.setNodes(childrenDTO);
-
-                return ok(Json.toJson(dto));
-
-            }).toCompletableFuture().join();
+            // Trip Details
+            dto.setName(trip.getName());
+            dto.setId(trip.getId());
 
             // Format trip's children
+            List<NodeDTO> childrenDTO = new ArrayList<>();
+
+            for (Node node : children) {
+                childrenDTO.add(new NodeDTO(node));
+            }
+
+            dto.setNodes(childrenDTO);
+
+
+            return ok(Json.toJson(dto));
+
 
         }).handle((result, ex)-> {
             return handleTrips(result, ex);

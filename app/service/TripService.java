@@ -1,9 +1,10 @@
 package service;
 
+import controllers.dto.trip.GetTripRes;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
-import javassist.NotFoundException;
+import exceptions.NotFoundException;
 import models.*;
 import repository.DatabaseExecutionContext;
 
@@ -116,58 +117,106 @@ public class TripService {
         }, context);
     }
 
-//    public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
-//        return supplyAsync(() -> {
-//            CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
-//
-//            CompletionStage<List<Node>> childrenStage = getChildrenByTripId(tripId);
-//
-//            CompletionStage<TripNode> newTrip = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
-//                if (!tripNodeOptional.isPresent()) {
-//                    throw new exceptions.NotFoundException("Trip not found");
-//                }
-//
-//                TripNode trip = tripNodeOptional.get();
-//
-//                TripNode.db().beginTransaction();
-//
-//                trip.setName(tripDTO.name);
-//
-//                ArrayList<Long> newNodeIds = new ArrayList<>();
-//
-//                for (NodeDTO node : tripDTO.getNodes()) {
-//                    if (node.id == null) {
-//                        if (node.type.equals("trip")) {
-//                            TripNode newNode = new TripNode(node.name, user);
-//                            newNode.insert();
-//                            node.id = newNode.getId();
-//
-//                        } else {
-//
-//                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
-//
-//                            if (!destination.isPresent()) {
-//                                throw new exceptions.NotFoundException("Destination not found");
-//                            }
-//
-//                            DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
-//                            newNode.insert();
-//                            node.id = newNode.getId();
-//                        }
-//
-//                    }
-//                    newNodeIds.add(node.id);
-//                }
-//
-////                for(Node oldNode : children)
-//            return trip;
-//            });
+    // TODO Adam: uncouple function from DTO??? unsure if possible or best practise at this point
 
+    public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
+        return supplyAsync(() -> {
 
-//            return newTrip.thenA;
-//        }, context);
-//
-//    }
+            CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
+
+            CompletionStage<List<Node>> childrenStage = getChildrenByTripId(tripId);
+
+            return tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+
+                /**
+                 * Check Trip Exists
+                 */
+                if(!tripNodeOptional.isPresent()) {
+                    throw new NotFoundException("Trip not found");
+                }
+
+                TripNode trip = tripNodeOptional.get();
+
+                trip.setName(tripDTO.name);
+
+                /**
+                 * Get Updated Ids
+                 */
+                ArrayList<Long> newNodeIds = new ArrayList<>();
+
+                if(tripDTO.getNodes() == null) {
+                    tripDTO.setNodes(new ArrayList<>());
+                }
+
+                for(NodeDTO node : tripDTO.getNodes()) {
+                    if(node.id == null) {
+                        if(node.type.equals("trip")) {
+                            TripNode newNode = new TripNode(node.name, user);
+                            newNode.setParent(newNode);
+                            newNode.save();
+                            node.id = newNode.getId();
+
+                        } else {
+
+                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+                            if(!destination.isPresent()) {
+                                throw new NotFoundException("Destination not found");
+                            }
+
+                            DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
+                            newNode.setParent(trip);
+                            newNode.save();
+
+                            node.id = newNode.getId();
+                        }
+
+                    }
+                    newNodeIds.add(node.id);
+                }
+
+                for(Node oldNode : children) {
+                    if (!newNodeIds.contains(oldNode.getId())) {
+                        oldNode.delete();
+                    }
+                }
+
+                for (NodeDTO node : tripDTO.getNodes()) {
+                    if (node.type.toLowerCase().equals("trip")) {
+                        Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.id));
+                        if (!tNodeOptional.isPresent()) {
+                            throw new NotFoundException("Trip node not found");
+                        }
+                        TripNode tNode = tNodeOptional.get();
+                        tNode.setName(node.name);
+                        tNode.setOrdinal(node.ordinal);
+                        tNode.update();
+                    } else {
+                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.id));
+                        if (!dNodeOptional.isPresent()) {
+                            throw new NotFoundException("Destination node not found");
+                        }
+                        DestinationNode dNode = dNodeOptional.get();
+                        dNode.setName(node.name);
+                        dNode.setOrdinal(node.ordinal);
+                        dNode.setArrivalDate(node.arrivalDate);
+                        dNode.setDepartureDate(node.departureDate);
+
+                        Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(dNode.getDestination().getId()));
+                        if (!destinationOptional.isPresent()) {
+                            throw new NotFoundException("Destination for destination node not found");
+                        }
+                        dNode.setDestination(destinationOptional.get());
+
+                        dNode.update();
+                    }
+                }
+
+                return trip;
+
+            }).toCompletableFuture().join();
+        }, context);
+
+    }
 
 
     /**
