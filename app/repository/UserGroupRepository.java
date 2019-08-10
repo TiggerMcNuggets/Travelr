@@ -1,11 +1,8 @@
 package repository;
 
-import io.ebean.ExpressionList;
-import models.Album;
+import controllers.dto.UserGroup.UpdateUserGroupReq;
 import models.Grouping;
-import models.User;
 import models.UserGroup;
-import scala.xml.Group;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -60,6 +57,30 @@ public class UserGroupRepository {
             }
 
             return null;
+        }, context);
+    }
+
+    /**
+     * Updates a user group
+     * @param userId The user's id
+     * @param groupId The user group id to be updated
+     * @param isAdmin Whether the user is an admin
+     * @param req The request object
+     * @return
+     */
+    public CompletableFuture<Grouping> updateUserGroup(Long userId, Long groupId, boolean isAdmin, UpdateUserGroupReq req) {
+        return supplyAsync(() -> {
+            Grouping group = Grouping.find.byId(groupId);
+
+            // Not found check
+            if (group == null) return null;
+
+            // Updating the group if no problems
+            group.setName(req.getName());
+            group.setDescription(req.getDescription());
+            group.update();
+
+            return group;
         }, context);
     }
 

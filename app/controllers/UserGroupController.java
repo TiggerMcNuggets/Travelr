@@ -1,8 +1,13 @@
 package controllers;
 
+import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.UserGroup.UpdateUserGroupReq;
+import models.Grouping;
 import models.UserGroup;
+import play.data.Form;
+import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -13,6 +18,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class UserGroupController extends Controller {
+
+    @Inject
+    FormFactory formFactory;
 
     private final UserGroupRepository userGroupRepository;
 
@@ -30,14 +38,13 @@ public class UserGroupController extends Controller {
      * @return result of operation
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> deleteGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
+    public CompletionStage<Result> removeGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
         // middleware stack
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null)
             return middlewareRes;
 
         return userGroupRepository.remove(groupId, memberId).thenApplyAsync(deletedUserId -> {
-            //not found check, repository checks that both album and media exist
             if(deletedUserId == null) {
                 return notFound(APIResponses.GROUP_MEMBER_NOT_FOUND);
             }
@@ -62,15 +69,67 @@ public class UserGroupController extends Controller {
             return middlewareRes;
 
         UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+
+        // Can't find the user group in the database
+        if(userGroup == null) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+        // The user is not the owner of the user group.
         if (userGroup != null && !userGroup.isOwner())
             return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
 
-        return userGroupRepository.remove(groupId).thenApplyAsync(deletedUserGroupId -> {
-            //not found check, repository checks that both album and media exist
-            if(deletedUserGroupId == null) {
+        return userGroupRepository.remove(groupId).thenApplyAsync(deletedGroupId -> {
+            if(deletedGroupId == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
             }
             return ok(APIResponses.SUCCESSFUL_GROUP_DELETION);
+        });
+    }
+
+    /**
+     * Updates a user group
+     * @param request the http request
+     * @param userId the user id
+     * @param groupId the group id to update
+     * @return whether the update was successful or not
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> updateUserGroup(Http.Request request, Long userId, Long groupId) {
+
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        Form<UpdateUserGroupReq> updateUserGroupForm = formFactory.form(UpdateUserGroupReq.class).bindFromRequest(request);
+
+        if (updateUserGroupForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error updating user group"));
+        }
+
+
+        UpdateUserGroupReq req = updateUserGroupForm.get();
+        boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
+
+        // Bad Request check
+        for (Grouping grouping : Grouping.find.all()) {
+            if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(grouping)) {
+                return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
+            }
+        }
+
+        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
+
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+
+            if (grouping == null) {
+                return notFound(APIResponses.GROUP_NOT_FOUND);
+            }
+            else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
+                return forbidden(APIResponses.FORBIDDEN);
+            }
+
+            return ok(APIResponses.SUCCESSFUL_GROUP_UPDATE);
         });
     }
 

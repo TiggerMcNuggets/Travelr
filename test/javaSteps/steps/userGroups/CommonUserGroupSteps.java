@@ -23,6 +23,16 @@ public class CommonUserGroupSteps {
     }
 
     /**
+     * Creates a user group but does not insert it into the database so it will not exist for the user.
+     */
+    @Given("I do not own an user group")
+    public void i_do_not_own_an_user_group() {
+        Grouping group = new Grouping("Team 300", "The best team eva");
+        group.setId(100L);
+        state.setGroup(group);
+    }
+
+    /**
      * Creates a user group and adds you to it, but not as an owner.
      * @param dataTable The data to create a user group.
      */
@@ -43,6 +53,21 @@ public class CommonUserGroupSteps {
      */
     @Given("I own the user group")
     public void i_own_the_user_group(List<Map<String, String>> dataTable) {
+        Map<String, String> groupInfo = dataTable.get(0);
+        Grouping group = new Grouping(groupInfo.get("name"), groupInfo.get("description"));
+        group.insert();
+        state.setGroup(group);
+
+        UserGroup userGroup = new UserGroup(state.getUser(), group, true);
+        userGroup.insert();
+    }
+
+    /**
+     * Creates a user group for another user - same as above but expects state user to not be the authenticated user.
+     * @param dataTable The data for the user group.
+     */
+    @Given("They own the user group")
+    public void they_own_the_user_group(List<Map<String, String>> dataTable) {
         Map<String, String> groupInfo = dataTable.get(0);
         Grouping group = new Grouping(groupInfo.get("name"), groupInfo.get("description"));
         group.insert();

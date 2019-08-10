@@ -42,7 +42,7 @@ Feature: GetTraveller
         "email": "j@j.s",
         "accountType": 0,
         "userProfilePhoto": "defaultPic.png",
-        "defaultAlbumId": 1
+        "defaultAlbumId": 2
       }
       """
 
@@ -104,7 +104,7 @@ Feature: GetTraveller
           }
         ],
         "userProfilePhoto": "defaultPic.png",
-        "defaultAlbumId": 2
+        "defaultAlbumId": 3
       }
       """
 

@@ -25,9 +25,12 @@ public class APIResponses {
     // Groups
     public static final String SUCCESSFUL_GROUP_MEMBER_DELETION = "Group member removed";
     public static final String GROUP_MEMBER_NOT_FOUND = "Group member not found";
-
     public static final String SUCCESSFUL_GROUP_DELETION = "Group removed";
+    public static final String SUCCESSFUL_GROUP_UPDATE = "Group updated";
     public static final String GROUP_NOT_FOUND = "Group not found";
+
+
+
 
 
 
