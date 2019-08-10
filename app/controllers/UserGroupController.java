@@ -58,8 +58,7 @@ public class UserGroupController extends Controller {
 
         CreateUserGroupReq req = userGroupRequestForm.get();
 
-        //Group Name Take Check
-        System.out.println(Grouping.find.findByName(req.name));
+        //Group Name Taken Check
         if (Grouping.find.findByName(req.name) != null) {
             return CompletableFuture.completedFuture(badRequest("Already a grouping with this name"));
         }

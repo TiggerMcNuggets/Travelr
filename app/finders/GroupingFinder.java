@@ -24,7 +24,7 @@ public class GroupingFinder extends Finder<Long, Grouping> {
      * @return A grouping with the provided name
      */
     public Grouping findByName(String name) {
-        return query().where().eq("name", name).findOneOrEmpty().orElse(null);
+        return query().where().eq("name", name).findOne();
     }
 
 }

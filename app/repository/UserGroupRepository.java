@@ -30,6 +30,8 @@ public class UserGroupRepository {
         return supplyAsync(() -> {
             Grouping group = new Grouping(request.name, request.description);
 
+            group.insert();
+
             UserGroup userGroup = new UserGroup(user, group, true);
 
             userGroup.insert();
