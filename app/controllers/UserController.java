@@ -111,7 +111,7 @@ public class UserController extends Controller {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
 
-            mailgunService.sendWelcomeEmail(req.email, req.firstName, req.lastName);
+            mailgunService.sendWelcomeEmail(req.email, req.firstName);
 
             return created(jsonResponse);
         });
