@@ -350,23 +350,37 @@ public class TripController extends Controller {
          * Then update the trip
          */
         return tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+
+
+            /**
+             * Check Trip Exists
+             */
             if(!tripNodeOptional.isPresent()) {
                 throw new NotFoundException("Trip not found");
             }
 
             TripNode trip = tripNodeOptional.get();
 
-            TripNode.db().beginTransaction();
+//            TripNode.db().beginTransaction(); TODO ADAM
 
             trip.setName(tripDTO.name);
 
+
+            /**
+             * Get Updated Ids
+             */
             ArrayList<Long> newNodeIds = new ArrayList<>();
+
+            if(tripDTO.getNodes() == null) {
+                tripDTO.setNodes(new ArrayList<>());
+            }
 
             for(NodeDTO node : tripDTO.getNodes()) {
                 if(node.id == null) {
                     if(node.type.equals("trip")) {
                         TripNode newNode = new TripNode(node.name, user);
-                        newNode.insert();
+                        newNode.save();
+                        trip.add(newNode);
                         node.id = newNode.getId();
 
                     } else {
@@ -378,7 +392,8 @@ public class TripController extends Controller {
                         }
 
                         DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
-                        newNode.insert();
+                        newNode.save();
+                        trip.add(newNode);
                         node.id = newNode.getId();
                     }
 
@@ -388,7 +403,7 @@ public class TripController extends Controller {
 
             for(Node oldNode : children) {
                 if (!newNodeIds.contains(oldNode.getId())) {
-                    oldNode.setDeleted(true);
+                    oldNode.delete();
                 }
             }
 
@@ -420,25 +435,33 @@ public class TripController extends Controller {
                     dNode.update();
                 }
             }
-            TripNode.db().commitTransaction();
 
-            GetTripDTO dto = new GetTripDTO();
+            trip.save();
 
-            // Trip Details
-            dto.setName(trip.getName());
-            dto.setId(trip.getId());
+//            TripNode.db().commitTransaction(); TODO ADAM
+
+            return tripService.getChildrenByTripId(trip.getId()).thenApplyAsync(tripChildren -> {
+
+                GetTripDTO dto = new GetTripDTO();
+
+                // Trip Details
+                dto.setName(trip.getName());
+                dto.setId(trip.getId());
+
+                List<NodeDTO> childrenDTO = new ArrayList<>();
+
+                for (Node node : tripChildren) {
+                    childrenDTO.add(new NodeDTO(node));
+                }
+
+                dto.setNodes(childrenDTO);
+
+                return ok(Json.toJson(dto));
+
+            }).toCompletableFuture().join();
 
             // Format trip's children
-            List<NodeDTO> childrenDTO = new ArrayList<>();
 
-            for (Node node : children) {
-                System.out.println(node.getClass());
-                childrenDTO.add(new NodeDTO(node));
-            }
-
-            dto.setNodes(childrenDTO);
-
-            return ok(Json.toJson(dto));
         }).handle((result, ex)-> {
             return handleTrips(result, ex);
         });
@@ -502,9 +525,14 @@ public class TripController extends Controller {
         tdf2.setOrdinal(0);
 
         TripNode tc = new TripNode("Level 1 Inner Trip", user);
-        tc.add(tdf1);
-        tc.add(tdf2);
         tc.setOrdinal(1);
+        tc.save();
+
+
+        tdf1.setParent(tc);
+        tdf1.save();
+        tdf2.setParent(tc);
+        tdf2.save();
 
 
         Destination dest3 = new Destination("Destination 3", 3.0, 3.0, "type3", "district3", "country3", user);
@@ -515,10 +543,16 @@ public class TripController extends Controller {
         tdf3.setOrdinal(0);
 
         TripNode tc2 = new TripNode("Root Trip", user);
-        tc2.add(tc);
-        tc2.add(tdf3);
+
         tc2.save();
+
+
+        tc.setParent(tc2);
         tc.save();
+
+        tdf3.setParent(tc2);
+        tdf3.save();
+
 
         List<Node> tNodes = Node.find.query().where().eq("parent", tc2).findList();
 
