@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.CreateUserGroupReq;
 import controllers.dto.UserGroup.CreateUserGroupRes;
@@ -39,7 +40,7 @@ public class UserGroupController extends Controller {
      * @param request from http
      * @return 201 with json object of new userGroupId if successfull
      */
-//    @Authorization.RequireAuthOrAdmin
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> createUserGroup(Http.Request request, Long userId) {
         // Turns the post data into a form object
         Form<CreateUserGroupReq> userGroupRequestForm = formFactory.form(CreateUserGroupReq.class).bindFromRequest(request);
