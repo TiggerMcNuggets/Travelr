@@ -265,14 +265,19 @@ public class TripController extends Controller {
 
         CompletionStage<Optional<TripNode>> tripStage = tripService.getTripById(tripId);
 
-        CompletionStage<List<Node>> childrenStage = tripService.getChildByTripId(tripId);
+        CompletionStage<List<Node>> childrenStage = tripService.getChildrenByTripId(tripId);
 
         CompletionStage<List<TripNode>> navigationStage = tripService.getNavigationForTrip(tripId);
 
+
+        /**
+         * Wait for trip and children to be fetched.
+         * Then create TripDTO
+         */
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
             if(!tripNodeOptional.isPresent()) {
-                throw new NotFoundException();
+                throw new NotFoundException("Trip not found");
             }
 
             TripNode trip = tripNodeOptional.get();
@@ -296,6 +301,11 @@ public class TripController extends Controller {
             return dto;
         });
 
+
+        /**
+         * Wait for TripDTO and navigation to be ready
+         * Then create and return GetTripResponse
+         */
         return tripDtoStage.thenCombineAsync(navigationStage, (tripDto, navigation) -> {
 
             List<NavigationDTO> navigationDTOS = new ArrayList<>();
@@ -314,21 +324,73 @@ public class TripController extends Controller {
 
             return ok(Json.toJson(response));
         }).handle((result, ex)-> {
-
-            // If Error
-            if(ex != null) {
-                if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
-                    return notFound();
-                }
-
-                logger.error(ex.getMessage());
-                ex.printStackTrace();
-                return status(500);
-            }
-            // Else result
-            return result;
+            return handleTrips(result, ex);
         });
     }
+
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> updateTrip(Http.Request request, Long tripId, Long userId) {
+
+        Form<GetTripDTO> updateTripForm = formFactory.form(GetTripDTO.class).bindFromRequest(request);
+        GetTripDTO tripDTO = updateTripForm.get();
+
+        User user = request.attrs().get(Attrs.ACCESS_USER);
+
+        if (updateTripForm.hasErrors()) {
+            logger.error("Trip object is not valid");
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        return tripService.updateTrip(tripId, tripDTO, user).thenApplyAsync(trip -> {
+
+            List<Node> children = tripService.getChildrenByTripId(tripId).join();
+
+
+            GetTripDTO dto = new GetTripDTO();
+
+            // Trip Details
+            dto.setName(trip.getName());
+            dto.setId(trip.getId());
+
+            // Format trip's children
+            List<NodeDTO> childrenDTO = new ArrayList<>();
+
+            for (Node node : children) {
+                childrenDTO.add(new NodeDTO(node));
+            }
+
+            dto.setNodes(childrenDTO);
+
+
+            return ok(Json.toJson(dto));
+
+
+        }).handle((result, ex)-> {
+            return handleTrips(result, ex);
+        });
+    }
+
+    /**
+     * Function for handling the async code within trips
+     * @param result the result of the async code passed in
+     * @param ex any errors thrown by the code
+     * @return the result unless there is an error
+     */
+    private Result handleTrips(Result result, Throwable ex) {
+        if(ex != null) {
+            if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
+                return notFound(ex.getMessage());
+            }
+
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+            return status(500);
+        }
+
+        return result;
+    }
+
+
 
     /**
      * //     * Soft Deletes a trip
@@ -366,9 +428,14 @@ public class TripController extends Controller {
         tdf2.setOrdinal(0);
 
         TripNode tc = new TripNode("Level 1 Inner Trip", user);
-        tc.add(tdf1);
-        tc.add(tdf2);
         tc.setOrdinal(1);
+        tc.save();
+
+
+        tdf1.setParent(tc);
+        tdf1.save();
+        tdf2.setParent(tc);
+        tdf2.save();
 
 
         Destination dest3 = new Destination("Destination 3", 3.0, 3.0, "type3", "district3", "country3", user);
@@ -379,10 +446,16 @@ public class TripController extends Controller {
         tdf3.setOrdinal(0);
 
         TripNode tc2 = new TripNode("Root Trip", user);
-        tc2.add(tc);
-        tc2.add(tdf3);
+
         tc2.save();
+
+
+        tc.setParent(tc2);
         tc.save();
+
+        tdf3.setParent(tc2);
+        tdf3.save();
+
 
         List<Node> tNodes = Node.find.query().where().eq("parent", tc2).findList();
 
