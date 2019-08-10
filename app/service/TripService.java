@@ -116,57 +116,58 @@ public class TripService {
         }, context);
     }
 
-    public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
-        return supplyAsync(() -> {
-            CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
+//    public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
+//        return supplyAsync(() -> {
+//            CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
+//
+//            CompletionStage<List<Node>> childrenStage = getChildrenByTripId(tripId);
+//
+//            CompletionStage<TripNode> newTrip = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+//                if (!tripNodeOptional.isPresent()) {
+//                    throw new exceptions.NotFoundException("Trip not found");
+//                }
+//
+//                TripNode trip = tripNodeOptional.get();
+//
+//                TripNode.db().beginTransaction();
+//
+//                trip.setName(tripDTO.name);
+//
+//                ArrayList<Long> newNodeIds = new ArrayList<>();
+//
+//                for (NodeDTO node : tripDTO.getNodes()) {
+//                    if (node.id == null) {
+//                        if (node.type.equals("trip")) {
+//                            TripNode newNode = new TripNode(node.name, user);
+//                            newNode.insert();
+//                            node.id = newNode.getId();
+//
+//                        } else {
+//
+//                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+//
+//                            if (!destination.isPresent()) {
+//                                throw new exceptions.NotFoundException("Destination not found");
+//                            }
+//
+//                            DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
+//                            newNode.insert();
+//                            node.id = newNode.getId();
+//                        }
+//
+//                    }
+//                    newNodeIds.add(node.id);
+//                }
+//
+////                for(Node oldNode : children)
+//            return trip;
+//            });
 
-            CompletionStage<List<Node>> childrenStage = getChildrenByTripId(tripId);
 
-            CompletionStage<TripNode> newTrip = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
-                if (!tripNodeOptional.isPresent()) {
-                    throw new exceptions.NotFoundException("Trip not found");
-                }
-
-                TripNode trip = tripNodeOptional.get();
-
-                TripNode.db().beginTransaction();
-
-                trip.setName(tripDTO.name);
-
-                ArrayList<Long> newNodeIds = new ArrayList<>();
-
-                for (NodeDTO node : tripDTO.getNodes()) {
-                    if (node.id == null) {
-                        if (node.type.equals("trip")) {
-                            TripNode newNode = new TripNode(node.name, user);
-                            newNode.insert();
-                            node.id = newNode.getId();
-
-                        } else {
-
-                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
-
-                            if (!destination.isPresent()) {
-                                throw new exceptions.NotFoundException("Destination not found");
-                            }
-
-                            DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
-                            newNode.insert();
-                            node.id = newNode.getId();
-                        }
-
-                    }
-                    newNodeIds.add(node.id);
-                }
-
-//                for(Node oldNode : children)
-            return trip;
-            });
-
-            return newTrip.thenA;
-        }, context);
-
-    }
+//            return newTrip.thenA;
+//        }, context);
+//
+//    }
 
 
     /**

@@ -1,10 +1,15 @@
 package models;
 
+import finders.DestinationNodeFinder;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
 public class DestinationNode extends Node {
+
+    public final static DestinationNodeFinder find = new DestinationNodeFinder();
+
     @ManyToOne
     private Destination destination;
 

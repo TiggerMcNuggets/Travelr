@@ -386,12 +386,59 @@ public class TripController extends Controller {
                 newNodeIds.add(node.id);
             }
 
-            for(Node oldNode : children)
+            for(Node oldNode : children) {
+                if (!newNodeIds.contains(oldNode.getId())) {
+                    oldNode.setDeleted(true);
+                }
+            }
 
+            for (NodeDTO node : tripDTO.getNodes()) {
+                if (node.type.toLowerCase().equals("trip")) {
+                    Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.id));
+                    if (!tNodeOptional.isPresent()) {
+                        throw new NotFoundException("Trip node not found");
+                    }
+                    TripNode tNode = tNodeOptional.get();
+                    tNode.setName(node.name);
+                    tNode.setOrdinal(node.ordinal);
+                    tNode.update();
+                } else {
+                    Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.id));
+                    if (!dNodeOptional.isPresent()) {
+                        throw new NotFoundException("Destination node not found");
+                    }
+                    DestinationNode dNode = dNodeOptional.get();
+                    dNode.setName(node.name);
+                    dNode.setOrdinal(node.ordinal);
+                    dNode.setArrivalDate(node.arrivalDate);
+                    dNode.setDepartureDate(node.departureDate);
+                    Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(dNode.getDestination().getId()));
+                    if (!destinationOptional.isPresent()) {
+                        throw new NotFoundException("Destination for destination node not found");
+                    }
+                    dNode.setDestination(destinationOptional.get());
+                    dNode.update();
+                }
+            }
+            TripNode.db().commitTransaction();
 
+            GetTripDTO dto = new GetTripDTO();
 
+            // Trip Details
+            dto.setName(trip.getName());
+            dto.setId(trip.getId());
 
-            return ok();
+            // Format trip's children
+            List<NodeDTO> childrenDTO = new ArrayList<>();
+
+            for (Node node : children) {
+                System.out.println(node.getClass());
+                childrenDTO.add(new NodeDTO(node));
+            }
+
+            dto.setNodes(childrenDTO);
+
+            return ok(Json.toJson(dto));
         }).handle((result, ex)-> {
             return handleTrips(result, ex);
         });
