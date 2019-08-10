@@ -1,6 +1,8 @@
 package service;
 
 import dto.trip.CreateTripDTO;
+import dto.trip.GetTripDTO;
+import dto.trip.NodeDTO;
 import javassist.NotFoundException;
 import models.*;
 import repository.DatabaseExecutionContext;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -111,6 +114,58 @@ public class TripService {
         return supplyAsync(() -> {
             return TripNode.find.query().where().and().eq("user.id", userId).eq("parent", null).findList();
         }, context);
+    }
+
+    public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
+        return supplyAsync(() -> {
+            CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
+
+            CompletionStage<List<Node>> childrenStage = getChildrenByTripId(tripId);
+
+            CompletionStage<TripNode> newTrip = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+                if (!tripNodeOptional.isPresent()) {
+                    throw new exceptions.NotFoundException("Trip not found");
+                }
+
+                TripNode trip = tripNodeOptional.get();
+
+                TripNode.db().beginTransaction();
+
+                trip.setName(tripDTO.name);
+
+                ArrayList<Long> newNodeIds = new ArrayList<>();
+
+                for (NodeDTO node : tripDTO.getNodes()) {
+                    if (node.id == null) {
+                        if (node.type.equals("trip")) {
+                            TripNode newNode = new TripNode(node.name, user);
+                            newNode.insert();
+                            node.id = newNode.getId();
+
+                        } else {
+
+                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+
+                            if (!destination.isPresent()) {
+                                throw new exceptions.NotFoundException("Destination not found");
+                            }
+
+                            DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
+                            newNode.insert();
+                            node.id = newNode.getId();
+                        }
+
+                    }
+                    newNodeIds.add(node.id);
+                }
+
+//                for(Node oldNode : children)
+            return trip;
+            });
+
+            return newTrip.thenA;
+        }, context);
+
     }
 
 
