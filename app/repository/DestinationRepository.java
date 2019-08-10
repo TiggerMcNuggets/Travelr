@@ -69,13 +69,7 @@ public class DestinationRepository {
             if (sameDestinations.size() > 0) {
                 return null;
             }
-
-            Album album = new Album(user,destination.getName() + "," + destination.getCountry(), true);
-            album.insert();
-
-            destination.setDefaultAlbum(album);
-
-
+            
             destination.insert();
 
 
