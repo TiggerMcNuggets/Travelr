@@ -38,7 +38,7 @@ public class UserGroupController extends Controller {
      * @return result of operation
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> deleteGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
+    public CompletionStage<Result> removeGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
         // middleware stack
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null)
@@ -69,6 +69,13 @@ public class UserGroupController extends Controller {
             return middlewareRes;
 
         UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+
+        // Can't find the user group in the database
+        if(userGroup == null) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+        // The user is not the owner of the user group.
         if (userGroup != null && !userGroup.isOwner())
             return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
 
