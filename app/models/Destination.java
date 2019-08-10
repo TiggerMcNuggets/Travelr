@@ -69,7 +69,8 @@ public class Destination extends BaseModel {
         this.country = request.country;
         this.user = user;
         this.isPublic = request.isPublic;
-
+        this.defaultAlbum = new Album(user, name + " Album", true);
+        this.defaultAlbum.insert();
     }
 
     // USED IN TEST DATA
@@ -83,6 +84,7 @@ public class Destination extends BaseModel {
         this.user = user;
         this.isPublic = false;
         this.defaultAlbum = new Album(user, name + " Album", true);
+        this.defaultAlbum.insert();
     }
 
 
