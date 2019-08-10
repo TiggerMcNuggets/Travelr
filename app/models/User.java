@@ -46,8 +46,6 @@ public class User extends BaseModel {
     @Constraints.Required
     public int dateOfBirth;
 
-    @NotNull
-    public Album defaultAlbum;
 
     @NotNull
     @Constraints.Required
@@ -74,6 +72,12 @@ public class User extends BaseModel {
 
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<UserNationality> nationalities;
+
+    /**
+     * Groups which the user belongs to
+     */
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
+    public List<UserGroup> userGroups;
 
     @ManyToMany(cascade=CascadeType.ALL)
     public List<TravellerType> travellerTypes;
@@ -278,7 +282,7 @@ public class User extends BaseModel {
         Date date = new Date();
         this.timestamp = date.getTime() / 1000;
         this.albums = new ArrayList<>();
-        this.defaultAlbum =  new Album(this, "All", true);
+        Album defaultAlbum =  new Album(this, "All", true);
         this.albums.add(defaultAlbum);
     }
 
@@ -292,7 +296,7 @@ public class User extends BaseModel {
         Date date = new Date();
         this.timestamp = date.getTime() / 1000;
         this.albums = new ArrayList<>();
-        this.defaultAlbum =  new Album(this, "All", true);
+        Album defaultAlbum =  new Album(this, "All", true);
         this.albums.add(defaultAlbum);
     }
 

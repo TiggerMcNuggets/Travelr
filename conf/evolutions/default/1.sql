@@ -64,6 +64,14 @@ create table destination_photo (
   constraint pk_destination_photo primary key (id)
 );
 
+create table grouping (
+  id                            bigint auto_increment not null,
+  name                          varchar(250),
+  description                   varchar(300),
+  deleted                       boolean default false not null,
+  constraint pk_grouping primary key (id)
+);
+
 create table media (
   id                            bigint auto_increment not null,
   is_public                     boolean default 0 not null,
@@ -152,6 +160,15 @@ create table user_traveller_type (
   constraint pk_user_traveller_type primary key (user_id,traveller_type_id)
 );
 
+create table user_group (
+  id                            bigint auto_increment not null,
+  user_id                       bigint,
+  group_id                      bigint,
+  is_owner                      boolean not null default false not null,
+  deleted                       boolean default false not null,
+  constraint pk_user_group primary key (id)
+);
+
 create table user_nationality (
   id                            bigint auto_increment not null,
   user_id                       bigint,
@@ -225,6 +242,12 @@ alter table user_traveller_type add constraint fk_user_traveller_type_user forei
 
 create index ix_user_traveller_type_traveller_type on user_traveller_type (traveller_type_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_traveller_type foreign key (traveller_type_id) references traveller_type (id) on delete restrict on update restrict;
+
+create index ix_user_group_user_id on user_group (user_id);
+alter table user_group add constraint fk_user_group_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_user_group_group_id on user_group (group_id);
+alter table user_group add constraint fk_user_group_group_id foreign key (group_id) references grouping (id) on delete restrict on update restrict;
 
 create index ix_user_nationality_user_id on user_nationality (user_id);
 alter table user_nationality add constraint fk_user_nationality_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -300,6 +323,12 @@ drop index if exists ix_user_traveller_type_user;
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_traveller_type;
 drop index if exists ix_user_traveller_type_traveller_type;
 
+alter table user_group drop constraint if exists fk_user_group_user_id;
+drop index if exists ix_user_group_user_id;
+
+alter table user_group drop constraint if exists fk_user_group_group_id;
+drop index if exists ix_user_group_group_id;
+
 alter table user_nationality drop constraint if exists fk_user_nationality_user_id;
 drop index if exists ix_user_nationality_user_id;
 
@@ -320,6 +349,8 @@ drop table if exists destination_edit_request_traveller_type;
 
 drop table if exists destination_photo;
 
+drop table if exists grouping;
+
 drop table if exists media;
 
 drop table if exists media_album;
@@ -337,6 +368,8 @@ drop table if exists trip_destination;
 drop table if exists user;
 
 drop table if exists user_traveller_type;
+
+drop table if exists user_group;
 
 drop table if exists user_nationality;
 
