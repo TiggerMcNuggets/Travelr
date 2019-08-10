@@ -90,4 +90,3 @@ GET     /assets/images/*file                    controllers.Assets.at(path="/pub
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)
 GET     /*file                                  controllers.FrontendController.assetOrDefault(file)
 
-POST        /api/email          controllers.MailController.sendEmailGivenTrip()
