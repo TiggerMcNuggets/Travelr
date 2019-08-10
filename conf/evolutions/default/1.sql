@@ -7,8 +7,10 @@ create table album (
   id                            bigint auto_increment not null,
   user_id                       bigint,
   name                          varchar(255),
+  associated_destination_id     bigint,
   is_permanent                  boolean,
   deleted                       boolean default false not null,
+  constraint uq_album_associated_destination_id unique (associated_destination_id),
   constraint pk_album primary key (id)
 );
 
@@ -181,6 +183,8 @@ create table user_nationality (
 create index ix_album_user_id on album (user_id);
 alter table album add constraint fk_album_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+alter table album add constraint fk_album_associated_destination_id foreign key (associated_destination_id) references destination (id) on delete restrict on update restrict;
+
 create index ix_album_media_album on album_media (album_id);
 alter table album_media add constraint fk_album_media_album foreign key (album_id) references album (id) on delete restrict on update restrict;
 
@@ -260,6 +264,8 @@ alter table user_nationality add constraint fk_user_nationality_nationality_id f
 
 alter table album drop constraint if exists fk_album_user_id;
 drop index if exists ix_album_user_id;
+
+alter table album drop constraint if exists fk_album_associated_destination_id;
 
 alter table album_media drop constraint if exists fk_album_media_album;
 drop index if exists ix_album_media_album;
