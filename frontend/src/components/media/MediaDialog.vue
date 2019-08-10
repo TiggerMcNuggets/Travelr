@@ -45,11 +45,34 @@
         </template>
       </v-select>
       <v-spacer></v-spacer>
-      <v-switch
-        v-model="clickedImage.is_public"
-        @on="updatePhotoVisability()"
-        :label="`Public Photo`"
-      ></v-switch>
+
+
+
+        <v-layout class="justify-end">
+          <v-flex mr-0>
+          <h5 class="headline mb-0"
+          v-if="photoIsPublic">Public</h5>
+          <h5 class="headline mb-0 mr-2"
+              v-else>Private</h5>
+          </v-flex>
+          <v-flex pr-5>
+          <v-icon
+                  v-if="editVisibility"
+                  @click="() => {updateMedia(clickedImage); editVisibility = false;}"
+          >save</v-icon>
+          <v-icon v-else @click="editVisibility = true">edit</v-icon>
+          </v-flex>
+
+        <div v-if="editVisibility">
+          <v-switch
+                  v-model="clickedImage.is_public"
+                  :label="`Public Photo`"
+          ></v-switch>
+        </div>
+        </v-layout>
+
+
+
     </v-card-actions>
     <v-card-actions>
       <v-btn color="error" @click="() => {setProfilePhoto()}">Set Profile Photo</v-btn>
@@ -86,6 +109,7 @@ export default {
     return {
       albums: [],
       editCaption: false,
+      editVisibility: false,
       value: "",
       selectedAlbums: []
     };
@@ -108,7 +132,15 @@ export default {
         }
         return true;
       });
-    }
+    },
+    photoIsPublic() {
+        if (this.clickedImage.is_public) {
+            return true;
+        } else {
+            return false;
+        }
+
+    },
   },
 
   methods: {
