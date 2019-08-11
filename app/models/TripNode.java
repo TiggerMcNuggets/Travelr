@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 public class TripNode extends Node {
 
-    @OneToMany(cascade= CascadeType.ALL,orphanRemoval=true)
+    @OneToMany(cascade= CascadeType.ALL,orphanRemoval=true, mappedBy = "parent")
     private List<Node> nodes;
 
     public TripNode(String name, User user) {

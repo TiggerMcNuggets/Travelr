@@ -1,7 +1,6 @@
 package finders;
 
 import io.ebean.Finder;
-import models.Node;
 import models.TripNode;
 
 import java.util.Optional;

@@ -33,4 +33,8 @@ public class GetTripDTO {
     public void setNodes(List<NodeDTO> nodes) {
         this.nodes = nodes;
     }
+
+    public GetTripDTO() {
+
+    }
 }
