@@ -384,12 +384,6 @@ public class TripController extends Controller {
                 CustomException exception = (CustomException)ex.getCause();
                 return status(exception.getResult(), exception.getResultMessage());
             }
-//            if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
-//                return notFound(ex.getMessage());
-//            }
-//            if(ex.getMessage().equals(UnauthorizedException.class.getCanonicalName())) {
-//                return unauthorized();
-//            }
 
             logger.error(ex.getMessage());
             ex.printStackTrace();

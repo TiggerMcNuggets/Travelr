@@ -139,7 +139,7 @@ public class TripService {
                 /**
                  * Check User can edit
                  */
-                if(trip.getUser() != user) {
+                if(trip.getUser().getId() != user.getId()) {
                     throw new CustomException(Http.Status.UNAUTHORIZED, "You do not have permission to update this trip");
                 }
 
