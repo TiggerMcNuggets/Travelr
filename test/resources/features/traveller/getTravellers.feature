@@ -42,7 +42,7 @@ Feature: GetTravellers
             }
           ],
           "userProfilePhoto":"defaultPic.png",
-          "defaultAlbumId": 1
+          "defaultAlbumId": 2
         }
       ]
       """

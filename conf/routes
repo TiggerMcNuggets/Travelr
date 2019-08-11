@@ -74,6 +74,10 @@ POST        /api/destinations/edit_requests/:requestId/accept        controllers
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
 # Groups
+DELETE      /api/users/:user_id/group/:group_id/member/:member_id    controllers.UserGroupController.removeGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
+PUT         /api/users/:user_id/group/:group_id                     controllers.UserGroupController.updateUserGroup(request: Request, user_id: Long, group_id: Long)
+DELETE      /api/users/:user_id/group/:group_id                      controllers.UserGroupController.deleteGroup(request: Request, user_id: Long, group_id: Long)
+POST        /api/users/:userId/groups                                controllers.UserGroupController.createUserGroup(request: Request, userId: Long)
 GET         /api/users/:userId/groups/:groupId                       controllers.UserGroupController.getSingleGroup(request: Request, userId: Long, groupId: Long)
 
 # Trips (trips within trips)
