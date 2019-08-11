@@ -15,11 +15,11 @@ Feature: CreateAlbum
     And I will receive the response body
       """
       {
-        "id": 2
+        "id": 3
       }
       """
     When I check the album
-    Then The album id is 2
+    Then The album id is 3
 
   Scenario: Create an album successfully for a user as an admin
     Given I am authenticated
@@ -39,11 +39,11 @@ Feature: CreateAlbum
     And I will receive the response body
       """
       {
-        "id": 3
+        "id": 4
       }
       """
     When I check the album
-    Then The album id is 3
+    Then The album id is 4
 #    And The album belongs to the user TODO: implement this step when users are connected to albums
 
 
