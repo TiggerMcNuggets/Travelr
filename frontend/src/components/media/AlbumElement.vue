@@ -6,7 +6,7 @@
           <a @click="openElement">{{ album.name }}</a>
         </span>
 
-        <v-menu bottom left>
+        <v-menu bottom left v-if="hasEditPermissions && !album.isPermanant">
           <template v-slot:activator="{ on }">
             <v-btn class="more-icon" icon v-on="on">
               <v-icon>more_vert</v-icon>
@@ -61,6 +61,7 @@
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import { store } from "../../store/index";
 let mediaRepository = RepositoryFactory.get("media");
 
 export default {
@@ -111,6 +112,15 @@ export default {
       }
 
       return thumbnails;
+    },
+
+    /**
+     * Returns if the user has edit permissions
+     */
+    hasEditPermissions: function() {
+      let isMyProfile = store.getters.getUser.id == this.userId;
+      let isAdminUser = store.getters.getIsUserAdmin;
+      return isMyProfile || isAdminUser
     }
   },
   methods: {
