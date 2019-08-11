@@ -18,7 +18,7 @@
         </v-layout>
         <ul>
           <draggable
-            :list="trip.destinations"
+            :list="trip.nodes"
             :disabled="!draggableEnabled"
             class="list-group"
             ghost-class="ghost"
@@ -26,7 +26,7 @@
             @end="dragging = false"
           >
             <li
-              v-for="(destination, index) in trip.destinations"
+              v-for="(node, index) in trip.nodes"
               :v-bind="index"
               :key="index"
               class="list-group-item"
@@ -35,23 +35,23 @@
                 <v-layout>
                   <v-flex xs12 md4 class="create-trip-item">
                     <v-combobox
-                        v-if="!destination.isTrip"
+                        v-if="!node.isTrip"
                         :items="userDestinations"
                         item-text="name"
-                        v-model="destination.destination"
+                        v-model="node.destination"
                         label="Select an existing destination"
                         :rules="noSameDestinationNameConsecutiveRule"
                         return-object
                 ></v-combobox>
                   <v-text-field
                           v-else
-                          v-model="destination.name"
+                          v-model="node.name"
                           label="The trip name"
                           :rules="nameRules"
                           v-on:change="removeDestinationFromNode(index)"
                   ></v-text-field>
                       <v-switch
-                              v-model="destination.isTrip"
+                              v-model="node.isTrip"
                               :label="'Trip'"></v-switch>
                       <v-btn
                               flat
@@ -64,11 +64,11 @@
                   </v-flex>
 
                   <v-flex xs12 md4 class="create-trip-item">
-                    <v-card v-if="!destination.isTrip"
+                    <v-card v-if="!node.isTrip"
                             class="times-padding">
                       <!-- Arrival date -->
                       <v-menu
-                        v-model="destination.arrivalDateMenu"
+                        v-model="node.arrivalDateMenu"
                         :close-on-content-click="false"
                         :nudge-right="40"
                         lazy
@@ -79,7 +79,7 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="destination.arrivalDate"
+                            v-model="node.arrivalDate"
                             :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                             label="Arrival date"
                             prepend-icon="event"
@@ -88,19 +88,19 @@
                           ></v-text-field>
                         </template>
                         <v-date-picker
-                          v-model="destination.arrivalDate"
-                          @input="destination.arrivalDateMenu = false"
+                          v-model="node.arrivalDate"
+                          @input="node.arrivalDateMenu = false"
                         ></v-date-picker>
                       </v-menu>
                     </v-card>
                   </v-flex>
                   <v-flex xs12 md4 class="create-trip-item">
                     <v-card
-                            v-if="!destination.isTrip"
+                            v-if="!node.isTrip"
                             class="times-padding">
                       <!-- Departure date -->
                       <v-menu
-                        v-model="destination.departureDateMenu"
+                        v-model="node.departureDateMenu"
                         :close-on-content-click="false"
                         :nudge-right="40"
                         lazy
@@ -111,7 +111,7 @@
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
-                            v-model="destination.departureDate"
+                            v-model="node.departureDate"
                             :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                             label="Departure date"
                             prepend-icon="event"
@@ -120,8 +120,8 @@
                           ></v-text-field>
                         </template>
                         <v-date-picker
-                          v-model="destination.departureDate"
-                          @input="destination.departureDateMenu = false"
+                          v-model="node.departureDate"
+                          @input="node.departureDateMenu = false"
                         ></v-date-picker>
                       </v-menu>
                     </v-card>
@@ -179,7 +179,7 @@
   justify-content: flex-start;
 }
 
-.destination-form-padding {
+.node-form-padding {
   padding: 2em;
 }
 .times-padding {
@@ -250,7 +250,7 @@ export default {
           },
       trip: {
         name: "",
-        destinations: [{
+        nodes: [{
             name: '',
             isTrip: false,
             arrivalDate: null,
@@ -286,7 +286,7 @@ export default {
      * A rule for the form to ensure there is no consecutive destination names in a trip.
      */
     noSameDestinationNameConsecutiveRule() {
-      return noSameDestinationNameConsecutiveRule(this.trip.destinations);
+      return noSameDestinationNameConsecutiveRule(this.trip.nodes);
     },
 
     /**
@@ -294,30 +294,21 @@ export default {
      */
     arrivalBeforeDepartureAndDestinationsOneAfterTheOther() {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
-        this.trip.destinations
+        this.trip.nodes
       );
     }
   },
+
   methods: {
 
+      /**
+       * @param index: the node index
+       * ensures the node will not contain a destination if toggled to be of trip type
+       */
       removeDestinationFromNode(index) {
-          if (this.trip.destinations[index].isTrip) {
-              this.trip.destinations[index].destination = {name: null}
+          if (this.trip.nodes[index].isTrip) {
+              this.trip.nodes[index].destination = {name: null}
           }
-      },
-
-      /**
-       * Increases the depth of destination at given index
-       */
-      promote(index) {
-          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
-      },
-
-      /**
-       * Decreases the depth of destination at given index
-       */
-      demote(index) {
-          this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
       },
 
 
@@ -357,28 +348,28 @@ export default {
      * @param destIndex the index of the destination
      */
     resetDestinationDate: function(destIndex) {
-      let newDestinations = this.trip.destinations;
+      let newDestinations = this.trip.nodes;
       newDestinations[destIndex].arrivalDate = null;
       newDestinations[destIndex].departureDate = null;
-      this.trip.destinations = newDestinations;
+      this.trip.nodes = newDestinations;
     },
 
     /**
      * Deletes the given destination from the created/modified trip
      */
     deleteDestination: function(index) {
-      let newDestinations = this.trip.destinations;
+      let newDestinations = deepCopy(this.trip.nodes);
       newDestinations.splice(index, 1);
-      this.trip.destinations = newDestinations;
+      this.trip.nodes = newDestinations;
     },
 
     /**
      * Adds a template empty destination object to the form
      */
     addDestinationToTrip: function() {
-      let newDestinations = this.trip.destinations;
+      let newDestinations = this.trip.nodes;
       newDestinations.push(deepCopy(this.emptyDest));
-      this.trip.destinations = newDestinations;
+      this.trip.nodes = newDestinations;
     },
 
     /**destination
@@ -387,11 +378,7 @@ export default {
      * else calls function updateTrip
      */
     onConfirm: function() {
-      if (this.passedTrip === null) {
         this.createTrip();
-      } else {
-        this.updateTrip();
-      }
     },
 
     /**
@@ -419,44 +406,12 @@ export default {
     },
 
     /**
-     * Checks if the update trip form passes validation
-     * If it does then updates trip and updates the view trip page
-     */
-    updateTrip: function() {
-      if (this.$refs.form.validate()) {
-        const trip = this.tripAssembler();
-        this._putTrip(this.id, parseInt(this.passedTrip), trip)
-          .then(() => {
-              const url = `/users/${this.id}/trips/${parseInt(this.passedTrip)}`;
-              this.rollbackCheckpoint(
-                  'PUT',
-                  {
-                      url: url,
-                      body: trip
-                  },
-                  {
-                      url: url,
-                      body: this.rollbackPreviousBody
-                  }
-              );
-
-              // Update previous body to be used for the next checkpoints reaction
-              this.rollbackSetPreviousBody({...trip});
-              this.updateViewTripPage();
-          })
-          .catch(e => {
-            console.log(e);
-          });
-      }
-    },
-
-    /**
      * Creates a trip object from the data passed that conforms with the API specs
      * @return {name: string, destinations: Array}
      **/
     tripAssembler: function() {
       let trip = { name: this.trip.name, nodes: [] };
-      this.trip.destinations.forEach((destination, index) => {
+      this.trip.nodes.forEach((destination, index) => {
         trip.nodes.push({
           ordinal: index,
           type: destination.isTrip ? 'trip': 'destination',
@@ -471,7 +426,7 @@ export default {
      * Undoes the last action and calls setDestination() afterwards
      */
     undo: function() {
-        const actions = [this.getTrip];
+        const actions = [];
         this.rollbackUndo(actions);
     },
 
@@ -479,47 +434,9 @@ export default {
      * Redoes the last action and calls setDestination() afterwards
      */
     redo: function() {
-        const actions = [this.getTrip];
+        const actions = [];
         this.rollbackRedo(actions);
     },
-
-
-    /**
-     * Helper function to create the trip object that is shown on the component
-     */
-    setTrip(result, tripToEdit) {
-        const tripById = result.data;
-        tripToEdit.name = tripById.name;
-        for (let i = 0; i < tripById.destinations.length; i++) {
-            const destToAdd = {};
-            const currentDest = tripById.destinations[i];
-            destToAdd.title = currentDest.name;
-            destToAdd.arrivalDate =
-                currentDest.arrivalDate === null
-                    ? null
-                    : moment.unix(currentDest.arrivalDate).format("YYYY-MM-DD");
-            destToAdd.departureDate =
-                currentDest.departureDate === null
-                    ? null
-                    : moment.unix(currentDest.departureDate).format("YYYY-MM-DD");
-            destToAdd.arrivalDateMenu = false;
-            destToAdd.departureDateMenu = false;
-            tripToEdit.destinations.push(destToAdd);
-        }
-        return tripToEdit;
-      },
-
-      /**
-       * Returns an async function that resolves in the trip object to display
-       */
-      getTrip() {
-          let tripToEdit = { name: "", destinations: [] };
-          return tripRepository.getTrip(this.id, this.passedTrip).then(result => {
-              const trip = this.setTrip(result, tripToEdit);
-              this.trip = trip;
-              return trip;
-          });
-      },
   },
 
 
@@ -531,11 +448,6 @@ export default {
    */
   mounted() {
     this.getDestinations(this.userId)
-        .then(() => {
-        if (this.passedTrip !== null) {
-            this.dialogName = "Edit current trip";
-            return this.getTrip()
-        }})
         .then(() => {
             // needed for rollback functionality
             this.rollbackSetPreviousBody(this.tripAssembler());
