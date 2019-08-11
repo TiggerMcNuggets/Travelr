@@ -1,11 +1,11 @@
 package service;
 
-import controllers.dto.trip.GetTripRes;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
-import exceptions.NotFoundException;
+import exceptions.CustomException;
 import models.*;
+import play.mvc.Http;
 import repository.DatabaseExecutionContext;
 
 import javax.inject.Inject;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -132,10 +131,17 @@ public class TripService {
                  * Check Trip Exists
                  */
                 if(!tripNodeOptional.isPresent()) {
-                    throw new NotFoundException("Trip not found");
+                    throw new CustomException(Http.Status.NOT_FOUND, "Trip not found");
                 }
 
                 TripNode trip = tripNodeOptional.get();
+
+                /**
+                 * Check User can edit
+                 */
+                if(trip.getUser() != user) {
+                    throw new CustomException(Http.Status.UNAUTHORIZED, "You do not have permission to update this trip");
+                }
 
                 trip.setName(tripDTO.name);
 
@@ -160,7 +166,7 @@ public class TripService {
 
                             Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
                             if(!destination.isPresent()) {
-                                throw new NotFoundException("Destination not found");
+                                throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
                             }
 
                             DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
@@ -184,7 +190,7 @@ public class TripService {
                     if (node.type.toLowerCase().equals("trip")) {
                         Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.id));
                         if (!tNodeOptional.isPresent()) {
-                            throw new NotFoundException("Trip node not found");
+                            throw new CustomException(Http.Status.NOT_FOUND, "Trip node not found");
                         }
                         TripNode tNode = tNodeOptional.get();
                         tNode.setName(node.name);
@@ -193,7 +199,7 @@ public class TripService {
                     } else {
                         Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.id));
                         if (!dNodeOptional.isPresent()) {
-                            throw new NotFoundException("Destination node not found");
+                            throw new CustomException(Http.Status.NOT_FOUND, "Destination node not found");
                         }
                         DestinationNode dNode = dNodeOptional.get();
                         dNode.setName(node.name);
@@ -203,7 +209,7 @@ public class TripService {
 
                         Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(dNode.getDestination().getId()));
                         if (!destinationOptional.isPresent()) {
-                            throw new NotFoundException("Destination for destination node not found");
+                            throw new CustomException(Http.Status.NOT_FOUND, "Destination for destination node not found");
                         }
                         dNode.setDestination(destinationOptional.get());
 
