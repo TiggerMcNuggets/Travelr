@@ -89,7 +89,8 @@ export default {
           sortable: true
         }
       ];
-      //Checking if user is admin and addind delete button if they are
+
+      // Checking if user is admin and adding delete button if they are
       if (this.isAdmin) {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
@@ -98,7 +99,7 @@ export default {
   },
 
   /**
-   * Gets users on component creation and sets user administration status.
+   * Sets user administration status.
    */
   created: async function() {
     if (this.$store.getters.getIsUserAdmin) {

@@ -42,7 +42,7 @@ export default {
           usergroup.name.toLowerCase().search(this.search.toLowerCase()) !== -1
       );
 
-      //Currently sorting trips by id, in future we will sort trips by creation time
+      // sorting alphabetically by name
       return filteredList.sort(function(a, b) {
         return a.name - b.name;
       });

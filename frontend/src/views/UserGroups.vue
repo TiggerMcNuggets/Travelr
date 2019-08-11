@@ -65,7 +65,7 @@ export default {
 
   methods: {
     /**
-     * Updates the store with the users gotten from the backend
+     * Retrieves user groups from api
      */
     getUserGroups() {
       // TODO: Connect to uesr groups endpoint
@@ -76,8 +76,8 @@ export default {
     },
 
     /**
-     * Takes in a users ID, Deletes the user then regets all users from the database into the this.$store.state
-     * @param userId
+     * Removes user from a user group
+     * @param userId the id of the user group to remove
      */
     async deleteUser(userId) {
       this.isError = false;
@@ -106,7 +106,7 @@ export default {
   },
 
   /**
-   * Gets users on component creation and sets user administration status.
+   * Sets user administration status.
    */
   created: async function() {
     this.getUserGroups();
