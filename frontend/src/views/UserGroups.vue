@@ -1,0 +1,118 @@
+
+
+<template>
+  <v-container fluid>
+    <PageHeader
+      title="User Groups"
+      :canRedo="rollbackCanRedo"
+      :canUndo="rollbackCanUndo"
+      :undo="undo"
+      :redo="redo"
+    />
+    <v-layout row wrap>
+      <v-flex xs12 sm4 md3 pr-4>
+        <v-flex xs12 pb-4>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-flex>
+        <UserGroupList
+          :search="search"
+          :selectUserGroup="selectUserGroup"
+          :selectedGroup="selectedGroup"
+          :usergroups="usergroups"
+        />
+      </v-flex>
+      <v-flex xs12 sm8 md9>
+        <GroupUsersTable :users="users" :deleteUser="deleteUser" :isError="isError"/>
+      </v-flex>
+    </v-layout>
+  </v-container>
+</template>
+
+<script>
+import GroupUsersTable from "../components/usergroups/GroupUsersTable";
+import UserGroupList from "../components/usergroups/UserGroupNav";
+import PageHeader from "../components/common/header/PageHeader";
+import RollbackMixin from "../components/mixins/RollbackMixin.vue";
+import sampleUserGroups from "./usergroups.json";
+
+export default {
+  mixins: [RollbackMixin],
+  data() {
+    return {
+      search: "",
+      isError: false,
+      selectedGroup: sampleUserGroups[0],
+      usergroups: sampleUserGroups
+    };
+  },
+  components: {
+    GroupUsersTable,
+    UserGroupList,
+    PageHeader
+  },
+
+  computed: {
+    users() {
+      return this.selectedGroup.members;
+    }
+  },
+
+  methods: {
+    /**
+     * Updates the store with the users gotten from the backend
+     */
+    getUserGroups() {
+      // TODO: Connect to uesr groups endpoint
+    },
+
+    selectUserGroup(group) {
+      this.selectedGroup = group;
+    },
+
+    /**
+     * Takes in a users ID, Deletes the user then regets all users from the database into the this.$store.state
+     * @param userId
+     */
+    async deleteUser(userId) {
+      this.isError = false;
+      // TODO: Connect to delete user from group
+
+      this.getUserGroups();
+    },
+
+    /**
+     * Undoes the last action and gets users afterwards
+     */
+    undo: function() {
+      this.isError = false;
+      const actions = [this.getUserGroups];
+      this.rollbackUndo(actions);
+    },
+
+    /**
+     * Redoes the last action and gets users afterwards
+     */
+    redo: function() {
+      this.isError = false;
+      const actions = [this.getUserGroups];
+      this.rollbackRedo(actions);
+    }
+  },
+
+  /**
+   * Gets users on component creation and sets user administration status.
+   */
+  created: async function() {
+    this.getUserGroups();
+    if (this.$store.getters.getIsUserAdmin) {
+      this.isAdmin = true;
+    }
+  }
+};
+</script>
