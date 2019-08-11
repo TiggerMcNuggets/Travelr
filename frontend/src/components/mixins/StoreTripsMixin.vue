@@ -44,7 +44,7 @@
              */
             _getTrip: async function(userId, tripId) {
                 try {
-                    await this.$store.dispatch('getTrip', {userId, tripId});
+                    return await this.$store.dispatch('getTrip', {userId, tripId});
                 } catch (e) {
                     console.log(e);
                 }
