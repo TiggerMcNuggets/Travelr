@@ -152,7 +152,7 @@ public class TripService {
                     if(node.id == null) {
                         if(node.type.equals("trip")) {
                             TripNode newNode = new TripNode(node.name, user);
-                            newNode.setParent(newNode);
+                            newNode.setParent(trip);
                             newNode.save();
                             node.id = newNode.getId();
 
