@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.CreateUserGroupReq;
 import controllers.dto.UserGroup.CreateUserGroupRes;
+import controllers.dto.UserGroup.GetUserGroupRes;
 import models.User;
 import models.UserGroup;
 import play.data.Form;
@@ -15,6 +16,8 @@ import play.mvc.Result;
 import repository.UserGroupRepository;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -69,13 +72,19 @@ public class UserGroupController extends Controller {
 
 
     public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
-        return userGroupRepository.getOneGroup(groupId).thenApplyAsync(UserGroups -> {
+        return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
+            List<User> members = new ArrayList<User>();
             for (UserGroup user: UserGroups) {
-                user.getUser();
+                members.add(user.getUser());
             }
-            return ok();
+            GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId));
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
         });
     }
+
+
 
 //    public CompletionStage<Result> getAllGroups() {
 //        return userGroupRepository.getAllGroups().thenApplyAsync(groups -> {
