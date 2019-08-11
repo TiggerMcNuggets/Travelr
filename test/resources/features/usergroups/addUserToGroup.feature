@@ -1,4 +1,4 @@
-Feature: Delete User Group
+Feature: Add User to Group
   Description: The purpose of this feature is to test the api endpoint related to adding a user to a group
 
   Scenario: Add a user to a group who will be an owner successfully
