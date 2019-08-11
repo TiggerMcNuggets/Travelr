@@ -3,6 +3,7 @@ package controllers;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
 import models.Grouping;
 import models.UserGroup;
@@ -16,6 +17,8 @@ import repository.UserGroupRepository;
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import static com.ea.async.Async.await;
 
 public class UserGroupController extends Controller {
 
@@ -118,6 +121,8 @@ public class UserGroupController extends Controller {
             }
         }
 
+        await(userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req));
+
         return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
 
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
@@ -133,8 +138,33 @@ public class UserGroupController extends Controller {
         });
     }
 
+    @Authorization.RequireAuth
+    public CompletionStage<Result> addUserToGroup(Http.Request request, Long userId, Long groupId, Long memberId) {
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
 
+        Form<AddUserToGroupReq> addUserToGroupForm = formFactory.form(AddUserToGroupReq.class).bindFromRequest(request);
 
+        if (addUserToGroupForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest("Error adding user to group"));
+        }
 
+        AddUserToGroupReq req = addUserToGroupForm.get();
+        boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
+        await(userGroupRepository.check)
+
+//        return userGroupRepository.addUserToGroup(userId, groupId, isAdmin, req)
+//                .thenApplyAsync(userGroup -> {
+//            if (userGroup == null) {
+//                return notFound(APIResponses.GROUP_NOT_FOUND);
+//            }
+//            else if (!isAdmin && !userGroup.isOwner()) {
+//                return forbidden(APIResponses.FORBIDDEN);
+//            }
+//        }).thenApplyAsync() ;
+
+//        await(userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req));
+    }
 }
