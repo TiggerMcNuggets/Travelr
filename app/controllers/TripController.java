@@ -414,7 +414,7 @@ public class TripController extends Controller {
      */
     public Result test() throws Exception {
 
-        User user = User.find.findById(1L);
+        User user = User.find.findById(3L);
 
         Destination dest1 = new Destination("Destination 1", 1.0, 1.0, "type", "district", "country", user);
         dest1.insert();
