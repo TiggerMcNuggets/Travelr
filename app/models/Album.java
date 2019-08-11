@@ -3,10 +3,7 @@ package models;
 import finders.AlbumFinder;
 import play.data.validation.Constraints;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +21,9 @@ public class Album extends BaseModel {
 
     @Constraints.Required
     public String name;
+
+    @OneToOne
+    public Destination associatedDestination;
 
     /**
      * Whether the album is a permanent album
