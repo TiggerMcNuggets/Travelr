@@ -5,6 +5,7 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
+import exceptions.RestException;
 import models.Grouping;
 import models.UserGroup;
 import play.data.Form;
@@ -19,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 import static com.ea.async.Async.await;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class UserGroupController extends Controller {
 
@@ -75,12 +77,12 @@ public class UserGroupController extends Controller {
 
         // Can't find the user group in the database
         if(userGroup == null) {
-            return CompletableFuture.completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+            return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
         }
 
         // The user is not the owner of the user group.
         if (userGroup != null && !userGroup.isOwner())
-            return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
+            return completedFuture(forbidden(APIResponses.FORBIDDEN));
 
         return userGroupRepository.remove(groupId).thenApplyAsync(deletedGroupId -> {
             if(deletedGroupId == null) {
@@ -107,7 +109,7 @@ public class UserGroupController extends Controller {
         Form<UpdateUserGroupReq> updateUserGroupForm = formFactory.form(UpdateUserGroupReq.class).bindFromRequest(request);
 
         if (updateUserGroupForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Error updating user group"));
+            return completedFuture(badRequest("Error updating user group"));
         }
 
 
@@ -117,7 +119,7 @@ public class UserGroupController extends Controller {
         // Bad Request check
         for (Grouping grouping : Grouping.find.all()) {
             if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(grouping)) {
-                return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
+                return completedFuture(badRequest(APIResponses.BAD_REQUEST));
             }
         }
 
@@ -153,18 +155,12 @@ public class UserGroupController extends Controller {
         AddUserToGroupReq req = addUserToGroupForm.get();
         boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        await(userGroupRepository.check)
-
-//        return userGroupRepository.addUserToGroup(userId, groupId, isAdmin, req)
-//                .thenApplyAsync(userGroup -> {
-//            if (userGroup == null) {
-//                return notFound(APIResponses.GROUP_NOT_FOUND);
-//            }
-//            else if (!isAdmin && !userGroup.isOwner()) {
-//                return forbidden(APIResponses.FORBIDDEN);
-//            }
-//        }).thenApplyAsync() ;
-
-//        await(userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req));
+        try {
+            await(userGroupRepository.addUserToGroup(userId, groupId, isAdmin, req));
+        } catch (RestException e) {
+            System.out.println("did i get here?");
+            return e.getResult();
+        }
+        return completedFuture(ok());
     }
 }

@@ -1,13 +1,22 @@
 package repository;
 
+import controllers.constants.APIResponses;
+import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
+import exceptions.BadRequestException;
+import exceptions.ForbiddenException;
+import exceptions.NotFoundException;
+import exceptions.RestException;
 import models.Grouping;
+import models.User;
 import models.UserGroup;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class UserGroupRepository {
@@ -84,7 +93,17 @@ public class UserGroupRepository {
         }, context);
     }
 
+    public CompletableFuture<Grouping> addUserToGroup(Long userId, Long groupId, boolean isAdmin, AddUserToGroupReq req) throws RestException {
+        return supplyAsync(() -> {
+            Grouping group = Grouping.find.byId(groupId);
+            System.out.println("did i get here 1");
+            if (group == null) throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
 
+            User user = User.find.findById(userId);
+            System.out.println("did i get here 2");
+            if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
+            return group;
+        }, context);
 
-
+    }
 }
