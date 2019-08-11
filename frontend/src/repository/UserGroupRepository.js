@@ -3,7 +3,7 @@ import Repository from "./Repository";
 export default {
   /**
    * Gets all user groups
-   * @param {*} userId The user id
+   * @param {number} userId The user id
    */
   getGroupsForUser(userId) {
     return Repository.get(`/users/${userId}/group`);
@@ -11,7 +11,7 @@ export default {
 
   /**
    * Gets a single a user group for a user.
-   * @param {*} userId The user id
+   * @param {number} userId The user id
    */
   createUserGroup(userId) {
     return Repository.post(`/users/${userId}/group`);
@@ -19,8 +19,8 @@ export default {
 
   /**
    * Gets a single user group given a user and group id
-   * @param {*} userId The user id
-   * @param {*} groupId The user group id
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
    */
   getSingleUserGroup(userId, groupId) {
     return Repository.get(`/users/${userId}/group/${groupId}`);
@@ -28,8 +28,15 @@ export default {
 
   /**
    * Updates a single user group given a user and group id
-   * @param {*} userId The user id
-   * @param {*} groupId The user group id
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
+   */
+
+  /**
+   *
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
+   * @param {Object} payload The new group information to be updated to.
    */
   updateUserGroup(userId, groupId, payload) {
     return Repository.put(`/users/${userId}/group/${groupId}`, payload);
@@ -37,8 +44,8 @@ export default {
 
   /**
    * Deletes a single user group given a user and group id
-   * @param {*} userId The user id
-   * @param {*} groupId The user group id
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
    */
   deleteSingleUserGroup(userId, groupId) {
     return Repository.delete(`/users/${userId}/group/${groupId}`);
@@ -46,9 +53,9 @@ export default {
 
   /**
    * Adds a a single to a user group given a user and group id and the id of the user to add.
-   * @param {*} userId The user id
-   * @param {*} groupId The user group id
-   * @param {*} memberId The id of the user to add to the group
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
+   * @param {number} memberId The id of the user to add to the group
    */
   addUserToUserGroup(userId, groupId, memberId) {
     return Repository.post(
@@ -58,9 +65,17 @@ export default {
 
   /**
    * Updates ownership status of a group member given a user and group id and the id of the user to update.
-   * @param {*} userId The user id
-   * @param {*} groupId The user group id
-   * @param {*} memberId The id of the user to update the group
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
+   * @param {number} memberId The id of the user to update the group
+   */
+
+  /**
+   * Updates ownership status of a group member given a user and group id and the id of the user to update.
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
+   * @param {number} memberId The id of the user to update the group
+   * @param {Object} payload the new member ownership information
    */
   updateUserInUserGroup(userId, groupId, memberId, payload) {
     return Repository.put(
@@ -71,9 +86,9 @@ export default {
 
   /**
    * Removes a group member given a user and group id and the id of the user to remove.
-   * @param {*} userId The user id
-   * @param {*} groupId The user group id
-   * @param {*} memberId The id of the user to remove in the group
+   * @param {number} userId The user id
+   * @param {number} groupId The user group id
+   * @param {number} memberId The id of the user to remove in the group
    */
   removeUserInUserGroup(userId, groupId, memberId) {
     return Repository.delete(
