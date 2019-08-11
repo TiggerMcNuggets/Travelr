@@ -23,7 +23,7 @@ Feature: GetDestinations
           "isPublic": false,
           "ownerId": 2,
           "travellerTypes": [],
-          "defaultAlbumId":3
+          "defaultAlbumId":4
         }
       ]
       """
@@ -70,7 +70,7 @@ Feature: GetDestinations
           "isPublic":true,
           "id":1,
           "travellerTypes":[],
-          "defaultAlbumId":3
+          "defaultAlbumId":4
         }
       ]
       """
