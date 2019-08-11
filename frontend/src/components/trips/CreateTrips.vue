@@ -33,22 +33,9 @@
             >
               <v-card class="destination-form-padding">
                 <v-layout>
-                    <v-flex align-self-center>
-                            <v-btn
-                                    :disabled="!isPromotable(trip.destinations, index)"
-                                    icon
-                                    v-on:click="promote(index)">
-                                <v-icon color="primary lighten-1">arrow_upward</v-icon>
-                            </v-btn>
-                            <v-btn
-                                :disabled="!isDemotable(trip.destinations, index)"
-                                icon
-                                v-on:click="demote(index)">
-                                <v-icon color="primary lighten-1">arrow_downward</v-icon>
-                            </v-btn>
-                    </v-flex>
                   <v-flex xs12 md4 class="create-trip-item">
                     <v-combobox
+                        v-if="!destination.isTrip"
                         :items="userDestinations"
                         item-text="name"
                         v-model="destination.destination"
@@ -56,22 +43,29 @@
                         :rules="noSameDestinationNameConsecutiveRule"
                         return-object
                 ></v-combobox>
-                      <v-chip
-                              :color="getDepthData(destination.depth).color"
-                              pill>
-                          {{destination.depth + 1}}
-                      </v-chip>
+                  <v-text-field
+                          v-else
+                          v-model="destination.name"
+                          label="The trip name"
+                          :rules="nameRules"
+                          v-on:change="removeDestinationFromNode(index)"
+                  ></v-text-field>
+                      <v-switch
+                              v-model="destination.isTrip"
+                              :label="'Trip'"></v-switch>
                       <v-btn
                               flat
                               small
                               color="error"
                               v-if="index > 1"
-                              v-on:click="deleteDestination(index)"
-                      >Remove</v-btn>
+                              v-on:click="deleteDestination(index)">
+                        Remove
+                      </v-btn>
                   </v-flex>
 
                   <v-flex xs12 md4 class="create-trip-item">
-                    <v-card class="times-padding">
+                    <v-card v-if="!destination.isTrip"
+                            class="times-padding">
                       <!-- Arrival date -->
                       <v-menu
                         v-model="destination.arrivalDateMenu"
@@ -101,7 +95,9 @@
                     </v-card>
                   </v-flex>
                   <v-flex xs12 md4 class="create-trip-item">
-                    <v-card class="times-padding">
+                    <v-card
+                            v-if="!destination.isTrip"
+                            class="times-padding">
                       <!-- Departure date -->
                       <v-menu
                         v-model="destination.departureDateMenu"
@@ -244,24 +240,27 @@ export default {
       draggableEnabled: true,
       dialogName: "Create a new trip",
       emptyDest: {
+            name: '',
+            isTrip: false,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
             departureDateMenu: false,
-            depth: 0,
             destination: {name: null}
           },
       trip: {
         name: "",
         destinations: [{
-            depth: 0,
+            name: '',
+            isTrip: false,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
             departureDateMenu: false,
             destination: {name: null}
           }, {
-            depth: 0,
+            name: '',
+            isTrip: false,
             arrivalDate: null,
             departureDate: null,
             arrivalDateMenu: false,
@@ -300,6 +299,12 @@ export default {
     }
   },
   methods: {
+
+      removeDestinationFromNode(index) {
+          if (this.trip.destinations[index].isTrip) {
+              this.trip.destinations[index].destination = {name: null}
+          }
+      },
 
       /**
        * Increases the depth of destination at given index
@@ -376,7 +381,7 @@ export default {
       this.trip.destinations = newDestinations;
     },
 
-    /**
+    /**destination
      * Checks if passedTrip is null
      * If it is then calls fucntion createTrip
      * else calls function updateTrip
@@ -398,10 +403,14 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        this._postTrip(this.id, trip)
+        const tripCreation = {name: this.trip.name};
+        this._postTrip(this.id, tripCreation)
           .then(res => {
-            this.toggleShowCreateTrip();
             this.checkpointCreateTrip(res.data.id)
+            return this._putTrip(this.id, res.data.id, trip);
+          })
+          .then(() => {
+              this.toggleShowCreateTrip();
           })
           .catch(e => {
             console.log(e);
@@ -446,11 +455,11 @@ export default {
      * @return {name: string, destinations: Array}
      **/
     tripAssembler: function() {
-      let trip = { name: this.trip.name, destinations: [] };
+      let trip = { name: this.trip.name, nodes: [] };
       this.trip.destinations.forEach((destination, index) => {
-        trip.destinations.push({
-          depth: destination.depth,
+        trip.nodes.push({
           ordinal: index,
+          type: destination.isTrip ? 'trip': 'destination',
           destination: {...destination.destination}, 
           arrivalDate: moment(destination.arrivalDate).unix(),
           departureDate: moment(destination.departureDate).unix()
