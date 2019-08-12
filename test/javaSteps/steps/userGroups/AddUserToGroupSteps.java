@@ -33,9 +33,10 @@ public class AddUserToGroupSteps {
      * Creates user without inserting and sets it to group member in state to be used for request URL in the future
      * @param dataTable The user data
      */
-    @Given("The future member does not exists")
-    public void theFutureMemberDoesNotExists(List<Map<String, String>> dataTable) {
+    @Given("The future member does not exist")
+    public void theFutureMemberDoesNotExist(List<Map<String, String>> dataTable) {
         User newGroupMember = createUserFromTable(dataTable);
+        newGroupMember.setId(100L);
         state.setGroupMember(newGroupMember);
     }
 

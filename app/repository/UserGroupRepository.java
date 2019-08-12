@@ -3,13 +3,11 @@ package repository;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
-import exceptions.BadRequestException;
-import exceptions.ForbiddenException;
-import exceptions.NotFoundException;
-import exceptions.RestException;
+import exceptions.*;
 import models.Grouping;
 import models.User;
 import models.UserGroup;
+import utils.AsyncHandler;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -18,10 +16,12 @@ import java.util.concurrent.CompletionException;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static utils.AsyncHandler.handleResult;
 
 public class UserGroupRepository {
 
     private DatabaseExecutionContext context;
+    private AsyncHandler asyncHandler = new AsyncHandler();
 
     @Inject
     public UserGroupRepository(DatabaseExecutionContext context) {
@@ -95,15 +95,21 @@ public class UserGroupRepository {
 
     public CompletableFuture<Grouping> addUserToGroup(Long userId, Long groupId, boolean isAdmin, AddUserToGroupReq req) throws RestException {
         return supplyAsync(() -> {
+
+
             Grouping group = Grouping.find.byId(groupId);
             System.out.println("did i get here 1");
-            if (group == null) throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
-
+            if (group == null) throw new CustomException(404, "Not foouund");
+//
             User user = User.find.findById(userId);
-            System.out.println("did i get here 2");
-            if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
+            if (user == null) {
+                System.out.println("did i get here 2");
+                throw new CustomException(404, "Not Fouuund");
+            }
+            if (true) {
+                throw new CustomException(404, "Not Fouuund");
+            }
             return group;
         }, context);
-
     }
 }

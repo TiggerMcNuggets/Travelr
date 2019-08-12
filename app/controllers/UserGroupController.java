@@ -5,6 +5,7 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
+import dto.trip.TripDTO;
 import exceptions.RestException;
 import models.Grouping;
 import models.UserGroup;
@@ -21,6 +22,7 @@ import java.util.concurrent.CompletionStage;
 
 import static com.ea.async.Async.await;
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static utils.AsyncHandler.handleResult;
 
 public class UserGroupController extends Controller {
 
@@ -123,8 +125,6 @@ public class UserGroupController extends Controller {
             }
         }
 
-        await(userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req));
-
         return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
 
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
@@ -153,14 +153,16 @@ public class UserGroupController extends Controller {
         }
 
         AddUserToGroupReq req = addUserToGroupForm.get();
+        System.out.println("1 " + req.getIsOwner());
         boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        try {
-            await(userGroupRepository.addUserToGroup(userId, groupId, isAdmin, req));
-        } catch (RestException e) {
-            System.out.println("did i get here?");
-            return e.getResult();
-        }
-        return completedFuture(ok());
+        CompletionStage<Grouping> testStage = userGroupRepository.addUserToGroup(userId, groupId, isAdmin, req);
+
+        return testStage.thenApplyAsync(grouping -> {
+            System.out.println("2");
+            return created();
+        }).handle((result, ex) -> {
+            return handleResult(result, ex);
+        });
     }
 }
