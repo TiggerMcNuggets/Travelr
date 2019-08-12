@@ -23,6 +23,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import service.MailgunService;
 import service.TripService;
 
 import java.io.BufferedWriter;
@@ -41,11 +42,12 @@ public class TripController extends Controller {
     @Inject
     FormFactory formFactory;
     private final TripService tripService;
+    private final MailgunService mailgunService;
 
     @Inject
 
-    public TripController(TripService tripService) {
-
+    public TripController(TripService tripService, MailgunService mailgunService) {
+        this.mailgunService = mailgunService;
         this.tripService = tripService;
     }
 
@@ -82,6 +84,7 @@ public class TripController extends Controller {
 
         Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
         TripDTO dto = createTripForm.get();
+        Trip updatedTrip = Trip.find.byId(tripId);
 
         if (createTripForm.hasErrors()) {
             System.out.println(createTripForm.errors());
@@ -94,12 +97,17 @@ public class TripController extends Controller {
 
         User user = request.attrs().get(Attrs.USER);
 
+        //TODO once groups and users 'following' a trip is implemented, generate a list of recipients for trip update
+        ArrayList<User> recipientList = new ArrayList<>();
+        recipientList.add(user);
+
+        mailgunService.sendTripUpdateEmail(recipientList, updatedTrip.name, userId, tripId);
+
 
         return tripService.updateTrip(tripId, dto, user).thenApplyAsync((trip) -> {
             if (trip == null) {
                 return notFound();
             }
-
             return ok(Json.toJson(new TripDTO(trip)));
         });
     }

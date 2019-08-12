@@ -22,6 +22,7 @@ import service.MailgunService;
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
@@ -110,8 +111,7 @@ public class UserController extends Controller {
             CreateUserRes response = new CreateUserRes(id);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
-
-            mailgunService.sendWelcomeEmail(req.email, req.firstName);
+            mailgunService.sendWelcomeEmail(User.find.findByEmail(req.email));
 
             return created(jsonResponse);
         });
