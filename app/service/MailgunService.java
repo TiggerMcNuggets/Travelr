@@ -2,6 +2,7 @@ package service;
 
 import com.google.gson.JsonObject;
 import models.User;
+import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
@@ -39,48 +40,52 @@ public class MailgunService {
      * A general function for generating a ws request to be sent to mailgun. This is to reduce code duplication
      * in the mailgunService class
      *
-     * @param recipientEmail The email address of the recipient as a string.
-     * @param recipientFirstName The first name of the recipient as a string.
+     * @param recipients An arraylist containing user objects indended to receive the email.
      * @param subject The subject of the email as a string.
      * @param template The name of the email template to be used as a string.
      * @param recipientVariables The custom variables to be included in the mailgun request, Json formatted as a string.
      * @return a WSRequest http request to be sent to the mailgun API.
      */
-    private WSRequest generateMailgunRequest(String recipientEmail, String recipientFirstName, String subject, String template, String recipientVariables){
+    private WSRequest generateMailgunRequest(ArrayList<User> recipients, String subject, String template, JsonObject recipientVariables){
         WSRequest request = ws.url(mailgunApi);
         request.addQueryParameter("from", mailgunFromAddress);
-        request.addQueryParameter("to", recipientEmail);
+        for (User recipient : recipients) {
+            request.addQueryParameter("to", recipient.email);
+        }
         request.addQueryParameter("subject", subject);
         request.addQueryParameter("template", template);
-        request.addQueryParameter("recipient-variables", recipientVariables);
+        request.addQueryParameter("recipient-variables", recipientVariables.toString());
         System.out.println(recipientVariables);
         request.setAuth("api", mailgunKey);
         return request;
     }
+
 
     /**
      * Composes and sends a welcome email to the given email address. This function
      * uses the 'welcome-email' template on our Mailgun account and provides the
      * user's first name to the template's placeholder field.
      *
-     * @param recipientEmail a string that contains the recipient's email address
-     * @param recipientFirstName a string that contains the recipient's first name
+     * @param recipient a user object that contains the recipient's data
      * @return a response code from the Mailgun API which is useful for testing.
      */
-    public CompletableFuture<Integer> sendWelcomeEmail(String recipientEmail, String recipientFirstName) {
+    public CompletableFuture<Integer> sendWelcomeEmail(User recipient) {
         return supplyAsync(() -> {
             String welcomeEmailSubject = "Travelr - Welcome Aboard!";
 
+            ArrayList<User> recipientList = new ArrayList<>();
+            recipientList.add(recipient);
+
             JsonObject recipientVariableFields = new JsonObject();
-            recipientVariableFields.addProperty("firstName", recipientFirstName);
+            recipientVariableFields.addProperty("firstName", recipient.firstName);
 
             JsonObject recipientVariable = new JsonObject();
-            recipientVariable.add(recipientEmail, recipientVariableFields);
-            WSRequest request = generateMailgunRequest(recipientEmail,
-                    recipientFirstName,
+            recipientVariable.add(recipient.email, recipientVariableFields);
+
+            WSRequest request = generateMailgunRequest(recipientList,
                     welcomeEmailSubject,
                     "welcome-email",
-                    recipientVariable.toString());
+                    recipientVariable);
 
             CompletionStage<WSResponse> asyncResponse = request.post("");
 
@@ -105,22 +110,27 @@ public class MailgunService {
      * a user following the trip. This function uses the "trip-update-email" template on the mailgun account
      * and provides the user's first name, email and the previous name of the trip updated.
      *
-     * @param recipient A user following the trip updated
+     * @param recipients An arraylist of recipient user objects.
      * @param tripName the previous name of the trip
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripUpdateEmail(User recipient, String tripName, Long userId, Long tripId) {
+    public CompletableFuture<Integer> sendTripUpdateEmail(ArrayList<User> recipients, String tripName, Long userId, Long tripId) {
         return supplyAsync(() -> {
             JsonObject recipientVariables = new JsonObject();
             JsonObject recipientVariableFields = new JsonObject();
             String subject = "Travelr - Your trip " + tripName + " was recently updated.";
-            recipientVariableFields.addProperty("firstName", recipient.firstName);
-            recipientVariables.add(recipient.email, recipientVariableFields);
-            WSRequest request = generateMailgunRequest(recipient.email,
-                    recipient.firstName,
+
+            for (User recipient: recipients) {
+                recipientVariableFields.addProperty("firstName", recipient.firstName);
+                recipientVariables.add(recipient.email, recipientVariableFields);
+                recipientVariableFields = new JsonObject();
+
+            }
+
+            WSRequest request = generateMailgunRequest(recipients,
                     subject,
                     "welcome-email", // TODO change this to the trip update email template
-                    recipientVariables.toString());
+                    recipientVariables);
             CompletionStage<WSResponse> asyncResponse = request.post("");
 
             CompletionStage<Integer> responseCode = asyncResponse.thenApply(response -> {

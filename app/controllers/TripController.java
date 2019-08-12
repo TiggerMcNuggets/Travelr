@@ -101,9 +101,7 @@ public class TripController extends Controller {
         ArrayList<User> recipientList = new ArrayList<>();
         recipientList.add(user);
 
-        for(User recipient : recipientList) {
-            mailgunService.sendTripUpdateEmail(recipient, updatedTrip.name, userId, tripId);
-        }
+        mailgunService.sendTripUpdateEmail(recipientList, updatedTrip.name, userId, tripId);
 
 
         return tripService.updateTrip(tripId, dto, user).thenApplyAsync((trip) -> {
