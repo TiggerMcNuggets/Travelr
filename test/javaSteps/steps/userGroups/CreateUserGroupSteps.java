@@ -12,6 +12,9 @@ public class CreateUserGroupSteps {
     // Singleton object that holds shared values across features
     private StateSingleton state = StateSingleton.getInstance();
 
+    /**
+     * Creates the post request for creating a userGroup
+     */
     @When("I want to create a group")
     public void i_want_to_create_a_group() {
         state.getRequest().method("POST");
