@@ -30,7 +30,7 @@ public class DeleteUserGroupMemberSteps {
     }
 
     /**
-     * Sends a request to delete the added group member from the group
+     * Sets request to delete the added group member from the group
      */
     @When("I want to remove the group member in the user group")
     public void i_want_to_remove_the_group_member_in_the_user_group() {
