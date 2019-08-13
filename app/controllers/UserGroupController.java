@@ -15,6 +15,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserGroupRepository;
+import utils.AsyncHandler;
 
 import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
@@ -22,7 +23,6 @@ import java.util.concurrent.CompletionStage;
 
 import static com.ea.async.Async.await;
 import static java.util.concurrent.CompletableFuture.completedFuture;
-import static utils.AsyncHandler.handleResult;
 
 public class UserGroupController extends Controller {
 
@@ -140,29 +140,32 @@ public class UserGroupController extends Controller {
         });
     }
 
+    /**
+     * Adds user to a group
+     * @param request The request object
+     * @param userId The user's id who is making the request (unless admin)
+     * @param groupId The group's id
+     * @param memberId The member's id who is going to be added to the group
+     * @return 201 if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> addUserToGroup(Http.Request request, Long userId, Long groupId, Long memberId) {
-        // middleware stack
+        // Middleware stack
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
         if (middlewareRes != null) return middlewareRes;
 
+        // Bad request check
         Form<AddUserToGroupReq> addUserToGroupForm = formFactory.form(AddUserToGroupReq.class).bindFromRequest(request);
-
         if (addUserToGroupForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest("Error adding user to group"));
         }
 
         AddUserToGroupReq req = addUserToGroupForm.get();
-        System.out.println("1 " + req.getIsOwner());
         boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        CompletionStage<Grouping> testStage = userGroupRepository.addUserToGroup(userId, groupId, isAdmin, req);
+        CompletionStage<Void> addUserToGroupStage = userGroupRepository.addUserToGroup(userId, groupId, memberId, isAdmin, req);
 
-        return testStage.thenApplyAsync(grouping -> {
-            System.out.println("2");
-            return created();
-        }).handle((result, ex) -> {
-            return handleResult(result, ex);
-        });
+        return addUserToGroupStage.thenApplyAsync(stage -> created()
+        ).handle(AsyncHandler::handleResult);
     }
 }

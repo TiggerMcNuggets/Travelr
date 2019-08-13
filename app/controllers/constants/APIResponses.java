@@ -6,6 +6,7 @@ public class APIResponses {
     public static final String FORBIDDEN = "Forbidden: Access Denied";
     public static final String BAD_REQUEST = "Bad Request";
     public static final String MISSING_FILE = "Missing file";
+    public static final String NOT_FOUND = "Not Found";
 
     public static final String DESTINATION_NOT_FOUND = "Destination not found";
     public static final String LESS_THAN_TWO_DESTINATIONS = "Less than two destinations";
@@ -28,6 +29,7 @@ public class APIResponses {
     public static final String SUCCESSFUL_GROUP_DELETION = "Group removed";
     public static final String SUCCESSFUL_GROUP_UPDATE = "Group updated";
     public static final String GROUP_NOT_FOUND = "Group not found";
+    public static final String MEMBER_EXISTS_IN_GROUP = "Member already exists in the group";
 
 
 

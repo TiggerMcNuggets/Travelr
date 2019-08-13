@@ -13,7 +13,7 @@ Feature: Add User to Group
     And The body is
     """
     {
-      "isOwner": "true"
+      "isOwner": true
     }
     """
     And I send the request
@@ -145,12 +145,11 @@ Feature: Add User to Group
     """
     And I send the request
     Then I will receive the response code 403
-    And The user still does not exist in the group
 
 
   Scenario: Add a user to a group which does not exist
     Given I am authenticated
-    And I do not own the user group
+    And The group does not exist
       | name         | description         |
       | Team 300     | The best team eva   |
     And The future member exists

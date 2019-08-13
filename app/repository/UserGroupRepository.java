@@ -93,23 +93,40 @@ public class UserGroupRepository {
         }, context);
     }
 
-    public CompletableFuture<Grouping> addUserToGroup(Long userId, Long groupId, boolean isAdmin, AddUserToGroupReq req) throws RestException {
+    /**
+     * Adds user to group
+     * @param userId The user's id who is calling the request
+     * @param groupId The group's id
+     * @param memberId The member's id who will be added to the group
+     * @param isAdmin Whether the member should be an owner
+     * @param req The request DTO
+     * @return Void
+     * @throws CustomException Exception that will return the related request
+     */
+    public CompletableFuture<Void> addUserToGroup(Long userId, Long groupId, Long memberId, boolean isAdmin, AddUserToGroupReq req) throws CustomException {
+
         return supplyAsync(() -> {
-
-
+            // Get group
             Grouping group = Grouping.find.byId(groupId);
-            System.out.println("did i get here 1");
-            if (group == null) throw new CustomException(404, "Not foouund");
-//
-            User user = User.find.findById(userId);
-            if (user == null) {
-                System.out.println("did i get here 2");
-                throw new CustomException(404, "Not Fouuund");
-            }
-            if (true) {
-                throw new CustomException(404, "Not Fouuund");
-            }
-            return group;
+            if (group == null) throw new CustomException(404, APIResponses.GROUP_NOT_FOUND);
+
+            // Get member
+            User user = User.find.findById(memberId);
+            if (user == null) throw new CustomException(404, APIResponses.GROUP_MEMBER_NOT_FOUND);
+
+            // Check if member already belongs to group
+            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("group_id", groupId).findOne();
+            if (memberGroup != null) throw new CustomException(403, APIResponses.MEMBER_EXISTS_IN_GROUP);
+
+            // Check that user is an admin or is the owner of the gruop
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+            if ((userGroup == null || !userGroup.isOwner) && !isAdmin) throw new CustomException(403, APIResponses.FORBIDDEN);
+
+            // Add user to group
+            UserGroup newUserGroup = new UserGroup(user, group, req.getIsOwner());
+            newUserGroup.insert();
+
+            return null;
         }, context);
     }
 }

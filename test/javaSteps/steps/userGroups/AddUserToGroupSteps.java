@@ -69,7 +69,7 @@ public class AddUserToGroupSteps {
      * Checks if the user is an owner of the group
      */
     @Then("The user is now an owner of the group")
-    public void theUserIsNowAnOwnerOfTheGroup() {
+    public void theUserIsNowAnOwnerOfTheGroup() { ;
         Assert.assertTrue(findUserGroup().isOwner());
     }
 
