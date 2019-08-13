@@ -7,6 +7,11 @@ public class CustomException extends RuntimeException {
     String message;
     int result;
 
+    /**
+     * Constructor
+     * @param result The http status number
+     * @param message The additional message to display with the response
+     */
     public CustomException(int result, String message) {
         this.result = result;
         this.message = message;
