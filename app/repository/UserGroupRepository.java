@@ -106,21 +106,22 @@ public class UserGroupRepository {
     public CompletableFuture<Void> addUserToGroup(Long userId, Long groupId, Long memberId, boolean isAdmin, AddUserToGroupReq req) throws CustomException {
 
         return supplyAsync(() -> {
+
             // Get group
             Grouping group = Grouping.find.byId(groupId);
-            if (group == null) throw new CustomException(404, APIResponses.GROUP_NOT_FOUND);
+            if (group == null) throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
 
             // Get member
             User user = User.find.findById(memberId);
-            if (user == null) throw new CustomException(404, APIResponses.GROUP_MEMBER_NOT_FOUND);
+            if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
 
             // Check if member already belongs to group
             UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("group_id", groupId).findOne();
-            if (memberGroup != null) throw new CustomException(403, APIResponses.MEMBER_EXISTS_IN_GROUP);
+            if (memberGroup != null) throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
 
-            // Check that user is an admin or is the owner of the gruop
+            // Check that user is an admin or is the owner of the group
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
-            if ((userGroup == null || !userGroup.isOwner) && !isAdmin) throw new CustomException(403, APIResponses.FORBIDDEN);
+            if ((userGroup == null || !userGroup.isOwner) && !isAdmin) throw new ForbiddenException(APIResponses.FORBIDDEN);
 
             // Add user to group
             UserGroup newUserGroup = new UserGroup(user, group, req.getIsOwner());

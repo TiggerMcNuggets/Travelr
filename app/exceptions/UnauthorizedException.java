@@ -1,9 +1,5 @@
 package exceptions;
 
-import static play.mvc.Results.unauthorized;
-
-public class UnauthorizedException extends RestException {
-    public UnauthorizedException(String message) {
-        super(unauthorized(message));
-    }
+public class UnauthorizedException extends CustomException {
+    public UnauthorizedException(String message) { super(401, message); }
 }

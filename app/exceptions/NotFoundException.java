@@ -1,9 +1,5 @@
 package exceptions;
 
-import static play.mvc.Results.notFound;
-
-public class NotFoundException extends RestException {
-    public NotFoundException(String message) {
-        super(notFound(message));
-    }
+public class NotFoundException extends CustomException {
+    public NotFoundException(String message) { super(404, message); }
 }

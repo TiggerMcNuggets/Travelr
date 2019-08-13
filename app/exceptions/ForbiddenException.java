@@ -1,9 +1,7 @@
 package exceptions;
 
-import static play.mvc.Results.forbidden;
-
-public class ForbiddenException extends RestException {
+public class ForbiddenException extends CustomException {
     public ForbiddenException(String message) {
-        super(forbidden(message));
+        super(403, message);
     }
 }

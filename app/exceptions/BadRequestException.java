@@ -1,9 +1,7 @@
 package exceptions;
 
-import static play.mvc.Results.badRequest;
-
-public class BadRequestException extends RestException {
+public class BadRequestException extends CustomException {
     public BadRequestException(String message) {
-        super(badRequest(message));
+        super(400, message);
     }
 }

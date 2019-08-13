@@ -5,8 +5,6 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
-import dto.trip.TripDTO;
-import exceptions.RestException;
 import models.Grouping;
 import models.UserGroup;
 import play.data.Form;
@@ -21,7 +19,6 @@ import javax.inject.Inject;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import static com.ea.async.Async.await;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class UserGroupController extends Controller {
@@ -157,7 +154,7 @@ public class UserGroupController extends Controller {
         // Bad request check
         Form<AddUserToGroupReq> addUserToGroupForm = formFactory.form(AddUserToGroupReq.class).bindFromRequest(request);
         if (addUserToGroupForm.hasErrors()) {
-            return CompletableFuture.completedFuture(badRequest("Error adding user to group"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
         AddUserToGroupReq req = addUserToGroupForm.get();
