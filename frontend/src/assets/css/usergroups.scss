@@ -1,0 +1,17 @@
+@import "./theme.scss";
+
+.usergroup-nav-item {
+  cursor: pointer;
+}
+
+.usergroup-element {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.usergroup-element-details {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
