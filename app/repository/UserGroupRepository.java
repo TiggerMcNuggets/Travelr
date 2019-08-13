@@ -36,7 +36,7 @@ public class UserGroupRepository {
             group.insert();
             UserGroup userGroup = new UserGroup(user, group, true);
             userGroup.insert();
-            return userGroup.id;
+            return group.id;
         }, context);
     }
 
