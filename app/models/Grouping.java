@@ -1,5 +1,6 @@
 package models;
 
+import finders.GroupingFinder;
 import io.ebean.Finder;
 import play.data.validation.Constraints;
 import javax.persistence.*;
@@ -10,7 +11,7 @@ public class Grouping extends BaseModel {
     /**
      * The user group finder
      */
-    public static final Finder<Long, Grouping> find = new Finder<>(Grouping.class);
+    public static final GroupingFinder find = new GroupingFinder();
 
     /**
      * The name of the user group

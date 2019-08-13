@@ -2,6 +2,7 @@ package repository;
 
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.AddUserToGroupReq;
+import controllers.dto.UserGroup.CreateUserGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
 import exceptions.*;
 import models.Grouping;
@@ -12,11 +13,7 @@ import utils.AsyncHandler;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-
-import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static utils.AsyncHandler.handleResult;
 
 public class UserGroupRepository {
 
@@ -28,6 +25,21 @@ public class UserGroupRepository {
         this.context = context;
     }
 
+    /**
+     * Creates a new group for the user provided
+     * @param request CreateUserGroupReq with name and description
+     * @param user The user who the group is being created for
+     * @return the groups Id
+     */
+    public CompletableFuture<Long> createNewGroup(CreateUserGroupReq request, User user) {
+        return supplyAsync(() -> {
+            Grouping group = new Grouping(request.name, request.description);
+            group.insert();
+            UserGroup userGroup = new UserGroup(user, group, true);
+            userGroup.insert();
+            return userGroup.id;
+        }, context);
+    }
 
     /**
      * Deletes a group member
