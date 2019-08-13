@@ -1,6 +1,16 @@
 <template>
   <v-container class="section-container">
     <SectionHeader title="User Groups List" disableUndoRedo :options="usergroupsOptions"/>
+     <v-flex v-if="searchActive" xs12 pb-4 pt-4 pr-2 pl-2>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-flex>
+        <CreateGroupForm v-if="createGroupActive"/>
     <v-flex class="section-body">
       <UserGroupNavItem
         class="usergroup-nav-item"
@@ -17,26 +27,58 @@
 <script>
 import UserGroupNavItem from "./UserGroupNavItem";
 import SectionHeader from "../common/header/SectionHeader";
+import CreateGroupForm from "./CreateGroupForm";
 
 export default {
   components: {
     UserGroupNavItem,
-    SectionHeader
+    SectionHeader,
+    CreateGroupForm
   },
   data() {
-    return {};
+    return {
+      search: "",
+      createGroupActive: false,
+      searchActive: false
+    };
   },
-  methods: {},
+  methods: {
+    
+
+    toggleAddUserGroup() {
+      this.searchActive = false;
+      this.createGroupActive = !this.createGroupActive;
+    },
+
+    toggleSearch() {
+      this.searchActive = !this.searchActive;
+      this.createGroupActive = false;
+    },
+  },
 
   props: {
     usergroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
-    search: String,
-    usergroupsOptions: Object
   },
 
   computed: {
+
+      /**
+     * Options used in the header component.
+     */
+    usergroupsOptions() {
+      return [
+        {
+          action: this.toggleAddUserGroup,
+          icon: "add"
+        },
+        {
+          action: this.toggleSearch,
+          icon: "search"
+        }
+      ];
+    },
     /**
      * Filtered User Groups
      */

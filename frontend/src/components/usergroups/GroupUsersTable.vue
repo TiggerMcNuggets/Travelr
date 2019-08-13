@@ -1,10 +1,9 @@
 <template>
   <v-container class="section-container">
-    <!-- <h3 class="section-heading">{{name}} members</h3> -->
-    <SectionHeader :title="name + ' members'" disableUndoRedo :options="usergroupsOptions"/>
+    <SectionHeader :title="name + ' members'" disableUndoRedo />
 
     <v-flex class="section-body">
-      <v-data-table :headers="getColumns" :items="users" :search="search">
+      <v-data-table :headers="getColumns" :items="users" >
         <template v-slot:items="props">
           <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
           <td class="text-xs-right">{{ props.item.lastName }}</td>
