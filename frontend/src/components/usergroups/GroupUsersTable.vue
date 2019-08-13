@@ -1,45 +1,58 @@
 <template>
-  <v-flex>
-    <v-data-table :headers="getColumns" :items="users" :search="search">
-      <template v-slot:items="props">
-        <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
-        <td class="text-xs-right">{{ props.item.lastName }}</td>
-        <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
-        <td class="text-xs-right">{{ props.item.gender }}</td>
-        <td>
-          <ul style="list-style-type:none">
-            <li v-for="(nationality, index) in props.item.nationalities" :key="index">
-              {{ nationality.name }}
-              <br>
-            </li>
-          </ul>
-        </td>
-        <td>
-          <ul style="list-style-type:none">
-            <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
-              {{ travelType.name }}
-              <br>
-            </li>
-          </ul>
-        </td>
-        <td v-if="isAdmin" class="text-xs-right">
-          <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
-            <v-icon>delete</v-icon>
-          </v-btn>
-        </td>
-      </template>
-    </v-data-table>
+  <v-container class="section-container">
+    <!-- <h3 class="section-heading">{{name}} members</h3> -->
+    <SectionHeader :title="name + ' members'" disableUndoRedo :options="usergroupsOptions"/>
+
+    <v-flex class="section-body">
+      <v-data-table :headers="getColumns" :items="users" :search="search">
+        <template v-slot:items="props">
+          <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
+          <td class="text-xs-right">{{ props.item.lastName }}</td>
+          <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
+          <td class="text-xs-right">{{ props.item.gender }}</td>
+          <td>
+            <ul style="list-style-type:none">
+              <li v-for="(nationality, index) in props.item.nationalities" :key="index">
+                {{ nationality.name }}
+                <br>
+              </li>
+            </ul>
+          </td>
+          <td>
+            <ul style="list-style-type:none">
+              <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
+                {{ travelType.name }}
+                <br>
+              </li>
+            </ul>
+          </td>
+          <td v-if="isAdmin" class="text-xs-right">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
+              <v-icon>delete</v-icon>
+            </v-btn>
+          </td>
+        </template>
+      </v-data-table>
+    </v-flex>
     <v-alert :value="isError" type="error">Cannot delete yourself or the global admin</v-alert>
-  </v-flex>
+  </v-container>
 </template>
 
 
 <script>
+import SectionHeader from "../common/header/SectionHeader";
+
 export default {
   props: {
     users: Array,
+    name: String,
     deleteUser: Function,
-    isError: Boolean
+    isError: Boolean,
+    usergroupsOptions: Object
+  },
+
+  components: {
+    SectionHeader
   },
 
   data() {

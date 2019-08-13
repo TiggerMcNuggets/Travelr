@@ -1,6 +1,7 @@
 <template>
-  <v-layout>
-    <v-flex xs12>
+  <v-container class="section-container">
+    <SectionHeader title="User Groups List" disableUndoRedo :options="usergroupsOptions"/>
+    <v-flex class="section-body">
       <UserGroupNavItem
         class="usergroup-nav-item"
         v-bind:key="index"
@@ -10,15 +11,17 @@
         :selectUserGroup="selectUserGroup"
       />
     </v-flex>
-  </v-layout>
+  </v-container>
 </template>
 
 <script>
 import UserGroupNavItem from "./UserGroupNavItem";
+import SectionHeader from "../common/header/SectionHeader";
 
 export default {
   components: {
-    UserGroupNavItem
+    UserGroupNavItem,
+    SectionHeader
   },
   data() {
     return {};
@@ -29,7 +32,8 @@ export default {
     usergroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
-    search: String
+    search: String,
+    usergroupsOptions: Object
   },
 
   computed: {
