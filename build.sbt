@@ -52,10 +52,6 @@ val appDependencies = Seq(
   "com.jayway.restassured" % "rest-assured" % "1.7" % "test"
 )
 
-// https://mvnrepository.com/artifact/com.ea.async/ea-async
-libraryDependencies += "com.ea.async" % "ea-async" % "1.2.1"
-
-
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
 scalacOptions in (Compile, doc) += "-no-java-comments"
 
