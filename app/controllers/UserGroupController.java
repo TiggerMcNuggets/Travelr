@@ -212,21 +212,62 @@ public class UserGroupController extends Controller {
         ).handle(AsyncHandler::handleResult);
     }
 
+    /**
+     *
+     * @param request The request object
+     * @param userId The id of the user who owns the group
+     * @param groupId The group id
+     * @return 200 with the group data
+     */
+//    @Authorization.RequireAuth
     public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
         return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
             List<User> members = new ArrayList<User>();
             List<User> owners = new ArrayList<User>();
+
             for (UserGroup user: UserGroups) {
                 members.add(user.getUser());
                 if (user.isOwner()) {
                     owners.add(user.getUser());
                 }
             }
-            System.out.println("####################HERE 1#######################");
+
+            //Check to see if user is part of group
+
             GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
             return ok(jsonResponse);
         });
     }
+    //    public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
+//        return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
+//            //Check to see if group exists
+////            if (UserGroups == null) {
+////                return notFound(APIResponses.GROUP_NOT_FOUND);
+////            }
+//            List<User> members = new ArrayList<User>();
+//            List<User> owners = new ArrayList<User>();
+//
+//            boolean isGroupMember = false;
+//
+//            for (UserGroup user: UserGroups) {
+////                if (user.getUser().getId() == request.attrs().get(Attrs.USER).getId()) {
+////                    isGroupMember = true;
+////                }
+//                members.add(user.getUser());
+//                if (user.isOwner()) {
+//                    owners.add(user.getUser());
+//                }
+//            }
+//            //Check to see if user is part of group
+////            if (!isGroupMember) {
+////                return forbidden(APIResponses.FORBIDDEN);
+////            }
+//            GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
+//            ObjectMapper mapper = new ObjectMapper();
+//            JsonNode jsonResponse = mapper.valueToTree(response);
+//            return ok(jsonResponse);
+//        });
+//    }
 }

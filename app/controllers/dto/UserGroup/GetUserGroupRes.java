@@ -16,37 +16,39 @@ public class GetUserGroupRes {
     public List<GetUserRes> members;
 
     public GetUserGroupRes(List<User> users, UserGroup userGroup, List<User> owners) {
-        System.out.println("####################HERE 2#######################");
         this.id = userGroup.getId();
         this.name = userGroup.getGroup().getName();
         this.description = userGroup.getGroup().getDescription();
-        System.out.println("####################HERE 3#######################");
         this.members = addUsers(users);
-        System.out.println("####################HERE 4#######################");
         this.owners = addOwners(owners);
     }
 
-
+    /**
+     * Goes through the list of users related to
+     * the group and turns them into user res
+     * @param users
+     * @return List of GetUserRes's of all group members
+     */
     public List<GetUserRes> addUsers(List<User> users) {
         List<GetUserRes> usersRes = new ArrayList<GetUserRes>();
         for (User user: users) {
-            System.out.println(user.getFirstName());
             GetUserRes userRes = new GetUserRes(user);
-//            System.out.println(userRes.getFirstName());
-            System.out.println("########################################################");
             usersRes.add(userRes);
-            System.out.println("########################################################");
         }
         return usersRes;
     }
 
 
-
+    /**
+     * Goes through all users of the group and adds
+     * them to the owners array if they are an owner
+     * @param owners
+     * @return List of owner ID's
+     */
     public List<Long> addOwners(List<User> owners) {
         List<Long> Owners = new ArrayList<Long>();
         for (User owner: owners) {
             Owners.add(owner.getId());
-//            System.out.println("####################HERE 3#######################");
         }
         return Owners;
     }
