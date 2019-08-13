@@ -54,7 +54,7 @@ export default {
      * Creates a new user group for the user.
      */
     createGroup() {
-      usergroupRepository.createUserGroup(this.$store.getters.getUser.id, {"name": this.name, "description": this.description}).then(response => console.log(response))
+      usergroupRepository.createUserGroup(this.$store.getters.getUser.id, {"name": this.name, "description": this.description})
     },
 
     /**

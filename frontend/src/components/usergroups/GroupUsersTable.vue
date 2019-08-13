@@ -47,7 +47,6 @@ export default {
     name: String,
     deleteUser: Function,
     isError: Boolean,
-    usergroupsOptions: Object
   },
 
   components: {
