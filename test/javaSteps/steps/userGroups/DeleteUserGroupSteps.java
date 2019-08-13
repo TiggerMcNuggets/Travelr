@@ -15,7 +15,7 @@ public class DeleteUserGroupSteps {
     private StateSingleton state = StateSingleton.getInstance();
 
     /**
-     * Sends a request to delete a user group and all its members.
+     * Sets request to delete a user group and all its members.
      */
     @When("I want to remove the user group and all its members")
     public void i_want_to_remove_the_user_group_and_all_its_members() {
