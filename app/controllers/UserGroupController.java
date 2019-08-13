@@ -171,7 +171,7 @@ public class UserGroupController extends Controller {
 
         //Group Name Taken Check
         if (Grouping.find.findByName(req.name) != null) {
-            return CompletableFuture.completedFuture(badRequest("Already a grouping with this name"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.DUPLICATE_GROUP_NAME));
         }
 
         return userGroupRepository.createNewGroup(req, user).thenApplyAsync(id -> {
