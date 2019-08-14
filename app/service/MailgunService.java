@@ -2,7 +2,6 @@ package service;
 
 import com.google.gson.JsonObject;
 import models.User;
-import play.libs.Json;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
@@ -13,8 +12,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -40,13 +37,13 @@ public class MailgunService {
      * A general function for generating a ws request to be sent to mailgun. This is to reduce code duplication
      * in the mailgunService class
      *
-     * @param recipients An arraylist containing user objects indended to receive the email.
+     * @param recipients An array containing user objects intended to receive the email.
      * @param subject The subject of the email as a string.
      * @param template The name of the email template to be used as a string.
      * @param recipientVariables The custom variables to be included in the mailgun request, Json formatted as a string.
      * @return a WSRequest http request to be sent to the mailgun API.
      */
-    private WSRequest generateMailgunRequest(ArrayList<User> recipients, String subject, String template, JsonObject recipientVariables){
+    private WSRequest buildMailgunRequest(ArrayList<User> recipients, String subject, String template, JsonObject recipientVariables){
         WSRequest request = ws.url(mailgunApi);
         request.addQueryParameter("from", mailgunFromAddress);
         for (User recipient : recipients) {
@@ -55,7 +52,6 @@ public class MailgunService {
         request.addQueryParameter("subject", subject);
         request.addQueryParameter("template", template);
         request.addQueryParameter("recipient-variables", recipientVariables.toString());
-        System.out.println(recipientVariables);
         request.setAuth("api", mailgunKey);
         return request;
     }
@@ -82,7 +78,7 @@ public class MailgunService {
             JsonObject recipientVariable = new JsonObject();
             recipientVariable.add(recipient.email, recipientVariableFields);
 
-            WSRequest request = generateMailgunRequest(recipientList,
+            WSRequest request = buildMailgunRequest(recipientList,
                     welcomeEmailSubject,
                     "welcome-email",
                     recipientVariable);
@@ -97,6 +93,8 @@ public class MailgunService {
 
         }, context);
     }
+
+
 
 //    public CompletableFuture<Integer> sendAddedToGroupEmail(User user) {
 //        return supplyAsync(() -> {
@@ -127,7 +125,6 @@ public class MailgunService {
                  + userId + "/trips/" + tripId);
                 recipientVariables.add(recipient.email, recipientVariableFields);
                 recipientVariableFields = new JsonObject();
-
             }
 
             WSRequest request = generateMailgunRequest(recipients,
@@ -141,8 +138,7 @@ public class MailgunService {
             });
 
             return responseCode.toCompletableFuture().join();
+
         }, context);
     }
-
-
 }
