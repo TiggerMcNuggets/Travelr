@@ -17,21 +17,18 @@ public class GetUserRes {
     private List<NationalityRes> nationalities;
     private List<TravellerType> travellerTypes;
     private String userProfilePhoto;
-
-
-
     private Long defaultAlbumId;
 
     public GetUserRes(User user) {
         this.id = user.id;
-        this.firstName = user.firstName;
-        this.middleName = user.middleName;
-        this.lastName = user.lastName;
-        this.dateOfBirth = user.dateOfBirth;
-        this.gender = user.gender;
-        this.travellerTypes = user.travellerTypes;
-        this.setNationalities(user.nationalities);
-        this.userProfilePhoto = user.userProfilePhoto;
+        this.firstName = user.getFirstName();
+        this.middleName = user.getMiddleName();
+        this.lastName = user.getLastName();
+        this.dateOfBirth = user.getDateOfBirth();
+        this.gender = user.getGender();
+        this.travellerTypes = user.getTravellerTypes();
+        this.setNationalities(user.getNationalities());
+        this.userProfilePhoto = user.getUserProfilePhoto();
         this.defaultAlbumId = user.getDefaultAlbum().getId();
 
     }

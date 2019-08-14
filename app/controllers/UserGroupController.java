@@ -10,6 +10,7 @@ import controllers.dto.UserGroup.CreateUserGroupRes;
 import controllers.dto.UserGroup.AddUserToGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
 import models.Grouping;
+import controllers.dto.UserGroup.GetUserGroupRes;
 import models.User;
 import models.UserGroup;
 import play.data.Form;
@@ -21,6 +22,9 @@ import repository.UserGroupRepository;
 import utils.AsyncHandler;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -207,4 +211,46 @@ public class UserGroupController extends Controller {
         return addUserToGroupStage.thenApplyAsync(stage -> created()
         ).handle(AsyncHandler::handleResult);
     }
+
+    /**
+     * Gets a singular grouping with all members
+     * @param request The request object
+     * @param userId The id of the user who owns the group
+     * @param groupId The group id
+     * @return 200 with the group data
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
+        return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
+            //Check to see if group exists
+            if (UserGroups.size() == 0) {
+                return notFound(APIResponses.GROUP_NOT_FOUND);
+            }
+            List<User> members = new ArrayList<User>();
+            List<User> owners = new ArrayList<User>();
+
+            boolean isGroupMember = false;
+
+            for (UserGroup user: UserGroups) {
+                if (user.getUser().getId() == request.attrs().get(Attrs.USER).getId()) {
+                    isGroupMember = true;
+                }
+                members.add(user.getUser());
+                if (user.isOwner()) {
+                    owners.add(user.getUser());
+                }
+            }
+
+            //Check to see if user is part of group or is an admin
+            if (!isGroupMember && !request.attrs().get(Attrs.USER).isAdmin()) {
+                return forbidden(APIResponses.FORBIDDEN);
+            }
+            GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
+        });
+    }
+
+
 }
