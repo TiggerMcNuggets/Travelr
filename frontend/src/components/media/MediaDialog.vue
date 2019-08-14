@@ -16,7 +16,7 @@
             @click="updateMediaAndSave(clickedImage)"
           >save
           </v-icon>
-          <v-icon v-else @click="editCaption = true">edit</v-icon>
+          <v-icon v-else-if="canCrudMedia" @click="editCaption = true">edit</v-icon>
         </v-layout>
         <div v-if="editCaption">
           <v-text-field v-model="clickedImage.caption" :counter="250" label="Caption"></v-text-field>
@@ -25,9 +25,9 @@
       </div>
     </v-card-title>
 
-    <v-divider></v-divider>
+    <v-divider v-if="canCrudMedia"></v-divider>
 
-    <v-card-actions>
+    <v-card-actions v-if="canCrudMedia">
       <v-select
         v-model="selectedAlbums"
         :items="albums"
@@ -58,7 +58,7 @@
             @click="updateVisibilityAndSave(clickedImage)"
           >save
           </v-icon>
-          <v-icon v-else @click="editVisibility = true">edit</v-icon>
+          <v-icon @click="editVisibility = true">edit</v-icon>
 
 
           <div v-if="editVisibility">
@@ -72,7 +72,7 @@
 
 
     </v-card-actions>
-    <v-card-actions>
+    <v-card-actions v-if="canCrudMedia">
       <v-btn color="error" @click="setProfilePhoto">Set Profile Photo</v-btn>
       <v-btn color="error" @click="openConfirmDelete">Delete</v-btn>
       <v-spacer></v-spacer>
@@ -99,7 +99,9 @@
       updateMedia: Function,
       openConfirmDelete: Function,
       deleteMedia: Function,
-      getAllAlbums: Function
+      getAllAlbums: Function,
+      isMyProfile: Boolean,
+      isAdminUser: Boolean
     },
 
     // local variables
@@ -109,11 +111,17 @@
         editCaption: false,
         editVisibility: false,
         value: "",
-        selectedAlbums: []
+        selectedAlbums: [],
+
       };
     },
 
     computed: {
+
+      canCrudMedia() {
+        return this.isAdminUser || this.isMyProfile
+      },
+
       mediaURL() {
         return (
           base_url +

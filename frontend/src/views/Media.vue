@@ -68,6 +68,8 @@
         :deleteMedia="deleteMedia"
         :getAllAlbums="getAllAlbums"
         :openConfirmDelete="() => {confirmDeletionDialogActive = true}"
+        :isMyProfile="isMyProfile"
+        :isAdminUser="isAdminUser"
       />
     </v-dialog>
 
