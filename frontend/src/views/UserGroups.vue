@@ -11,24 +11,20 @@
     />
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
-        <v-flex xs12 pb-4>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
-        </v-flex>
         <UserGroupList
-          :search="search"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
+          :updateUserGroups="getUserGroups"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
-        <GroupUsersTable :users="users" :deleteUser="deleteUser" :isError="isError"/>
+        <GroupUsersTable
+          :users="users"
+          :name="selectedGroup.name"
+          :deleteUser="deleteUser"
+          :isError="isError"
+        />
       </v-flex>
     </v-layout>
   </v-container>
@@ -37,6 +33,7 @@
 <script>
 import GroupUsersTable from "../components/usergroups/GroupUsersTable";
 import UserGroupList from "../components/usergroups/UserGroupNav";
+
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
 import sampleUserGroups from "./usergroups.json";
@@ -48,7 +45,7 @@ export default {
       search: "",
       isError: false,
       selectedGroup: sampleUserGroups[0],
-      usergroups: sampleUserGroups
+      usergroups: sampleUserGroups,
     };
   },
   components: {
@@ -64,6 +61,7 @@ export default {
   },
 
   methods: {
+
     /**
      * Retrieves user groups from api
      */
@@ -79,7 +77,7 @@ export default {
      * Removes user from a user group
      * @param userId the id of the user group to remove
      */
-    async deleteUser(userId) {
+    async deleteUser() {
       this.isError = false;
       // TODO: Connect to delete user from group
 
