@@ -13,7 +13,7 @@ public class GetUserGroupSteps {
      */
     @When("I want to get the user group")
     public void i_want_to_get_the_user_group() {
-        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/groups/%s", state.getUser().getId(), state.getGroup().getId())));
+        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/group/%s", state.getUser().getId(), state.getGroup().getId())));
         state.getRequest().method("GET");
     }
 
