@@ -66,7 +66,6 @@ public class UserGroupRepository {
     public CompletableFuture<Long> remove(Long groupId) {
         return supplyAsync(() -> {
             List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", groupId).findList();
-            ;
             for (UserGroup userGroup : userGroupsToBeDeleted) {
                 userGroup.delete();
             }

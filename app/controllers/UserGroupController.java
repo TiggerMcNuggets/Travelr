@@ -213,7 +213,7 @@ public class UserGroupController extends Controller {
     }
 
     /**
-     *
+     * Gets a singular grouping with all members
      * @param request The request object
      * @param userId The id of the user who owns the group
      * @param groupId The group id
@@ -241,7 +241,7 @@ public class UserGroupController extends Controller {
                 }
             }
 
-            //Check to see if user is part of group
+            //Check to see if user is part of group or is an admin
             if (!isGroupMember && !request.attrs().get(Attrs.USER).isAdmin()) {
                 return forbidden(APIResponses.FORBIDDEN);
             }
