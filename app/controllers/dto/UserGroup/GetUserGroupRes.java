@@ -32,8 +32,6 @@ public class GetUserGroupRes {
     public List<GetUserRes> addUsers(List<User> users) {
         List<GetUserRes> usersRes = new ArrayList<GetUserRes>();
         for (User user: users) {
-            // Hacky work around to fix null pointer error
-            user.getFirstName();
             GetUserRes userRes = new GetUserRes(user);
             usersRes.add(userRes);
         }
