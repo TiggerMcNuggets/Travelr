@@ -63,22 +63,6 @@ export default {
   methods: {
 
     /**
-     * Undoes the last action and calls setDestination() afterwards
-     */
-    undo: function() {
-      const actions = [this.setDestination];
-      this.rollbackUndo(actions);
-    },
-
-    /**
-     * Redoes the last action and calls setDestination() afterwards
-     */
-    redo: function() {
-      const actions = [this.setDestination];
-      this.rollbackRedo(actions);
-    },
-
-    /**
      * Takes in a users id and redirects current page to that users account.
      * @param id
      */

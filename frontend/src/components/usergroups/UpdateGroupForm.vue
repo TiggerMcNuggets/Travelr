@@ -41,7 +41,8 @@ export default {
     name: String,
     description: String,
     usergroupId: Number,
-    closeDialog: Function
+    closeDialog: Function,
+    checkpoint: Function
   },
 
   data() {
@@ -65,6 +66,19 @@ export default {
           this.usergroup
         )
         .then(response => {
+          // Pushes checkpoint containing type of action, action body, and reaction body
+          const url = `/users/${this.$store.getters.getUser.id}/group/${usergroupId}`
+          this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                    url: url,
+                    body: {...this.usergroup}
+                  },
+                  {
+                    url: url,
+                    body: this.rollbackPreviousBody
+                  }
+          );
           this.closeDialog();
         });
     }

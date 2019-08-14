@@ -31,6 +31,7 @@
         :description="usergroup.name"
         :usergroupId="usergroup.id"
         :closeDialog="closeEditDialog"
+        :checkpoint="checkpoint"
       />
     </v-dialog>
   </v-flex>
@@ -54,7 +55,8 @@ export default {
     usergroup: Object,
     isSelected: Boolean,
     selectUserGroup: Function,
-    updateUserGroups: Function
+    updateUserGroups: Function,
+    checkpoint: Function
   },
 
   methods: {
