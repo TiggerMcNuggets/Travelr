@@ -219,13 +219,22 @@ public class UserGroupController extends Controller {
      * @param groupId The group id
      * @return 200 with the group data
      */
-//    @Authorization.RequireAuth
+    @Authorization.RequireAuth
     public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
         return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
+            //Check to see if group exists
+            if (UserGroups.size() == 0) {
+                return notFound(APIResponses.GROUP_NOT_FOUND);
+            }
             List<User> members = new ArrayList<User>();
             List<User> owners = new ArrayList<User>();
 
+            boolean isGroupMember = false;
+
             for (UserGroup user: UserGroups) {
+                if (user.getUser().getId() == request.attrs().get(Attrs.USER).getId()) {
+                    isGroupMember = true;
+                }
                 members.add(user.getUser());
                 if (user.isOwner()) {
                     owners.add(user.getUser());
@@ -233,40 +242,14 @@ public class UserGroupController extends Controller {
             }
 
             //Check to see if user is part of group
+            if (!isGroupMember && !request.attrs().get(Attrs.USER).isAdmin()) {
+                return forbidden(APIResponses.FORBIDDEN);
+            }
             GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
             return ok(jsonResponse);
         });
     }
-    //    public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
-//        return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
-//            //Check to see if group exists
-////            if (UserGroups == null) {
-////                return notFound(APIResponses.GROUP_NOT_FOUND);
-////            }
-//            List<User> members = new ArrayList<User>();
-//            List<User> owners = new ArrayList<User>();
-//
-//            boolean isGroupMember = false;
-//
-//            for (UserGroup user: UserGroups) {
-////                if (user.getUser().getId() == request.attrs().get(Attrs.USER).getId()) {
-////                    isGroupMember = true;
-////                }
-//                members.add(user.getUser());
-//                if (user.isOwner()) {
-//                    owners.add(user.getUser());
-//                }
-//            }
-//            //Check to see if user is part of group
-////            if (!isGroupMember) {
-////                return forbidden(APIResponses.FORBIDDEN);
-////            }
-//            GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
-//            ObjectMapper mapper = new ObjectMapper();
-//            JsonNode jsonResponse = mapper.valueToTree(response);
-//            return ok(jsonResponse);
-//        });
-//    }
+
 }
