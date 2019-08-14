@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
+import service.MailgunService;
+
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 public class UserGroupController extends Controller {
@@ -36,10 +38,12 @@ public class UserGroupController extends Controller {
     FormFactory formFactory;
 
     private final UserGroupRepository userGroupRepository;
+    private final MailgunService mailgunService;
 
     @Inject
-    public UserGroupController(UserGroupRepository userGroupRepository) {
+    public UserGroupController(UserGroupRepository userGroupRepository, MailgunService mailgunService) {
         this.userGroupRepository = userGroupRepository;
+        this.mailgunService = mailgunService;
     }
 
     /**
@@ -208,8 +212,11 @@ public class UserGroupController extends Controller {
 
         CompletionStage<Void> addUserToGroupStage = userGroupRepository.addUserToGroup(userId, groupId, memberId, isAdmin, req);
 
-        return addUserToGroupStage.thenApplyAsync(stage -> created()
-        ).handle(AsyncHandler::handleResult);
+        return addUserToGroupStage.thenApplyAsync(stage -> {
+            User recipient = User.find.findById(memberId);
+            mailgunService.sendAddedToGroupEmail(recipient, groupId);
+            return created();
+        }).handle(AsyncHandler::handleResult);
     }
 
     /**
