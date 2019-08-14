@@ -13,7 +13,7 @@
           <h5 class="headline mb-0 mr-2">Description</h5>
           <v-icon
             v-if="editCaption"
-            @click="() => {updateMediaAndSave(clickedImage)}"
+            @click="updateMediaAndSave(clickedImage)"
           >save
           </v-icon>
           <v-icon v-else @click="editCaption = true">edit</v-icon>
@@ -55,7 +55,7 @@
           <v-icon
             v-if="editVisibility"
 
-            @click="() => {updateVisibilityAndSave(clickedImage)}"
+            @click="updateVisibilityAndSave(clickedImage)"
           >save
           </v-icon>
           <v-icon v-else @click="editVisibility = true">edit</v-icon>
@@ -64,7 +64,7 @@
           <div v-if="editVisibility">
             <v-switch
               v-model="clickedImage.is_public"
-              :label="`Public Photo`"
+              label="Public Photo"
             ></v-switch>
           </div>
         </v-flex>
@@ -73,8 +73,8 @@
 
     </v-card-actions>
     <v-card-actions>
-      <v-btn color="error" @click="(setProfilePhoto())">Set Profile Photo</v-btn>
-      <v-btn color="error" @click="(openConfirmDelete())">Delete</v-btn>
+      <v-btn color="error" @click="setProfilePhoto">Set Profile Photo</v-btn>
+      <v-btn color="error" @click="openConfirmDelete">Delete</v-btn>
       <v-spacer></v-spacer>
       <v-btn color="error" outline @click="closeMediaDialog">Close</v-btn>
     </v-card-actions>
