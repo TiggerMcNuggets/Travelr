@@ -63,6 +63,18 @@ public class CommonUserGroupSteps {
     }
 
     /**
+     * Creates a group without inserting it to mock a 404 request
+     * @param dataTable The details of the group to create
+     */
+    @Given("The group does not exist")
+    public void the_group_does_not_exist(List<Map<String, String>> dataTable) {
+        Map<String, String> groupInfo = dataTable.get(0);
+        Grouping group = new Grouping(groupInfo.get("name"), groupInfo.get("description"));
+        group.setId(100L);
+        state.setGroup(group);
+    }
+
+    /**
      * Creates a user group for another user - same as above but expects state user to not be the authenticated user.
      * @param dataTable The data for the user group.
      */

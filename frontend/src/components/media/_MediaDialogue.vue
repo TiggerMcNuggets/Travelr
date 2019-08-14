@@ -12,6 +12,7 @@
 
             <v-divider></v-divider>
 
+
             <v-card-actions>
                 <!-- <v-spacer></v-spacer> -->
                 <div v-if="isAdminUser || isMyProfile" class="photo-popup-options">
