@@ -123,6 +123,8 @@ public class MailgunService {
             for (User recipient: recipients) {
                 recipientVariableFields.addProperty("firstName", recipient.firstName);
                 recipientVariableFields.addProperty("tripName", tripName);
+                recipientVariableFields.addProperty("tripURL", "http://localhost:9000/api/users/"
+                 + userId + "/trips/" + tripId);
                 recipientVariables.add(recipient.email, recipientVariableFields);
                 recipientVariableFields = new JsonObject();
 
