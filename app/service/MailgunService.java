@@ -122,6 +122,7 @@ public class MailgunService {
 
             for (User recipient: recipients) {
                 recipientVariableFields.addProperty("firstName", recipient.firstName);
+                recipientVariableFields.addProperty("tripName", tripName);
                 recipientVariables.add(recipient.email, recipientVariableFields);
                 recipientVariableFields = new JsonObject();
 
@@ -129,7 +130,7 @@ public class MailgunService {
 
             WSRequest request = generateMailgunRequest(recipients,
                     subject,
-                    "trip-update-email",
+                    "trip-updated",
                     recipientVariables);
             CompletionStage<WSResponse> asyncResponse = request.post("");
 
