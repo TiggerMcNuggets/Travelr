@@ -88,13 +88,7 @@ public class CommonSteps  {
 
     @Given("The user exists")
     public void theUserExists(List<Map<String, String>> dataTable) {
-        Map<String, String> userInfo = dataTable.get(0);
-        User user = new User(
-                userInfo.get("first"),
-                userInfo.get("last"),
-                userInfo.get("email"),
-                Integer.valueOf(userInfo.get("dob"))
-        );
+        User user = createUserFromTable(dataTable);
         user.insert();
         state.setUser(user);
     }
@@ -133,5 +127,16 @@ public class CommonSteps  {
 
         return user;
 
+    }
+
+    public static User createUserFromTable(List<Map<String, String>> dataTable) {
+        Map<String, String> userInfo = dataTable.get(0);
+        User user = new User(
+                userInfo.get("first"),
+                userInfo.get("last"),
+                userInfo.get("email"),
+                Integer.valueOf(userInfo.get("dob"))
+        );
+        return user;
     }
 }

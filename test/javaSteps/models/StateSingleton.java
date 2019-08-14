@@ -27,6 +27,8 @@ public class StateSingleton {
     private Destination destination;
     private Album album;
     private Media media;
+    private Grouping group;
+    private User groupMember;
     private Trip trip;
 
 
@@ -100,6 +102,22 @@ public class StateSingleton {
 
     public void setAlbum(Album album) {
         this.album = album;
+    }
+
+    public Grouping getGroup() {
+        return group;
+    }
+
+    public void setGroup(Grouping group) {
+        this.group = group;
+    }
+
+    public User getGroupMember() {
+        return groupMember;
+    }
+
+    public void setGroupMember(User groupMember) {
+        this.groupMember = groupMember;
     }
 
     public Media getMedia() {

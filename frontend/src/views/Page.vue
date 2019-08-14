@@ -128,6 +128,7 @@ export default {
             link: "/user/" + store.getters.getUser.id + "/profile"
           },
           { name: "Users", icon: "supervised_user_circle", link: "/users" },
+          { name: "User Groups", icon: "group", link: "/usergroups" },
           { name: "Destination Map", icon: "map", link: "/destinations" },
           {
             name: "Destination List",
@@ -169,13 +170,18 @@ export default {
     traveller: function(newImage, oldImage) {
       if (newImage !== oldImage)
         if (
-        !this.traveller.userProfilePhoto ||
-        this.traveller.userProfilePhoto == "defaultPic.png"
-      ) {
-        this.url = DefaultPic;
-      } else {
-        this.url = base_url + "/api/travellers/profile-photo/" + this.traveller.id + "?" + new Date().getTime();
-      }
+          !this.traveller.userProfilePhoto ||
+          this.traveller.userProfilePhoto == "defaultPic.png"
+        ) {
+          this.url = DefaultPic;
+        } else {
+          this.url =
+            base_url +
+            "/api/travellers/profile-photo/" +
+            this.traveller.id +
+            "?" +
+            new Date().getTime();
+        }
     }
   },
 
@@ -196,14 +202,19 @@ export default {
   },
 
   created() {
-      if (
-        !this.traveller.userProfilePhoto ||
-        this.traveller.userProfilePhoto == "defaultPic.png"
-      ) {
-        this.url = DefaultPic;
-      } else {
-        this.url = base_url + "/api/travellers/profile-photo/" + this.traveller.id + "?" + new Date().getTime();
-      }
+    if (
+      !this.traveller.userProfilePhoto ||
+      this.traveller.userProfilePhoto == "defaultPic.png"
+    ) {
+      this.url = DefaultPic;
+    } else {
+      this.url =
+        base_url +
+        "/api/travellers/profile-photo/" +
+        this.traveller.id +
+        "?" +
+        new Date().getTime();
+    }
   }
 };
 </script>
