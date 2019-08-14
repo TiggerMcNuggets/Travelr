@@ -18,7 +18,7 @@ public class CreateUserGroupSteps {
     @When("I want to create a group")
     public void i_want_to_create_a_group() {
         state.getRequest().method("POST");
-        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/groups", state.getUser().getId()));
+        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/groupFixng", state.getUser().getId()));
     }
 
 }

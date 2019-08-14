@@ -3,7 +3,7 @@
     <SectionHeader :title="name + ' members'" disableUndoRedo />
 
     <v-flex class="section-body">
-      <v-data-table :headers="getColumns" :items="users" >
+      <v-data-table :headers="getColumns" :items="users">
         <template v-slot:items="props">
           <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
           <td class="text-xs-right">{{ props.item.lastName }}</td>
@@ -13,7 +13,7 @@
             <ul style="list-style-type:none">
               <li v-for="(nationality, index) in props.item.nationalities" :key="index">
                 {{ nationality.name }}
-                <br>
+                <br />
               </li>
             </ul>
           </td>
@@ -21,7 +21,7 @@
             <ul style="list-style-type:none">
               <li v-for="(travelType, index) in props.item.travellerTypes" :key="index">
                 {{ travelType.name }}
-                <br>
+                <br />
               </li>
             </ul>
           </td>
@@ -46,7 +46,7 @@ export default {
     users: Array,
     name: String,
     deleteUser: Function,
-    isError: Boolean,
+    isError: Boolean
   },
 
   components: {
