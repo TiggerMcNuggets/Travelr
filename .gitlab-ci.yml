@@ -20,11 +20,13 @@ before_script:
   - npm install
   - cd ../
 
-# recent artifacts on all non-tagged commits on any branch
+# Recent artifacts - all non-tagged branches
 recent-artifacts:
   stage: deploy
   script:
     - sbt dist
+    - rm -rf /srv/production/build/*
+    - unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
   artifacts:
     paths:
       - target/universal/*.zip
@@ -34,22 +36,38 @@ recent-artifacts:
   except:
     - tags
 
-
-# Deploy prod server and release artifacts on tagged master commits
-# release-artifacts:
+#production-deploy:
+#  stage: deploy
+#  script:
+#    - sbt dist
+#
+#
+#
+## Release artifacts - tagged branch
+#release-artifacts:
 #  stage: deploy
 #  script:
 #     - sbt dist
-#     - cd ./target/universal
-#     - sudo rm -rf /home/gitlab-runner/prod/*
-#     - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/prod/
-#     - sudo unzip /home/gitlab-runner/prod/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/prod/
-
 #  artifacts:
 #     paths:
 #     - target/universal/*.zip
 #  only:
 #     - tags
+#
+#deploy-dev:
+#  stage: deploy
+#  script:
+#    - sbt dist
+#    - sudo systemctl stop Dev.service
+#    - cd ./target/universal
+#    - sudo rm -rf /home/gitlab-runner/dev/*
+#    - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
+#    - sudo unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
+#    - sudo systemctl start Dev.service
+#  only:
+#    - master@seng302-2019/team-300
+#  except:
+#    - tags
 
 
 # # Deploy dev server on non-tagged master commits
