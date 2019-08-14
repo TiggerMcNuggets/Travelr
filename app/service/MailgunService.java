@@ -129,7 +129,7 @@ public class MailgunService {
 
             WSRequest request = generateMailgunRequest(recipients,
                     subject,
-                    "welcome-email", // TODO change this to the trip update email template
+                    "trip-update-email",
                     recipientVariables);
             CompletionStage<WSResponse> asyncResponse = request.post("");
 
