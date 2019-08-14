@@ -92,7 +92,7 @@ public class AddUserToGroupSteps {
                 .where()
                 .eq("user", state.getGroupMember())
                 .and()
-                .eq("group", state.getGroup())
+                .eq("grouping", state.getGroup())
                 .findOne();
     }
 }
