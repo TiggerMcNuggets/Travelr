@@ -61,6 +61,9 @@ deploy-production-server:
   - sudo rm -rf /srv/production/build/*
   - sudo unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
   - sudo systemctl start Production
+  environment:
+    name: production
+    url: https://csse-s302g3.canterbury.ac.nz/
   only:
   - tags
 
@@ -74,6 +77,9 @@ deploy-develop-server:
   - sudo rm -rf /srv/develop/build/*
   - sudo unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/develop/build/
   - sudo systemctl start Develop
+  environment:
+    name: production
+    url: https://csse-s302g3.canterbury.ac.nz:8433
   only:
   - master@seng302-2019/team-300
   except:
