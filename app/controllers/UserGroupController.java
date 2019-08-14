@@ -209,7 +209,7 @@ public class UserGroupController extends Controller {
         CompletionStage<Void> addUserToGroupStage = userGroupRepository.addUserToGroup(userId, groupId, memberId, isAdmin, req);
 
         return addUserToGroupStage.thenApplyAsync(stage -> {
-            User recipient = request.attrs().get(Attrs.USER);
+            User recipient = User.find.findById(memberId);
             mailgunService.sendAddedToGroupEmail(recipient, groupId);
             return created();
         }).handle(AsyncHandler::handleResult);

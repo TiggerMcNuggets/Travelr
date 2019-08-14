@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-
 /**
  * A service which holds the email notification logic using the MailGun API
  */
@@ -100,14 +98,23 @@ public class MailgunService {
         return sendMailgunRequest(request).toCompletableFuture();
     }
 
-
+    /**
+     * Composes and sends an email notification to the user's email address. This function
+     * uses the 'added-to-group' email template on our Mailgun account and provides the
+     * user's first name, the group's name and group page URL to the template's placeholder fields.
+     *
+     * @param recipient a user object that contains the recipient's data.
+     * @param groupId the id of the group that the user has been added to.
+     * @return a response code from the Mailgun API which is useful for testing.
+     */
     public CompletableFuture<Integer> sendAddedToGroupEmail(User recipient, Long groupId) {
-        Grouping grouping = Grouping.find.query().where().eq("group_id", groupId).findOne();
-        String groupingEmailSubject = "Travelr - You've been added to a group!";
+        Grouping grouping = UserGroup.find.query().where().eq("user_id", recipient.getId()).eq("group_id", groupId).findOne().getGroup();
 
-        if (grouping.getName() != null) {
-            groupingEmailSubject = "Travelr - You've been added to " + StringUtils.capitalize(grouping.getName()) +"!";
+        if (grouping == null) {
+            return CompletableFuture.completedFuture(404);
         }
+
+        String groupingEmailSubject = "Travelr - You've been added to " + StringUtils.capitalize(grouping.getName()) +"!";
 
         ArrayList<User> recipientList = new ArrayList<>();
         recipientList.add(recipient);
@@ -115,7 +122,7 @@ public class MailgunService {
         JsonObject recipientVariableFields = new JsonObject();
         recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
         recipientVariableFields.addProperty("groupName", grouping.getName());
-        recipientVariableFields.addProperty("groupsURL", "http://localhost:8080/usergroups");
+        recipientVariableFields.addProperty("groupURL", "http://localhost:8080/usergroups");
 
         JsonObject recipientVariable = new JsonObject();
         recipientVariable.add(recipient.email, recipientVariableFields);
