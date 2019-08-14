@@ -1,3 +1,9 @@
+stages:
+- test
+- build
+- deploy
+
+
 # tag_checker:
 #   stage: build
 #   script:
@@ -21,49 +27,53 @@ before_script:
   - cd ../
 
 # Recent artifacts - all non-tagged branches
-#recent-artifacts:
-#  stage: deploy
-#  script:
-#    - sbt dist
-#    - rm -rf /srv/production/build/*
-#    - unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
-#  artifacts:
-#    paths:
-#      - target/universal/*.zip
-#    expire_in: 1 week
-#  only:
-#   - master@seng302-2019/team-300
-#  except:
-#    - tags
+recent-artifacts:
+  stage: build
+  script:
+    - sbt dist
+  artifacts:
+    paths:
+      - target/universal/*.zip
+    expire_in: 1 week
+  only:
+   - master@seng302-2019/team-300
+  except:
+    - tags
 
 # Release artifacts - tagged branch
-#release-artifacts:
-#  stage: deploy
-#  script:
-#     - sbt dist
-#  artifacts:
-#     paths:
-#     - target/universal/*.zip
-#  only:
-#     - tags
+release-artifacts:
+  stage: build
+  script:
+     - sbt dist
+  artifacts:
+     paths:
+     - target/universal/*.zip
+  only:
+     - tags
 
 # Deploy production server - tagged branch
-#deploy-production-server:
-#  stage: deploy
-#  script:
-#  - sudo rm -rf /srv/production/build/*
-#  - sudo unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
-#  only:
-#  - tags
+deploy-production-server:
+  stage: deploy
+  dependencies:
+  - build
+  script:
+  - sudo systemctl stop Production
+  - sudo rm -rf /srv/production/build/*
+  - sudo unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
+  - sudo systemctl start Production
+  only:
+  - tags
 
 # Deploy develop server - all non-tagged master commits
 deploy-develop-server:
   stage: deploy
+  dependencies:
+  - build
   script:
-  - sbt dist
-  - rm -rf /srv/production/build/*
-  - unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
-  - sudo systemctl start Production
+  - sudo systemctl stop Develop
+  - rm -rf /srv/develop/build/*
+  - unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/develop/build/
+  - sudo systemctl start Develop
   only:
   - master@seng302-2019/team-300
   except:
