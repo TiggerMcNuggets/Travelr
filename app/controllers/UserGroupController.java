@@ -233,7 +233,6 @@ public class UserGroupController extends Controller {
             }
 
             //Check to see if user is part of group
-
             GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);

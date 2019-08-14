@@ -32,12 +32,13 @@ public class GetUserGroupRes {
     public List<GetUserRes> addUsers(List<User> users) {
         List<GetUserRes> usersRes = new ArrayList<GetUserRes>();
         for (User user: users) {
+            // Hacky work around to fix null pointer error
+            user.getFirstName();
             GetUserRes userRes = new GetUserRes(user);
             usersRes.add(userRes);
         }
         return usersRes;
     }
-
 
     /**
      * Goes through all users of the group and adds
@@ -53,5 +54,24 @@ public class GetUserGroupRes {
         return Owners;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<Long> getOwners() {
+        return owners;
+    }
+
+    public List<GetUserRes> getMembers() {
+        return members;
+    }
 
 }
