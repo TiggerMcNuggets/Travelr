@@ -65,7 +65,7 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", groupId).findList();;
+            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", groupId).findList();
             for (UserGroup userGroup : userGroupsToBeDeleted) {
                 userGroup.delete();
             }
@@ -79,6 +79,16 @@ public class UserGroupRepository {
 
             return null;
         }, context);
+    }
+
+    /**
+     *
+     * Gets a list of UserGroups
+     * @param id the id of the group
+     * @return completable future of list of userGroups
+     */
+    public CompletableFuture<List<UserGroup>> getGroupMembers(Long id) {
+        return supplyAsync(() -> UserGroup.find.query().where().eq("group_id",id).findList(), context);
     }
 
     /**
