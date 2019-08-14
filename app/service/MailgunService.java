@@ -121,15 +121,18 @@ public class MailgunService {
         JsonObject recipientVariableFields = new JsonObject();
         String subject = "Travelr - Your trip " + tripName + " was recently updated.";
 
-        for (User recipient: recipients) {
-            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
-            recipientVariables.add(recipient.email, recipientVariableFields);
-            recipientVariableFields = new JsonObject();
-        }
+            for (User recipient: recipients) {
+                recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+                recipientVariableFields.addProperty("tripName", tripName);
+                recipientVariableFields.addProperty("tripURL", "http://localhost:8080/user/"
+                 + userId + "/trips/" + tripId);
+                recipientVariables.add(recipient.email, recipientVariableFields);
+                recipientVariableFields = new JsonObject();
+            }
 
         WSRequest request = buildMailgunRequest(recipients,
                 subject,
-                "trip-update-email",
+                "trip-updated",
                 recipientVariables);
 
         return sendMailgunRequest(request).toCompletableFuture();
