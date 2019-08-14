@@ -78,11 +78,11 @@ POST        /api/users/:user_id/group/:group_id/member/:member_id    controllers
 DELETE      /api/users/:user_id/group/:group_id/member/:member_id    controllers.UserGroupController.removeGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
 PUT         /api/users/:user_id/group/:group_id                      controllers.UserGroupController.updateUserGroup(request: Request, user_id: Long, group_id: Long)
 DELETE      /api/users/:user_id/group/:group_id                      controllers.UserGroupController.deleteGroup(request: Request, user_id: Long, group_id: Long)
-POST        /api/users/:user_id/group                                controllers.UserGroupController.createUserGroup(request: Request, user_id: Long)
 GET         /api/users/:user_id/group/:group_id                      controllers.UserGroupController.getSingleGroup(request: Request, user_id: Long, group_id: Long)
+POST        /api/users/:user_id/group                                controllers.UserGroupController.createUserGroup(request: Request, user_id: Long)
+GET         /api/users/:user_id/group                                controllers.UserGroupController.getUserGroups(request: Request, user_id: Long)
 
 # Trips (trips within trips)
-
 POST        /api/users/:userId/trips                        controllers.TripController.createTrip(request: Request, userId: Long)
 GET         /api/users/:userId/trips                        controllers.TripController.getUserTrips(request: Request, userId: Long)
 GET         /api/users/:userId/trips/:tripId                controllers.TripController.getTripById(request: Request, tripId: Long, userId: Long)
