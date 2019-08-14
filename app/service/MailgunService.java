@@ -1,7 +1,9 @@
 package service;
 
 import com.google.gson.JsonObject;
+import models.Grouping;
 import models.User;
+import models.UserGroup;
 import org.apache.commons.lang3.StringUtils;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
@@ -95,17 +97,36 @@ public class MailgunService {
                 welcomeEmailSubject,
                 "welcome-email",
                 recipientVariable);
-
         return sendMailgunRequest(request).toCompletableFuture();
     }
 
 
-//    public CompletableFuture<Integer> sendAddedToGroupEmail(User user) {
-//        return supplyAsync(() -> {
-//
-//        }, context);
-//    }
-//
+    public CompletableFuture<Integer> sendAddedToGroupEmail(User recipient, Long groupId) {
+        Grouping grouping = Grouping.find.query().where().eq("group_id", groupId).findOne();
+        String groupingEmailSubject = "Travelr - You've been added to a group!";
+
+        if (grouping.getName() != null) {
+            groupingEmailSubject = "Travelr - You've been added to " + StringUtils.capitalize(grouping.getName()) +"!";
+        }
+
+        ArrayList<User> recipientList = new ArrayList<>();
+        recipientList.add(recipient);
+
+        JsonObject recipientVariableFields = new JsonObject();
+        recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+        recipientVariableFields.addProperty("groupName", grouping.getName());
+        recipientVariableFields.addProperty("groupsURL", "http://localhost:8080/usergroups");
+
+        JsonObject recipientVariable = new JsonObject();
+        recipientVariable.add(recipient.email, recipientVariableFields);
+
+        WSRequest request = buildMailgunRequest(recipientList,
+                groupingEmailSubject,
+                "added-to-group",
+                recipientVariable);
+        return sendMailgunRequest(request).toCompletableFuture();
+    }
+
 
     /**
      * Creates a http request for the mailgun api endpoint to compose an email regarding the update of a trip to
@@ -134,7 +155,6 @@ public class MailgunService {
                 subject,
                 "trip-updated",
                 recipientVariables);
-
         return sendMailgunRequest(request).toCompletableFuture();
     }
 }
