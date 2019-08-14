@@ -11,7 +11,7 @@
           ></v-text-field>
         </v-flex>
         <CreateGroupForm v-if="createGroupActive"/>
-    <v-flex class="section-body">
+    <v-flex class="section-body" pr-0 pl-0 pt-4>
       <UserGroupNavItem
         class="usergroup-nav-item"
         v-bind:key="index"
@@ -19,6 +19,7 @@
         :usergroup="usergroup"
         :isSelected="selectedGroup == usergroup"
         :selectUserGroup="selectUserGroup"
+        :updateUserGroups="updateUserGroups"
       />
     </v-flex>
   </v-container>
@@ -60,6 +61,7 @@ export default {
     usergroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
+    updateUserGroups: Function
   },
 
   computed: {

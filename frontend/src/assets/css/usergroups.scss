@@ -14,15 +14,35 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
+
+  strong {
+    font-size: 15px;
+  }
+
+  p {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .usergroup-element-details-description {
+    color: black;
+    margin-bottom: 0px !important;
+  }
 }
+
+.usergroup-selected {
+  background-color: rgba(25, 118, 210, 0.05);
+}
+
 
 .section-container {
   padding: 0px !important;
+  margin: 0px !important;
 }
 
 .section-heading {
-  background-color: rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid darkgrey;
+  background-color: rgba(143, 143, 143, 0.05);
+  // border-bottom: 1px solid darkgrey;
   padding: 10px;
 
   .section-options-container {

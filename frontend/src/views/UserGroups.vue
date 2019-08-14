@@ -15,6 +15,7 @@
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
+          :updateUserGroups="getUserGroups"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
