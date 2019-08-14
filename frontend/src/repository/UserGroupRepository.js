@@ -10,11 +10,11 @@ export default {
   },
 
   /**
-   * Gets a single a user group for a user.
+   * Creates a single a user group for a user.
    * @param {number} userId The user id
    */
-  createUserGroup(userId) {
-    return Repository.post(`/users/${userId}/group`);
+  createUserGroup(userId, payload) {
+    return Repository.post(`/users/${userId}/group`, payload);
   },
 
   /**
