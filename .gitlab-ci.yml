@@ -70,10 +70,10 @@ deploy-develop-server:
   dependencies:
   - recent-artifacts
   script:
-  - sudo systemctl stop Develop
+  - systemctl stop Develop
   - rm -rf /srv/develop/build/*
   - unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/develop/build/
-  - sudo systemctl start Develop
+  - systemctl start Develop
   only:
   - master@seng302-2019/team-300
   except:
