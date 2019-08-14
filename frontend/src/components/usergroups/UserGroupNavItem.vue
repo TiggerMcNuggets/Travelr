@@ -72,7 +72,10 @@ export default {
      * Deletes the user group
      */
     deleteUserGroup() {
-      usergroupRepository.deleteSingleUserGroup(this.$store.getters.getUser.id, this.usergroup.id).then(() =>  {console.log(response); this.updateUserGroups()})
+      usergroupRepository.deleteSingleUserGroup(
+        this.$store.getters.getUser.id,
+        this.usergroup.id
+      );
     }
   }
 };
