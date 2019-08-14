@@ -2,6 +2,7 @@ package service;
 
 import com.google.gson.JsonObject;
 import models.User;
+import org.apache.commons.lang3.StringUtils;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
@@ -58,6 +59,19 @@ public class MailgunService {
 
 
     /**
+     * This methods handles the sending of emails to the Mailgun API. It requires
+     * a built request to be sent, and returns the status code to the caller
+     * once the request is executed.
+     *
+     * @param request to be sent to the Mailgun API
+     * @return an integer response code from the Mailgun API
+     */
+    private CompletionStage<Integer> sendMailgunRequest(WSRequest request) {
+        return request.post("").thenApplyAsync(WSResponse::getStatus);
+    }
+
+
+    /**
      * Composes and sends a welcome email to the given email address. This function
      * uses the 'welcome-email' template on our Mailgun account and provides the
      * user's first name to the template's placeholder field.
@@ -66,34 +80,24 @@ public class MailgunService {
      * @return a response code from the Mailgun API which is useful for testing.
      */
     public CompletableFuture<Integer> sendWelcomeEmail(User recipient) {
-        return supplyAsync(() -> {
-            String welcomeEmailSubject = "Travelr - Welcome Aboard!";
+        String welcomeEmailSubject = "Travelr - Welcome Aboard!";
 
-            ArrayList<User> recipientList = new ArrayList<>();
-            recipientList.add(recipient);
+        ArrayList<User> recipientList = new ArrayList<>();
+        recipientList.add(recipient);
 
-            JsonObject recipientVariableFields = new JsonObject();
-            recipientVariableFields.addProperty("firstName", recipient.firstName);
+        JsonObject recipientVariableFields = new JsonObject();
+        recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
 
-            JsonObject recipientVariable = new JsonObject();
-            recipientVariable.add(recipient.email, recipientVariableFields);
+        JsonObject recipientVariable = new JsonObject();
+        recipientVariable.add(recipient.email, recipientVariableFields);
 
-            WSRequest request = buildMailgunRequest(recipientList,
-                    welcomeEmailSubject,
-                    "welcome-email",
-                    recipientVariable);
+        WSRequest request = buildMailgunRequest(recipientList,
+                welcomeEmailSubject,
+                "welcome-email",
+                recipientVariable);
 
-            CompletionStage<WSResponse> asyncResponse = request.post("");
-
-            CompletionStage<Integer> responseCode = asyncResponse.thenApply(response -> {
-                return response.getStatus();
-            });
-
-            return responseCode.toCompletableFuture().join();
-
-        }, context);
+        return sendMailgunRequest(request).toCompletableFuture();
     }
-
 
 
 //    public CompletableFuture<Integer> sendAddedToGroupEmail(User user) {
@@ -113,32 +117,21 @@ public class MailgunService {
      * @return a response code given by the mailgun API
      */
     public CompletableFuture<Integer> sendTripUpdateEmail(ArrayList<User> recipients, String tripName, Long userId, Long tripId) {
-        return supplyAsync(() -> {
-            JsonObject recipientVariables = new JsonObject();
-            JsonObject recipientVariableFields = new JsonObject();
-            String subject = "Travelr - Your trip " + tripName + " was recently updated.";
+        JsonObject recipientVariables = new JsonObject();
+        JsonObject recipientVariableFields = new JsonObject();
+        String subject = "Travelr - Your trip " + tripName + " was recently updated.";
 
-            for (User recipient: recipients) {
-                recipientVariableFields.addProperty("firstName", recipient.firstName);
-                recipientVariableFields.addProperty("tripName", tripName);
-                recipientVariableFields.addProperty("tripURL", "http://localhost:9000/api/users/"
-                 + userId + "/trips/" + tripId);
-                recipientVariables.add(recipient.email, recipientVariableFields);
-                recipientVariableFields = new JsonObject();
-            }
+        for (User recipient: recipients) {
+            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+            recipientVariables.add(recipient.email, recipientVariableFields);
+            recipientVariableFields = new JsonObject();
+        }
 
-            WSRequest request = generateMailgunRequest(recipients,
-                    subject,
-                    "trip-updated",
-                    recipientVariables);
-            CompletionStage<WSResponse> asyncResponse = request.post("");
+        WSRequest request = buildMailgunRequest(recipients,
+                subject,
+                "trip-update-email",
+                recipientVariables);
 
-            CompletionStage<Integer> responseCode = asyncResponse.thenApply(response -> {
-                return response.getStatus();
-            });
-
-            return responseCode.toCompletableFuture().join();
-
-        }, context);
+        return sendMailgunRequest(request).toCompletableFuture();
     }
 }
