@@ -20,6 +20,7 @@ import SingleDestination from "../components/destination/SingleDestination";
 import DestinationPage from "../components/destination/DestinationPage";
 import Page from "../views/Page";
 import Media from "../views/Media";
+import UserGroupsPage from "../views/UserGroups";
 
 const DEFAULT_ROUTE_AUTH = () => `/user/${store.getters.getUser.id}/dashboard`;
 const DEFAULT_ROUTE_UNAUTH = () => "/login";
@@ -154,6 +155,12 @@ let router = new Router({
           path: "/destinations",
           name: "destinationPage",
           component: DestinationPage,
+          beforeEnter: authGuard
+        },
+        {
+          path: "/usergroups",
+          name: "userGroupPage",
+          component: UserGroupsPage,
           beforeEnter: authGuard
         },
         {

@@ -1,13 +1,16 @@
 package controllers.dto.UserGroup;
 
+import models.Grouping;
+import models.User;
+import models.UserGroup;
 import play.data.validation.Constraints;
 
-public class UpdateUserGroupReq {
+import java.util.ArrayList;
+import java.util.List;
 
-    @Constraints.Required
-    public String name;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
-    public String description;
+public class CreateUserGroupReq {
 
     public String getName() {
         return name;
@@ -24,4 +27,10 @@ public class UpdateUserGroupReq {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Constraints.Required
+    public String name;
+
+    @Constraints.Required
+    public String description;
 }
