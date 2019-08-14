@@ -1,5 +1,4 @@
 <template>
-    
   <v-container class="section-container">
     <v-layout row wrap class="section-body">
       <v-text-field
@@ -16,11 +15,10 @@
         v-model="description"
         maxlength="50"
       ></v-textarea>
-      <v-flex pb-3 pt-2>
+      <v-flex pb-2 pt-2>
         <v-btn color="error" @click="clearAndSubmit">Create New Group</v-btn>
       </v-flex>
     </v-layout>
-    <v-divider></v-divider>
   </v-container>
 </template>
 
@@ -55,15 +53,18 @@ export default {
      * Creates a new user group for the user.
      */
     createGroup() {
-      usergroupRepository.createUserGroup(this.$store.getters.getUser.id, {"name": this.name, "description": this.description})
+      usergroupRepository.createUserGroup(this.$store.getters.getUser.id, {
+        name: this.name,
+        description: this.description
+      });
     },
 
     /**
      * Clears the fields.
      */
     clearFields() {
-      this.name = ""
-      this.description = ""
+      this.name = "";
+      this.description = "";
     }
   }
 };
