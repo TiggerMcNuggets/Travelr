@@ -47,7 +47,7 @@ POST        /api/users/:id/albums/:album_id                    controllers.Media
 GET         /api/users/:id/albums/:album_id                    controllers.MediaController.getAlbumContent(request: Request, id: Long, album_id: Long)
 DELETE      /api/users/:id/albums/:album_id                    controllers.MediaController.deleteAlbum(request: Request, id: Long, album_id: Long)
 PUT         /api/users/:id/albums/:album_id                    controllers.MediaController.updateAlbumGivenUser(request: Request, id: Long, album_id: Long)
-PUT       /api/users/:id/albums/:album_id/media/:media_id    controllers.MediaController.addMediaToAlbum(request: Request, id: Long, album_id: Long, media_id: Long)
+PUT         /api/users/:id/albums/:album_id/media/:media_id    controllers.MediaController.addMediaToAlbum(request: Request, id: Long, album_id: Long, media_id: Long)
 DELETE      /api/users/:id/albums/:album_id/media/:media_id    controllers.MediaController.deleteSingleMedia(request: Request, id: Long, album_id: Long, media_id: Long, removeAll: Integer)
 POST        /api/users/:id/media/:media_id                     controllers.MediaController.updateUserMedia(request: Request, id: Long, media_id: Long)
 GET         /api/users/:id/media/:filename                     controllers.MediaController.getImageFromDatabase(request: Request, id: Long, filename: String)
