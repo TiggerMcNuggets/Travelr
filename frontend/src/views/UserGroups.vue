@@ -20,7 +20,8 @@
       </v-flex>
       <v-flex xs12 sm8 md9>
         <GroupUsersTable
-          :users="users"
+          :groupUsers="groupUsers"
+          :selectedGroup="selectedGroup"
           :name="selectedGroup.name"
           :deleteUser="deleteUser"
           :isError="isError"
@@ -58,9 +59,12 @@ export default {
   },
 
   computed: {
-    users() {
+    /**
+     * returns a list of members/users in the selected group
+     */
+    groupUsers() {
       return this.selectedGroup.members;
-    }
+    },
   },
 
   methods: {
@@ -122,6 +126,7 @@ export default {
    */
   created: async function() {
     this.getUserGroups();
+    await this.$store.dispatch("getUsers", false);
     if (this.$store.getters.getIsUserAdmin) {
       this.isAdmin = true;
     }
