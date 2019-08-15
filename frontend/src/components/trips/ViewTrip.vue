@@ -45,13 +45,24 @@
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-btn
-                                v-on:click=""
+                                v-on:click="addTripNode(true)"
                                 icon
                                 v-on="on">
-                            <v-icon color="primary lighten-1">add_circle</v-icon>
+                            <v-icon color="primary lighten-1">add_location</v-icon>
                         </v-btn>
                     </template>
                     <span>Add Destination</span>
+                </v-tooltip>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-btn
+                                v-on:click="addTripNode(false)"
+                                icon
+                                v-on="on">
+                            <v-icon color="primary lighten-1">local_airport</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Add Trip</span>
                 </v-tooltip>
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
@@ -102,16 +113,15 @@
                     <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                         <li v-for="(node, i) in trip.trip.nodes"
                             :key="i"
-                            class="trip-timeline-item-width white--text mb-5"
-                        >
+                            class="trip-timeline-item-width white--text mb-5">
                             <v-timeline-item
-                                    v-if="node.type.toLowerCase() === 'destination'"
-                            >
-                                <v-card>
+                                    v-if="node.type.toLowerCase() === 'destination'">
+                                <v-card
+                                        class="v-timeline-item-style">
                                     <v-combobox
                                             :items="userDestinations"
                                             item-text="name"
-                                            v-model="node.name"
+                                            v-model="node.destination.name"
                                             label="Select an existing destination"
                                             return-object
                                     >
@@ -166,15 +176,6 @@
                                                 @input="node.departureDateMenu = false"
                                         ></v-date-picker>
                                     </v-menu>
-                                    <div class='date-margin title font-weight-regular'>
-                                        <v-text-field
-                                                class="mt-0 pt-0"
-                                                label="Location"
-                                                v-model="node.destination.name"
-                                                prepend-icon="place"
-                                                readonly
-                                        ></v-text-field>
-                                    </div>
 
                                 </v-card>
 
@@ -320,8 +321,14 @@
                             <v-timeline-item
                                     v-else
                                     color="red">
-                                <v-card class='hoverable' v-on:click="getSelectedTrip(node.id)">
-                                    <h3>{{node.name}}</h3>
+                                <v-card >
+                                    <!--<h3 class='hoverable' v-on:click="getSelectedTrip(node.id)">{{node.name}}</h3>-->
+                                    <v-text-field
+                                            class="v-timeline-item-style"
+                                            v-model="node.name"
+                                            :rules="nameRules"
+                                            :counter="60"
+                                            label="Trip Name"></v-text-field>
                                 </v-card>
                             </v-timeline-item>
                         </li>
@@ -355,8 +362,8 @@
         padding: 8px 16px 4px 16px
     }
 
-    .container-custom-padding {
-        padding: 0;
+    .v-timeline-item-style {
+        padding: 1.5em 1em 1.5em 1em;
     }
 
 </style>
@@ -505,6 +512,11 @@
                 // this.trip.destinations = this.setOrdinal(copy);
             },
 
+            changeNodeType(index) {
+                const destinationType = this.trip.trip.nodes[index].type.toLowerCase() === 'destination';
+                this.trip.trip.nodes[index].type = destinationType ? 'trip' : 'destination';
+            },
+
             /**
              * Validates the trip form
              */
@@ -512,21 +524,22 @@
                 !this.$refs.form.validate()
             },
 
-            // /**
-            //  * Adds a destination to the trip destinations
-            //  */
-            // addTripDestination() {
-            // const destinationsSize = this.trip.destinations.length;
-            // this.trip.destinations.push({
-            //     arrivalDate: null,
-            //     departureDate: null,
-            //     depth: 0,
-            //     destination: {name: null},
-            //     expanded: false,
-            //     hidden: false,
-            //     ordinal: destinationsSize,
-            // });
-            // },
+            /**
+             * Adds a node to the trip destinations
+             * @param {boolean} isDestination
+             */
+            addTripNode(isDestination) {
+                this.trip.trip.nodes.push({
+                        name: '',
+                        type: isDestination ? 'destination' : 'trip',
+                        arrivalDate: null,
+                        departureDate: null,
+                        arrivalDateMenu: false,
+                        departureDateMenu: false,
+                        destination: {name: null}
+                    }
+                );
+            },
 
             /**
              * Ensures the list of destinations ordinal value is up to date
@@ -537,20 +550,6 @@
                     d.ordinal = i;
                 });
                 return copy
-            },
-
-            /**
-             * Increases the depth of destination at given index
-             */
-            promote(index) {
-                this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth + 1);
-            },
-
-            /**
-             * Decreases the depth of destination at given index
-             */
-            demote(index) {
-                this.$set(this.trip.destinations[index], "depth", this.trip.destinations[index].depth - 1);
             },
 
             /**
