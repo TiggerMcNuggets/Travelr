@@ -179,7 +179,7 @@
           .setProfilePic(this.$route.params.id, {
             photo_filename: this.clickedImage.filename
           })
-          .then(res => {
+          .then(() => {
             store.dispatch("fetchMe");
           });
       },

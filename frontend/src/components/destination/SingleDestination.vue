@@ -292,7 +292,7 @@ export default {
             this.files = this.groupImages(result.data);
           });
         })
-        .catch(error => {
+        .catch(() => {
           this.uploadError = true;
         });
       this.$refs.file.value = "";
