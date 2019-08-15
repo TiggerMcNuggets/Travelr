@@ -26,7 +26,7 @@
             </ul>
           </td>
           <td v-if="isAdmin" class="text-xs-right">
-            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </td>
@@ -46,7 +46,8 @@ export default {
     users: Array,
     name: String,
     deleteUser: Function,
-    isError: Boolean
+    isError: Boolean,
+    group: Object
   },
 
   components: {
@@ -57,6 +58,11 @@ export default {
     return {
       isAdmin: false
     };
+  },
+
+  watch: {
+    users: () => {
+    }
   },
 
   methods: {
@@ -106,7 +112,7 @@ export default {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
       return columns;
-    }
+    },
   },
 
   /**

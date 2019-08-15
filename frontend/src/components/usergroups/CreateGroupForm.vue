@@ -58,7 +58,6 @@ export default {
         name: this.name,
         description: this.description
       }).then(() => {
-        console.log("here 1");
         this.updateUserGroups();
       });
     },

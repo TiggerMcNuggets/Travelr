@@ -24,6 +24,7 @@
           :name="selectedGroup.name"
           :deleteUser="deleteUser"
           :isError="isError"
+          :group="selectedGroup"
         />
       </v-flex>
     </v-layout>
@@ -68,7 +69,6 @@ export default {
      * Retrieves user groups from api
      */
     getUserGroups() {
-      console.log(this.$store.getters.getUser.id);
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
         this.usergroups = result.data;
@@ -84,11 +84,13 @@ export default {
      * Removes user from a user group
      * @param userId the id of the user group to remove
      */
-    async deleteUser() {
+    async deleteUser(groupId, memberId) {
       this.isError = false;
-      // TODO: Connect to delete user from group
-
-      this.getUserGroups();
+      userGroupRepository.removeUserInUserGroup(
+        this.$store.getters.getUser.id, 
+        groupId, 
+        memberId
+      ).then(this.getUserGroups());
     },
 
     /**
