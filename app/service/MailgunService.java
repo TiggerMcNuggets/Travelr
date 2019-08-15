@@ -108,7 +108,7 @@ public class MailgunService {
      * @return a response code from the Mailgun API which is useful for testing.
      */
     public CompletableFuture<Integer> sendAddedToGroupEmail(User recipient, Long groupId) {
-        Grouping grouping = UserGroup.find.query().where().eq("user_id", recipient.getId()).eq("group_id", groupId).findOne().getGroup();
+        Grouping grouping = UserGroup.find.query().where().eq("user_id", recipient.getId()).eq("grouping_id", groupId).findOne().getGrouping();
 
         if (grouping == null) {
             return CompletableFuture.completedFuture(404);
