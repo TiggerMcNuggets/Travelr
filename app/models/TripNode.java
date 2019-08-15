@@ -20,10 +20,6 @@ public class TripNode extends Node {
         nodes = new ArrayList<>();
     }
 
-    public void add(Node node) {
-        nodes.add(node);
-    }
-
     public static TripNodeFinder find = new TripNodeFinder();
 
     public List<Node> getNodes() {
