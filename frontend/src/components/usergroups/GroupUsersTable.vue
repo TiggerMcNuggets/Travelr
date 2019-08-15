@@ -5,7 +5,7 @@
       <v-select
       :items="users"
       :v-model="selectedUserId"
-      @change="selectUser"
+      v-on:change="selectUser"
       ></v-select>
       <v-checkbox
         v-model="isMaintainer"
@@ -13,7 +13,7 @@
       ></v-checkbox>
       <v-btn
         color="error"
-        @click="addUserToGroup">
+        v-on:click="addUserToGroup">
         Add user to group
       </v-btn>
     </div>
@@ -22,7 +22,7 @@
     <v-flex class="section-body">
       <v-data-table :headers="getColumns" :items="groupUsers">
         <template v-slot:items="props">
-          <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
+          <td v-on:click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
           <td class="text-xs-right">{{ props.item.lastName }}</td>
           <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
           <td class="text-xs-right">{{ props.item.gender }}</td>
