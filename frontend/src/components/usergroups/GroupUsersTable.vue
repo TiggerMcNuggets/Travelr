@@ -63,6 +63,7 @@ let userGroupRepository = RepositoryFactory.get("userGroup");
 export default {
   props: {
     groupUsers: Array,
+    getUserGroups: Function,
     selectedGroup: Object,
     name: String,
     deleteUser: Function,
@@ -118,6 +119,8 @@ export default {
     addUserToGroup() {
       userGroupRepository.addUserToUserGroup(this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {
         isOwner: this.isMaintainer
+      }).then(() => {
+        this.getUserGroups();
       });
     }
   },

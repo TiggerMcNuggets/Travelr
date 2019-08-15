@@ -26,6 +26,7 @@
           :deleteUser="deleteUser"
           :isError="isError"
           :group="selectedGroup"
+          :getUserGroups="getUserGroups"
         />
       </v-flex>
     </v-layout>
@@ -83,6 +84,9 @@ export default {
       })
     },
 
+    /**
+     * Sets the selected user group
+     */
     selectUserGroup(group) {
       this.selectedGroup = group;
     },
