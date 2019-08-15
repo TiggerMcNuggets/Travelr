@@ -306,7 +306,7 @@ export default {
      */
     getImgUrl(item) {
       return (
-        base_url + "/api/users/" + this.userId + "/media/" + item.uriString
+        `${base_url}/api/users/${this.userId}/media/${item.uriString}`
       );
     },
 
