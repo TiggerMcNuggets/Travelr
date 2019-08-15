@@ -132,7 +132,7 @@ export default {
   components: {
     PhotoSelect,
     SuggestTravellerTypes,
-    PageHeader
+    PageHeader,
   },
 
   // local variables
@@ -286,12 +286,11 @@ export default {
 
       storeDestinationImage(this.userId, this.destId, formData)
         .then(() => {
-          getImages(this.userId, this.destination.defaultAlbumId).then(
-            result => {
-              this.uploadExisting = true;
-              this.files = this.groupImages(result.data);
-            }
-          );
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+            this.uploadExisting = true;
+            console.log(result);
+            this.files = this.groupImages(result.data);
+          });
         })
         .catch(error => {
           this.uploadError = true;
@@ -305,9 +304,7 @@ export default {
      * @returns {string} A url of where to find the photo to set as src
      */
     getImgUrl(item) {
-      return (
-        `${base_url}/api/users/${this.userId}/media/${item.uriString}`
-      );
+      return base_url + "/api/users/" + this.userId + "/media/" + item.uriString;
     },
 
     /**
@@ -385,10 +382,13 @@ export default {
       .getDestination(this.userId, this.destId)
       .then(response => {
         this.destination = response.data;
-        // Gets all the images to display on the page.
-        getImages(this.userId, this.destination.defaultAlbumId).then(result => {
-          this.files = this.groupImages(result.data);
-        });
+          console.log(this.destination);
+          // Gets all the images to display on the page.
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+              console.log("here")
+
+              this.files = this.groupImages(result.data);
+          });
       })
       .catch(err => {
         console.log(err);
