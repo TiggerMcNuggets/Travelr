@@ -4,17 +4,17 @@ stages:
 - deploy
 
 
-# tag_checker:
-#   stage: build
-#   script:
-#     - python tag_checker.py $CI_COMMIT_TAG
-#   only:
-#     - tags
+tag_checker:
+  stage: test
+  script:
+    - python tag_checker.py $CI_COMMIT_TAG
+  only:
+    - tags
 
-# junit:
-#   stage: test
-#   script:
-#     - sbt test
+junit:
+  stage: test
+  script:
+    - sbt test
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
