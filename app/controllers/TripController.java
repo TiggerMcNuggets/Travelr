@@ -85,6 +85,7 @@ public class TripController extends Controller {
         Form<TripDTO> createTripForm = formFactory.form(TripDTO.class).bindFromRequest(request);
         TripDTO dto = createTripForm.get();
         Trip updatedTrip = Trip.find.byId(tripId);
+        if (updatedTrip == null) return CompletableFuture.completedFuture(notFound());
 
         if (createTripForm.hasErrors()) {
             System.out.println(createTripForm.errors());
