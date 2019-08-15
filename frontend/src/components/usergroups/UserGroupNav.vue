@@ -1,10 +1,10 @@
 <template>
   <v-container class="section-container">
-    <SectionHeader title="User Groups List" disableUndoRedo :options="usergroupsOptions" />
+    <SectionHeader title="User Groups List" disableUndoRedo :options="usergroupsOptions"/>
     <v-flex v-if="searchActive" xs12 pb-4 pt-4 pr-2 pl-2>
       <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-flex>
-    <CreateGroupForm v-if="createGroupActive" />
+    <CreateGroupForm v-if="createGroupActive"/>
     <v-flex class="section-body" pr-0 pl-0 pt-4>
       <UserGroupNavItem
         class="usergroup-nav-item"
@@ -80,7 +80,7 @@ export default {
         }
       ];
     },
-    
+
     /**
      * Filtered User Groups
      */
