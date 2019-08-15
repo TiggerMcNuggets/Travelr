@@ -15,7 +15,7 @@ public class UpdateUserGroupSteps {
     private StateSingleton state = StateSingleton.getInstance();
 
     /**
-     * Sets the request to the endpoint and method to edit a user group.
+     * Sets the request to the endpoint and method to edit a user grouping.
      */
     @When("I want to edit the user group")
     public void i_want_to_edit_the_user_group() {
@@ -24,7 +24,7 @@ public class UpdateUserGroupSteps {
     }
 
     /**
-     * Verifies the user group matches the specified data
+     * Verifies the user grouping matches the specified data
      * @param dataTable The data to check against.
      */
     @Then("The user group is")
