@@ -29,7 +29,7 @@ public class APIResponses {
     public static final String SUCCESSFUL_GROUP_DELETION = "Group removed";
     public static final String SUCCESSFUL_GROUP_UPDATE = "Group updated";
     public static final String GROUP_NOT_FOUND = "Group not found";
-    public static final String DUPLICATE_GROUP_NAME = "There is already a grouping with this name";
+    public static final String DUPLICATE_GROUP_NAME = "There is already a group with this name";
     public static final String MEMBER_EXISTS_IN_GROUP = "Member already exists in the group";
 
 

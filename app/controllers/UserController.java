@@ -17,10 +17,12 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
+import service.MailgunService;
 
 
 import javax.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,11 +35,13 @@ public class UserController extends Controller {
     FormFactory formFactory;
 
     private UserRepository userRepository;
+    private final MailgunService mailgunService;
 
 
     @Inject
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, MailgunService mailgunService) {
         this.userRepository = userRepository;
+        this.mailgunService = mailgunService;
     }
 
     /**
@@ -76,7 +80,7 @@ public class UserController extends Controller {
 
 
     /**
-     * Creates a new user
+     * Creates a new user and sends a welcome email when successfully created.
      * @param request the http request
      * @return 201 with json object of new user id if all ok
      */
@@ -107,6 +111,7 @@ public class UserController extends Controller {
             CreateUserRes response = new CreateUserRes(id);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response);
+            mailgunService.sendWelcomeEmail(User.find.findByEmail(req.email));
 
             return created(jsonResponse);
         });

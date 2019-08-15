@@ -64,7 +64,7 @@ export default {
           this.usergroupId,
           this.usergroup
         )
-        .then(response => {
+        .then(() => {
           this.closeDialog();
         });
     }

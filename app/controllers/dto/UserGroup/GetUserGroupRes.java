@@ -1,6 +1,7 @@
 package controllers.dto.UserGroup;
 
 import controllers.dto.User.GetUserRes;
+import models.Grouping;
 import models.User;
 import models.UserGroup;
 
@@ -15,12 +16,39 @@ public class GetUserGroupRes {
     public List<Long> owners;
     public List<GetUserRes> members;
 
+    /**
+     * Constructor given users, userGroup and owners (used for get single group)
+     * @param users The list of users
+     * @param userGroup The user group
+     * @param owners The list of owners
+     */
     public GetUserGroupRes(List<User> users, UserGroup userGroup, List<User> owners) {
         this.id = userGroup.getId();
-        this.name = userGroup.getGroup().getName();
-        this.description = userGroup.getGroup().getDescription();
+        this.name = userGroup.getGrouping().getName();
+        this.description = userGroup.getGrouping().getDescription();
         this.members = addUsers(users);
         this.owners = addOwners(owners);
+    }
+
+    /**
+     * Constructor given grouping (used for get all groups that belong to a user)
+     * @param grouping The group
+     */
+    public GetUserGroupRes(Grouping grouping) {
+
+        this.id = grouping.getId();
+        this.name = grouping.getName();
+        this.description = grouping.getDescription();
+        this.owners = new ArrayList<>();
+        this.members = new ArrayList<>();
+
+        for (UserGroup userGroup : grouping.getUserGroups()) {
+            if (userGroup.isOwner()) {
+                this.owners.add(userGroup.getUser().getId());
+            } else {
+                this.members.add(new GetUserRes(userGroup.getUser()));
+            }
+        }
     }
 
     /**
@@ -46,7 +74,7 @@ public class GetUserGroupRes {
      */
     public List<Long> addOwners(List<User> owners) {
         List<Long> Owners = new ArrayList<Long>();
-        for (User owner: owners) {
+        for (User owner : owners) {
             Owners.add(owner.getId());
         }
         return Owners;
@@ -56,20 +84,47 @@ public class GetUserGroupRes {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<Long> getOwners() {
         return owners;
+    }
+
+    public void setOwners(List<Long> owners) {
+        this.owners = owners;
     }
 
     public List<GetUserRes> getMembers() {
         return members;
     }
 
+    public void setMembers(List<GetUserRes> members) {
+        this.members = members;
+    }
+
+    public static List<GetUserGroupRes> parseUserGroups(List<Grouping> groupings) {
+        List<GetUserGroupRes> userGroupRes = new ArrayList<>();
+        for (Grouping grouping : groupings) {
+            userGroupRes.add(new GetUserGroupRes(grouping));
+        }
+        return userGroupRes;
+    }
 }
