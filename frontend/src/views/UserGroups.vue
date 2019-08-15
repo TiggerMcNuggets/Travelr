@@ -72,10 +72,9 @@ export default {
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
         this.usergroups = result.data;
-        if (this.selectedGroup.id === null) {
+        this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
+        if (!this.selectedGroup) {
           this.selectedGroup = result.data[0];
-        } else {
-          this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         }
       })
     },

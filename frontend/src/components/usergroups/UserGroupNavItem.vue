@@ -75,7 +75,9 @@ export default {
       usergroupRepository.deleteSingleUserGroup(
         this.$store.getters.getUser.id,
         this.usergroup.id
-      );
+      ).then(() => {
+        this.updateUserGroups();
+      });
     }
   }
 };
