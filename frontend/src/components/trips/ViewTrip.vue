@@ -332,6 +332,11 @@
                 :destinations="trip.trip.nodes"
                 class="trip-map"/>
     </v-container>
+    <TripMap
+        :destinations="trip.destinations"
+        class="trip-map"/>
+    </v-card>
+
 </template>
 
 <style>

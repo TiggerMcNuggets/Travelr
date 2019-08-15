@@ -1,0 +1,66 @@
+@import "./theme.scss";
+
+.usergroup-nav-item {
+  cursor: pointer;
+}
+
+.usergroup-element {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.usergroup-element-details {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  strong {
+    font-size: 15px;
+  }
+
+  p {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .usergroup-element-details-description {
+    color: black;
+    margin-bottom: 0px !important;
+  }
+}
+
+.usergroup-selected {
+  background-color: rgba(25, 118, 210, 0.05);
+}
+
+
+.section-container {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.section-heading {
+  background-color: rgba(143, 143, 143, 0.05);
+  padding: 10px;
+
+  .section-options-container {
+    flex-grow: 0 !important;
+  }
+
+  h3 {
+    color: black;
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.section-body {
+  padding: 10px;
+
+  button {
+    margin: 0px !important;
+    margin-bottom: 15px;
+  }
+}

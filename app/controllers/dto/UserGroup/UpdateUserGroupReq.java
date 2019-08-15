@@ -5,7 +5,7 @@ import play.data.validation.Constraints;
 public class UpdateUserGroupReq {
 
     @Constraints.Required
-    public String  name;
+    public String name;
 
     public String description;
 
