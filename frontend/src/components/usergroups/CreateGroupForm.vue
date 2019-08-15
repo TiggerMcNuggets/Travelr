@@ -29,7 +29,8 @@ let usergroupRepository = RepositoryFactory.get("userGroup");
 export default {
   props: {
     title: String,
-    album: Object
+    album: Object,
+    updateUserGroups: Function
   },
 
   data() {
@@ -56,6 +57,9 @@ export default {
       usergroupRepository.createUserGroup(this.$store.getters.getUser.id, {
         name: this.name,
         description: this.description
+      }).then(() => {
+        console.log("here 1");
+        this.updateUserGroups();
       });
     },
 
