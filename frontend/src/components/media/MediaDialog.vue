@@ -16,7 +16,7 @@
             @click="updateMediaAndSave(clickedImage)"
           >save
           </v-icon>
-          <v-icon v-else-if="canCrudMedia" @click="editCaption = true">edit</v-icon>
+          <v-icon v-else-if="canCRUDMedia" @click="editCaption = true">edit</v-icon>
         </v-layout>
         <div v-if="editCaption">
           <v-text-field v-model="clickedImage.caption" :counter="250" label="Caption"></v-text-field>
@@ -25,9 +25,9 @@
       </div>
     </v-card-title>
 
-    <v-divider v-if="canCrudMedia"></v-divider>
+    <v-divider v-if="canCRUDMedia"></v-divider>
 
-    <v-card-actions v-if="canCrudMedia">
+    <v-card-actions v-if="canCRUDMedia">
       <v-select
         v-model="selectedAlbums"
         :items="albums"
@@ -72,7 +72,7 @@
 
 
     </v-card-actions>
-    <v-card-actions v-if="canCrudMedia">
+    <v-card-actions v-if="canCRUDMedia">
       <v-btn color="error" @click="setProfilePhoto">Set Profile Photo</v-btn>
       <v-btn color="error" @click="openConfirmDelete">Delete</v-btn>
       <v-spacer></v-spacer>
@@ -118,7 +118,7 @@
 
     computed: {
 
-      canCrudMedia() {
+      canCRUDMedia() {
         return this.isAdminUser || this.isMyProfile
       },
 
