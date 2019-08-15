@@ -144,6 +144,7 @@
                                                     readonly
                                                     v-on="on"
                                                     class="date-margin"
+                                                    :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                                             ></v-text-field>
                                         </template>
                                         <v-date-picker
@@ -163,6 +164,7 @@
                                     >
                                         <template v-slot:activator="{ on }">
                                             <v-text-field
+                                                    :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                                                     v-model="node.departureDate"
                                                     label="Departure date"
                                                     prepend-icon="event"
@@ -178,145 +180,6 @@
                                     </v-menu>
 
                                 </v-card>
-
-                                <!--<template v-slot:icon>-->
-                                <!--<span class="hoverable"-->
-                                <!--v-on:click="toggleExpanded(i)">{{getDepthData(destination.depth).number}}</span>-->
-                                <!--</template>-->
-                                <!--<v-card-->
-                                <!--color="whitesmoke"-->
-                                <!--&gt;-->
-                                <!--<v-container class="container-custom-padding">-->
-                                <!--<v-card-title>-->
-                                <!--<v-combobox-->
-                                <!--:items="userDestinations"-->
-                                <!--item-text="name"-->
-                                <!--v-model="destination.destination"-->
-                                <!--label="Select an existing destination"-->
-                                <!--:rules="noSameDestinationNameConsecutiveRule"-->
-                                <!--return-object-->
-                                <!--&gt;-->
-                                <!--</v-combobox>-->
-                                <!--<v-btn-->
-                                <!--v-on:click="toggleHiddenDestinations(destination)"-->
-                                <!--fab flat small>-->
-                                <!--<v-icon>view_headline</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--<v-btn-->
-                                <!--:disabled="!isPromotable(trip.destinations, destination.ordinal)"-->
-                                <!--v-on:click="promote(destination.ordinal)"-->
-                                <!--fab flat small>-->
-                                <!--<v-icon>arrow_upward</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--<v-btn-->
-                                <!--:disabled="!isDemotable(trip.destinations, destination.ordinal)"-->
-                                <!--v-on:click="demote(destination.ordinal)"-->
-                                <!--fab flat small>-->
-                                <!--<v-icon>arrow_downward</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--<v-tooltip v-if="(!destination.arrivalDate || !destination.departureDate ||-->
-                                <!--destination.arrivalDate == null || destination.departureDate == null)" top>-->
-                                <!--<template v-slot:activator="{ on }">-->
-                                <!--<v-btn v-on="on" fab flat small>-->
-                                <!--<v-icon v-if="(!destination.arrivalDate || !destination.departureDate ||-->
-                                <!--destination.arrivalDate == null || destination.departureDate == null)">info</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--</template>-->
-                                <!--<span>Missing Date(s)</span>-->
-                                <!--</v-tooltip>-->
-                                <!--</v-card-title>-->
-                                <!--<v-container v-if="destination.expanded">-->
-                                <!--<v-menu-->
-                                <!--v-model="destination.arrivalDateMenu"-->
-                                <!--:close-on-content-click="false"-->
-                                <!--:nudge-right="40"-->
-                                <!--lazy-->
-                                <!--transition="scale-transition"-->
-                                <!--offset-y-->
-                                <!--full-width-->
-                                <!--min-width="290px"-->
-                                <!--&gt;-->
-                                <!--<template v-slot:activator="{ on }">-->
-                                <!--<v-text-field-->
-                                <!--v-model="destination.arrivalDate"-->
-                                <!--:rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"-->
-                                <!--label="Arrival date"-->
-                                <!--prepend-icon="event"-->
-                                <!--readonly-->
-                                <!--v-on="on"-->
-                                <!--class="date-margin"-->
-                                <!--&gt;</v-text-field>-->
-                                <!--</template>-->
-                                <!--<v-date-picker-->
-                                <!--v-model="destination.arrivalDate"-->
-                                <!--@input="destination.arrivalDateMenu = false"-->
-                                <!--&gt;</v-date-picker>-->
-                                <!--</v-menu>-->
-                                <!--<v-menu-->
-                                <!--v-model="destination.departureDateMenu"-->
-                                <!--:close-on-content-click="false"-->
-                                <!--:nudge-right="40"-->
-                                <!--lazy-->
-                                <!--transition="scale-transition"-->
-                                <!--offset-y-->
-                                <!--full-width-->
-                                <!--min-width="290px"-->
-                                <!--&gt;-->
-                                <!--<template v-slot:activator="{ on }">-->
-                                <!--<v-text-field-->
-                                <!--v-model="destination.departureDate"-->
-                                <!--:rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"-->
-                                <!--label="Departure date"-->
-                                <!--prepend-icon="event"-->
-                                <!--readonly-->
-                                <!--v-on="on"-->
-                                <!--class="date-margin"-->
-                                <!--&gt;</v-text-field>-->
-                                <!--</template>-->
-                                <!--<v-date-picker-->
-                                <!--v-model="destination.departureDate"-->
-                                <!--@input="destination.departureDateMenu = false"-->
-                                <!--&gt;</v-date-picker>-->
-                                <!--</v-menu>-->
-
-                                <!--<div>-->
-                                <!--<v-tooltip top>-->
-                                <!--<template v-slot:activator="{ on }">-->
-                                <!--<v-btn-->
-                                <!--v-on="on"-->
-                                <!--v-on:click="deleteDestination(i)"-->
-                                <!--fab flat small>-->
-                                <!--<v-icon>delete</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--</template>-->
-                                <!--<span>Delete</span>-->
-                                <!--</v-tooltip>-->
-                                <!--<v-tooltip top>-->
-                                <!--<template v-slot:activator="{ on }">-->
-                                <!--<v-btn-->
-                                <!--v-on="on"-->
-                                <!--v-on:click="toggleExpanded(i)"-->
-                                <!--fab flat small>-->
-                                <!--<v-icon>visibility_off</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--</template>-->
-                                <!--<span>Hide</span>-->
-                                <!--</v-tooltip>-->
-                                <!--<v-tooltip top>-->
-                                <!--<template v-slot:activator="{ on }">-->
-                                <!--<v-btn-->
-                                <!--v-on="on"-->
-                                <!--v-on:click="viewDestination(destination.id)"-->
-                                <!--fab small flat>-->
-                                <!--<v-icon>explore</v-icon>-->
-                                <!--</v-btn>-->
-                                <!--</template>-->
-                                <!--<span>View Destination</span>-->
-                                <!--</v-tooltip>-->
-                                <!--</div>-->
-                                <!--</v-container>-->
-                                <!--</v-container>-->
-                                <!--</v-card>-->
                             </v-timeline-item>
                             <v-timeline-item
                                     v-else
@@ -336,9 +199,9 @@
                 </draggable>
             </v-timeline>
         </v-form>
-        <TripMap
-                :destinations="trip.trip.nodes"
-                class="trip-map"/>
+        <!--<TripMap-->
+                <!--:nodes="trip.trip.nodes"-->
+                <!--class="trip-map"/>-->
     </v-container>
 </template>
 
@@ -445,15 +308,15 @@
 
         computed: {
             noSameDestinationNameConsecutiveRule() {
-                return noSameDestinationNameConsecutiveRule(this.trip.destinations);
+                return noSameDestinationNameConsecutiveRule(this.trip.trip.nodes);
             },
+            /**
+             * A rule to enforce arrival and departure times are in a valid order.
+             */
             arrivalBeforeDepartureAndDestinationsOneAfterTheOther() {
                 return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
-                    this.trip.destinations
+                    this.trip.trip.nodes
                 );
-            },
-            notHiddenTrips() {
-                return this.trip.destinations.filter((d) => !d.hidden);
             },
         },
         methods: {
