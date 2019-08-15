@@ -37,6 +37,8 @@ import UserGroupList from "../components/usergroups/UserGroupNav";
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
 import sampleUserGroups from "./usergroups.json";
+import { RepositoryFactory } from "../repository/RepositoryFactory";
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   mixins: [RollbackMixin],
@@ -66,7 +68,11 @@ export default {
      * Retrieves user groups from api
      */
     getUserGroups() {
-      // TODO: Connect to uesr groups endpoint
+      console.log(this.$store.getters.getUser.id);
+      userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
+      .then(result => {
+        console.log(result.data);
+      })
     },
 
     selectUserGroup(group) {
