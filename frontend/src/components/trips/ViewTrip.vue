@@ -23,6 +23,7 @@
                 </template>
             </v-breadcrumbs>
             <v-text-field
+                    v-if="isOwnerOrAdmin"
                     v-model="trip.trip.name"
                     :rules="nameRules"
                     :counter="60"
@@ -30,7 +31,7 @@
 
                     required
             ></v-text-field>
-            <v-layout flex>
+            <v-layout flex v-if="isOwnerOrAdmin">
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -118,7 +119,9 @@
                                     v-if="node.type.toLowerCase() === 'destination'">
                                 <v-card
                                         class="v-timeline-item-style">
+                                    <h2 v-if="!isOwnerOrAdmin">{{node.destination.name}}</h2>
                                     <v-combobox
+                                            v-else
                                             :items="userDestinations"
                                             item-text="name"
                                             v-model="node.destination.name"
@@ -126,7 +129,9 @@
                                             return-object
                                     >
                                     </v-combobox>
+                                    <h4 v-if="!isOwnerOrAdmin">Arrival Date: {{node.arrivalDate != null ? node.arrivalDate : 'TO DECIDE'}}</h4>
                                     <v-menu
+                                            v-else
                                             v-model="node.arrivalDateMenu"
                                             :close-on-content-click="false"
                                             :nudge-right="40"
@@ -138,6 +143,7 @@
                                     >
                                         <template v-slot:activator="{ on }">
                                             <v-text-field
+
                                                     v-model="node.arrivalDate"
                                                     label="Arrival date"
                                                     prepend-icon="event"
@@ -152,7 +158,9 @@
                                                 @input="node.arrivalDateMenu = false"
                                         ></v-date-picker>
                                     </v-menu>
+                                    <h4 v-if="!isOwnerOrAdmin">Departure Date: {{node.arrivalDate != null ? node.arrivalDate : 'TO DECIDE'}}</h4>
                                     <v-menu
+                                            v-else
                                             v-model="node.departureDateMenu"
                                             :close-on-content-click="false"
                                             :nudge-right="40"
@@ -185,8 +193,9 @@
                                     v-else
                                     color="red">
                                 <v-card >
-                                    <!--<h3 class='hoverable' v-on:click="getSelectedTrip(node.id)">{{node.name}}</h3>-->
+                                    <h3 v-if="!isOwnerOrAdmin" class='hoverable v-timeline-item-style' v-on:click="getSelectedTrip(node.id)">{{node.name}}</h3>
                                     <v-text-field
+                                            v-else
                                             class="v-timeline-item-style"
                                             v-model="node.name"
                                             :rules="nameRules"
@@ -318,6 +327,10 @@
                     this.trip.trip.nodes
                 );
             },
+
+            isOwnerOrAdmin() {
+                return store.getters.getIsUserAdmin || (parseInt(this.userId) === parseInt(this.trip.root.user.id));
+            }
         },
         methods: {
 
