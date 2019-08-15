@@ -235,7 +235,7 @@ INSERT INTO traveller_type (name) values ('Frequent Weekender');
 INSERT INTO traveller_type (name) values ('Gap Year');
 
 
-INSERT INTO user (first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES ('Global', '', 'Admin', 0, 'Male', 'admin@admin.com', 'f872adc163af9ef9c1ddcc8cc9276cba0e614a5b4992913f8302875561412f55679d0e7e06ecf99dc16fc84605fd841f9a61dcc542123a4d5a1d7f6ca3ae07c6', 1529196155, 2);
+INSERT INTO user (first_name, middle_name, last_name, date_of_birth, gender, email, password, timestamp, account_type) VALUES ('Global', '', 'Admin', 0, 'Male', 'admin@admin.com', '0b92abaa6ba4238079530ab9b9c23e6fa9585324ef5039f953816b3937e6fabad990a33c8348dba7a134ae4169cba4e1481538c6ba9b8fe5414de4d1393c862e', 1529196155, 2);
 INSERT INTO album (name, user_id, is_permanent, deleted) VALUES ('All', 1, true, false);
 
 -- !Downs

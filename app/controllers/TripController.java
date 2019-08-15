@@ -8,7 +8,7 @@ import controllers.actions.Authorization;
 import dto.shared.CreatedDTO;
 import dto.trip.*;
 
-import exceptions.NotFoundException;
+import exceptions.CustomException;
 import models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,6 +261,7 @@ public class TripController extends Controller {
      * @param userId the User who the request is being sent for (used in middleware)
      * @returna GetTripResponse object
      */
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> fetchTrip(Http.Request request, Long tripId, Long userId) {
 
         CompletionStage<Optional<TripNode>> tripStage = tripService.getTripById(tripId);
@@ -277,7 +278,7 @@ public class TripController extends Controller {
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
             if(!tripNodeOptional.isPresent()) {
-                throw new NotFoundException("Trip not found");
+                throw new CustomException(404, "Trip not found");
             }
 
             TripNode trip = tripNodeOptional.get();
@@ -332,7 +333,6 @@ public class TripController extends Controller {
     public CompletionStage<Result> updateTrip(Http.Request request, Long tripId, Long userId) {
 
         Form<GetTripDTO> updateTripForm = formFactory.form(GetTripDTO.class).bindFromRequest(request);
-        GetTripDTO tripDTO = updateTripForm.get();
 
         User user = request.attrs().get(Attrs.ACCESS_USER);
 
@@ -340,6 +340,8 @@ public class TripController extends Controller {
             logger.error("Trip object is not valid");
             return CompletableFuture.completedFuture(badRequest());
         }
+
+        GetTripDTO tripDTO = updateTripForm.get();
 
         return tripService.updateTrip(tripId, tripDTO, user).thenApplyAsync(trip -> {
 
@@ -378,8 +380,9 @@ public class TripController extends Controller {
      */
     private Result handleTrips(Result result, Throwable ex) {
         if(ex != null) {
-            if(ex.getMessage().equals(NotFoundException.class.getCanonicalName())) {
-                return notFound(ex.getMessage());
+            if(ex.getMessage().equals(CustomException.class.getCanonicalName())) {
+                CustomException exception = (CustomException)ex.getCause();
+                return status(exception.getResult(), exception.getResultMessage());
             }
 
             logger.error(ex.getMessage());
