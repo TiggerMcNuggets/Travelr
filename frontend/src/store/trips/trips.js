@@ -87,45 +87,12 @@ export default {
             return state.trips;
         },
 
-        // /**
-        //  * @param {Object} state
-        //  * @returns {Object}
-        //  */
-        // getSelectedTrip: state => {
-        //     return state.selected_trip;
-        // },
-        //
         /**
          * @param {Object} state
          * @returns {Object}
          */
         getSelectedTrip: state => {
-            return {
-                "root": {
-                    user: {id: 2, firstName: "Ciao", lastName: "Ciao"},
-                    "id": 1,
-                    "name": "trip1"
-                },
-                "trip": {
-                    id: 12,
-                    name: "Big trip",
-                    nodes: [
-                        {type: "destination", arrivalDate: 23455667, departureDate: 45678, ordinal: 0, id: 1, name: "tt1", destination: {longitude: 0, latitude: 0, id: 1, name: "Ciao"}},
-                        {type: "trip", ordinal: 1, id: 2, name: "my new trip"},
-                        {type: "destination", arrivalDate: 23456567, departureDate: 45678, ordinal: 0, id: 1, name: "tt1", destination: {longitude: 0, latitude: 0, id: 1, name: "Ciao"}},
-                    ]
-                },
-                "navigation": [
-                    {
-                        "id": 1,
-                        "name": "trip1"
-                    },
-                    {
-                        "id": 2,
-                        "name": "trip2"
-                    }
-                ]
-            };
+            return state.selected_trip;
         },
     },
 }
