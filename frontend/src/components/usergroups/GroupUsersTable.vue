@@ -7,6 +7,10 @@
       :v-model="selectedUserId"
       @change="selectUser"
       ></v-select>
+      <v-checkbox
+        v-model="isMaintainer"
+        label="Group Admin"
+      ></v-checkbox>
       <v-btn
         color="error"
         @click="addUserToGroup">
@@ -72,6 +76,7 @@ export default {
   data() {
     return {
       selectedUserId: 0,
+      isMaintainer: false,
       addUserActive: false,
       isAdmin: false
     };
@@ -106,7 +111,7 @@ export default {
      */
     addUserToGroup() {
       userGroupRepository.addUserToUserGroup(this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {
-        isOwner: false
+        isOwner: this.isMaintainer
       });
     }
   },
