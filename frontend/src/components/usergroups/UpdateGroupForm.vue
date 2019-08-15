@@ -55,7 +55,7 @@ export default {
 
   methods: {
     /**
-     * Creates a new user group for the user.
+     * Updates a user group for the user.
      */
     updateGroup() {
       usergroupRepository
