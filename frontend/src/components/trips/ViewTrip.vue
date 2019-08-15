@@ -15,7 +15,7 @@
                 v-model="isFormValid">
             <v-breadcrumbs :items="trip.navigation">
                 <template v-slot:item="props">
-                    <v-breadcrumbs-item>
+                    <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">
 
                         {{ props.item.name }}
 
@@ -27,6 +27,7 @@
                     :rules="nameRules"
                     :counter="60"
                     label="Trip Name"
+
                     required
             ></v-text-field>
             <v-layout flex>
@@ -319,7 +320,7 @@
                             <v-timeline-item
                                     v-else
                                     color="red">
-                                <v-card>
+                                <v-card class='hoverable' v-on:click="getSelectedTrip(node.id)">
                                     <h3>{{node.name}}</h3>
                                 </v-card>
                             </v-timeline-item>
@@ -699,6 +700,9 @@
                 return trip;
             },
 
+
+
+
             // getTrip: function() {
             //     return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
             //         let trip = result.data;
@@ -734,6 +738,14 @@
             //         return this.trip;
             //     });
             // },
+
+            getSelectedTrip(tripId) {
+                this._getTrip(this.userId, tripId).then(() => {
+                    this.trip = this.selected_trip;
+                    this.tripId = tripId;
+                });
+
+            },
 
             /**
              * Undoes the last action and calls setDestination() afterwards
