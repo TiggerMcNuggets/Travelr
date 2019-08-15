@@ -132,7 +132,7 @@ export default {
   components: {
     PhotoSelect,
     SuggestTravellerTypes,
-    PageHeader
+    PageHeader,
   },
 
   // local variables
@@ -286,14 +286,13 @@ export default {
 
       storeDestinationImage(this.userId, this.destId, formData)
         .then(() => {
-          getImages(this.userId, this.destination.defaultAlbumId).then(
-            result => {
-              this.uploadExisting = true;
-              this.files = this.groupImages(result.data);
-            }
-          );
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+            this.uploadExisting = true;
+            console.log(result);
+            this.files = this.groupImages(result.data);
+          });
         })
-        .catch(error => {
+        .catch(() => {
           this.uploadError = true;
         });
       this.$refs.file.value = "";
@@ -383,10 +382,10 @@ export default {
       .getDestination(this.userId, this.destId)
       .then(response => {
         this.destination = response.data;
-        // Gets all the images to display on the page.
-        getImages(this.userId, this.destination.defaultAlbumId).then(result => {
-          this.files = this.groupImages(result.data);
-        });
+          // Gets all the images to display on the page.
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+              this.files = this.groupImages(result.data);
+          });
       })
       .catch(err => {
         console.log(err);
