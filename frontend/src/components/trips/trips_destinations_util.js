@@ -69,19 +69,40 @@ export const isDemotable = (destinations, index) => {
 };
 
 
+// /**
+//  * Creates a trip object from the data passed that conforms with the API specs
+//  **/
+// export const tripAssembler = (tripBody) => {
+//     let trip = { name: tripBody.name, destinations: [] };
+//     tripBody.destinations.forEach((destination, index) => {
+//         trip.destinations.push({
+//             destination: {...destination.destination},
+//             ordinal: index,
+//             depth: destination.depth,
+//             arrivalDate: moment(destination.arrivalDate).unix(),
+//             departureDate: moment(destination.departureDate).unix()
+//         });
+//     });
+//     return trip;
+// };
+
 /**
  * Creates a trip object from the data passed that conforms with the API specs
  **/
 export const tripAssembler = (tripBody) => {
-    let trip = { name: tripBody.name, destinations: [] };
-    tripBody.destinations.forEach((destination, index) => {
-        trip.destinations.push({
-            destination: {...destination.destination},
-            ordinal: index,
-            depth: destination.depth,
-            arrivalDate: moment(destination.arrivalDate).unix(),
-            departureDate: moment(destination.departureDate).unix()
+  let trip = { name: tripBody.name, nodes: [] };
+  console.log(tripBody);
+  tripBody.trip.nodes.forEach((node, index) => {
+        trip.nodes.push({
+          arrivalDate: moment(node.arrivalDate).unix(),
+          arrivalDateMenu: node.arrivalDateMenu,
+          departureDate: moment(node.departureDate).unix(),
+          departureDateMenu: node.departureDateMenu,
+          //is this ok for destination?
+          destination: {...node.destination},
         });
-    });
-    return trip;
+
+
+  });
+  return trip;
 };
