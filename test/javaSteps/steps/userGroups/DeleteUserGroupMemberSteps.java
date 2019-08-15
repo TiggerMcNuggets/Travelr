@@ -14,7 +14,7 @@ public class DeleteUserGroupMemberSteps {
     private StateSingleton state = StateSingleton.getInstance();
 
     /**
-     * Creates a user and adds this sets this as the group member but they are not added to the group.
+     * Creates a user and adds this sets this as the grouping member but they are not added to the grouping.
      * Used for testing 404
      */
     @Given("the user group does not have another group member")
@@ -30,7 +30,7 @@ public class DeleteUserGroupMemberSteps {
     }
 
     /**
-     * Sets request to delete the added group member from the group
+     * Sets request to delete the added grouping member from the grouping
      */
     @When("I want to remove the group member in the user group")
     public void i_want_to_remove_the_group_member_in_the_user_group() {
@@ -39,7 +39,7 @@ public class DeleteUserGroupMemberSteps {
     }
 
     /**
-     * Checks that a group member does not exist in a group.
+     * Checks that a grouping member does not exist in a grouping.
      */
     @Then("The group member does not exist in the user group")
     public void the_group_member_does_not_exist_in_the_user_group() {

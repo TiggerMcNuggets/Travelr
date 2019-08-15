@@ -9,22 +9,22 @@ import javax.persistence.*;
 public class UserGroup extends BaseModel {
 
     /**
-     * The user group finder
+     * The user grouping finder
      */
     public static final Finder<Long, UserGroup> find = new Finder<>(UserGroup.class);
 
     /**
-     * The group member
+     * The grouping member
      */
     @JsonIgnore
     @ManyToOne
     public User user;
 
     /**
-     * The associated user group
+     * The associated user grouping
      */
     @ManyToOne
-    public Grouping group;
+    public Grouping grouping;
 
     /**
      * Whether the user is an owner or not
@@ -34,51 +34,51 @@ public class UserGroup extends BaseModel {
 
 
     /**
-     * Basic constructor for a user group
-     * @param user The new member of the user group
-     * @param group The user group
-     * @param isOwner if the member is an owner of the user group
+     * Basic constructor for a user grouping
+     * @param user The new member of the user grouping
+     * @param grouping The user grouping
+     * @param isOwner if the member is an owner of the user grouping
      */
-    public UserGroup(User user, Grouping group, boolean isOwner) {
+    public UserGroup(User user, Grouping grouping, boolean isOwner) {
         this.user = user;
-        this.group = group;
+        this.grouping = grouping;
         this.isOwner = isOwner;
     }
 
     /**
-     * Gets the group user
-     * @return the group user
+     * Gets the grouping user
+     * @return the grouping user
      */
     public User getUser() {
         return user;
     }
 
     /**
-     * Sets the group user
-     * @param user the group user
+     * Sets the grouping user
+     * @param user the grouping user
      */
     public void setUser(User user) {
         this.user = user;
     }
 
     /**
-     * Gets the user group
-     * @return the user group
+     * Gets the user grouping
+     * @return the user grouping
      */
-    public Grouping getGroup() {
-        return group;
+    public Grouping getGrouping() {
+        return grouping;
     }
 
     /**
-     * Sets the user group to the group specified
-     * @param group the user group
+     * Sets the user grouping to the grouping specified
+     * @param grouping the user grouping
      */
-    public void setGroup(Grouping group) {
-        this.group = group;
+    public void setGrouping(Grouping grouping) {
+        this.grouping = grouping;
     }
 
     /**
-     * Returns if the user is an owner of the group
+     * Returns if the user is an owner of the grouping
      * @return if the user is an owner
      */
     public boolean isOwner() {

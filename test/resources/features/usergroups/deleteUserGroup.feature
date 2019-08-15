@@ -33,7 +33,10 @@ Feature: Delete User Group
 
   Scenario: Delete an user group which does not exist
     Given I am authenticated
-    When I want to remove the user group with an id 100
+    And The group does not exist
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    When I want to remove the user group and all its members
     And I send the request
     Then I will receive the response code 404
     And I will receive the response body text
