@@ -46,8 +46,8 @@ export default {
     return {
       search: "",
       isError: false,
-      selectedGroup: sampleUserGroups[0],
-      usergroups: sampleUserGroups,
+      selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
+      usergroups: [],
     };
   },
   components: {
@@ -71,7 +71,8 @@ export default {
       console.log(this.$store.getters.getUser.id);
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
-        console.log(result.data);
+        this.usergroups = result.data;
+        this.selectedGroup = result.data[0];
       })
     },
 
