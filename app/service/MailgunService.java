@@ -1,10 +1,12 @@
 package service;
 
 import com.google.gson.JsonObject;
+import com.typesafe.config.ConfigFactory;
 import models.Grouping;
 import models.User;
 import models.UserGroup;
 import org.apache.commons.lang3.StringUtils;
+import play.api.Configuration;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
@@ -23,15 +25,18 @@ public class MailgunService {
 
     private DatabaseExecutionContext context;
 
+
+    private String websiteUrl;
     private WSClient ws;
     private String mailgunApi = "https://api.mailgun.net/v3/sandboxc7b3b2d7b248471d9e3c50aa8687d1c4.mailgun.org/messages";
     private String mailgunKey = "369f89d26186533f02492395d4086aef-73ae490d-9c3ed2ca";
     private String mailgunFromAddress = "fd15@uclive.ac.nz";
 
     @Inject
-    public MailgunService(DatabaseExecutionContext context, WSClient ws) {
+    public MailgunService(DatabaseExecutionContext context, WSClient ws, Configuration configuration) {
         this.context = context;
         this.ws = ws;
+        this.websiteUrl = ConfigFactory.load().getString("baseRedirectUrl");
     }
 
     /**
@@ -87,6 +92,8 @@ public class MailgunService {
 
         JsonObject recipientVariableFields = new JsonObject();
         recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+        recipientVariableFields.addProperty("welcomeURL", websiteUrl);
+
 
         JsonObject recipientVariable = new JsonObject();
         recipientVariable.add(recipient.email, recipientVariableFields);
@@ -122,7 +129,7 @@ public class MailgunService {
         JsonObject recipientVariableFields = new JsonObject();
         recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
         recipientVariableFields.addProperty("groupName", grouping.getName());
-        recipientVariableFields.addProperty("groupURL", "http://localhost:8080/usergroups");
+        recipientVariableFields.addProperty("groupURL", websiteUrl + "usergroups");
 
         JsonObject recipientVariable = new JsonObject();
         recipientVariable.add(recipient.email, recipientVariableFields);
@@ -152,7 +159,7 @@ public class MailgunService {
             for (User recipient: recipients) {
                 recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
                 recipientVariableFields.addProperty("tripName", tripName);
-                recipientVariableFields.addProperty("tripURL", "http://localhost:8080/user/"
+                recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
                  + userId + "/trips/" + tripId);
                 recipientVariables.add(recipient.email, recipientVariableFields);
                 recipientVariableFields = new JsonObject();
