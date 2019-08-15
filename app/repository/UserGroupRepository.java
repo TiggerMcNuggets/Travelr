@@ -8,7 +8,6 @@ import exceptions.*;
 import models.Grouping;
 import models.User;
 import models.UserGroup;
-import utils.AsyncHandler;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -18,7 +17,6 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class UserGroupRepository {
 
     private DatabaseExecutionContext context;
-    private AsyncHandler asyncHandler = new AsyncHandler();
 
     @Inject
     public UserGroupRepository(DatabaseExecutionContext context) {
@@ -49,7 +47,7 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId, Long memberId) {
         return supplyAsync(() -> {
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("group_id", groupId).findOne();
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
                 userGroup.delete();
                 return userGroup.user.getId();
@@ -65,7 +63,7 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", groupId).findList();;
+            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("grouping_id", groupId).findList();;
             for (UserGroup userGroup : userGroupsToBeDeleted) {
                 userGroup.delete();
             }
@@ -79,6 +77,16 @@ public class UserGroupRepository {
 
             return null;
         }, context);
+    }
+
+    /**
+     *
+     * Gets a list of UserGroups
+     * @param id the id of the group
+     * @return completable future of list of userGroups
+     */
+    public CompletableFuture<List<UserGroup>> getGroupMembers(Long id) {
+        return supplyAsync(() -> UserGroup.find.query().where().eq("grouping_id",id).findList(), context);
     }
 
     /**
@@ -116,7 +124,6 @@ public class UserGroupRepository {
      * @throws CustomException Exception that will return the related request
      */
     public CompletableFuture<Void> addUserToGroup(Long userId, Long groupId, Long memberId, boolean isAdmin, AddUserToGroupReq req) throws CustomException {
-
         return supplyAsync(() -> {
 
             // Get group
@@ -128,11 +135,11 @@ public class UserGroupRepository {
             if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
 
             // Check if member already belongs to group
-            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("group_id", groupId).findOne();
+            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (memberGroup != null) throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
 
             // Check that user is an admin or is the owner of the group
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
             if ((userGroup == null || !userGroup.isOwner) && !isAdmin) throw new ForbiddenException(APIResponses.FORBIDDEN);
 
             // Add user to group
@@ -141,5 +148,25 @@ public class UserGroupRepository {
 
             return null;
         }, context);
+    }
+
+    /**
+     * Gets all user groups that belongs to the user
+     * @param userId The user's id
+     * @return the list of groups
+     * @throws CustomException
+     */
+    public CompletableFuture<List<Grouping>> getUserGroups(Long userId) throws CustomException {
+        return supplyAsync(() -> Grouping
+                    .find
+                    .query()
+                    .fetch("userGroups")
+                    .fetch("userGroups.user")
+                    .fetch("userGroups.user.nationalities")
+                    .fetch("userGroups.user.nationalities.nationality")
+                    .where()
+                    .eq("userGroups.user.id", userId)
+                    .findList()
+        , context);
     }
 }

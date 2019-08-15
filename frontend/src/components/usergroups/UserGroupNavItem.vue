@@ -1,29 +1,82 @@
 <template>
   <v-flex xs12>
     <v-layout>
-      <div class="usergroup-element" @click="selectUserGroup(usergroup)">
+      <v-flex
+        :class="isSelected ? 'usergroup-element usergroup-selected' : 'usergroup-element'"
+        pa-2
+        @click="selectUserGroup(usergroup)"
+      >
         <div class="usergroup-element-details" d-flex justify-start align-center>
           <div>
             <strong>{{ usergroup.name }}</strong>
-            <p>{{usergroup.description}}</p>
+            <p>{{usergroup.members.length == 1 ? usergroup.members.length + ' member' : usergroup.members.length + ' members'}}</p>
+
+            <p class="usergroup-element-details-description">{{usergroup.description}}</p>
           </div>
         </div>
-
         <div>
-          <v-checkbox disabled v-model="isSelected"></v-checkbox>
+          <v-btn icon flat small color="primary" @click="() => editDialogActive = true">
+            <v-icon>edit</v-icon>
+          </v-btn>
+          <v-btn icon flat small color="error" @click="deleteUserGroup">
+            <v-icon>delete</v-icon>
+          </v-btn>
         </div>
-      </div>
+      </v-flex>
     </v-layout>
-    <v-divider></v-divider>
+    <v-divider class="no-margin"></v-divider>
+    <v-dialog v-model="editDialogActive" width="500">
+      <UpdateGroupForm
+        :name="usergroup.name"
+        :description="usergroup.name"
+        :usergroupId="usergroup.id"
+        :closeDialog="closeEditDialog"
+      />
+    </v-dialog>
   </v-flex>
 </template>
 
 <script>
+import UpdateGroupForm from "./UpdateGroupForm";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let usergroupRepository = RepositoryFactory.get("userGroup");
+
 export default {
+  components: {
+    UpdateGroupForm
+  },
+
+  data() {
+    return {
+      editDialogActive: false
+    };
+  },
+
   props: {
     usergroup: Object,
     isSelected: Boolean,
-    selectUserGroup: Function
+    selectUserGroup: Function,
+    updateUserGroups: Function
+  },
+
+  methods: {
+    /**
+     * Closes the dialog and updates the user group in case of updating.
+     */
+    closeEditDialog() {
+      this.updateUserGroups();
+      this.editDialogActive = false;
+    },
+
+    /**
+     * Deletes the user group
+     */
+    deleteUserGroup() {
+      usergroupRepository.deleteSingleUserGroup(
+        this.$store.getters.getUser.id,
+        this.usergroup.id
+      );
+    }
   }
 };
 </script>

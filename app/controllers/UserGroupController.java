@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
-import controllers.dto.UserGroup.CreateUserGroupReq;
-import controllers.dto.UserGroup.CreateUserGroupRes;
-import controllers.dto.UserGroup.AddUserToGroupReq;
-import controllers.dto.UserGroup.UpdateUserGroupReq;
+import controllers.dto.UserGroup.*;
 import models.Grouping;
+import controllers.dto.UserGroup.GetUserGroupRes;
 import models.User;
 import models.UserGroup;
 import play.data.Form;
@@ -21,8 +19,12 @@ import repository.UserGroupRepository;
 import utils.AsyncHandler;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+
+import service.MailgunService;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -32,10 +34,12 @@ public class UserGroupController extends Controller {
     FormFactory formFactory;
 
     private final UserGroupRepository userGroupRepository;
+    private final MailgunService mailgunService;
 
     @Inject
-    public UserGroupController(UserGroupRepository userGroupRepository) {
+    public UserGroupController(UserGroupRepository userGroupRepository, MailgunService mailgunService) {
         this.userGroupRepository = userGroupRepository;
+        this.mailgunService = mailgunService;
     }
 
     /**
@@ -77,7 +81,7 @@ public class UserGroupController extends Controller {
         if (middlewareRes != null)
             return middlewareRes;
 
-        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
 
         // Can't find the user group in the database
         if(userGroup == null) {
@@ -129,7 +133,7 @@ public class UserGroupController extends Controller {
 
         return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
 
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("group_id", groupId).findOne();
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
 
             if (grouping == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
@@ -204,7 +208,74 @@ public class UserGroupController extends Controller {
 
         CompletionStage<Void> addUserToGroupStage = userGroupRepository.addUserToGroup(userId, groupId, memberId, isAdmin, req);
 
-        return addUserToGroupStage.thenApplyAsync(stage -> created()
-        ).handle(AsyncHandler::handleResult);
+        return addUserToGroupStage.thenApplyAsync(stage -> {
+            User recipient = User.find.findById(memberId);
+            mailgunService.sendAddedToGroupEmail(recipient, groupId);
+            return created();
+        }).handle(AsyncHandler::handleResult);
     }
+
+    /**
+     * Gets all groups that belongs to a user
+     * @param request The http request
+     * @param userId The user's id
+     * @return 200 if all ok
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserGroups(Http.Request request, Long userId) {
+        // Middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        CompletionStage<List<Grouping>> getUserGroupsStage = userGroupRepository.getUserGroups(userId);
+
+        return getUserGroupsStage.thenApplyAsync(groupings -> {
+            List<GetUserGroupRes> response = GetUserGroupRes.parseUserGroups(groupings);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
+        });
+    }
+
+    /**
+     * Gets a singular grouping with all members
+     * @param request The request object
+     * @param userId The id of the user who owns the group
+     * @param groupId The group id
+     * @return 200 with the group data
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getSingleGroup(Http.Request request, Long userId, Long groupId) {
+        return userGroupRepository.getGroupMembers(groupId).thenApplyAsync(UserGroups -> {
+            //Check to see if group exists
+            if (UserGroups.size() == 0) {
+                return notFound(APIResponses.GROUP_NOT_FOUND);
+            }
+            List<User> members = new ArrayList<User>();
+            List<User> owners = new ArrayList<User>();
+
+            boolean isGroupMember = false;
+
+            for (UserGroup user: UserGroups) {
+                if (user.getUser().getId() == request.attrs().get(Attrs.USER).getId()) {
+                    isGroupMember = true;
+                }
+                members.add(user.getUser());
+                if (user.isOwner()) {
+                    owners.add(user.getUser());
+                }
+            }
+
+            //Check to see if user is part of group or is an admin
+            if (!isGroupMember && !request.attrs().get(Attrs.USER).isAdmin()) {
+                return forbidden(APIResponses.FORBIDDEN);
+            }
+            GetUserGroupRes response = new GetUserGroupRes(members, UserGroup.find.byId(groupId), owners);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonResponse = mapper.valueToTree(response);
+            return ok(jsonResponse);
+        });
+    }
+
+
 }
