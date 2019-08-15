@@ -90,7 +90,9 @@ export default {
         this.$store.getters.getUser.id, 
         groupId, 
         memberId
-      ).then(this.getUserGroups());
+      ).then(() => {
+        this.getUserGroups()
+      });
     },
 
     /**
