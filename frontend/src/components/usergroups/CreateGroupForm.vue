@@ -40,7 +40,8 @@ export default {
       name: "",
       description: "",
       successful: false,
-      failure: false
+      failure: false,
+      failureMessage: ""
     };
   },
 
