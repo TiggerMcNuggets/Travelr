@@ -14,6 +14,7 @@
         :isSelected="selectedGroup == usergroup"
         :selectUserGroup="selectUserGroup"
         :updateUserGroups="updateUserGroups"
+        :rollbackCheckpoint="checkpoint"
       />
     </v-flex>
   </v-container>
@@ -43,7 +44,8 @@ export default {
     usergroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
-    updateUserGroups: Function
+    updateUserGroups: Function,
+    rollbackCheckpoint: Function
   },
 
   methods: {
@@ -61,6 +63,11 @@ export default {
     toggleSearch() {
       this.searchActive = !this.searchActive;
       this.createGroupActive = false;
+    },
+
+    checkpoint(type, action, reaction) {
+        console.log("CIAO rollback in userGroupNav");
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 

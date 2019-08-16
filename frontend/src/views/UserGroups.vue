@@ -12,6 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
+          :rollbackCheckpoint="checkpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
@@ -76,6 +77,7 @@ export default {
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
         this.usergroups = result.data;
+        console.log(result.data);
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup) {
           this.selectedGroup = result.data[0];
@@ -121,6 +123,11 @@ export default {
       this.isError = false;
       const actions = [this.getUserGroups];
       this.rollbackRedo(actions);
+    },
+
+    checkpoint: function(type, action, reaction) {
+        console.log("CIAO rollback in userGroups");
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 
