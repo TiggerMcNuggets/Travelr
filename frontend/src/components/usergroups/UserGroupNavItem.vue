@@ -18,7 +18,7 @@
           <v-btn icon flat small color="primary" @click="() => editDialogActive = true">
             <v-icon>edit</v-icon>
           </v-btn>
-          <v-btn icon flat small color="primary">
+          <v-btn icon flat small color="error" @click="deleteUserGroup">
             <v-icon>delete</v-icon>
           </v-btn>
         </div>
@@ -39,6 +39,8 @@
 
 <script>
 import UpdateGroupForm from "./UpdateGroupForm";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let usergroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   components: {
@@ -66,6 +68,18 @@ export default {
     closeEditDialog() {
       this.updateUserGroups();
       this.editDialogActive = false;
+    },
+
+    /**
+     * Deletes the user group
+     */
+    deleteUserGroup() {
+      usergroupRepository.deleteSingleUserGroup(
+        this.$store.getters.getUser.id,
+        this.usergroup.id
+      ).then(() => {
+        this.updateUserGroups();
+      });
     }
   }
 };
