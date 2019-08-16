@@ -1,6 +1,6 @@
 <template>
   <v-container class="section-container">
-    <v-layout row wrap class="section-body">
+    <v-flex class="section-body">
       <v-text-field
         label="New Group Name"
         placeholder="Your group name"
@@ -18,7 +18,9 @@
       <v-flex pb-2 pt-2>
         <v-btn color="error" @click="clearAndSubmit">Create New Group</v-btn>
       </v-flex>
-    </v-layout>
+    </v-flex>
+    <v-alert type="success" v-model="successful">User group successfully created.</v-alert>
+    <v-alert type="error" v-model="failure">{{failureMessage}}</v-alert>
   </v-container>
 </template>
 
@@ -36,7 +38,9 @@ export default {
   data() {
     return {
       name: "",
-      description: ""
+      description: "",
+      successful: false,
+      failure: false
     };
   },
 
@@ -54,12 +58,21 @@ export default {
      * Creates a new user group for the user.
      */
     createGroup() {
-      usergroupRepository.createUserGroup(this.$store.getters.getUser.id, {
-        name: this.name,
-        description: this.description
-      }).then(() => {
+      this.successful = false;
+      this.failure = false;
+      usergroupRepository
+        .createUserGroup(this.$store.getters.getUser.id, {
+          name: this.name,
+          description: this.description
+        })
+        .then(() => {
+          this.successful = true;
         this.updateUserGroups();
-      });
+        })
+        .catch(error => {
+          this.failure = true;
+          this.failureMessage = error.response.data;
+        });
     },
 
     /**
