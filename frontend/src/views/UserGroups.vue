@@ -79,8 +79,10 @@ export default {
         this.usergroups = result.data;
         console.log(result.data);
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
-        if (!this.selectedGroup) {
+        if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
+        } else {
+          this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
       })
     },

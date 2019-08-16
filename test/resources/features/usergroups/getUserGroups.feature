@@ -137,27 +137,27 @@ Feature: Get User Groups
     Then I will receive the response code 200
     And I will receive the response body
     """
-    [
-       {
+    [  
+       {  
           "id":1,
           "name":"Team 300",
           "description":"The best team eva",
-          "owners":[
+          "owners":[  
              2
           ],
-          "members":[
-             {
+          "members":[  
+             {  
                 "id":2,
                 "firstName":"Test",
                 "middleName":null,
                 "lastName":"User",
                 "dateOfBirth":1,
                 "gender":"Male",
-                "nationalities":[
-
+                "nationalities":[  
+    
                 ],
-                "travellerTypes":[
-                   {
+                "travellerTypes":[  
+                   {  
                       "id":1,
                       "deleted":false,
                       "name":"Thrill-Seeker"
@@ -166,18 +166,18 @@ Feature: Get User Groups
                 "userProfilePhoto":"defaultPic.png",
                 "defaultAlbumId":2
              },
-             {
+             {  
                 "id":3,
                 "firstName":"John",
                 "middleName":null,
                 "lastName":"Smith",
                 "dateOfBirth":1,
                 "gender":"Male",
-                "nationalities":[
-
+                "nationalities":[  
+    
                 ],
-                "travellerTypes":[
-
+                "travellerTypes":[  
+    
                 ],
                 "userProfilePhoto":"defaultPic.png",
                 "defaultAlbumId":3
