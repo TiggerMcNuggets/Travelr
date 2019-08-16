@@ -145,19 +145,19 @@ Feature: Get User Groups
           "owners":[  
              2
           ],
-          "members":[  
-             {  
+          "members":[
+             {
                 "id":2,
                 "firstName":"Test",
                 "middleName":null,
                 "lastName":"User",
                 "dateOfBirth":1,
                 "gender":"Male",
-                "nationalities":[  
-    
+                "nationalities":[
+
                 ],
-                "travellerTypes":[  
-                   {  
+                "travellerTypes":[
+                   {
                       "id":1,
                       "deleted":false,
                       "name":"Thrill-Seeker"

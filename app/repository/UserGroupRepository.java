@@ -49,7 +49,7 @@ public class UserGroupRepository {
         return supplyAsync(() -> {
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
-                userGroup.setDeleted(userGroup.isDeleted());
+                userGroup.setDeleted(!userGroup.isDeleted());
                 userGroup.update();
                 return userGroup.user.getId();
             }
@@ -172,6 +172,7 @@ public class UserGroupRepository {
                     .fetch("userGroups.user.nationalities.nationality")
                     .where()
                     .eq("userGroups.user.id", userId)
+                    .orderBy("userGroups.user.id")
                     .findList()
         , context);
     }
