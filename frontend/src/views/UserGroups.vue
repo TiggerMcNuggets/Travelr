@@ -40,7 +40,6 @@ import UserGroupList from "../components/usergroups/UserGroupNav";
 
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
-import sampleUserGroups from "./usergroups.json";
 import { RepositoryFactory } from "../repository/RepositoryFactory";
 let userGroupRepository = RepositoryFactory.get("userGroup");
 
