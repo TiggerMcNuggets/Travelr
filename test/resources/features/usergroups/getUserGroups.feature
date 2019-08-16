@@ -147,22 +147,6 @@ Feature: Get User Groups
           ],
           "members":[
              {
-                "id":3,
-                "firstName":"John",
-                "middleName":null,
-                "lastName":"Smith",
-                "dateOfBirth":1,
-                "gender":"Male",
-                "nationalities":[
-
-                ],
-                "travellerTypes":[
-
-                ],
-                "userProfilePhoto":"defaultPic.png",
-                "defaultAlbumId":3
-             },
-             {
                 "id":2,
                 "firstName":"Test",
                 "middleName":null,
@@ -181,6 +165,22 @@ Feature: Get User Groups
                 ],
                 "userProfilePhoto":"defaultPic.png",
                 "defaultAlbumId":2
+             },
+             {
+                "id":3,
+                "firstName":"John",
+                "middleName":null,
+                "lastName":"Smith",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[
+
+                ],
+                "travellerTypes":[
+
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":3
              }
           ]
        }
