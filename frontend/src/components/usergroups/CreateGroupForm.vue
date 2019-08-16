@@ -68,7 +68,7 @@ export default {
         })
         .then(() => {
           this.successful = true;
-        this.updateUserGroups();
+          this.updateUserGroups();
         })
         .catch(error => {
           this.failure = true;
