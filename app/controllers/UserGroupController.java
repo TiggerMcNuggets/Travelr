@@ -21,6 +21,7 @@ import utils.AsyncHandler;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -89,8 +90,9 @@ public class UserGroupController extends Controller {
         }
 
         // The user is not the owner of the user group.
-        if (userGroup != null && !userGroup.isOwner())
+        if (userGroup != null && !userGroup.isOwner()) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
+        }
 
         return userGroupRepository.remove(groupId).thenApplyAsync(deletedGroupId -> {
             if(deletedGroupId == null) {
@@ -98,6 +100,45 @@ public class UserGroupController extends Controller {
             }
             return ok(APIResponses.SUCCESSFUL_GROUP_DELETION);
         });
+    }
+
+    /**
+     *
+     * @param request the http request
+     * @param userId the user id
+     * @param groupId the group id
+     * @param memberId the member to promote id
+     * @return 200 if the member can be promoted to group owner,
+     *      401 if user is not group owner, 404 if member or user are not in group
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> promoteGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
+        // middleware stack
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
+        if (middlewareRes != null)
+            return middlewareRes;
+
+        Optional<UserGroup> userGroup = UserGroup.find.findByUserId(userId, groupId);
+        Optional<UserGroup> memberGroup = UserGroup.find.findByUserId(memberId, groupId);
+
+        // Can't find the user group or member group in the database
+        if(!userGroup.isPresent() || !memberGroup.isPresent()) {
+            return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+        // The user is not the owner of the user group.
+        if (!userGroup.get().isOwner()) {
+            return completedFuture(forbidden(APIResponses.FORBIDDEN));
+        }
+
+
+        return userGroupRepository.promoteUser(memberId, groupId).thenApplyAsync(group -> {
+            if (group == null) {
+                return notFound(APIResponses.FAILED_TO_PROMOTE);
+            }
+            return ok(APIResponses.SUCCESSFUL_GROUP_UPDATE);
+        });
+
     }
 
     /**
