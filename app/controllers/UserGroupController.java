@@ -81,7 +81,9 @@ public class UserGroupController extends Controller {
         if (middlewareRes != null)
             return middlewareRes;
 
-        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+        UserGroup userGroup =
+                UserGroup.find.query().setIncludeSoftDeletes()
+                        .where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
 
         // Can't find the user group in the database
         if(userGroup == null) {
@@ -92,7 +94,7 @@ public class UserGroupController extends Controller {
         if (userGroup != null && !userGroup.isOwner())
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
 
-        return userGroupRepository.remove(groupId).thenApplyAsync(deletedGroupId -> {
+        return userGroupRepository.removeGroupAndMembers(groupId).thenApplyAsync(deletedGroupId -> {
             if(deletedGroupId == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
             }
