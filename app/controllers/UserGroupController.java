@@ -109,7 +109,7 @@ public class UserGroupController extends Controller {
      * @param groupId the group id
      * @param memberId the member to promote id
      * @return 200 if the member can be promoted to group owner,
-     *      401 if user is not group owner, 404 if member or user are not in group
+     *      403 if user is not group owner, 404 if member or user are not in group
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> promoteGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
