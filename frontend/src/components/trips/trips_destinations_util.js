@@ -91,15 +91,15 @@ export const isDemotable = (destinations, index) => {
  **/
 export const tripAssembler = (tripBody) => {
   let trip = { name: tripBody.name, nodes: [] };
-  console.log(tripBody);
   tripBody.trip.nodes.forEach((node, index) => {
         trip.nodes.push({
           arrivalDate: moment(node.arrivalDate).unix(),
-          arrivalDateMenu: node.arrivalDateMenu,
           departureDate: moment(node.departureDate).unix(),
-          departureDateMenu: node.departureDateMenu,
-          //is this ok for destination?
           destination: {...node.destination},
+          id: node.id,
+          name: node.name,
+          ordinal: node.ordinal,
+          type: node.type
         });
 
 

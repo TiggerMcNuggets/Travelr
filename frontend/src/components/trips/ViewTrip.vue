@@ -121,7 +121,7 @@
                                     <v-combobox
                                             :items="userDestinations"
                                             item-text="name"
-                                            v-model="node.destination.name"
+                                            v-model="node.destination"
                                             label="Select an existing destination"
                                             return-object
                                     >
@@ -399,7 +399,9 @@
                         departureDate: null,
                         arrivalDateMenu: false,
                         departureDateMenu: false,
-                        destination: {name: null}
+                        destination: {
+                          name: null
+                        }
                     }
                 );
             },
@@ -436,7 +438,7 @@
 
                     const trip = tripAssembler(this.trip);
                     const userId = this.userId;
-                    const tripId = parseInt(this.trip.id);
+                    const tripId = parseInt(this.trip.trip.id);
                     tripRepository
                         .updateTrip(userId, tripId, trip)
                         .then(() => {
@@ -478,7 +480,7 @@
                 tripRepo.getTrip(this.userId, this.tripId).then((result) => {
                     let trip = result.data;
                     // Sorts the destinations ensure they are in the order of their ordinal
-                    let ordered_dests = trip.destinations.sort(function (a, b) {
+                    let ordered_dests = trip.trip.nodes.sort(function (a, b) {
                         return a.ordinal - b.ordinal;
                     });
                     trip.destinations = ordered_dests;
@@ -603,7 +605,8 @@
 
             getSelectedTrip(tripId) {
                 this._getTrip(this.userId, tripId).then(() => {
-                    this.trip = this.selected_trip;
+                  this.trip = deepCopy(this.selected_trip);
+                  this.trip.trip = this.tripWithDates(this.trip.trip);
                     this.tripId = tripId;
                 });
 
@@ -632,7 +635,7 @@
             this.isMyProfile = (store.getters.getUser.id == this.$route.params.id);
             // If the person viewing the trip is not admin and does not own the trip then takes them back to the page they were on
             if (!this.isMyProfile && !this.isAdmin) {
-                this.$router.go(-1);
+              this.$router.go(-1);
             }
             this._getTrip(this.userId, this.tripId).then(() => {
                 this.trip = deepCopy(this.selected_trip);

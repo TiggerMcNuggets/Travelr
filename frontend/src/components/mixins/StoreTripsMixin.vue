@@ -97,7 +97,6 @@
 
         },
         async mounted() {
-            console.log('Created in dest mixin is called and userId =', this.userId);
             await this._getTrips(this.userId);
         },
     };
