@@ -25,6 +25,8 @@
           :name="selectedGroup.name"
           :deleteUser="deleteUser"
           :isError="isError"
+          :group="selectedGroup"
+          :getUserGroups="getUserGroups"
         />
       </v-flex>
     </v-layout>
@@ -37,7 +39,8 @@ import UserGroupList from "../components/usergroups/UserGroupNav";
 
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
-import sampleUserGroups from "./usergroups.json";
+import { RepositoryFactory } from "../repository/RepositoryFactory";
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   mixins: [RollbackMixin],
@@ -45,8 +48,8 @@ export default {
     return {
       search: "",
       isError: false,
-      selectedGroup: sampleUserGroups[0],
-      usergroups: sampleUserGroups,
+      selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
+      usergroups: [],
     };
   },
   components: {
@@ -70,9 +73,21 @@ export default {
      * Retrieves user groups from api
      */
     getUserGroups() {
-      // TODO: Connect to uesr groups endpoint
+      userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
+      .then(result => {
+        this.usergroups = result.data;
+        this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
+        if (!this.selectedGroup && result.data.length > 0) {
+          this.selectedGroup = result.data[0];
+        } else {
+          this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
+        }
+      })
     },
 
+    /**
+     * Sets the selected user group
+     */
     selectUserGroup(group) {
       this.selectedGroup = group;
     },
@@ -81,11 +96,15 @@ export default {
      * Removes user from a user group
      * @param userId the id of the user group to remove
      */
-    async deleteUser() {
+    async deleteUser(groupId, memberId) {
       this.isError = false;
-      // TODO: Connect to delete user from group
-
-      this.getUserGroups();
+      userGroupRepository.removeUserInUserGroup(
+        this.$store.getters.getUser.id, 
+        groupId, 
+        memberId
+      ).then(() => {
+        this.getUserGroups()
+      });
     },
 
     /**

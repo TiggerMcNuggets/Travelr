@@ -43,7 +43,7 @@
             </ul>
           </td>
           <td v-if="isAdmin" class="text-xs-right">
-            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </td>
@@ -63,10 +63,12 @@ let userGroupRepository = RepositoryFactory.get("userGroup");
 export default {
   props: {
     groupUsers: Array,
+    getUserGroups: Function,
     selectedGroup: Object,
     name: String,
     deleteUser: Function,
-    isError: Boolean
+    isError: Boolean,
+    group: Object
   },
 
   components: {
@@ -112,6 +114,8 @@ export default {
     addUserToGroup() {
       userGroupRepository.addUserToUserGroup(this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {
         isOwner: this.isMaintainer
+      }).then(() => {
+        this.getUserGroups();
       });
     }
   },

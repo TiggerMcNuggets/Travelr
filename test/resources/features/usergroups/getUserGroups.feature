@@ -12,13 +12,36 @@ Feature: Get User Groups
     And I will receive the response body
     """
     [
-      {
-        "id":1,
-        "name":"Team 300",
-        "description":"The best team eva",
-        "owners":[2],
-        "members":[]
-      }
+       {
+          "id":1,
+          "name":"Team 300",
+          "description":"The best team eva",
+          "owners":[
+             2
+          ],
+          "members":[
+             {
+                "id":2,
+                "firstName":"Test",
+                "middleName":null,
+                "lastName":"User",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[
+
+                ],
+                "travellerTypes":[
+                   {
+                      "id":1,
+                      "deleted":false,
+                      "name":"Thrill-Seeker"
+                   }
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":2
+             }
+          ]
+       }
     ]
     """
 
@@ -37,20 +60,66 @@ Feature: Get User Groups
     And I will receive the response body
     """
     [
-      {
-        "id":1,
-        "name":"Team 300",
-        "description":"The best team eva",
-        "owners":[2],
-        "members":[]
-      },
-      {
-        "id":2,
-        "name":"Team 400",
-        "description":"Not the best team eva",
-        "owners":[2],
-        "members":[]
-      }
+       {
+          "id":1,
+          "name":"Team 300",
+          "description":"The best team eva",
+          "owners":[
+             2
+          ],
+          "members":[
+             {
+                "id":2,
+                "firstName":"Test",
+                "middleName":null,
+                "lastName":"User",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[
+
+                ],
+                "travellerTypes":[
+                   {
+                      "id":1,
+                      "deleted":false,
+                      "name":"Thrill-Seeker"
+                   }
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":2
+             }
+          ]
+       },
+       {
+          "id":2,
+          "name":"Team 400",
+          "description":"Not the best team eva",
+          "owners":[
+             2
+          ],
+          "members":[
+             {
+                "id":2,
+                "firstName":"Test",
+                "middleName":null,
+                "lastName":"User",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[
+
+                ],
+                "travellerTypes":[
+                   {
+                      "id":1,
+                      "deleted":false,
+                      "name":"Thrill-Seeker"
+                   }
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":2
+             }
+          ]
+       }
     ]
     """
 
@@ -68,27 +137,53 @@ Feature: Get User Groups
     Then I will receive the response code 200
     And I will receive the response body
     """
-    [
-      {
-        "id":1,
-        "name":"Team 300",
-        "description":"The best team eva",
-        "owners":[2],
-        "members":[
-          {
-            "id":3,
-            "firstName":"John",
-            "middleName":null,
-            "lastName":"Smith",
-            "dateOfBirth":1,
-            "gender":"Male",
-            "nationalities":[],
-            "travellerTypes":[],
-            "userProfilePhoto":"defaultPic.png",
-            "defaultAlbumId":3
-          }
-        ]
-      }
+    [  
+       {  
+          "id":1,
+          "name":"Team 300",
+          "description":"The best team eva",
+          "owners":[  
+             2
+          ],
+          "members":[  
+             {  
+                "id":2,
+                "firstName":"Test",
+                "middleName":null,
+                "lastName":"User",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[  
+    
+                ],
+                "travellerTypes":[  
+                   {  
+                      "id":1,
+                      "deleted":false,
+                      "name":"Thrill-Seeker"
+                   }
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":2
+             },
+             {  
+                "id":3,
+                "firstName":"John",
+                "middleName":null,
+                "lastName":"Smith",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[  
+    
+                ],
+                "travellerTypes":[  
+    
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":3
+             }
+          ]
+       }
     ]
     """
 
@@ -108,13 +203,32 @@ Feature: Get User Groups
     And I will receive the response body
     """
     [
-      {
-        "id":1,
-        "name":"Team 300",
-        "description":"The best team eva",
-        "owners":[3],
-        "members":[]
-      }
+       {
+          "id":1,
+          "name":"Team 300",
+          "description":"The best team eva",
+          "owners":[
+             3
+          ],
+          "members":[
+             {
+                "id":3,
+                "firstName":"John",
+                "middleName":null,
+                "lastName":"Smith",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[
+
+                ],
+                "travellerTypes":[
+
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":3
+             }
+          ]
+       }
     ]
     """
 

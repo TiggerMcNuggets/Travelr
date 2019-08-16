@@ -45,9 +45,8 @@ public class GetUserGroupRes {
         for (UserGroup userGroup : grouping.getUserGroups()) {
             if (userGroup.isOwner()) {
                 this.owners.add(userGroup.getUser().getId());
-            } else {
-                this.members.add(new GetUserRes(userGroup.getUser()));
             }
+            this.members.add(new GetUserRes(userGroup.getUser()));
         }
     }
 
