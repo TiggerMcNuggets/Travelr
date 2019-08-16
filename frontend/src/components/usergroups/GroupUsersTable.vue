@@ -1,6 +1,5 @@
 <template>
   <v-container class="section-container">
-    <SectionHeader :title="name + ' members'" :undo="undo" :redo="redo"/>
     <SectionHeader :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
     <div v-if="addUserActive">
       <v-select

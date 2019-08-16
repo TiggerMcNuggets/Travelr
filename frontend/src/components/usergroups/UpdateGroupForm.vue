@@ -35,8 +35,11 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let usergroupRepository = RepositoryFactory.get("userGroup");
+import RollbackMixin from "../mixins/RollbackMixin.vue";
 
 export default {
+  mixins: [RollbackMixin],
+  
   props: {
     name: String,
     description: String,
@@ -67,7 +70,7 @@ export default {
         )
         .then(response => {
           // Pushes checkpoint containing type of action, action body, and reaction body
-          const url = `/users/${this.$store.getters.getUser.id}/group/${usergroupId}`
+          const url = `/users/${this.$store.getters.getUser.id}/group/${this.usergroupId}`
           this.rollbackCheckpoint(
                   'PUT',
                   {
