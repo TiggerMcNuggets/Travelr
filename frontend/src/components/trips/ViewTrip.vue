@@ -105,11 +105,9 @@
 
       </v-layout>
       <v-container>
-        <v-row>
-          <v-col>
-            <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination consecutive.</v-alert>
-          </v-col>
-        </v-row>
+        <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination
+          consecutive.
+        </v-alert>
       </v-container>
       <v-timeline align-top dense>
         <draggable
@@ -333,7 +331,7 @@
         isPromotable: isPromotable,
         isDemotable: isDemotable,
         arrivalDateMenu: false,
-        hasAdjacentIdentical: true,
+        hasAdjacentIdentical: false,
 
         // rules
         ...rules,
@@ -465,13 +463,28 @@
       },
 
       /**
+       * Checks if we have any identical destinations that are consecutive before updating trip
+       */
+      noAdjacentIdenticalDestinations() {
+        for (let i = 0; i < (this.trip.trip.nodes.length - 1); i++) {
+          if ((this.trip.trip.nodes[i].type === 'destination') && (this.trip.trip.nodes[i + 1].type === 'destination')) {
+            if (this.trip.trip.nodes[i].destination.id === this.trip.trip.nodes[i + 1].destination.id) {
+              //same consecutive destination
+              return false;
+            }
+          }
+        }
+        return true;
+      },
+
+      /**
        * Checks if the update trip form passes validation
        * If it does then updates trip and updates the view trip page
        */
       updateTrip() {
-        if (this.no_adjacent_identical_destinations()) {
+        if (this.noAdjacentIdenticalDestinations()) {
+          this.hasAdjacentIdentical = false;
           if (this.$refs.form.validate()) {
-
             const trip = tripAssembler(this.trip);
             const userId = this.userId;
             const tripId = parseInt(this.trip.trip.id);
@@ -519,6 +532,11 @@
       updateViewTripPage: function () {
         tripRepo.getTrip(this.userId, this.tripId).then((result) => {
           let trip = result.data;
+
+          // trip.trip.nodes.nodes.forEach((node, index) => {
+          //   console.log("dest name is" + node.destination.name);
+          // });
+
           // Sorts the destinations ensure they are in the order of their ordinal
           let ordered_dests = trip.trip.nodes.sort(function (a, b) {
             return a.ordinal - b.ordinal;
@@ -677,6 +695,10 @@
       }
       this._getTrip(this.userId, this.tripId).then(() => {
         this.trip = deepCopy(this.selected_trip);
+
+        // this.trip.trip.nodes.forEach((node, index) => {
+        //   console.log("dest name on creation is" + node.destination.name);
+        // });
         this.trip.trip = this.tripWithDates(this.trip.trip);
 
 
