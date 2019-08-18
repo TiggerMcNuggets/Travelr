@@ -19,6 +19,24 @@ Feature: Delete User Group
     And The user group does not exist
     And All its group members are removed
 
+
+  Scenario: Toggle delete twice a user group and all its members successfully
+    Given I am authenticated
+    And I own the user group
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    And the user group has the group member
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    When I want to remove the user group and all its members
+    And I send the request
+    When I want to remove the user group and all its members
+    And I send the request
+    Then The user group exist
+    And All its group members are in the group
+
+
+
   Scenario: Delete an user group when not logged in
     Given I am not authenticated
     And I own the user group

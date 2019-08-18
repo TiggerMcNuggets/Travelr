@@ -58,7 +58,7 @@ export default {
     isSelected: Boolean,
     selectUserGroup: Function,
     updateUserGroups: Function,
-    checkpoint: Function
+    rollbackCheckpoint: Function
   },
 
   methods: {
@@ -74,11 +74,21 @@ export default {
      * Deletes the user group
      */
     deleteUserGroup() {
+      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_delete`;
       usergroupRepository.deleteSingleUserGroup(
         this.$store.getters.getUser.id,
         this.usergroup.id
       ).then(() => {
         this.updateUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+              url: url
+          },
+          {
+              url: url
+          }
+        );
       });
     }
   }

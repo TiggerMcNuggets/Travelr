@@ -27,4 +27,13 @@ public class GroupingFinder extends Finder<Long, Grouping> {
         return query().where().eq("name", name).findOne();
     }
 
+    /**
+     *
+     * @param id
+     * @return the grouping with given id, returns also the soft deleted values
+     */
+    public Grouping findByIdWithSoftDeletes(Long id) {
+        return query().setIncludeSoftDeletes().where().eq("id", id).findOne();
+    }
+
 }
