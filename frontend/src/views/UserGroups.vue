@@ -91,11 +91,11 @@ export default {
      * Checks to see if user is an owner
      */
     checkIfUserIsOwner() {
-        if (this.selectedGroup.owners.length != 0) {
-          this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
-        } else {
-          this.isOwner = false;
-        }
+      if (this.selectedGroup.owners.length != 0) {
+        this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
+      } else {
+        this.isOwner = false;
+      }
     },
 
     /**
