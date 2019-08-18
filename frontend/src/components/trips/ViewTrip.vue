@@ -117,7 +117,7 @@
               <v-timeline-item
                 v-if="node.type.toLowerCase() === 'destination'">
                 <v-card
-                  class="v-timeline-item-style">
+                  class="v-timeline-destination-item-style">
                   <v-combobox
                     :items="userDestinations"
                     item-text="name"
@@ -183,15 +183,21 @@
               </v-timeline-item>
               <v-timeline-item
                 v-else
-                color="red">
+                color="red"
+                >
                 <v-card>
-                  <!--<h3 class='hoverable' v-on:click="getSelectedTrip(node.id)">{{node.name}}</h3>-->
                   <v-text-field
-                    class="v-timeline-item-style"
+                    class="v-timeline-trip-item-style"
                     v-model="node.name"
                     :rules="nameRules"
                     :counter="60"
                     label="Trip Name"></v-text-field>
+                  <div class="view-trip-button">
+                  <div v-on:click="getSelectedTrip(node.id)">
+                    <v-btn flat text small color="error" class="align-with-arrow">View Trip</v-btn>
+                    <v-icon color="error">arrow_right_alt</v-icon>
+                  </div>
+                  </div>
                 </v-card>
               </v-timeline-item>
             </li>
@@ -207,6 +213,16 @@
 </template>
 
 <style>
+  .align-with-arrow {
+    padding: 0px 0px 30px 30px;
+    margin-right: 2px;
+  }
+
+  .view-trip-button {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .trip-timeline-item-width {
     min-width: 300px;
     width: 25%;
@@ -226,8 +242,12 @@
     padding: 8px 16px 4px 16px
   }
 
-  .v-timeline-item-style {
+  .v-timeline-destination-item-style {
     padding: 1.5em 1em 1.5em 1em;
+  }
+
+  .v-timeline-trip-item-style {
+    padding: 1.5em 1em 0.7em 1em;
   }
 
 </style>
