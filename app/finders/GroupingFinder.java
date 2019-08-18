@@ -19,7 +19,7 @@ public class GroupingFinder extends Finder<Long, Grouping> {
     }
 
     /**
-     * retrieves user from database if user email matches email given
+     * Retrieves user from database if user email matches email given
      * @param name
      * @return A grouping with the provided name
      */
@@ -28,9 +28,9 @@ public class GroupingFinder extends Finder<Long, Grouping> {
     }
 
     /**
-     *
+     * Retrieves the Grouping element given id (includes soft-deletes)
      * @param id
-     * @return the grouping with given id, returns also the soft deleted values
+     * @return the grouping with given id
      */
     public Grouping findByIdWithSoftDeletes(Long id) {
         return query().setIncludeSoftDeletes().where().eq("id", id).findOne();
