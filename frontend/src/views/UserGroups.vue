@@ -155,7 +155,6 @@ export default {
      * Adds a command to the undo/redo stack to be executed
      */
     checkpoint: function(type, action, reaction) {
-        console.log("CIAO rollback in userGroups");
         this.rollbackCheckpoint(type, action, reaction);
     }
   },

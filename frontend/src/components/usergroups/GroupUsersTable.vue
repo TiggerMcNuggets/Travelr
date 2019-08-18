@@ -128,7 +128,6 @@ export default {
      * Group owners cannot remove themselves from the group.
      */
     isDeletable(targetUserId) {
-      console.log(targetUserId)
       return !!((this.isAdmin || this.isOwner) && !this.checkIfUserIsOwner(targetUserId));
     }
   },
