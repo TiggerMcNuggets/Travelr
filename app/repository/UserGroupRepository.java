@@ -50,7 +50,8 @@ public class UserGroupRepository {
         return supplyAsync(() -> {
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
-                userGroup.delete();
+                userGroup.setDeleted(!userGroup.isDeleted());
+                userGroup.update();
                 return userGroup.user.getId();
             }
             return null;
@@ -62,17 +63,22 @@ public class UserGroupRepository {
      * @param groupId The group id
      * @return The id of the deleted group otherwise null if not found.
      */
-    public CompletableFuture<Long> remove(Long groupId) {
+    public CompletableFuture<Long> removeGroupAndMembers(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("grouping_id", groupId).findList();;
+            List<UserGroup> userGroupsToBeDeleted =
+                    UserGroup.find.query().setIncludeSoftDeletes()
+                        .where().eq("grouping_id", groupId).findList();
             for (UserGroup userGroup : userGroupsToBeDeleted) {
-                userGroup.delete();
+                userGroup.setDeleted(!userGroup.isDeleted());
+                userGroup.update();
             }
 
-            Grouping groupToBeDeleted = Grouping.find.byId(groupId);
+            Grouping groupToBeDeleted =
+                    Grouping.find.findByIdWithSoftDeletes(groupId);
 
             if (groupToBeDeleted != null) {
-                groupToBeDeleted.delete();
+                groupToBeDeleted.setDeleted(!groupToBeDeleted.isDeleted());
+                groupToBeDeleted.update();
                 return groupToBeDeleted.getId();
             }
 
