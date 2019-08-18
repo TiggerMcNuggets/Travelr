@@ -57,9 +57,10 @@ export default {
    * @param {number} groupId The user group id
    * @param {number} memberId The id of the user to add to the group
    */
-  addUserToUserGroup(userId, groupId, memberId) {
+  addUserToUserGroup(userId, groupId, memberId, payload) {
     return Repository.post(
-      `/users/${userId}/group/${groupId}/member/${memberId}`
+      `/users/${userId}/group/${groupId}/member/${memberId}`,
+      payload
     );
   },
 
