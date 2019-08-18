@@ -143,8 +143,18 @@ public class UserGroupRepository {
             if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
 
             // Check if member already belongs to group
-            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
-            if (memberGroup != null) throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
+            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).setIncludeSoftDeletes().findOne();
+            if (memberGroup != null) {
+
+                // Checks if the user is soft deleted and in the group already
+                if (memberGroup.isDeleted()) {
+                    memberGroup.setDeleted(!memberGroup.isDeleted());
+                    memberGroup.update();
+                    return null;
+                } else {
+                    throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
+                }
+            }
 
             // Check that user is an admin or is the owner of the group
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
