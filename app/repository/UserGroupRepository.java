@@ -47,7 +47,8 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId, Long memberId) {
         return supplyAsync(() -> {
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
+            UserGroup userGroup = UserGroup.find.query().setIncludeSoftDeletes()
+                    .where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
                 userGroup.setDeleted(!userGroup.isDeleted());
                 userGroup.update();
