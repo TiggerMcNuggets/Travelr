@@ -12,7 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
-          :rollbackCheckpoint="checkpoint"
+          :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
@@ -79,7 +79,6 @@ export default {
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
         this.usergroups = result.data;
-        console.log(result.data);
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
@@ -115,12 +114,23 @@ export default {
      */
     async deleteUser(groupId, memberId) {
       this.isError = false;
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/toggle_deleted`;
+
       userGroupRepository.removeUserInUserGroup(
         this.$store.getters.getUser.id, 
         groupId, 
         memberId
       ).then(() => {
-        this.getUserGroups()
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
       });
     },
 
@@ -142,6 +152,9 @@ export default {
       this.rollbackRedo(actions);
     },
 
+    /**
+     * Adds a command to the undo/redo stack to be executed
+     */
     checkpoint: function(type, action, reaction) {
         console.log("CIAO rollback in userGroups");
         this.rollbackCheckpoint(type, action, reaction);
