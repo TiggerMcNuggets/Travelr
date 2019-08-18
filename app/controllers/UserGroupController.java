@@ -174,12 +174,13 @@ public class UserGroupController extends Controller {
             }
         }
 
-        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+        User user = request.attrs().get(Attrs.USER);
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", user.getId()).eq("grouping_id", groupId).findOne();
 
         if (userGroup == null) {
             return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
         }
-        else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
+        else if (!isAdmin && userGroup != null || !userGroup.isOwner()) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
