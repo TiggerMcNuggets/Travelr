@@ -44,7 +44,7 @@
              */
             _getTrip: async function(userId, tripId) {
                 try {
-                    await this.$store.dispatch('getTrip', {userId, tripId});
+                    return await this.$store.dispatch('getTrip', {userId, tripId});
                 } catch (e) {
                     console.log(e);
                 }
@@ -97,7 +97,6 @@
 
         },
         async mounted() {
-            console.log('Created in dest mixin is called and userId =', this.userId);
             await this._getTrips(this.userId);
         },
     };

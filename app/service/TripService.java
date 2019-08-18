@@ -118,8 +118,16 @@ public class TripService {
 
     // TODO Adam: uncouple function from DTO??? unsure if possible or best practise at this point
 
+    /**
+     * updates a trips based on information chamnged by the user
+     * @param tripId trip to be updated
+     * @param tripDTO
+     * @param user user who owns the trip
+     * @return the updated trip
+     */
     public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
         return supplyAsync(() -> {
+
 
             CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
 
