@@ -42,7 +42,7 @@
               </li>
             </ul>
           </td>
-          <td v-if="isAdmin" class="text-xs-right">
+          <td v-if="isAdmin || isOwner" class="text-xs-right">
             <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
@@ -68,7 +68,8 @@ export default {
     name: String,
     deleteUser: Function,
     isError: Boolean,
-    group: Object
+    group: Object,
+    isOwner: Boolean
   },
 
   components: {
@@ -152,7 +153,7 @@ export default {
       ];
 
       // Checking if user is admin and adding delete button if they are
-      if (this.isAdmin) {
+      if (this.isAdmin || this.isOwner) {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
       return columns;

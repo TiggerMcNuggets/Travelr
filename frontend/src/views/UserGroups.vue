@@ -28,6 +28,7 @@
           :isError="isError"
           :group="selectedGroup"
           :getUserGroups="getUserGroups"
+          :isOwner="isOwner"
         />
       </v-flex>
     </v-layout>
