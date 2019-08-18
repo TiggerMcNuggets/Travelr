@@ -12,6 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
+          :rollbackCheckpoint="checkpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
@@ -137,6 +138,16 @@ export default {
       this.isError = false;
       const actions = [this.getUserGroups];
       this.rollbackRedo(actions);
+    },
+
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
+    checkpoint: function(type, action, reaction) {
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 

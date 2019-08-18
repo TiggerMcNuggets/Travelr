@@ -48,7 +48,7 @@ export default {
    * @param {number} groupId The user group id
    */
   deleteSingleUserGroup(userId, groupId) {
-    return Repository.delete(`/users/${userId}/group/${groupId}`);
+    return Repository.put(`/users/${userId}/group/${groupId}/toggle_delete`);
   },
 
   /**
