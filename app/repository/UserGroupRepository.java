@@ -1,13 +1,17 @@
 package repository;
 
+import controllers.constants.APIResponses;
+import controllers.dto.UserGroup.AddUserToGroupReq;
+import controllers.dto.UserGroup.CreateUserGroupReq;
 import controllers.dto.UserGroup.UpdateUserGroupReq;
+import exceptions.*;
 import models.Grouping;
+import models.User;
 import models.UserGroup;
 
 import javax.inject.Inject;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class UserGroupRepository {
@@ -19,6 +23,21 @@ public class UserGroupRepository {
         this.context = context;
     }
 
+    /**
+     * Creates a new group for the user provided
+     * @param request CreateUserGroupReq with name and description
+     * @param user The user who the group is being created for
+     * @return the groups Id
+     */
+    public CompletableFuture<Long> createNewGroup(CreateUserGroupReq request, User user) {
+        return supplyAsync(() -> {
+            Grouping group = new Grouping(request.name, request.description);
+            group.insert();
+            UserGroup userGroup = new UserGroup(user, group, true);
+            userGroup.insert();
+            return group.id;
+        }, context);
+    }
 
     /**
      * Deletes a group member
@@ -28,7 +47,7 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId, Long memberId) {
         return supplyAsync(() -> {
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("group_id", groupId).findOne();
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
                 userGroup.delete();
                 return userGroup.user.getId();
@@ -44,7 +63,7 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("group_id", groupId).findList();;
+            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("grouping_id", groupId).findList();;
             for (UserGroup userGroup : userGroupsToBeDeleted) {
                 userGroup.delete();
             }
@@ -58,6 +77,16 @@ public class UserGroupRepository {
 
             return null;
         }, context);
+    }
+
+    /**
+     *
+     * Gets a list of UserGroups
+     * @param id the id of the group
+     * @return completable future of list of userGroups
+     */
+    public CompletableFuture<List<UserGroup>> getGroupMembers(Long id) {
+        return supplyAsync(() -> UserGroup.find.query().where().eq("grouping_id",id).findList(), context);
     }
 
     /**
@@ -84,7 +113,60 @@ public class UserGroupRepository {
         }, context);
     }
 
+    /**
+     * Adds user to group
+     * @param userId The user's id who is calling the request
+     * @param groupId The group's id
+     * @param memberId The member's id who will be added to the group
+     * @param isAdmin Whether the member should be an owner
+     * @param req The request DTO
+     * @return Void
+     * @throws CustomException Exception that will return the related request
+     */
+    public CompletableFuture<Void> addUserToGroup(Long userId, Long groupId, Long memberId, boolean isAdmin, AddUserToGroupReq req) throws CustomException {
+        return supplyAsync(() -> {
 
+            // Get group
+            Grouping group = Grouping.find.byId(groupId);
+            if (group == null) throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
 
+            // Get member
+            User user = User.find.findById(memberId);
+            if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
 
+            // Check if member already belongs to group
+            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
+            if (memberGroup != null) throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
+
+            // Check that user is an admin or is the owner of the group
+            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+            if ((userGroup == null || !userGroup.isOwner) && !isAdmin) throw new ForbiddenException(APIResponses.FORBIDDEN);
+
+            // Add user to group
+            UserGroup newUserGroup = new UserGroup(user, group, req.getIsOwner());
+            newUserGroup.insert();
+
+            return null;
+        }, context);
+    }
+
+    /**
+     * Gets all user groups that belongs to the user
+     * @param userId The user's id
+     * @return the list of groups
+     * @throws CustomException
+     */
+    public CompletableFuture<List<Grouping>> getUserGroups(Long userId) throws CustomException {
+        return supplyAsync(() -> Grouping
+                    .find
+                    .query()
+                    .fetch("userGroups")
+                    .fetch("userGroups.user")
+                    .fetch("userGroups.user.nationalities")
+                    .fetch("userGroups.user.nationalities.nationality")
+                    .where()
+                    .eq("userGroups.user.id", userId)
+                    .findList()
+        , context);
+    }
 }

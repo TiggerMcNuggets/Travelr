@@ -19,6 +19,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import service.MailgunService;
 import service.TripService;
 
 import java.util.ArrayList;
@@ -35,11 +36,12 @@ public class TripController extends Controller {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
+    private final MailgunService mailgunService;
 
     @Inject
 
-    public TripController(TripService tripService) {
-
+    public TripController(TripService tripService, MailgunService mailgunService) {
+        this.mailgunService = mailgunService;
         this.tripService = tripService;
     }
 //

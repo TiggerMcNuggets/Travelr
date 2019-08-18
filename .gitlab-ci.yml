@@ -1,5 +1,11 @@
+stages:
+- test
+- build
+- deploy
+
+
 tag_checker:
-  stage: build
+  stage: test
   script:
     - python tag_checker.py $CI_COMMIT_TAG
   only:
@@ -10,10 +16,19 @@ junit:
   script:
     - sbt test
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - ./frontend/node_modules/
 
-# recent artifacts on all non-tagged commits on any branch
+before_script:
+  - cd ./frontend
+  - npm install
+  - cd ../
+
+# Recent artifacts - all non-tagged branches
 recent-artifacts:
-  stage: deploy
+  stage: build
   script:
     - sbt dist
   artifacts:
@@ -23,48 +38,48 @@ recent-artifacts:
   except:
     - tags
 
-
-# Deploy prod server and release artifacts on tagged master commits
+# Release artifacts - tagged branch
 release-artifacts:
- stage: deploy
- script:
-    - sbt dist
-    - sudo systemctl stop Prod.service
-    - cd ./target/universal
-    - sudo rm -rf /home/gitlab-runner/prod/*
-    - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/prod/
-    - sudo unzip /home/gitlab-runner/prod/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/prod/
-    - sudo systemctl start Prod.service
- artifacts:
-    paths:
-    - target/universal/*.zip
- only:
-    - tags
-
-
-# Deploy dev server on non-tagged master commits
-deploy-dev:
-  stage: deploy
+  stage: build
   script:
-    - sbt dist
-    - sudo systemctl stop Dev.service
-    - cd ./target/universal
-    - sudo rm -rf /home/gitlab-runner/dev/*
-    - sudo cp team300-travelea-1.0.0-SNAPSHOT.zip /home/gitlab-runner/dev/
-    - sudo unzip /home/gitlab-runner/dev/team300-travelea-1.0.0-SNAPSHOT.zip -d /home/gitlab-runner/dev/
-    - sudo systemctl start Dev.service
+     - sbt dist
+  artifacts:
+     paths:
+     - target/universal/*.zip
   only:
-    - master@seng302-2019/team-300
+     - tags
+
+# Deploy production server - tagged branch
+deploy-production-server:
+  stage: deploy
+  dependencies:
+  - release-artifacts
+  script:
+  - sudo systemctl stop Production
+  - sudo rm -rf /srv/production/build/*
+  - sudo unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/production/build/
+  - sudo systemctl start Production
+  environment:
+    name: production
+    url: https://csse-s302g3.canterbury.ac.nz/
+  only:
+  - tags
+
+# Deploy develop server - all non-tagged master commits
+deploy-develop-server:
+  stage: deploy
+  dependencies:
+  - recent-artifacts
+  script:
+  - sudo systemctl stop Develop
+  - sudo rm -rf /srv/develop/build/*
+  - sudo unzip target/universal/team300-travelea-1.0.0-SNAPSHOT.zip -d /srv/develop/build/
+  - sudo systemctl start Develop
+  environment:
+    name: production
+    url: https://csse-s302g3.canterbury.ac.nz:8433
+  only:
+  - master@seng302-2019/team-300
   except:
-    - tags
+  - tags
     
-    
-# Run sonar scanner on master commits
-update-sonar:
-    stage: deploy
-    script:
-        - sbt dist
-        - chmod -R 777 .
-        - /opt/sonarqubeScanner/bin/sonar-scanner
-    only:
-        - master@seng302-2019/team-300
