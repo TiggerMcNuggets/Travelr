@@ -36,7 +36,7 @@
 <script>
 import GroupUsersTable from "../components/usergroups/GroupUsersTable";
 import UserGroupList from "../components/usergroups/UserGroupNav";
-
+import dateTime from "../components/common/dateTime/dateTime.js";
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
 import { RepositoryFactory } from "../repository/RepositoryFactory";
@@ -64,7 +64,7 @@ export default {
      * returns a list of members/users in the selected group
      */
     groupUsers() {
-      return this.selectedGroup.members;
+      return this.selectedGroup.members.map(item => {item.dateOfBirth = dateTime.convertTimestampToString(item.dateOfBirth); return item });
     },
   },
 
