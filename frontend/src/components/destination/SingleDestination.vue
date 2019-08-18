@@ -29,25 +29,14 @@
       </p>
     </div>
     <v-divider class="photo-header-divider"></v-divider>
-    <div v-if="showUploadSection">
-      <div class="upload-section section">
-        <label>
-          <input
-            class="choose-file-button"
-            type="file"
-            id="file"
-            ref="file"
-            v-on:change="handleFileUpload()"
-          >
-        </label>
-        <div>
-          <v-btn v-on:click="submitFile()">Upload Photo</v-btn>
-        </div>
-      </div>
-      <v-alert :value="uploadError" color="error">{{errorText}}</v-alert>
-      <v-alert :value="uploadSuccessful" color="success">Upload Successful</v-alert>
-      <v-divider class="photo-header-divider"></v-divider>
-    </div>
+    <v-dialog v-model="showUploadSection" width="800">
+      <MediaUpload
+        :uploadMedia="uploadMedia"
+        :openUploadDialog="toggleShowUploadPhoto"
+        :closeUploadDialog="toggleShowUploadPhoto"
+        :isDestination=true
+      ></MediaUpload>
+    </v-dialog>
 
     <ul>
       <li v-for="row in files" :value="row.value" :key="row.value">
@@ -76,9 +65,6 @@
       :showSuggestTravellerTypes="showSuggestTravellerTypes"
       :close="toggleShowSuggestTravellerTypes"
     />
-    <v-dialog v-model="chooseExistingDialog" width="800">
-      <PhotoSelect v-bind="{closeDialog, setDestinationImages}"/>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -113,7 +99,7 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
-import PhotoSelect from "../photos/PhotoSelect";
+import MediaUpload from "../media/MediaUpload";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
 import { store } from "../../store/index";
 import {
@@ -125,14 +111,15 @@ import {
 import PageHeader from "../common/header/PageHeader";
 
 let destinationRepository = RepositoryFactory.get("destination");
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
 
   components: {
-    PhotoSelect,
     SuggestTravellerTypes,
     PageHeader,
+    MediaUpload,
   },
 
   // local variables
@@ -162,6 +149,7 @@ export default {
   },
 
   computed: {
+    
     /**
      * Options used in the header component.
      */
@@ -224,12 +212,50 @@ export default {
         addExistingPhoto(this.userId, this.destId, {
           photo_filename: selectedImages[i].photo_filename
         }).then(() => {
-          getImages(this.userId, this.destId).then(result => {
+          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+            this.uploadExisting = true;
             this.files = this.groupImages(result.data);
           });
         });
       }
       this.closeDialog();
+    },
+
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          return getImages(this.userId, this.destination.defaultAlbumId);
+        })
+        .then(result => {
+          this.uploadExisting = true;
+          this.files = this.groupImages(result.data);
+        })
+        .catch(error => {
+          console.log(error);
+          this.uploadError = true;
+          this.errorText = error.response.data;
+        });
+    },
+
+    /**
+     * Uploads the given media files the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.destination.defaultAlbumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
     },
 
     /**
@@ -273,29 +299,6 @@ export default {
     updatePhotoVisability() {
       this.clickedImage.is_public = this.publicPhotoSwitch;
       updateDestinationPhoto(this.clickedImage);
-    },
-
-    /**
-     * Submits the image file and uploads it to the server
-     */
-    submitFile() {
-      this.uploadError = false;
-      this.uploadExisting = false;
-      let formData = new FormData();
-      formData.append("picture", this.file);
-
-      storeDestinationImage(this.userId, this.destId, formData)
-        .then(() => {
-          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
-            this.uploadExisting = true;
-            console.log(result);
-            this.files = this.groupImages(result.data);
-          });
-        })
-        .catch(() => {
-          this.uploadError = true;
-        });
-      this.$refs.file.value = "";
     },
 
     /**
