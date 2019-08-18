@@ -14,6 +14,7 @@
         :isSelected="selectedGroup == usergroup"
         :selectUserGroup="selectUserGroup"
         :updateUserGroups="updateUserGroups"
+        :rollbackCheckpoint="checkpoint"
       />
     </v-flex>
   </v-container>
@@ -43,7 +44,8 @@ export default {
     usergroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
-    updateUserGroups: Function
+    updateUserGroups: Function,
+    rollbackCheckpoint: Function
   },
 
   methods: {
@@ -61,6 +63,16 @@ export default {
     toggleSearch() {
       this.searchActive = !this.searchActive;
       this.createGroupActive = false;
+    },
+
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
+    checkpoint(type, action, reaction) {
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 

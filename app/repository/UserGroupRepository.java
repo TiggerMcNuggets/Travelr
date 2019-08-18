@@ -11,6 +11,7 @@ import models.UserGroup;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -49,7 +50,8 @@ public class UserGroupRepository {
         return supplyAsync(() -> {
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
-                userGroup.delete();
+                userGroup.setDeleted(!userGroup.isDeleted());
+                userGroup.update();
                 return userGroup.user.getId();
             }
             return null;
@@ -61,17 +63,22 @@ public class UserGroupRepository {
      * @param groupId The group id
      * @return The id of the deleted group otherwise null if not found.
      */
-    public CompletableFuture<Long> remove(Long groupId) {
+    public CompletableFuture<Long> removeGroupAndMembers(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("grouping_id", groupId).findList();;
+            List<UserGroup> userGroupsToBeDeleted =
+                    UserGroup.find.query().setIncludeSoftDeletes()
+                        .where().eq("grouping_id", groupId).findList();
             for (UserGroup userGroup : userGroupsToBeDeleted) {
-                userGroup.delete();
+                userGroup.setDeleted(!userGroup.isDeleted());
+                userGroup.update();
             }
 
-            Grouping groupToBeDeleted = Grouping.find.byId(groupId);
+            Grouping groupToBeDeleted =
+                    Grouping.find.findByIdWithSoftDeletes(groupId);
 
             if (groupToBeDeleted != null) {
-                groupToBeDeleted.delete();
+                groupToBeDeleted.setDeleted(!groupToBeDeleted.isDeleted());
+                groupToBeDeleted.update();
                 return groupToBeDeleted.getId();
             }
 
@@ -169,5 +176,33 @@ public class UserGroupRepository {
                     .orderBy("userGroups.user.id")
                     .findList()
         , context);
+    }
+
+    /**
+     *
+     * @param memberId
+     * @param groupId
+     * @return the group id if successfull, null otherwise
+     */
+    public CompletableFuture<Long> promoteUser(Long memberId, Long groupId) {
+        return supplyAsync(() -> {
+            Grouping group = Grouping.find.byId(groupId);
+
+            // Not found check
+            if (group == null) return null;
+
+            // Check if member already belongs to group
+            Optional<UserGroup> memberGroup = UserGroup.find.findByUserAndGroupId(memberId, groupId);
+            if (!memberGroup.isPresent()) {
+                return null;
+            }
+
+            UserGroup userGroup = memberGroup.get();
+
+            userGroup.setOwner(!userGroup.isOwner());
+            userGroup.update();
+            return group.id;
+
+            }, context);
     }
 }
