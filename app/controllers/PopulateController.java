@@ -87,6 +87,18 @@ public class PopulateController extends Controller {
             new UserNationality(admin, nationality, true).insert();
         }
 
+        // Adding usergroups
+        Grouping grouping = new Grouping("Our First Group", "We Da Best");
+        grouping.insert();
+
+        UserGroup group1 = new UserGroup(user1, grouping, true);
+        group1.insert();
+
+        UserGroup group2 = new UserGroup(user2, grouping, false);
+        group2.insert();
+
+
+
         Destination dest1 = new Destination("Christchurch", -43.522, 172.581, "City", "Canterbury", "New Zealand", user1);
         dest1.setTravellerTypes(travellerTypes);
 

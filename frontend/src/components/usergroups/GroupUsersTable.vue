@@ -1,11 +1,28 @@
 <template>
   <v-container class="section-container">
-    <SectionHeader :title="name + ' members'" disableUndoRedo />
+    <SectionHeader :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
+    <div v-if="addUserActive">
+      <v-select
+      :items="users"
+      :v-model="selectedUserId"
+      v-on:change="selectUser"
+      ></v-select>
+      <v-checkbox
+        v-model="isMaintainer"
+        label="Group Admin"
+      ></v-checkbox>
+      <v-btn
+        color="error"
+        v-on:click="addUserToGroup">
+        Add user to group
+      </v-btn>
+    </div>
+
 
     <v-flex class="section-body">
-      <v-data-table :headers="getColumns" :items="users">
+      <v-data-table :headers="getColumns" :items="groupUsers">
         <template v-slot:items="props">
-          <td @click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
+          <td v-on:click="goToUser(props.item.id)" class="text-xs-right">{{ props.item.firstName }}</td>
           <td class="text-xs-right">{{ props.item.lastName }}</td>
           <td class="text-xs-right">{{ props.item.dateOfBirth }}</td>
           <td class="text-xs-right">{{ props.item.gender }}</td>
@@ -26,7 +43,7 @@
             </ul>
           </td>
           <td v-if="isAdmin" class="text-xs-right">
-            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </td>
@@ -40,13 +57,18 @@
 
 <script>
 import SectionHeader from "../common/header/SectionHeader";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   props: {
-    users: Array,
+    groupUsers: Array,
+    getUserGroups: Function,
+    selectedGroup: Object,
     name: String,
     deleteUser: Function,
-    isError: Boolean
+    isError: Boolean,
+    group: Object
   },
 
   components: {
@@ -55,6 +77,9 @@ export default {
 
   data() {
     return {
+      selectedUserId: 0,
+      isMaintainer: false,
+      addUserActive: false,
       isAdmin: false
     };
   },
@@ -67,6 +92,31 @@ export default {
     goToUser(id) {
       var endpoint = "/user/" + id;
       this.$router.push(endpoint);
+    },
+    
+    /**
+     * Toggles add user to group content
+     */
+    toggleAddUser() {
+      this.addUserActive = !this.addUserActive;
+    },
+
+    /**
+     * Updates the selectedUserId variable to the given user id
+     */
+    selectUser(userId) {
+      this.selectedUserId = userId;
+    },
+
+    /**
+     * Sends a request to add the selected user to the group
+     */
+    addUserToGroup() {
+      userGroupRepository.addUserToUserGroup(this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {
+        isOwner: this.isMaintainer
+      }).then(() => {
+        this.getUserGroups();
+      });
     }
   },
 
@@ -106,7 +156,26 @@ export default {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
       return columns;
-    }
+    },
+
+    /**
+     * returns a list of all button options for GroupUsersTable, each specifying an icon and the function of the button.
+     */
+    userTableOptions() {
+      return [
+        {
+          action: this.toggleAddUser,
+          icon: "add"
+        },
+      ]
+    },
+
+    /**
+     * function to get a list of users mapping first and last name to text and id to value for the v-select
+     */
+    users() {
+      return this.$store.state.users.users.map(user => ({text: user.firstName + " " + user.lastName, value: user.id, id: user.id}));
+    },
   },
 
   /**

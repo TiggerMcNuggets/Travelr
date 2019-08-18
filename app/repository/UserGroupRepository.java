@@ -167,6 +167,7 @@ public class UserGroupRepository {
                     .fetch("userGroups.user.nationalities.nationality")
                     .where()
                     .eq("userGroups.user.id", userId)
+                    .orderBy("userGroups.user.id")
                     .findList()
         , context);
     }
