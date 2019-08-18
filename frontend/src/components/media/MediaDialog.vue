@@ -50,8 +50,8 @@
 
       <v-layout>
         <v-flex>
-          <h7 class="title mb-0 mr-2" v-if="photoIsPublic">Public</h7>
-          <h7 class="title mb-0 mr-2" v-else >Private</h7>
+          <p class="title mb-0 mr-2" v-if="photoIsPublic">Public</p>
+          <p class="title mb-0 mr-2" v-else >Private</p>
           <v-icon
             v-if="editVisibility"
 
