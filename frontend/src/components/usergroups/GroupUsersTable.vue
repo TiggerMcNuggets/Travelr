@@ -42,8 +42,8 @@
               </li>
             </ul>
           </td>
-          <td v-if="isAdmin || isOwner" class="text-xs-right">
-            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
+          <td v-if="(isAdmin || isOwner)" class="text-xs-right">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)" v-if="isDeletable(props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </td>
@@ -69,7 +69,8 @@ export default {
     deleteUser: Function,
     isError: Boolean,
     group: Object,
-    isOwner: Boolean
+    isOwner: Boolean,
+    checkIfUserIsOwner: Function
   },
 
   components: {
@@ -118,6 +119,17 @@ export default {
       }).then(() => {
         this.getUserGroups();
       });
+    },
+
+    /**
+     * Checks if a given user id can be deleted by the currently logged in user.
+     * Admins and group owners have the same permissions.
+     * Group owners cannot delete other group owners.
+     * Group owners cannot remove themselves from the group.
+     */
+    isDeletable(targetUserId) {
+      console.log(targetUserId)
+      return !!((this.isAdmin || this.isOwner) && !this.checkIfUserIsOwner(targetUserId));
     }
   },
 

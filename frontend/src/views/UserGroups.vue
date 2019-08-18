@@ -29,6 +29,7 @@
           :group="selectedGroup"
           :getUserGroups="getUserGroups"
           :isOwner="isOwner"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
     </v-layout>
@@ -85,18 +86,16 @@ export default {
         } else if (result.data.length == 0) {
           this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
-        this.checkIfUserIsOwner();
+        this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
       })
     },
 
     /**
-     * Checks to see if user is an owner
+     * Checks to see if the given user is an owner of the currently selected group
      */
-    checkIfUserIsOwner() {
+    checkIfUserIsOwner(userId) {
         if (this.selectedGroup.owners.length != 0) {
-          this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
-        } else {
-          this.isOwner = false;
+          return this.selectedGroup.owners.some((owner) => owner === userId);
         }
     },
 
@@ -105,7 +104,7 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
-      this.checkIfUserIsOwner();
+      this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
     },
 
     /**
