@@ -12,6 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
+          :rollbackCheckpoint="checkpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
@@ -50,6 +51,7 @@ export default {
       isError: false,
       selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
       usergroups: [],
+      isOwner: true
     };
   },
   components: {
@@ -79,10 +81,22 @@ export default {
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
-        } else {
+        } else if (result.data.length == 0) {
           this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
+        this.checkIfUserIsOwner();
       })
+    },
+
+    /**
+     * Checks to see if user is an owner
+     */
+    checkIfUserIsOwner() {
+        if (this.selectedGroup.owners.length != 0) {
+          this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
+        } else {
+          this.isOwner = false;
+        }
     },
 
     /**
@@ -90,6 +104,7 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      this.checkIfUserIsOwner();
     },
 
     /**
@@ -123,6 +138,16 @@ export default {
       this.isError = false;
       const actions = [this.getUserGroups];
       this.rollbackRedo(actions);
+    },
+
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
+    checkpoint: function(type, action, reaction) {
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 
