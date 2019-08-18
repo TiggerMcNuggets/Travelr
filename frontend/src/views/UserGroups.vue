@@ -51,6 +51,7 @@ export default {
       isError: false,
       selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
       usergroups: [],
+      isOwner: true
     };
   },
   components: {
@@ -81,10 +82,22 @@ export default {
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
-        } else {
+        } else if (result.data.length == 0) {
           this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
+        this.checkIfUserIsOwner();
       })
+    },
+
+    /**
+     * Checks to see if user is an owner
+     */
+    checkIfUserIsOwner() {
+        if (this.selectedGroup.owners.length != 0) {
+          this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
+        } else {
+          this.isOwner = false;
+        }
     },
 
     /**
@@ -92,6 +105,7 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      this.checkIfUserIsOwner();
     },
 
     /**

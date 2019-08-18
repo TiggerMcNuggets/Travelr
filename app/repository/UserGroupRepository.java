@@ -11,6 +11,7 @@ import models.UserGroup;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -176,5 +177,33 @@ public class UserGroupRepository {
                     .orderBy("userGroups.user.id")
                     .findList()
         , context);
+    }
+
+    /**
+     *
+     * @param memberId
+     * @param groupId
+     * @return the group id if successfull, null otherwise
+     */
+    public CompletableFuture<Long> promoteUser(Long memberId, Long groupId) {
+        return supplyAsync(() -> {
+            Grouping group = Grouping.find.byId(groupId);
+
+            // Not found check
+            if (group == null) return null;
+
+            // Check if member already belongs to group
+            Optional<UserGroup> memberGroup = UserGroup.find.findByUserAndGroupId(memberId, groupId);
+            if (!memberGroup.isPresent()) {
+                return null;
+            }
+
+            UserGroup userGroup = memberGroup.get();
+
+            userGroup.setOwner(!userGroup.isOwner());
+            userGroup.update();
+            return group.id;
+
+            }, context);
     }
 }

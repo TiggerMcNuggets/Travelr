@@ -81,6 +81,7 @@ PUT         /api/users/:user_id/group/:group_id/toggle_deleted                  
 GET         /api/users/:user_id/group/:group_id                                     controllers.UserGroupController.getSingleGroup(request: Request, user_id: Long, group_id: Long)
 POST        /api/users/:user_id/group                                               controllers.UserGroupController.createUserGroup(request: Request, user_id: Long)
 GET         /api/users/:user_id/group                                               controllers.UserGroupController.getUserGroups(request: Request, user_id: Long)
+PUT         /api/users/:user_id/group/:group_id/member/:member_id/promote   controllers.UserGroupController.promoteGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
 
 # Trips (trips within trips)
 POST        /api/users/:userId/trips                        controllers.TripController.createTrip(request: Request, userId: Long)
