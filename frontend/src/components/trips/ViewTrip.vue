@@ -102,7 +102,15 @@
           <v-icon>calendar_today</v-icon>
         </v-btn>
 
+
       </v-layout>
+      <v-container>
+        <v-row>
+          <v-col>
+            <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination consecutive.</v-alert>
+          </v-col>
+        </v-row>
+      </v-container>
       <v-timeline align-top dense>
         <draggable
           class="list-group"
@@ -184,7 +192,7 @@
               <v-timeline-item
                 v-else
                 color="red"
-                >
+              >
                 <v-card>
                   <v-text-field
                     class="v-timeline-trip-item-style"
@@ -193,10 +201,10 @@
                     :counter="60"
                     label="Trip Name"></v-text-field>
                   <div class="view-trip-button">
-                  <div v-on:click="getSelectedTrip(node.id)">
-                    <v-btn flat text small color="error" class="align-with-arrow">View Trip</v-btn>
-                    <v-icon color="error">arrow_right_alt</v-icon>
-                  </div>
+                    <div v-on:click="getSelectedTrip(node.id)">
+                      <v-btn flat text small color="error" class="align-with-arrow">View Trip</v-btn>
+                      <v-icon color="error">arrow_right_alt</v-icon>
+                    </div>
                   </div>
                 </v-card>
               </v-timeline-item>
@@ -206,13 +214,18 @@
       </v-timeline>
     </v-form>
     <!--<TripMap-->
-      <!--:nodes="trip.trip.nodes"-->
-      <!--class="trip-map"/>-->
+    <!--:nodes="trip.trip.nodes"-->
+    <!--class="trip-map"/>-->
   </v-container>
 
 </template>
 
 <style>
+  .same-dist-alert {
+    width: 32%;
+    margin-left: 0;
+  }
+
   .align-with-arrow {
     padding: 0px 0px 30px 30px;
     margin-right: 2px;
@@ -320,6 +333,7 @@
         isPromotable: isPromotable,
         isDemotable: isDemotable,
         arrivalDateMenu: false,
+        hasAdjacentIdentical: true,
 
         // rules
         ...rules,
@@ -455,35 +469,40 @@
        * If it does then updates trip and updates the view trip page
        */
       updateTrip() {
-        if (this.$refs.form.validate()) {
+        if (this.no_adjacent_identical_destinations()) {
+          if (this.$refs.form.validate()) {
 
-          const trip = tripAssembler(this.trip);
-          const userId = this.userId;
-          const tripId = parseInt(this.trip.trip.id);
-          tripRepository
-            .updateTrip(userId, tripId, trip)
-            .then(() => {
-              const url = `/users/${userId}/trips/${tripId}`;
-              this.rollbackCheckpoint(
-                'PUT',
-                {
-                  url: url,
-                  body: trip
-                },
-                {
-                  url: url,
-                  body: this.rollbackPreviousBody
-                }
-              );
+            const trip = tripAssembler(this.trip);
+            const userId = this.userId;
+            const tripId = parseInt(this.trip.trip.id);
+            tripRepository
+              .updateTrip(userId, tripId, trip)
+              .then(() => {
+                const url = `/users/${userId}/trips/${tripId}`;
+                this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                    url: url,
+                    body: trip
+                  },
+                  {
+                    url: url,
+                    body: this.rollbackPreviousBody
+                  }
+                );
 
-              // Update previous body to be used for the next checkpoints reaction
-              this.rollbackSetPreviousBody(trip);
-              this.updateViewTripPage();
-            })
-            .catch(e => {
-              console.log(e);
-            });
+                // Update previous body to be used for the next checkpoints reaction
+                this.rollbackSetPreviousBody(trip);
+                this.updateViewTripPage();
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          }
+        } else {
+          this.hasAdjacentIdentical = true;
         }
+
       },
 
       /**
