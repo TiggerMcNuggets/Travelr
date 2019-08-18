@@ -18,7 +18,7 @@ public class UserGroupFinder extends Finder<Long, UserGroup> {
      * @param userId
      * @return the UserGroupObject given the user_id of the user involved
      */
-    public Optional<UserGroup> findByUserId(Long userId, Long groupId) {
+    public Optional<UserGroup> findByUserAndGroupId(Long userId, Long groupId) {
         return Optional.ofNullable(query()
                 .where()
                     .eq("user_id", userId)

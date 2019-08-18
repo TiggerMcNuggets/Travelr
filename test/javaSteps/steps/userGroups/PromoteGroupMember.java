@@ -31,7 +31,7 @@ public class PromoteGroupMember {
      * @return
      */
     private Optional<UserGroup> findUserGroup() {
-        return UserGroup.find.findByUserId(state.getGroupMember().getId(), state.getGroup().getId());
+        return UserGroup.find.findByUserAndGroupId(state.getGroupMember().getId(), state.getGroup().getId());
     }
 
 }

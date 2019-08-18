@@ -171,6 +171,12 @@ public class UserGroupRepository {
         , context);
     }
 
+    /**
+     *
+     * @param memberId
+     * @param groupId
+     * @return the group id if successfull, null otherwise
+     */
     public CompletableFuture<Long> promoteUser(Long memberId, Long groupId) {
         return supplyAsync(() -> {
             Grouping group = Grouping.find.byId(groupId);
@@ -179,7 +185,7 @@ public class UserGroupRepository {
             if (group == null) return null;
 
             // Check if member already belongs to group
-            Optional<UserGroup> memberGroup = UserGroup.find.findByUserId(memberId, groupId);
+            Optional<UserGroup> memberGroup = UserGroup.find.findByUserAndGroupId(memberId, groupId);
             if (!memberGroup.isPresent()) {
                 return null;
             }

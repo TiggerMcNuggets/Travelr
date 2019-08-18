@@ -118,8 +118,8 @@ public class UserGroupController extends Controller {
         if (middlewareRes != null)
             return middlewareRes;
 
-        Optional<UserGroup> userGroup = UserGroup.find.findByUserId(userId, groupId);
-        Optional<UserGroup> memberGroup = UserGroup.find.findByUserId(memberId, groupId);
+        Optional<UserGroup> userGroup = UserGroup.find.findByUserAndGroupId(userId, groupId);
+        Optional<UserGroup> memberGroup = UserGroup.find.findByUserAndGroupId(memberId, groupId);
 
         // Can't find the user group or member group in the database
         if(!userGroup.isPresent() || !memberGroup.isPresent()) {
