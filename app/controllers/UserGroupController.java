@@ -92,7 +92,7 @@ public class UserGroupController extends Controller {
         }
 
         // The user is not the owner of the user group.
-        if (userGroup != null && !userGroup.isOwner()) {
+        if (!userGroup.isOwner() || userGroup.isDeleted()) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
