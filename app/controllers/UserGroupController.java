@@ -131,15 +131,19 @@ public class UserGroupController extends Controller {
             }
         }
 
-        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
 
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+        if (userGroup == null) {
+            return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+        else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
+            return completedFuture(forbidden(APIResponses.FORBIDDEN));
+        }
+
+        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
 
             if (grouping == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
-            }
-            else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
-                return forbidden(APIResponses.FORBIDDEN);
             }
 
             return ok(APIResponses.SUCCESSFUL_GROUP_UPDATE);
