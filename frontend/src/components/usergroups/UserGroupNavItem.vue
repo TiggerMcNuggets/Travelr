@@ -28,7 +28,7 @@
     <v-dialog v-model="editDialogActive" width="500">
       <UpdateGroupForm
         :name="usergroup.name"
-        :description="usergroup.name"
+        :description="usergroup.description"
         :usergroupId="usergroup.id"
         :closeDialog="closeEditDialog"
       />
