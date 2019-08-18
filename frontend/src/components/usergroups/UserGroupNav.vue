@@ -65,8 +65,13 @@ export default {
       this.createGroupActive = false;
     },
 
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
     checkpoint(type, action, reaction) {
-        console.log("CIAO rollback in userGroupNav");
         this.rollbackCheckpoint(type, action, reaction);
     }
   },

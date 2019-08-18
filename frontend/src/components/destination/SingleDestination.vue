@@ -288,7 +288,6 @@ export default {
         .then(() => {
           getImages(this.userId, this.destination.defaultAlbumId).then(result => {
             this.uploadExisting = true;
-            console.log(result);
             this.files = this.groupImages(result.data);
           });
         })
