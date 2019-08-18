@@ -59,7 +59,6 @@
 import SectionHeader from "../common/header/SectionHeader";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let userGroupRepository = RepositoryFactory.get("userGroup");
-import RollbackMixin from "../mixins/RollbackMixin.vue";
 
 export default {
   props: {
