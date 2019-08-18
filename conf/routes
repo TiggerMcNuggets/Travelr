@@ -74,15 +74,14 @@ POST        /api/destinations/edit_requests/:requestId/accept        controllers
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
 # Groups
+PUT         /api/users/:user_id/group/:group_id/toggle_delete               controllers.UserGroupController.deleteGroup(request: Request, user_id: Long, group_id: Long)
 POST        /api/users/:user_id/group/:group_id/member/:member_id           controllers.UserGroupController.addUserToGroup(request: Request, user_id: Long, group_id: Long, member_id: Long)
 DELETE      /api/users/:user_id/group/:group_id/member/:member_id           controllers.UserGroupController.removeGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
 PUT         /api/users/:user_id/group/:group_id                             controllers.UserGroupController.updateUserGroup(request: Request, user_id: Long, group_id: Long)
 PUT         /api/users/:user_id/group/:group_id/member/:member_id/promote   controllers.UserGroupController.promoteGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
-DELETE      /api/users/:user_id/group/:group_id                             controllers.UserGroupController.deleteGroup(request: Request, user_id: Long, group_id: Long)
 GET         /api/users/:user_id/group/:group_id                             controllers.UserGroupController.getSingleGroup(request: Request, user_id: Long, group_id: Long)
 POST        /api/users/:user_id/group                                       controllers.UserGroupController.createUserGroup(request: Request, user_id: Long)
 GET         /api/users/:user_id/group                                       controllers.UserGroupController.getUserGroups(request: Request, user_id: Long)
-PUT         /api/users/:user_id/group/:group_id/toggle_delete        controllers.UserGroupController.deleteGroup(request: Request, user_id: Long, group_id: Long)
 
 # Trips (trips within trips)
 POST        /api/users/:userId/trips                        controllers.TripController.createTrip(request: Request, userId: Long)
