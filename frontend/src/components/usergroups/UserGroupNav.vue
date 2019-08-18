@@ -66,7 +66,6 @@ export default {
     },
 
     checkpoint(type, action, reaction) {
-        console.log("CIAO rollback in userGroupNav");
         this.rollbackCheckpoint(type, action, reaction);
     }
   },

@@ -79,7 +79,6 @@ export default {
         this.usergroup.id
       ).then(() => {
         this.updateUserGroups();
-        console.log("CIAO rollback in userGroupNavItem");
         this.rollbackCheckpoint(
           "DELETE",
           {

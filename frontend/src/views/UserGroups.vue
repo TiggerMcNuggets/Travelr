@@ -77,7 +77,6 @@ export default {
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
         this.usergroups = result.data;
-        console.log(result.data);
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
@@ -128,7 +127,6 @@ export default {
     },
 
     checkpoint: function(type, action, reaction) {
-        console.log("CIAO rollback in userGroups");
         this.rollbackCheckpoint(type, action, reaction);
     }
   },
