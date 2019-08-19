@@ -31,6 +31,7 @@
         :description="usergroup.description"
         :usergroupId="usergroup.id"
         :closeDialog="closeEditDialog"
+        :rollbackCheckpoint="rollbackCheckpoint"
       />
     </v-dialog>
   </v-flex>
