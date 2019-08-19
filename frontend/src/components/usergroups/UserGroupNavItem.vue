@@ -15,10 +15,10 @@
           </div>
         </div>
         <div v-if="isOwner">
-          <v-btn icon flat small color="primary" @click="() => editDialogActive = true">
+          <v-btn icon flat small color="primary" v-on:click="() => editDialogActive = true">
             <v-icon>edit</v-icon>
           </v-btn>
-          <v-btn icon flat small color="error" @click="deleteUserGroup">
+          <v-btn icon flat small color="error" v-on:click="deleteUserGroup">
             <v-icon>delete</v-icon>
           </v-btn>
         </div>
