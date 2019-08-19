@@ -30,19 +30,23 @@ public class AlbumRepository {
     }
 
     /**
-     * Returns all photos assoociated with a user.
+     * Returns all photos assoociated with a particular album.
      * 
      * @param albumId      user id The user id
      * @param privateMedia if true will not return the public photos that are
      *                     available to the user
-     * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
+     * @return CompletionStage<List<Media>> The list of personal photos
      *         associated with the user.
      */
     public CompletableFuture<List<Media>> list(Long albumId, Boolean privateMedia) {
         return supplyAsync(() -> {
             ExpressionList<Media> query = Media.find.query().where().eq("albums.id", albumId)
                     .or(Expr.eq("is_public", true), Expr.eq("is_public", !privateMedia));
-            return query.findList();
+
+            List<Media> mediaList = query.findList();
+            System.out.println("mediaList");
+            System.out.println(mediaList);
+            return mediaList;
         }, executionContext);
     }
 

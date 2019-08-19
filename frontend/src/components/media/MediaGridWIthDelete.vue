@@ -3,8 +3,13 @@
     <v-layout row wrap>
       <v-flex v-for="file in media.entries()" :key="file[0]" xs12 md4>
         <v-hover>
-          <v-card slot-scope="{ hover }" class="mx-auto" color="grey lighten-4" max-width="600" >
-            <v-img class="media-item" :src="file[1]" height="200px" v-on:click="deletePhoto(file[1])">
+          <v-card slot-scope="{ hover }" class="mx-auto" color="grey lighten-4" max-width="600">
+            <v-img
+              class="media-item"
+              :src="file[1]"
+              height="200px"
+              v-on:click="deletePhoto ? deletePhoto(file[1]) : () => {}"
+            >
               <v-flex v-if="hover" class="hover-white fill-height">
                 <v-icon size="50" color="white">delete</v-icon>
               </v-flex>
@@ -48,7 +53,9 @@ export default {
   },
 
   updated() {
-      () => {return ""};
+    () => {
+      return "";
+    };
   },
 
   data() {

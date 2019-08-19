@@ -124,6 +124,8 @@ import {
 } from "../../repository/DestinationPhotoRepository";
 import PageHeader from "../common/header/PageHeader";
 
+let mediaRepository = RepositoryFactory.get("media");
+
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
@@ -132,7 +134,7 @@ export default {
   components: {
     PhotoSelect,
     SuggestTravellerTypes,
-    PageHeader,
+    PageHeader
   },
 
   // local variables
@@ -180,6 +182,13 @@ export default {
           action: this.toggleShowUploadPhoto,
           icon: "insert_photo"
         });
+
+        options.push({
+          action: () => {
+            this.chooseExistingDialog = true;
+          },
+          icon: "add_photo_alternate"
+        });
       }
 
       if (
@@ -221,13 +230,17 @@ export default {
      */
     setDestinationImages(selectedImages) {
       for (let i = 0; i < selectedImages.length; i++) {
-        addExistingPhoto(this.userId, this.destId, {
-          photo_filename: selectedImages[i].photo_filename
-        }).then(() => {
-          getImages(this.userId, this.destId).then(result => {
-            this.files = this.groupImages(result.data);
+        mediaRepository
+          .moveMediaToAlbum(
+            this.userId,
+            this.destination.defaultAlbumId,
+            selectedImages[i].id
+          )
+          .then(() => {
+            getImages(this.userId, this.destId).then(result => {
+              this.files = this.groupImages(result.data);
+            });
           });
-        });
       }
       this.closeDialog();
     },
@@ -286,11 +299,13 @@ export default {
 
       storeDestinationImage(this.userId, this.destId, formData)
         .then(() => {
-          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
-            this.uploadExisting = true;
-            console.log(result);
-            this.files = this.groupImages(result.data);
-          });
+          getImages(this.userId, this.destination.defaultAlbumId).then(
+            result => {
+              this.uploadExisting = true;
+              console.log(result);
+              this.files = this.groupImages(result.data);
+            }
+          );
         })
         .catch(() => {
           this.uploadError = true;
@@ -382,10 +397,10 @@ export default {
       .getDestination(this.userId, this.destId)
       .then(response => {
         this.destination = response.data;
-          // Gets all the images to display on the page.
-          getImages(this.userId, this.destination.defaultAlbumId).then(result => {
-              this.files = this.groupImages(result.data);
-          });
+        // Gets all the images to display on the page.
+        getImages(this.userId, this.destination.defaultAlbumId).then(result => {
+          this.files = this.groupImages(result.data);
+        });
       })
       .catch(err => {
         console.log(err);

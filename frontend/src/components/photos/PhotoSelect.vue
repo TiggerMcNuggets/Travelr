@@ -2,83 +2,40 @@
 
 <template>
   <v-card>
-    <!-- <div class="outer-container">
-      <div class="inner-container">
-        <v-card-title primary-title class="headline media-popup-header white--text">
-          <h5 class="font-weight-regular">Add Existing Photo</h5>
-        </v-card-title>
+    <v-card-title primary-title class="headline media-popup-header white--text">
+      <h5 class="font-weight-regular">Add Existing Photo</h5>
+    </v-card-title>
 
-        <div>
-          <v-tabs
-                  v-model="active"
-                  light
-                  slider-color="indigo"
-          >
-            <v-tab
-                    class="button"
-                    :key="All"
-                    ripple
-            >
-              All
-
-            </v-tab>
-            <v-tab-item
-                    :key="All"
-            >
+    <!-- <div>
+          <v-tabs v-model="active" light slider-color="indigo">
+            <v-tab class="button" key="All" ripple>All</v-tab>
+            <v-tab-item key="All">
               <v-card flat>
                 <v-card-text>All Media</v-card-text>
               </v-card>
             </v-tab-item>
-            <v-tab
-                    class="button"
-                    :key="Photos"
-                    ripple
-            >
-              Photos
-
-            </v-tab>
-            <v-tab-item
-                    :key="Photos"
-            >
+            <v-tab class="button" key="Photos" ripple>Photos</v-tab>
+            <v-tab-item key="Photos">
               <v-card flat>
                 <v-card-text>All Photos</v-card-text>
               </v-card>
             </v-tab-item>
-            <v-tab
-                    class="button"
-                    :key="Videos"
-                    ripple
-            >
-              Videos
-
-            </v-tab>
-            <v-tab-item
-                    :key="Videos"
-            >
+            <v-tab class="button" key="Videos" ripple>Videos</v-tab>
+            <v-tab-item key="Videos">
               <v-card flat>
                 <v-card-text>All Videos</v-card-text>
               </v-card>
             </v-tab-item>
-            <v-tab
-                    class="button"
-                    :key="Albums"
-                    ripple
-            >
-              Albums
-
-            </v-tab>
-            <v-tab-item
-                    :key="Albums"
-            >
+            <v-tab class="button" key="Albums" ripple>Albums</v-tab>
+            <v-tab-item key="Albums">
               <v-card flat>
                 <v-card-text>All Albums</v-card-text>
               </v-card>
             </v-tab-item>
           </v-tabs>
+    </div>-->
 
-        </div>
-
-        <ul>
+    <!-- <ul>
           <li v-for="row in files" :value="row.value" :key="row.value">
             <div class="personal-photo-row">
               <div
@@ -98,18 +55,36 @@
               </div>
             </div>
           </li>
-        </ul>
-      </div>
-    </div>
+    </ul>-->
+
+    <v-container v-bind="{ [`grid-list-lg`]: true }" ma-1 pa-0 fluid class="media-container">
+      <v-layout row wrap>
+        <v-flex v-for="file in files.entries()" :key="file[0]" xs12 md4>
+          <v-hover>
+            <v-card class="mx-auto" color="grey lighten-4" max-width="600">
+              <v-img
+                class="media-item"
+                :src="getImgUrl(file[1])"
+                height="200px"
+                v-on:click="selectImage(file[1])"
+              >
+                <v-flex v-if="imageIsSelected(file[1])" class="hover-white fill-height">
+                  <v-icon size="50" color="white">done</v-icon>
+                </v-flex>
+              </v-img>
+            </v-card>
+          </v-hover>
+        </v-flex>
+      </v-layout>
+    </v-container>
     <v-divider></v-divider>
     <v-btn class="button" color="error" v-on:click="processSelected()">Add</v-btn>
-    <v-btn class="button" outline color="error" @click="closeDialog()">Cancel</v-btn> -->
+    <v-btn class="button" outline color="error" @click="closeDialog()">Cancel</v-btn>
   </v-card>
 </template>
 
 
 <style>
-
 .button {
   text-transform: initial;
 }
@@ -180,7 +155,10 @@ hr {
 <script>
 import { store } from "../../store/index";
 import base_url from "../../repository/BaseUrl";
-import { getImages } from "../../repository/PersonalPhotosRepository";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import MediaGridWithDelete from "../media/MediaGridWIthDelete";
+
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
@@ -191,12 +169,17 @@ export default {
       files: [],
       clickedImageURL: "",
       id: null,
-      selectedImages: []
+      selectedImages: [],
+      active: "All"
     };
   },
 
+  components: {
+    MediaGridWithDelete
+  },
+
   // props methods being passed in from parent.
-  props: ['closeDialog', "setDestinationImages"],
+  props: ["closeDialog", "setDestinationImages"],
 
   methods: {
     /**
@@ -212,10 +195,11 @@ export default {
      * @returns {string}
      */
     getImgUrl(item) {
-      return base_url + "/api/travellers/photo/" + item.photo_filename;
+      return (
+        base_url + `/api/users/${this.$route.params.id}/media/${item.uriString}`
+      );
     },
 
-    //
     /**
      * Checks if the photo is selected that is it is present in the selected images list.
      * @param selectedImage The image that is been clicked to check
@@ -280,10 +264,17 @@ export default {
    */
   created: function() {
     this.id = this.$route.params.id;
+    console.log(this.$store.getters.getUser.id);
+    console.log(this.$store.getters.getUser.defaultAlbumId);
 
-    getImages(this.id).then(result => {
-      this.files = this.groupImages(result.data);
-    });
+    mediaRepository
+      .getAlbumContent(
+        this.$store.getters.getUser.id,
+        this.$store.getters.getUser.defaultAlbumId
+      )
+      .then(response => {
+        this.files = response.data;
+      });
   }
 };
 </script>
