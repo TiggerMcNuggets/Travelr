@@ -246,20 +246,35 @@ export default {
     },
 
     /**
+     * Checks if the media/album can be edited
+     */
+    canCRUDMedia() {
+      return this.isAdminUser || this.isMyProfile;
+    },
+
+    /**
      * Options used in the header component when viewing all albums.
      */
     normalOptions() {
-      return [
-        { action: this.openUploadDialog, icon: "add_photo_alternate" },
-        { action: this.openCreateAlbumDialog, icon: "add_to_photos" }
-      ];
+      if (this.canCRUDMedia) {
+        return [
+          { action: this.openUploadDialog, icon: "add_photo_alternate" },
+          { action: this.openCreateAlbumDialog, icon: "add_to_photos" }
+        ];
+      } else {
+        return [];
+      }
     },
 
     /**
      * Options used in the header component when viewing an album.
      */
     albumOptions() {
-      return [{ action: this.openUploadDialog, icon: "add_photo_alternate" }];
+      if (this.canCRUDMedia) {
+        return [{ action: this.openUploadDialog, icon: "add_photo_alternate" }];
+      } else {
+        return [];
+      }
     }
   },
 

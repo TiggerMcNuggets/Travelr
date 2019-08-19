@@ -43,8 +43,9 @@ public class DeleteUserGroupMemberSteps {
      */
     @Then("The group member does not exist in the user group")
     public void the_group_member_does_not_exist_in_the_user_group() {
-        UserGroup deletedGroupMember = UserGroup.find.query().where().eq("user_id", state.getGroupMember().getId()).findOne();
-        Assert.assertNull(deletedGroupMember);
+        UserGroup deletedGroupMember = UserGroup.find.query().setIncludeSoftDeletes().where().eq("user_id", state.getGroupMember().getId()).findOne();
+        Assert.assertNotNull(deletedGroupMember);
+        Assert.assertTrue(deletedGroupMember.isDeleted());
     }
 
 }

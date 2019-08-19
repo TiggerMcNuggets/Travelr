@@ -12,10 +12,12 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
+          :rollbackCheckpoint="checkpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
           :updateUserGroups="getUserGroups"
+          :checkpoint="rollbackCheckpoint"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
@@ -69,6 +71,7 @@ export default {
   },
 
   methods: {
+    
 
     /**
      * Retrieves user groups from api
@@ -103,6 +106,9 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      // This is set to later be pushed as a reaction to the rollback stack
+      this.rollbackSetPreviousBody(group);
+
       this.checkIfUserIsOwner();
     },
 
@@ -137,6 +143,16 @@ export default {
       this.isError = false;
       const actions = [this.getUserGroups];
       this.rollbackRedo(actions);
+    },
+
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
+    checkpoint: function(type, action, reaction) {
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 

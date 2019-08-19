@@ -11,11 +11,7 @@
       <div>
         <v-layout d-flex>
           <h5 class="headline mb-0 mr-2">Description</h5>
-          <v-icon
-            v-if="editCaption"
-            @click="updateMediaAndSave(clickedImage)"
-          >save
-          </v-icon>
+          <v-icon v-if="editCaption" @click="updateMediaAndSave(clickedImage)">save</v-icon>
           <v-icon v-else-if="canCRUDMedia" @click="editCaption = true">edit</v-icon>
         </v-layout>
         <div v-if="editCaption">
@@ -47,7 +43,6 @@
       </v-select>
       <v-spacer></v-spacer>
 
-
       <v-layout>
         <v-flex>
           <p class="title mb-0 mr-2" v-if="photoIsPublic">Public</p>
@@ -60,17 +55,11 @@
           </v-icon>
           <v-icon @click="editVisibility = true">edit</v-icon>
 
-
           <div v-if="editVisibility">
-            <v-switch
-              v-model="clickedImage.is_public"
-              label="Public Photo"
-            ></v-switch>
+            <v-switch v-model="clickedImage.is_public" label="Public Photo"></v-switch>
           </div>
         </v-flex>
       </v-layout>
-
-
     </v-card-actions>
     <v-card-actions v-if="canCRUDMedia">
       <v-btn color="error" @click="setProfilePhoto">Set Profile Photo</v-btn>
@@ -83,172 +72,167 @@
 
 
 <script>
-  import {RepositoryFactory} from "../../repository/RepositoryFactory";
-  import base_url from "../../repository/BaseUrl";
-  import {store} from "../../store/index";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+import base_url from "../../repository/BaseUrl";
+import { store } from "../../store/index";
 
-  let mediaRepository = RepositoryFactory.get("media");
-  let userRespository = RepositoryFactory.get("user");
+let mediaRepository = RepositoryFactory.get("media");
+let userRespository = RepositoryFactory.get("user");
 
-  export default {
-    store,
+export default {
+  store,
 
-    props: {
-      clickedImage: Object,
-      closeMediaDialog: Function,
-      updateMedia: Function,
-      openConfirmDelete: Function,
-      deleteMedia: Function,
-      getAllAlbums: Function,
-      isMyProfile: Boolean,
-      isAdminUser: Boolean
+  props: {
+    clickedImage: Object,
+    closeMediaDialog: Function,
+    updateMedia: Function,
+    openConfirmDelete: Function,
+    deleteMedia: Function,
+    getAllAlbums: Function,
+    isMyProfile: Boolean,
+    isAdminUser: Boolean
+  },
+
+  // local variables
+  data() {
+    return {
+      albums: [],
+      editCaption: false,
+      editVisibility: false,
+      value: "",
+      selectedAlbums: []
+    };
+  },
+
+  computed: {
+    canCRUDMedia() {
+      return this.isAdminUser || this.isMyProfile;
     },
 
-    // local variables
-    data() {
-      return {
-        albums: [],
-        editCaption: false,
-        editVisibility: false,
-        value: "",
-        selectedAlbums: [],
-
-      };
+    mediaURL() {
+      return (
+        base_url +
+        `/api/users/${this.$route.params.id}/media/${
+          this.clickedImage.filename
+        }`
+      );
     },
 
-    computed: {
-
-      canCRUDMedia() {
-        return this.isAdminUser || this.isMyProfile
-      },
-
-      mediaURL() {
-        return (
-          base_url +
-          `/api/users/${this.$route.params.id}/media/${
-            this.clickedImage.filename
-            }`
-        );
-      },
-
-      notSelectedAlbums() {
-        return this.albums.filter(album => {
-          for (let a of this.selectedAlbums) {
-            if (a.id === album.id) return false;
-          }
-          return true;
-        });
-      },
-      photoIsPublic() {
-        if (this.clickedImage.is_public) {
-          return true;
-        } else {
-          return false;
+    notSelectedAlbums() {
+      return this.albums.filter(album => {
+        for (let a of this.selectedAlbums) {
+          if (a.id === album.id) return false;
         }
-
-      },
+        return true;
+      });
     },
+    photoIsPublic() {
+      if (this.clickedImage.is_public) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
 
-    methods: {
-      async updateAlbums() {
-        for (let album of this.selectedAlbums) {
-          try {
-            await mediaRepository.moveMediaToAlbum(
-              this.$route.params.id,
-              album.id,
-              this.clickedImage.id
-              // requestBody
-            );
-          } catch (e) {
-            console.log(e);
-          }
+  methods: {
+    async updateAlbums() {
+      for (let album of this.selectedAlbums) {
+        try {
+          await mediaRepository.moveMediaToAlbum(
+            this.$route.params.id,
+            album.id,
+            this.clickedImage.id
+            // requestBody
+          );
+        } catch (e) {
+          console.log(e);
         }
+      }
 
-        for (let album of this.notSelectedAlbums) {
-          try {
-            await mediaRepository.deleteMedia(
-              this.$route.params.id,
-              album.id,
-              this.clickedImage.id
-            );
-          } catch (e) {
-            console.log(e);
-          }
-          this.getAllAlbums();
+      for (let album of this.notSelectedAlbums) {
+        try {
+          await mediaRepository.deleteMedia(
+            this.$route.params.id,
+            album.id,
+            this.clickedImage.id
+          );
+        } catch (e) {
+          console.log(e);
         }
         this.getAllAlbums();
-      },
-
-      /**
-       * Sets the user's profile photo as the selected
-       */
-      setProfilePhoto() {
-        userRespository
-          .setProfilePic(this.$route.params.id, {
-            photo_filename: this.clickedImage.filename
-          })
-          .then(() => {
-            store.dispatch("fetchMe");
-          });
-      },
-
-      /**
-       * updates the media description and saves it
-       */
-      updateMediaAndSave(clickedImage) {
-        this.updateMedia(clickedImage);
-        this.editCaption = false;
-
-      },
-
-      /**
-       * updates the media visibility and saves it
-       */
-      updateVisibilityAndSave(clickedImage) {
-        this.updateMedia(clickedImage);
-        this.editVisibility = false;
-
       }
+      this.getAllAlbums();
     },
 
-    mounted: function () {
-      this.selectedAlbums = this.clickedImage.albums
-        ? this.clickedImage.albums
-        : [];
+    /**
+     * Sets the user's profile photo as the selected
+     */
+    setProfilePhoto() {
+      userRespository
+        .setProfilePic(this.$route.params.id, {
+          photo_filename: this.clickedImage.filename
+        })
+        .then(() => {
+          store.dispatch("fetchMe");
+        });
+    },
+
+    /**
+     * updates the media description and saves it
+     */
+    updateMediaAndSave(clickedImage) {
+      this.updateMedia(clickedImage);
+      this.editCaption = false;
+    },
+
+    /**
+     * updates the media visibility and saves it
+     */
+    updateVisibilityAndSave(clickedImage) {
+      this.updateMedia(clickedImage);
+      this.editVisibility = false;
+    }
+  },
+
+  mounted: function() {
+    this.selectedAlbums = this.clickedImage.albums
+      ? this.clickedImage.albums
+      : [];
+
+    mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
+      this.albums = res.data
+        .map(item => {
+          return { id: item.id, name: item.name };
+        })
+        .filter(a => a.name.toLowerCase() !== "all");
+    });
+  },
+
+  watch: {
+    clickedImage: function(newImage, oldImage) {
+      if (newImage !== oldImage) {
+        this.selectedAlbums = this.clickedImage.albums
+          ? this.clickedImage.albums
+          : [];
+      }
 
       mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
         this.albums = res.data
           .map(item => {
-            return {id: item.id, name: item.name};
+            return { id: item.id, name: item.name };
           })
           .filter(a => a.name.toLowerCase() !== "all");
       });
-    },
-
-    watch: {
-      clickedImage: function (newImage, oldImage) {
-        if (newImage !== oldImage) {
-          this.selectedAlbums = this.clickedImage.albums
-            ? this.clickedImage.albums
-            : [];
-        }
-
-        mediaRepository.getUserAlbums(store.getters.getUser.id).then(res => {
-          this.albums = res.data
-            .map(item => {
-              return {id: item.id, name: item.name};
-            })
-            .filter(a => a.name.toLowerCase() !== "all");
-        });
-      }
-    },
-
-    /**
-     * Initialises the application on component creation.
-     */
-    created: function () {
-      this.isPublic = this.clickedImage.is_public;
-      this.user = store.getters.getUser;
     }
-  };
+  },
+
+  /**
+   * Initialises the application on component creation.
+   */
+  created: function() {
+    this.isPublic = this.clickedImage.is_public;
+    this.user = store.getters.getUser;
+  }
+};
 </script>
