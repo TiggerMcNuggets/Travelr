@@ -85,6 +85,7 @@ export default {
   },
 
   methods: {
+
     /**
      * Takes in a users id and redirects current page to that users account.
      * @param id
