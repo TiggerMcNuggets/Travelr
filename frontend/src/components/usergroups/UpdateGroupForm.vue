@@ -35,17 +35,22 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let usergroupRepository = RepositoryFactory.get("userGroup");
-
+import RollbackMixin from "../mixins/RollbackMixin.vue";
+import {deepCopy} from "../../tools/deepCopy";
 export default {
+  mixins: [RollbackMixin],
+  
   props: {
     name: String,
     description: String,
     usergroupId: Number,
-    closeDialog: Function
+    closeDialog: Function,
+    rollbackCheckpoint: Function
   },
 
   data() {
     return {
+      rollbackBody: {name: "", description: ""},
       usergroup: {
         name: "",
         description: ""
@@ -65,6 +70,20 @@ export default {
           this.usergroup
         )
         .then(() => {
+          // Pushes checkpoint containing type of action, action body, and reaction body
+          const url = `/users/${this.$store.getters.getUser.id}/group/${this.usergroupId}`
+          this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                    url: url,
+                    body: this.usergroup
+                  },
+                  {
+                    url: url,
+                    body: this.rollbackBody
+                  }
+          );
+          this.rollbackBody = this.usergroup;
           this.closeDialog();
         });
     }
@@ -74,8 +93,9 @@ export default {
    * Sets the user group name and description from the props on mount
    */
   mounted() {
-    this.usergroup.name = this.name;
-    this.usergroup.description = this.description;
+    this.usergroup.name = deepCopy(this.name);
+    this.usergroup.description = deepCopy(this.description);
+    this.rollbackBody = deepCopy(this.usergroup);
   }
 };
 </script>

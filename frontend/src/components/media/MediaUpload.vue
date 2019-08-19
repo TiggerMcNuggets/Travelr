@@ -263,9 +263,10 @@ export default {
     albumNames() {
       let albumNames = [];
       if (!this.isDestination) {
-        for (let i = 0; i < this.allAlbums.length; i++) {
-          if (!this.allAlbums[i].isPermanant) {
-            albumNames.push(this.allAlbums[i].name);
+      for (let i = 0; i < this.allAlbums.length; i++) {
+        if (!this.allAlbums[i].isPermanent && (this.allAlbums[i].name.toLowerCase() !== ('all'))
+        ) {
+          albumNames.push(this.allAlbums[i].name);
           }
         }
       }

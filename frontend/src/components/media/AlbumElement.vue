@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-layout>
     <v-flex mb-3>
       <v-flex ml-0 pl-0 v-if="!disableTitle">
@@ -20,7 +20,7 @@
           </v-list>
         </v-menu>
       </v-flex>
-      <v-card flat tile hover @click="openElement">
+      <v-card flat tile @click="openElement">
         <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
         <div v-if="!album.public" class="triangle"></div>
         <div class="grid-4-container">
