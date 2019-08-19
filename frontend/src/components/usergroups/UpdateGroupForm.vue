@@ -72,8 +72,6 @@ export default {
         .then(() => {
           // Pushes checkpoint containing type of action, action body, and reaction body
           const url = `/users/${this.$store.getters.getUser.id}/group/${this.usergroupId}`
-          console.log(this.rollbackBody);
-          console.log(this.usergroup);
           this.rollbackCheckpoint(
                   'PUT',
                   {
