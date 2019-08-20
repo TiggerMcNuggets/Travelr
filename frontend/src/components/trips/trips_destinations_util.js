@@ -80,7 +80,7 @@ export const tripAssembler = (tripBody) => {
           destination: {...node.destination},
           id: node.id,
           name: node.name,
-          ordinal: node.ordinal,
+          ordinal: index,
           type: node.type
         });
 
