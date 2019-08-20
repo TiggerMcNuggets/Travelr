@@ -14,7 +14,7 @@
             <p class="usergroup-element-details-description">{{usergroup.description}}</p>
           </div>
         </div>
-        <div>
+        <div v-if="isUserAdminOrOwner">
           <v-btn icon flat small color="primary" @click="() => editDialogActive = true">
             <v-icon>edit</v-icon>
           </v-btn>
@@ -58,7 +58,14 @@ export default {
     isSelected: Boolean,
     selectUserGroup: Function,
     updateUserGroups: Function,
-    rollbackCheckpoint: Function
+    rollbackCheckpoint: Function,
+    checkIfUserIsOwner: Function
+  },
+
+  computed: {
+    isUserAdminOrOwner() {
+      return (this.checkIfUserIsOwner(this.$store.getters.getUser.id, this.usergroup) || this.$store.getters.getIsUserAdmin)
+    }
   },
 
   methods: {
