@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import dto.shared.CreatedDTO;
 import dto.trip.*;
 
@@ -473,4 +474,41 @@ public class TripController extends Controller {
 
         return ok(Json.toJson(nodeDTOS));
     }
+
+
+    /**
+     * Changing the user trip attendance status.
+     * @param request the http request
+     * @param tripId the id of the trip object
+     * @param userId the id of the user
+     * @return 200 for updating successfully, 404 for not found user/trip, 401 for unauthenticated, 403 for unauthorised
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> changeUserTripStatus(Http.Request request, Long tripId, Long userId) {
+        Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
+
+        if (!node.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+        if (!user.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRAVELLER_NOT_FOUND));
+        }
+
+        Form<TripStatusDTO> updateTripForm = formFactory.form(TripStatusDTO.class).bindFromRequest(request);
+
+        if (updateTripForm.hasErrors()) {
+            logger.error("Trip object is not valid");
+            return CompletableFuture.completedFuture(badRequest());
+        }
+
+        TripStatusDTO tripStatusDTO = updateTripForm.get();
+
+        if (TripStatus.valueOf(tripStatusDTO.getStatus()) == null) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_STATUS_INVALID));
+        }
+
+        return tripService.changeUserTripStatus(tripStatusDTO, user.get(), node.get()).thenApplyAsync(id -> ok(APIResponses.TRIP_STATUS_UPDATED));
+    }
+
 }

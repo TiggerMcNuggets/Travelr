@@ -3,6 +3,7 @@ package service;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
+import dto.trip.TripStatusDTO;
 import exceptions.CustomException;
 import models.*;
 import play.mvc.Http;
@@ -274,4 +275,41 @@ public class TripService {
 
         }, context);
     }
+
+    /**
+     * Updates a Group value to the group property of a Trip object
+     * @param trip the Trip object
+     * @param user the User object
+     * @return the Trip id of the user that has been updated
+     */
+    public CompletableFuture<Long> changeUserTripStatus(TripStatusDTO tripStatusDTO, User user, Node trip) {
+        return supplyAsync(() -> {
+
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user_id", user.id).eq("node_id", trip.id).findOne();
+            TripStatus tripStatus = TripStatus.valueOf(tripStatusDTO.getStatus());
+
+            if (userStatus == null) {
+                userStatus = new NodeUserStatus(user, trip, tripStatus);
+                userStatus.insert();
+            } else {
+                userStatus.setTripStatus(tripStatus);
+                userStatus.update();
+            }
+
+            List<Node> childrenDestinations = Node.find.query().where().eq("parent", trip).eq("type", "destination").findList();
+
+            for (Node destinationNode : childrenDestinations) {
+                NodeUserStatus userDestStatus = NodeUserStatus.find.query().where().eq("user_id", user.id).eq("node_id", destinationNode.id).findOne();
+                userDestStatus.setTripStatus(tripStatus);
+                userDestStatus.update();
+            }
+
+            return trip.id;
+
+        }, context);
+    }
+
+
+
+
 }
