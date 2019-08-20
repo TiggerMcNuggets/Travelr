@@ -15,7 +15,7 @@
           :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
-          :usergroups="usergroups"
+          :userGroups="userGroups"
           :updateUserGroups="getUserGroups"
           :checkpoint="rollbackCheckpoint"
           :isOwnerOrAdmin="isOwnerOrAdmin"
@@ -43,7 +43,7 @@
 <script>
 import GroupUsersTable from "../components/usergroups/GroupUsersTable";
 import UserGroupNav from "../components/usergroups/UserGroupNav";
-
+import dateTime from "../components/common/dateTime/dateTime.js";
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
 import { RepositoryFactory } from "../repository/RepositoryFactory";
@@ -57,7 +57,7 @@ export default {
       search: "",
       isError: false,
       selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
-      usergroups: [],
+      userGroups: [],
       isOwner: true
     };
   },
@@ -72,7 +72,7 @@ export default {
      * returns a list of members/users in the selected group
      */
     groupUsers() {
-      return this.selectedGroup.members;
+      return this.selectedGroup.members.map(item => {item.dateOfBirth = dateTime.convertTimestampToString(item.dateOfBirth); return item });
     },
 
     /**
@@ -91,7 +91,7 @@ export default {
     getUserGroups() {
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
-        this.usergroups = result.data;
+        this.userGroups = result.data;
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
