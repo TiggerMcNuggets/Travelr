@@ -212,7 +212,7 @@ import {isDemotable, isPromotable, getDepthData} from "./trips_destinations_util
 import StoreTripsMixin from '../mixins/StoreTripsMixin'
 import RollbackMixin from '../mixins/RollbackMixin';
 import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
-let tripRepository = RepositoryFactory.get("trip");
+// let tripRepository = RepositoryFactory.get("trip");
 let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
