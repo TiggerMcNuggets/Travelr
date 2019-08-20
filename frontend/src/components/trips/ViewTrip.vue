@@ -279,7 +279,7 @@
     rules
   } from "../form_rules";
   import {deepCopy} from "../../tools/deepCopy";
-  import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
+  // import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
   import {RepositoryFactory} from "../../repository/RepositoryFactory";
 
   let tripRepository = RepositoryFactory.get("trip")
@@ -289,8 +289,8 @@
     store,
     components: {
       draggable,
-      TripMap,
-      UndoRedoButtons,
+      // TripMap,
+      // UndoRedoButtons,
       PageHeader
     },
     mixins: [RollbackMixin, StoreTripsMixin],
