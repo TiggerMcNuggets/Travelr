@@ -1,13 +1,14 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.ebean.Finder;
 import play.data.validation.Constraints;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 
-enum TripStatus {
+public enum TripStatus {
     GOING,
     NOT_GOING,
     MAYBE
@@ -16,7 +17,10 @@ enum TripStatus {
 @Entity
 public class NodeUserStatus extends BaseModel {
 
-
+    /**
+     * Finder instance
+     */
+    public static final Finder<Long, NodeUserStatus> find = new Finder<>(NodeUserStatus.class);
 
     /**
      * The trip member
