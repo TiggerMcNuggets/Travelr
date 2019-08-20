@@ -200,13 +200,13 @@ public class TripService {
                     }
 
                     else {
-                        if (node.getType().equals("trip") && oldDeletedIds.contains(node.getId())) {
-                            Optional<Node> tripNode = Node.find.findByIdIncludeDeleted(node.getId());
-                            if (!tripNode.isPresent()) {
+                        if (oldDeletedIds.contains(node.getId())) {
+                            Optional<Node> optionalNode = Node.find.findByIdIncludeDeleted(node.getId());
+                            if (!optionalNode.isPresent()) {
                                 throw new CustomException(Http.Status.NOT_FOUND, "trip not found");
                             }
-                            tripNode.get().setDeleted(false);
-                            tripNode.get().save();
+                            optionalNode.get().setDeleted(false);
+                            optionalNode.get().save();
                         }
 
                     }
