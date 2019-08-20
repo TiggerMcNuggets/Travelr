@@ -1,29 +1,15 @@
 package utils;
 
 
-import cucumber.api.java.ca.Cal;
-import models.Destination;
-import models.Trip;
-import models.TripDestination;
-import models.User;
-import net.fortuna.ical4j.data.CalendarOutputter;
+import models.*;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Date;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
-import net.fortuna.ical4j.model.parameter.Value;
 import net.fortuna.ical4j.model.property.CalScale;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.Uid;
 import net.fortuna.ical4j.model.property.Version;
-import net.fortuna.ical4j.util.UidGenerator;
-
-import java.io.FileOutputStream;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
+import java.util.ArrayList;
 
 public class iCalCreator {
 
@@ -32,7 +18,7 @@ public class iCalCreator {
      * @param trip the trip that is getting turned into an iCal file
      * @return a Calendar object from the trip provided
      */
-    public Calendar createCalendarFromTrip(Trip trip) {
+    public Calendar createCalendarFromTrip(TripNode trip) {
 
         Calendar calendar = new Calendar();
         calendar.getProperties().add(new ProdId(trip.getId().toString()));
@@ -40,10 +26,15 @@ public class iCalCreator {
         calendar.getProperties().add(CalScale.GREGORIAN);
 
         int UID = 0;
-        for (TripDestination destination: trip.destinations) {
-            //need to change this part to cater for new trip set up, we only want the destinations
-            //we want to get all the destinations that have this trip as parent
-            //we can get this list from a new method in destinationNodeFinder
+
+        ArrayList<DestinationNode> destList = new ArrayList<>();
+        for (int i = 0; i < trip.getNodes().size(); i++) {
+            if (trip.getNodes().get(i).getClass() == DestinationNode.class) {
+                destList.add((DestinationNode) trip.getNodes().get(i));
+            }
+        }
+
+        for (DestinationNode destination: destList) {
 
             if (destination.getArrivalDate() != 0 && destination.getDepartureDate() != 0) {
                 //Addition of 24*60*60 will add one day to the date which in turn will make it export to .ics file with correct dates.

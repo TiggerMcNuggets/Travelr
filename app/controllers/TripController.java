@@ -25,6 +25,10 @@ import service.MailgunService;
 import service.TripService;
 import utils.iCalCreator;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -194,14 +198,14 @@ public class TripController extends Controller {
 
         if (middlewareRes != null) return middlewareRes;
 
-        Trip trip = Trip.find.byId(tripId);
+        TripNode trip = TripNode.find.byId(tripId);
 
         if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
 
         iCalCreator creator = new iCalCreator();
         Calendar iCalString = creator.createCalendarFromTrip(trip);
         try {
-            File tempFile = File.createTempFile(trip.name, ".ics");
+            File tempFile = File.createTempFile(trip.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
             bw.write(iCalString.toString());
             bw.close();
