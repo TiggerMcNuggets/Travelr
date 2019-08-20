@@ -1,13 +1,26 @@
 <template>
   <div>
     <div class="section">
-
       <!-- Right side of page header with optional back button and page title -->
       <div class="page__title_container">
-        <v-btn fab small dark color="indigo" @click="$router.go(-1)" v-if="enableBackButton && !backButtonOverride">
+        <v-btn
+          fab
+          small
+          dark
+          color="indigo"
+          @click="$router.go(-1)"
+          v-if="enableBackButton && !backButtonOverride"
+        >
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
-        <v-btn fab small dark color="indigo" @click="backButtonOverride" v-if="enableBackButton && backButtonOverride">
+        <v-btn
+          fab
+          small
+          dark
+          color="indigo"
+          @click="backButtonOverride"
+          v-if="enableBackButton && backButtonOverride"
+        >
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
         <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
@@ -27,17 +40,33 @@
       <!-- Page options such as add or search to be displayed on the right side of the header -->
       <div v-if="options">
         <v-btn
-          v-for="option in options.entries()"
-          :key="option[0]"
+          v-for="(option, i) in options"
+          :key="i"
           class="upload-toggle-button"
           fab
           small
           dark
           color="indigo"
-          @click="option[1].action"
+          @click="option.action"
         >
-          <v-icon dark>{{option[1].icon}}</v-icon>
+          <v-icon dark>{{option.icon}}</v-icon>
         </v-btn>
+      </div>
+
+      <div v-if="multiOptions">
+        <v-menu v-for="(option, i) in multiOptions" :key="i">
+          <template v-slot:activator="{ on }">
+            <v-btn class="upload-toggle-button" icon v-on="on" fab small dark color="indigo">
+              <v-icon dark>{{option.icon}}</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-tile v-for="(action, i) in option.actions" :key="i" @click="action.callback">
+              <v-list-tile-title>{{ action.text }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </div>
     </div>
 
@@ -73,6 +102,7 @@ export default {
   props: {
     title: String,
     options: Array,
+    multiOptions: Array,
     undo: Function,
     redo: Function,
     canUndo: Function,
