@@ -11,13 +11,15 @@
     />
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
-        <UserGroupList
-          :rollbackCheckpoint="checkpoint"
+        <UserGroupNav
+          :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
           :updateUserGroups="getUserGroups"
           :checkpoint="rollbackCheckpoint"
+          :isOwnerOrAdmin="isOwnerOrAdmin"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
@@ -29,6 +31,9 @@
           :isError="isError"
           :group="selectedGroup"
           :getUserGroups="getUserGroups"
+          :isOwnerOrAdmin="isOwnerOrAdmin"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
+          :togglePromoteUser="togglePromoteUser"
         />
       </v-flex>
     </v-layout>
@@ -37,11 +42,12 @@
 
 <script>
 import GroupUsersTable from "../components/usergroups/GroupUsersTable";
-import UserGroupList from "../components/usergroups/UserGroupNav";
+import UserGroupNav from "../components/usergroups/UserGroupNav";
 import dateTime from "../components/common/dateTime/dateTime.js";
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
 import { RepositoryFactory } from "../repository/RepositoryFactory";
+import {deepCopy} from "../tools/deepCopy";
 let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
@@ -57,7 +63,7 @@ export default {
   },
   components: {
     GroupUsersTable,
-    UserGroupList,
+    UserGroupNav,
     PageHeader
   },
 
@@ -68,10 +74,16 @@ export default {
     groupUsers() {
       return this.selectedGroup.members.map(item => {item.dateOfBirth = dateTime.convertTimestampToString(item.dateOfBirth); return item });
     },
+
+    /**
+     * Returns {boolean} stating if user is admin or group owner
+     */
+    isOwnerOrAdmin() {
+      return (this.$store.getters.getIsUserAdmin || this.isOwner);
+    },
   },
 
   methods: {
-    
 
     /**
      * Retrieves user groups from api
@@ -86,18 +98,17 @@ export default {
         } else if (result.data.length == 0) {
           this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
-        this.checkIfUserIsOwner();
+        this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
       })
     },
 
     /**
-     * Checks to see if user is an owner
+     * Checks to see if the given user is an owner of a given group or a site admin
      */
-    checkIfUserIsOwner() {
-      if (this.selectedGroup.owners.length != 0) {
-        this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
-      } else {
-        this.isOwner = false;
+    checkIfUserIsOwner(userId, selectedGroup) {
+      let group = selectedGroup ? deepCopy(selectedGroup) : deepCopy(this.selectedGroup);
+      if (group.owners.length > 0) {
+        return group.owners.some((owner) => owner === userId);
       }
     },
 
@@ -106,10 +117,9 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
       // This is set to later be pushed as a reaction to the rollback stack
       this.rollbackSetPreviousBody(group);
-
-      this.checkIfUserIsOwner();
     },
 
     /**
@@ -118,13 +128,52 @@ export default {
      */
     async deleteUser(groupId, memberId) {
       this.isError = false;
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/toggle_deleted`;
+
       userGroupRepository.removeUserInUserGroup(
         this.$store.getters.getUser.id, 
         groupId, 
         memberId
       ).then(() => {
-        this.getUserGroups()
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
       });
+    },
+
+    /**
+     * Sends a request to toggle the member's ownership status
+     * @param: memberId The member's id
+     */
+    togglePromoteUser(groupId, memberId) {
+      this.isError = false;
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/promote`
+
+      userGroupRepository.togglePromoteUser(
+        this.$store.getters.getUser.id, 
+        groupId, 
+        memberId
+      ).then(() => {
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "PUT",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
+      }).catch(() => {
+        this.isError = true;
+      })
     },
 
     /**
@@ -162,9 +211,6 @@ export default {
   created: async function() {
     this.getUserGroups();
     await this.$store.dispatch("getUsers", false);
-    if (this.$store.getters.getIsUserAdmin) {
-      this.isAdmin = true;
-    }
   }
 };
 </script>

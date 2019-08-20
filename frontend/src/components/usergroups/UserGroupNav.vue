@@ -15,6 +15,7 @@
         :selectUserGroup="selectUserGroup"
         :updateUserGroups="updateUserGroups"
         :rollbackCheckpoint="rollbackCheckpoint"
+        :checkIfUserIsOwner="checkIfUserIsOwner"
       />
     </v-flex>
   </v-container>
@@ -45,7 +46,9 @@ export default {
     selectUserGroup: Function,
     selectedGroup: Object,
     updateUserGroups: Function,
-    rollbackCheckpoint: Function
+    rollbackCheckpoint: Function,
+    isOwnerOrAdmin: Boolean,
+    checkIfUserIsOwner: Function
   },
 
   methods: {

@@ -14,7 +14,7 @@
             <p class="usergroup-element-details-description">{{usergroup.description}}</p>
           </div>
         </div>
-        <div v-if="isOwner">
+        <div v-if="isUserAdminOrOwner">
           <v-btn icon flat small color="primary" v-on:click="() => editDialogActive = true">
             <v-icon>edit</v-icon>
           </v-btn>
@@ -58,16 +58,13 @@ export default {
     isSelected: Boolean,
     selectUserGroup: Function,
     updateUserGroups: Function,
-    rollbackCheckpoint: Function
+    rollbackCheckpoint: Function,
+    checkIfUserIsOwner: Function
   },
 
   computed: {
-    isOwner() {
-      if (this.usergroup.owners.length != 0) {
-        return this.usergroup.owners.some((owner) => owner === this.$store.getters.getUser.id) || this.$store.getters.getIsUserAdmin;
-      } else {
-        return false;
-      }
+    isUserAdminOrOwner() {
+      return (this.checkIfUserIsOwner(this.$store.getters.getUser.id, this.usergroup) || this.$store.getters.getIsUserAdmin)
     }
   },
 
@@ -84,7 +81,7 @@ export default {
      * Deletes the user group
      */
     deleteUserGroup() {
-      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_delete`;
+      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_deleted`;
       usergroupRepository.deleteSingleUserGroup(
         this.$store.getters.getUser.id,
         this.usergroup.id

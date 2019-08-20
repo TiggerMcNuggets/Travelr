@@ -36,8 +36,6 @@ public class MediaController extends Controller {
 
     private final AlbumRepository albumRepository;
 
-    private DestinationFinder destinationFinder;
-
     private final FileHelper fh = new FileHelper();
 
     private String MEDIA_FILEPATH;
@@ -46,7 +44,7 @@ public class MediaController extends Controller {
     FormFactory formFactory;
 
     @Inject
-    public MediaController(Config config, PersonalPhotoRepository personalPhotoRepository,
+    public MediaController(Config config,
             MediaRepository mediaRepository, AlbumRepository albumRepository) {
         String rootPath = System.getProperty("user.home");
         MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
@@ -238,7 +236,7 @@ public class MediaController extends Controller {
     public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.addMediaToAlbum(album_id, media_id).thenApplyAsync(updated_album_id -> {
             // not found check, repository checks that both album and media exist
-            if (updated_album_id != null) {
+            if (updated_album_id == null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }

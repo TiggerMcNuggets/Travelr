@@ -12,7 +12,7 @@
       </v-flex>
     </v-card-text>
 
-    <div class="album-select" v-if="!activeAlbumMetadata">
+    <div class="album-select" v-if="!activeAlbumMetadata && !isDestination">
       <v-divider></v-divider>
 
       <v-card-title primary-title>
@@ -33,7 +33,11 @@
           </v-flex>
 
           <v-flex xs12 md4 offset-md2>
-            <v-btn @click="openCreateAlbumDialog">Create new album</v-btn>
+            <div v-if="isDestination">
+            </div>
+            <div v-else>
+              <v-btn v-model="isDestination" @click="openCreateAlbumDialog">Create new album</v-btn>
+            </div>
           </v-flex>
         </v-layout>
       </div>
@@ -128,7 +132,11 @@ export default {
     createNewAlbum: Function,
     toggleCreateAlbumDialog: Function,
     createAlbumDialogActive: Boolean,
-    activeAlbumMetadata: Object
+    activeAlbumMetadata: Object,
+    isDestination: {
+      default: false,
+      type: Boolean,
+    },
   },
 
   // local variables
@@ -254,9 +262,12 @@ export default {
      */
     albumNames() {
       let albumNames = [];
+      if (!this.isDestination) {
       for (let i = 0; i < this.allAlbums.length; i++) {
-        if (!this.allAlbums[i].isPermanant) {
+        if (!this.allAlbums[i].isPermanent && (this.allAlbums[i].name.toLowerCase() !== ('all'))
+        ) {
           albumNames.push(this.allAlbums[i].name);
+          }
         }
       }
       return albumNames;
@@ -267,12 +278,14 @@ export default {
      */
     selectedAlbums() {
       let selectedAlbums = [];
-      for (let i = 0; i < this.allAlbums.length; i++) {
-        if (
-          this.selectedAlbumNames.includes(this.allAlbums[i].name) &&
-          !this.allAlbums[i].isPermanant
-        ) {
-          selectedAlbums.push(this.allAlbums[i]);
+      if (!this.isDestination) {
+        for (let i = 0; i < this.allAlbums.length; i++) {
+          if (
+            this.selectedAlbumNames.includes(this.allAlbums[i].name) &&
+            !this.allAlbums[i].isPermanant
+          ) {
+            selectedAlbums.push(this.allAlbums[i]);
+          }
         }
       }
       return selectedAlbums;

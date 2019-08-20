@@ -2,11 +2,11 @@
   <v-container class="section-container">
     <SectionHeader :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
     <div v-if="addUserActive">
-      <v-select
+      <v-autocomplete
       :items="users"
       :v-model="selectedUserId"
       v-on:change="selectUser"
-      ></v-select>
+      ></v-autocomplete>
       <v-checkbox
         v-model="isMaintainer"
         label="Group Admin"
@@ -42,8 +42,16 @@
               </li>
             </ul>
           </td>
-          <td v-if="isAdmin" class="text-xs-right">
-            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
+          <td v-if="isOwnerOrAdmin" class="text-xs-right">
+            {{ isUserOwner(props.item.id) ? "Owner" : "Member" }} 
+            <v-btn flat icon @click="togglePromoteUser(group.id, props.item.id)">
+              <v-icon v-if="isOwnerOrAdmin">
+                {{ isUserOwner(props.item.id) ? "arrow_downward" : "arrow_upward" }}
+              </v-icon>
+            </v-btn>
+          </td>
+          <td v-if="isOwnerOrAdmin" class="text-xs-right">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)" v-if="isDeletable(props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </td>
@@ -68,7 +76,10 @@ export default {
     name: String,
     deleteUser: Function,
     isError: Boolean,
-    group: Object
+    group: Object,
+    isOwnerOrAdmin: Boolean,
+    checkIfUserIsOwner: Function,
+    togglePromoteUser: Function
   },
 
   components: {
@@ -113,19 +124,40 @@ export default {
      * Sends a request to add the selected user to the group
      */
     addUserToGroup() {
-      userGroupRepository.addUserToUserGroup(this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {
-        isOwner: this.isMaintainer
-      }).then(() => {
-        this.getUserGroups();
-      });
+      userGroupRepository.addUserToUserGroup(
+        this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {isOwner: this.isMaintainer}
+        )
+        .then(() => {
+          this.isMaintainer = false;
+          this.getUserGroups();
+        });
+    },
+
+    /**
+     * Checks if user is owner in the group
+     * @param: userId The user's id
+     */
+    isUserOwner(userId) {
+      return this.selectedGroup.owners.some((owner) => owner === userId);
+    },
+    
+    /*
+     * Checks if a given user id can be deleted by the currently logged in user.
+     * Admins and group owners have the same permissions.
+     * Group owners cannot delete other group owners.
+     * Group owners cannot remove themselves from the group.
+     */
+    isDeletable(targetUserId) {
+      return !!(this.isOwnerOrAdmin && !this.checkIfUserIsOwner(targetUserId, this.group));
     }
   },
 
   computed: {
+
     /**
      * Gets a list of columns for the table in format {text: String, value: String, align: String, sortable: boolean}
      * If the user is an admin add column delete to list.
-     * @return a list of what columns should be in the table
+     * @return *[] list of what columns should be in the table
      */
     getColumns() {
       const columns = [
@@ -149,11 +181,17 @@ export default {
           value: "types",
           align: "left",
           sortable: true
+        },
+        {
+          text: "Status",
+          value: "isOwner",
+          align: "left",
+          sortable: true
         }
       ];
 
       // Checking if user is admin and adding delete button if they are
-      if (this.isAdmin) {
+      if (this.isOwnerOrAdmin) {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
       return columns;
@@ -163,29 +201,26 @@ export default {
      * returns a list of all button options for GroupUsersTable, each specifying an icon and the function of the button.
      */
     userTableOptions() {
-      return [
-        {
+      const options = [];
+      if (this.isOwnerOrAdmin) {
+        options.push({
           action: this.toggleAddUser,
           icon: "add"
-        },
-      ]
+        })
+      }
+      return options;
     },
 
     /**
      * function to get a list of users mapping first and last name to text and id to value for the v-select
      */
     users() {
-      return this.$store.state.users.users.map(user => ({text: user.firstName + " " + user.lastName, value: user.id, id: user.id}));
+      return this.$store.state.users.users.map(user => ({
+        text: user.firstName + " " + user.lastName,
+        value: user.id,
+        id: user.id
+      }));
     },
-  },
-
-  /**
-   * Sets user administration status.
-   */
-  created: async function() {
-    if (this.$store.getters.getIsUserAdmin) {
-      this.isAdmin = true;
-    }
   }
 };
 </script>
