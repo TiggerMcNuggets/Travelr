@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <PageHeader :title="destination.name" disableUndoRedo enableBackButton :options="options" />
+    <PageHeader :title="destination.name" disableUndoRedo enableBackButton :options="options"/>
 
     <v-layout row wrap>
       <v-flex md2 pr-3>
@@ -47,7 +47,16 @@
         :close="toggleShowSuggestTravellerTypes"
       />
       <v-dialog v-model="chooseExistingDialog" width="800">
-        <PhotoSelect :closeDialog="closeDialog" :setDestinationImages="setDestinationImages" />
+        <PhotoSelect :closeDialog="closeDialog" :setDestinationImages="setDestinationImages"/>
+      </v-dialog>
+
+      <v-dialog v-model="showUploadSection" width="800">
+        <MediaUpload
+          :uploadMedia="uploadMedia"
+          :openUploadDialog="toggleShowUploadPhoto"
+          :closeUploadDialog="toggleShowUploadPhoto"
+          :isDestination="true"
+        ></MediaUpload>
       </v-dialog>
     </v-layout>
   </v-container>
@@ -56,7 +65,7 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
-import PhotoSelect from "../photos/PhotoSelect";
+import MediaUpload from "../media/MediaUpload";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
 import { store } from "../../store/index";
 import PageHeader from "../common/header/PageHeader";
@@ -68,10 +77,10 @@ let destinationRepository = RepositoryFactory.get("destination");
 export default {
   store,
   components: {
-    PhotoSelect,
     SuggestTravellerTypes,
     PageHeader,
-    MediaGrid
+    MediaGrid,
+    MediaUpload
   },
 
   // local variables
@@ -90,7 +99,8 @@ export default {
       uploadSuccessful: false,
       errorText:
         "You are trying to upload a duplicate image or an error occured while uploading.",
-      showSuggestTravellerTypes: false
+      showSuggestTravellerTypes: false,
+      showUploadSection: false
     };
   },
 
@@ -109,6 +119,14 @@ export default {
       }
 
       if (this.isMyProfile || this.isAdminUser) {
+        options.push({
+          action: this.uploadExisting,
+          icon: "add_photo_alternate",
+          dropDown: true,
+          actions: [
+            { text: "Upload Existing", callback: () => this.uploadExisting }
+          ]
+        });
         options.push({
           action: this.uploadExisting,
           icon: "add_photo_alternate"
@@ -166,6 +184,43 @@ export default {
           });
       });
       this.closeDialog();
+    },
+
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          return getImages(this.userId, this.destination.defaultAlbumId);
+        })
+        .then(result => {
+          this.uploadExisting = true;
+          this.files = this.groupImages(result.data);
+        })
+        .catch(error => {
+          console.log(error);
+          this.uploadError = true;
+          this.errorText = error.response.data;
+        });
+    },
+
+    /**
+     * Uploads the given media files to the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.destination.defaultAlbumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
     },
 
     /**
