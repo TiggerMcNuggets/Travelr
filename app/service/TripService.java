@@ -215,7 +215,7 @@ public class TripService {
                         dNode.setArrivalDate(node.arrivalDate);
                         dNode.setDepartureDate(node.departureDate);
 
-                        Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(dNode.getDestination().getId()));
+                        Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(node.getDestination().getId()));
                         if (!destinationOptional.isPresent()) {
                             throw new CustomException(Http.Status.NOT_FOUND, "Destination for destination node not found");
                         }
