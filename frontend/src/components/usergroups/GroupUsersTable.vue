@@ -42,10 +42,10 @@
               </li>
             </ul>
           </td>
-          <td v-if="isAdmin || isOwner" class="text-xs-right">
+          <td v-if="isOwnerOrAdmin" class="text-xs-right">
             {{ isUserOwner(props.item.id) ? "Owner" : "Member" }} 
             <v-btn flat icon @click="togglePromoteUser(group.id, props.item.id)">
-              <v-icon v-if="isAdmin || isOwner">
+              <v-icon v-if="isOwnerOrAdmin">
                 {{ isUserOwner(props.item.id) ? "arrow_downward" : "arrow_upward" }}
               </v-icon>
             </v-btn>
@@ -77,8 +77,9 @@ export default {
     deleteUser: Function,
     isError: Boolean,
     group: Object,
-    isOwner: Boolean,
-    checkIfUserIsOwner: Function
+    isOwnerOrAdmin: Boolean,
+    checkIfUserIsOwner: Function,
+    togglePromoteUser: Function
   },
 
   components: {
