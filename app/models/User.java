@@ -82,10 +82,6 @@ public class User extends BaseModel {
     @ManyToMany(cascade=CascadeType.ALL)
     public List<TravellerType> travellerTypes;
 
-
-    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
-    public List<Trip> trips;
-
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<PersonalPhoto> personalPhotos;
 
@@ -193,14 +189,6 @@ public class User extends BaseModel {
 
     public void setTravellerTypes(List<TravellerType> travellerTypes) {
         this.travellerTypes = travellerTypes;
-    }
-
-    public List<Trip> getTrips() {
-        return trips;
-    }
-
-    public void setTrips(List<Trip> trips) {
-        this.trips = trips;
     }
 
     public List<Destination> getDestinations() {

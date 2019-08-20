@@ -151,18 +151,19 @@ public class DestinationRepository {
      * @param sameDestinations The list of same destinations
      */
     private void mergeDestinations(Destination destination, List<Destination> sameDestinations) {
-        List<TripDestination> tripDestinations = new ArrayList<TripDestination>();
+        List<DestinationNode> tripDestinations = new ArrayList<DestinationNode>();
         List<DestinationPhoto> destinationPhotos = new ArrayList<DestinationPhoto>();
 
         for (Destination sameDestination : sameDestinations) {
             destinationPhotos.addAll(DestinationPhoto.find.getAllPhotosForDestination(sameDestination.id));
-            tripDestinations.addAll(TripDestination.find.getAllByDestinationId(sameDestination.getId()));
+            tripDestinations.addAll(DestinationNode.find.query().where().eq("destination", sameDestination).findList());
         }
 
         // Transfer destination in trips
         boolean destinationTaken = false;
-        for (TripDestination tripDestination : tripDestinations) {
+        for (DestinationNode tripDestination : tripDestinations) {
             destinationTaken = true;
+            tripDestination.setDestination(destination);
             tripDestination.save();
         }
 
@@ -174,12 +175,12 @@ public class DestinationRepository {
 
 
         if (destinationTaken) {
-            Destination.find.transferToAdmin(destination.id);
+            Destination.find.transferToAdmin(destination.getId());
         }
 
         // Delete destination
         for (Destination sameDestination : sameDestinations) {
-            if (sameDestination.id != destination.id) {
+            if (sameDestination.getId() != destination.getId()) {
                 sameDestination.delete();
             }
         }
@@ -212,9 +213,15 @@ public class DestinationRepository {
         }, context);
     }
 
-    public Boolean isDestinationUsed(Long destinationId) {
-        List<TripDestination> tripDestinations = TripDestination.find.getAllByDestinationId(destinationId);
-        return tripDestinations.size() > 0;
+    /**
+     * Checks if the same destination has been used in another trip
+     * @param destination The destination
+     * @return true if the destination has been used
+     */
+    public Boolean isDestinationUsed(Destination destination) {
+
+        List<DestinationNode> tripDestinations = DestinationNode.find.query().where().eq("destination", destination).findList();
+        return !tripDestinations.isEmpty();
     }
 
 
