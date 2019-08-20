@@ -16,7 +16,7 @@
             trips() {
                 return this.$store.getters.getTrips;
             },
-            selected_trip() {
+            selectedTrip() {
                 return this.$store.getters.getSelectedTrip;
             }
         },
