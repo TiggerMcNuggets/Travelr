@@ -140,29 +140,6 @@ create table traveller_type (
   constraint pk_traveller_type primary key (id)
 );
 
-create table trip (
-  id                            bigint auto_increment not null,
-  user_id                       bigint,
-  name                          varchar(255),
-  description                   varchar(255),
-  published                     boolean default 0 not null,
-  deleted                       boolean default false not null,
-  constraint pk_trip primary key (id)
-);
-
-create table trip_destination (
-  id                            bigint auto_increment not null,
-  trip_id                       bigint,
-  destination_id                bigint,
-  depth                         integer not null,
-  ordinal                       integer not null,
-  custom_name                   varchar(255),
-  arrival_date                  integer not null,
-  departure_date                integer not null,
-  deleted                       boolean default false not null,
-  constraint pk_trip_destination primary key (id)
-);
-
 create table user (
   id                            bigint auto_increment not null,
   first_name                    varchar(150) not null,
@@ -275,15 +252,6 @@ alter table node_user_status add constraint fk_node_user_status_trip_id foreign 
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
-create index ix_trip_user_id on trip (user_id);
-alter table trip add constraint fk_trip_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
-
-create index ix_trip_destination_trip_id on trip_destination (trip_id);
-alter table trip_destination add constraint fk_trip_destination_trip_id foreign key (trip_id) references trip (id) on delete restrict on update restrict;
-
-create index ix_trip_destination_destination_id on trip_destination (destination_id);
-alter table trip_destination add constraint fk_trip_destination_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
-
 create index ix_user_traveller_type_user on user_traveller_type (user_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_user foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -375,15 +343,6 @@ drop index if exists ix_node_user_status_trip_id;
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
-alter table trip drop constraint if exists fk_trip_user_id;
-drop index if exists ix_trip_user_id;
-
-alter table trip_destination drop constraint if exists fk_trip_destination_trip_id;
-drop index if exists ix_trip_destination_trip_id;
-
-alter table trip_destination drop constraint if exists fk_trip_destination_destination_id;
-drop index if exists ix_trip_destination_destination_id;
-
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_user;
 drop index if exists ix_user_traveller_type_user;
 
@@ -431,10 +390,6 @@ drop table if exists node_user_status;
 drop table if exists personal_photo;
 
 drop table if exists traveller_type;
-
-drop table if exists trip;
-
-drop table if exists trip_destination;
 
 drop table if exists user;
 

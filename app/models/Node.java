@@ -85,6 +85,14 @@ public abstract class Node extends BaseModel {
         return ordinal;
     }
 
+    public Grouping getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(Grouping userGroup) {
+        this.userGroup = userGroup;
+    }
+
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
     }
