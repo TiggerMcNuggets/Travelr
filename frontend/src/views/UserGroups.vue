@@ -17,6 +17,7 @@
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
           :updateUserGroups="getUserGroups"
+          :checkpoint="rollbackCheckpoint"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
@@ -72,6 +73,7 @@ export default {
   },
 
   methods: {
+    
 
     /**
      * Retrieves user groups from api
@@ -105,6 +107,8 @@ export default {
     selectUserGroup(group) {
       this.selectedGroup = group;
       this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
+      // This is set to later be pushed as a reaction to the rollback stack
+      this.rollbackSetPreviousBody(group);
     },
 
     /**

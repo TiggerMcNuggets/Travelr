@@ -255,7 +255,8 @@ export default {
     albumNames() {
       let albumNames = [];
       for (let i = 0; i < this.allAlbums.length; i++) {
-        if (!this.allAlbums[i].isPermanant) {
+        if (!this.allAlbums[i].isPermanent && (this.allAlbums[i].name.toLowerCase() !== ('all'))
+        ) {
           albumNames.push(this.allAlbums[i].name);
         }
       }
@@ -270,7 +271,7 @@ export default {
       for (let i = 0; i < this.allAlbums.length; i++) {
         if (
           this.selectedAlbumNames.includes(this.allAlbums[i].name) &&
-          !this.allAlbums[i].isPermanant
+          !this.allAlbums[i].isPermanent
         ) {
           selectedAlbums.push(this.allAlbums[i]);
         }
