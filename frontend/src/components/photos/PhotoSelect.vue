@@ -1,153 +1,59 @@
-
-
 <template>
   <v-card>
-    <v-card-title primary-title class="headline media-popup-header white--text">
-      <h5 class="font-weight-regular">Add Existing Photo</h5>
+    <v-card-title primary-title>
+      <h2 class="headline">Add Exising Media</h2>
     </v-card-title>
-
-    <!-- <div>
-          <v-tabs v-model="active" light slider-color="indigo">
-            <v-tab class="button" key="All" ripple>All</v-tab>
-            <v-tab-item key="All">
-              <v-card flat>
-                <v-card-text>All Media</v-card-text>
-              </v-card>
-            </v-tab-item>
-            <v-tab class="button" key="Photos" ripple>Photos</v-tab>
-            <v-tab-item key="Photos">
-              <v-card flat>
-                <v-card-text>All Photos</v-card-text>
-              </v-card>
-            </v-tab-item>
-            <v-tab class="button" key="Videos" ripple>Videos</v-tab>
-            <v-tab-item key="Videos">
-              <v-card flat>
-                <v-card-text>All Videos</v-card-text>
-              </v-card>
-            </v-tab-item>
-            <v-tab class="button" key="Albums" ripple>Albums</v-tab>
-            <v-tab-item key="Albums">
-              <v-card flat>
-                <v-card-text>All Albums</v-card-text>
-              </v-card>
-            </v-tab-item>
-          </v-tabs>
-    </div>-->
-
-    <!-- <ul>
-          <li v-for="row in files" :value="row.value" :key="row.value">
-            <div class="personal-photo-row">
-              <div
-                v-for="item in row"
-                :value="item.value"
-                :key="item.value"
-                class="select-image-container"
-              >
-                <v-icon v-if="imageIsSelected(item)" class="lock-icon" left>done</v-icon>
-                <div v-if="imageIsSelected(item)" class="triangle image-selected"></div>
-
-                <v-img
-                  v-on:click="selectImage(item)"
-                  class="personal-photo-element"
-                  :src="getImgUrl(item)"
-                ></v-img>
-              </div>
-            </div>
-          </li>
-    </ul>-->
-
-    <v-container v-bind="{ [`grid-list-lg`]: true }" ma-1 pa-0 fluid class="media-container">
-      <v-layout row wrap>
-        <v-flex v-for="file in files.entries()" :key="file[0]" xs12 md4>
-          <v-hover>
-            <v-card class="mx-auto" color="grey lighten-4" max-width="600">
-              <v-img
-                class="media-item"
-                :src="getImgUrl(file[1])"
-                height="200px"
-                v-on:click="selectImage(file[1])"
-              >
-                <v-flex v-if="imageIsSelected(file[1])" class="hover-white fill-height">
-                  <v-icon size="50" color="white">done</v-icon>
-                </v-flex>
-              </v-img>
-            </v-card>
-          </v-hover>
-        </v-flex>
-      </v-layout>
-    </v-container>
     <v-divider></v-divider>
-    <v-btn class="button" color="error" v-on:click="processSelected()">Add</v-btn>
-    <v-btn class="button" outline color="error" @click="closeDialog()">Cancel</v-btn>
+
+    <v-card-text>
+        <v-container v-bind="{ [`grid-list-lg`]: true }" ma-1 pa-0 fluid class="media-container">
+          <v-layout row wrap>
+            <v-flex v-for="file in files.entries()" :key="file[0]" xs12 md4>
+              <v-hover>
+                <v-card class="mx-auto" color="grey lighten-4" max-width="600">
+                  <v-img
+                    class="media-item"
+                    :src="getImgUrl(file[1])"
+                    height="200px"
+                    v-on:click="selectImage(file[1])"
+                  >
+                    <v-flex v-if="imageIsSelected(file[1])" class="hover-white fill-height">
+                      <v-icon size="50" color="white">done</v-icon>
+                    </v-flex>
+                  </v-img>
+                </v-card>
+              </v-hover>
+            </v-flex>
+          </v-layout>
+        </v-container>
+    </v-card-text>
+
+    <v-divider></v-divider>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn ma-3 flat v-on:click="closeDialog()">Cancel</v-btn>
+      <v-btn ma-3 color="primary" flat v-on:click="processSelected()">Add Existing</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 
 <style>
-.button {
-  text-transform: initial;
-}
-
-.image-selected {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 70px 70px 0 0;
-  border-color: greenyellow transparent transparent transparent !important;
-  opacity: 0.3;
-  position: absolute;
-  z-index: 10;
-}
-
-.lock-icon {
-  color: white !important;
-  opacity: 1;
-  position: absolute;
-  z-index: 12;
-  font-size: 2.3em;
-  margin-top: 0.2em;
-  margin-left: 0.2em;
-  align-self: flex-start !important;
-}
-
-.select-image-container {
-  width: 24%;
-  height: 170px;
-  border: 1px solid lightgrey;
-  background-position: center;
-  padding: 7px;
-  overflow: hidden;
+.hover-white {
+  background-color: rgba(133, 255, 11, 0.2);
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  bottom: 0;
+  justify-content: center;
 }
 
-.image-container:hover .personal-photo-element {
+.media-item:hover {
   cursor: pointer;
-  opacity: 0.8;
 }
 
-.personal-photo-element {
-  height: 100%;
-  overflow: hidden;
-}
-
-.personal-photo-row {
-  display: flex;
-  justify-content: space-evenly;
-  margin-bottom: 30px;
-}
-
-ul {
-  padding-left: 0px;
-}
-
-h2 {
-  align-self: flex-end;
-}
-
-hr {
-  margin-bottom: 25px;
+.media-container {
+  padding-top: 0;
 }
 </style>
 
@@ -156,7 +62,7 @@ hr {
 import { store } from "../../store/index";
 import base_url from "../../repository/BaseUrl";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import MediaGridWithDelete from "../media/MediaGridWIthDelete";
+import { getAlbumContent } from "../../repository/MediaRepository";
 
 let mediaRepository = RepositoryFactory.get("media");
 
@@ -174,12 +80,12 @@ export default {
     };
   },
 
-  components: {
-    MediaGridWithDelete
-  },
-
   // props methods being passed in from parent.
-  props: ["closeDialog", "setDestinationImages"],
+  // props: ["closeDialog", "setDestinationImages"],
+  props: {
+    closeDialog: Function,
+    setDestinationImages: Function
+  },
 
   methods: {
     /**
@@ -187,6 +93,7 @@ export default {
      */
     processSelected() {
       this.setDestinationImages(this.selectedImages);
+      this.selectedImages = [];
     },
 
     /**
@@ -237,25 +144,17 @@ export default {
     },
 
     /**
-     * Groups the images into rows with four columns.
-     * @param imageList The list of image data from the server.
-     * @returns {Array} A list of rows each with four images.
+     * Gets all album content from the users default album
      */
-    groupImages(imageList) {
-      let newImageList = [];
-      let row = [];
-      const num_cols = 4;
-      for (let i = 0; i < imageList.length; i++) {
-        if (i % num_cols === 0 && row.length !== 0) {
-          newImageList.unshift(row);
-          row = [];
-        }
-        row.push(imageList[i]);
-      }
-
-      newImageList.unshift(row);
-      newImageList.reverse();
-      return newImageList;
+    getAlbumContent() {
+      mediaRepository
+        .getAlbumContent(
+          this.$store.getters.getUser.id,
+          this.$store.getters.getUser.defaultAlbumId
+        )
+        .then(response => {
+          this.files = response.data;
+        });
     }
   },
 
@@ -264,17 +163,7 @@ export default {
    */
   created: function() {
     this.id = this.$route.params.id;
-    console.log(this.$store.getters.getUser.id);
-    console.log(this.$store.getters.getUser.defaultAlbumId);
-
-    mediaRepository
-      .getAlbumContent(
-        this.$store.getters.getUser.id,
-        this.$store.getters.getUser.defaultAlbumId
-      )
-      .then(response => {
-        this.files = response.data;
-      });
+    this.getAlbumContent();
   }
 };
 </script>
