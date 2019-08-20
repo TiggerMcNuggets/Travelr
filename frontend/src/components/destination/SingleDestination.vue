@@ -103,7 +103,6 @@ import MediaUpload from "../media/MediaUpload";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
 import { store } from "../../store/index";
 import {
-  storeDestinationImage,
   getImages,
   updateDestinationPhoto,
   addExistingPhoto
