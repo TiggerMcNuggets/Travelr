@@ -50,18 +50,6 @@ export default {
   props: {
     media: Array,
     deletePhoto: Function
-  },
-
-  updated() {
-    () => {
-      return "";
-    };
-  },
-
-  data() {
-    return {};
-  },
-
-  methods: {}
+  }
 };
 </script>
