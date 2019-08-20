@@ -177,18 +177,17 @@ public class UserGroupController extends Controller {
 
         // Bad Request check
         for (Grouping grouping : Grouping.find.all()) {
-            if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(groupId)) {
+            if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(grouping)) {
                 return completedFuture(badRequest(APIResponses.BAD_REQUEST));
             }
         }
 
-        User user = request.attrs().get(Attrs.USER);
-        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", user.getId()).eq("grouping_id", groupId).findOne();
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
 
         if (userGroup == null) {
             return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
         }
-        else if (!isAdmin && userGroup != null || !userGroup.isOwner()) {
+        else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
