@@ -72,7 +72,7 @@ export const isDemotable = (destinations, index) => {
  * Creates a trip object from the data passed that conforms with the API specs
  **/
 export const tripAssembler = (tripBody) => {
-  let trip = { name: tripBody.name, nodes: [] };
+  let trip = { name: tripBody.trip.name, nodes: [] };
   tripBody.trip.nodes.forEach((node, index) => {
         trip.nodes.push({
           arrivalDate: moment(node.arrivalDate).unix(),
