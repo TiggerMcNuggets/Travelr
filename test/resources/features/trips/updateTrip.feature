@@ -160,6 +160,103 @@ Feature: UpdateTrip
       | New            |
 
 
+  Scenario: Unremove a sub trip
+    Given I am authenticated
+    And I own the trip
+      | name          |
+      | My First Trip |
+    When I want to edit the trip
+    And The body is
+    """
+    {
+      "name": "My Trip of Trips",
+      "nodes": [
+          {
+              "type": "trip",
+              "name": "Place One",
+              "ordinal": 1,
+              "arrivalDate": 1,
+              "departureDate": 1
+          },
+          {
+              "type": "trip",
+              "name": "Place Two",
+              "ordinal": 2,
+              "arrivalDate": 2,
+              "departureDate": 2
+          }
+      ]
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And The trip is now
+      | name             |
+      | My Trip of Trips |
+    And The trip's sub trips are
+      | name           |
+      | Place One      |
+      | Place Two      |
+    When The body is
+    """
+    {
+      "name": "My Trip of Trips",
+      "nodes": [
+          {
+              "id": 2,
+              "type": "trip",
+              "name": "Place One",
+              "ordinal": 1,
+              "arrivalDate": 1,
+              "departureDate": 1
+          }
+      ]
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And The trip is now
+      | name             |
+      | My Trip of Trips |
+    And The trip's sub trips are
+      | name           |
+      | Place One      |
+    When The body is
+    """
+    {
+      "name": "My Trip of Trips",
+      "nodes": [
+          {
+              "id": "2",
+              "type": "trip",
+              "name": "Place One",
+              "ordinal": 1,
+              "arrivalDate": 1,
+              "departureDate": 1
+          },
+          {
+              "id": "3",
+              "type": "trip",
+              "name": "Place Two",
+              "ordinal": 2,
+              "arrivalDate": 2,
+              "departureDate": 2
+          }
+      ]
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And The trip is now
+      | name             |
+      | My Trip of Trips |
+    And The trip's sub trips are
+      | name           |
+      | Place One      |
+      | Place Two      |
+
+
+
   Scenario: Add two destinations to a another users trip as admin
     Given I am authenticated
     And I am an admin
