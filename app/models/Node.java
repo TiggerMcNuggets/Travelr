@@ -30,11 +30,11 @@ public abstract class Node extends BaseModel {
     @ManyToOne
     public Grouping userGroup;
 
-    /**
-     * The user statuses for trip attendance
-     */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<NodeUserStatus> userStatuses;
+//    /**
+//     * The user statuses for trip attendance
+//     */
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    public List<NodeUserStatus> userStatuses;
 
 
     public static final NodeFinder find = new NodeFinder();
@@ -103,23 +103,23 @@ public abstract class Node extends BaseModel {
      * Adds user status
      * @param status the user status to add
      */
-    public void addStatus(NodeUserStatus status) {
-        this.userStatuses.add(status);
-    }
-
-    /**
-     * Removes user status
-     * @param status the user status to remove
-     */
-    public void removeStatus(NodeUserStatus status) {
-        this.userStatuses.remove(status);
-    }
-
-    /**
-     * Get all status associated with the trip
-     * @return the user statuses associated with the trip
-     */
-    public List<NodeUserStatus> getUserStatuses() {
-        return userStatuses;
-    }
+//    public void addStatus(NodeUserStatus status) {
+//        this.userStatuses.add(status);
+//    }
+//
+//    /**
+//     * Removes user status
+//     * @param status the user status to remove
+//     */
+//    public void removeStatus(NodeUserStatus status) {
+//        this.userStatuses.remove(status);
+//    }
+//
+//    /**
+//     * Get all status associated with the trip
+//     * @return the user statuses associated with the trip
+//     */
+//    public List<NodeUserStatus> getUserStatuses() {
+//        return userStatuses;
+//    }
 }
