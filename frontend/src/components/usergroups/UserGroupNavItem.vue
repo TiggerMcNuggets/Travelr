@@ -4,14 +4,14 @@
       <v-flex
         :class="isSelected ? 'usergroup-element usergroup-selected' : 'usergroup-element'"
         pa-2
-        @click="selectUserGroup(usergroup)"
+        @click="selectUserGroup(userGroup)"
       >
         <div class="usergroup-element-details" d-flex justify-start align-center>
           <div>
-            <strong>{{ usergroup.name }}</strong>
-            <p>{{usergroup.members.length == 1 ? usergroup.members.length + ' member' : usergroup.members.length + ' members'}}</p>
+            <strong>{{ userGroup.name }}</strong>
+            <p>{{userGroup.members.length == 1 ? userGroup.members.length + ' member' : userGroup.members.length + ' members'}}</p>
 
-            <p class="usergroup-element-details-description">{{usergroup.description}}</p>
+            <p class="usergroup-element-details-description">{{userGroup.description}}</p>
           </div>
         </div>
         <div v-if="isUserAdminOrOwner">
@@ -27,9 +27,9 @@
     <v-divider class="no-margin"></v-divider>
     <v-dialog v-model="editDialogActive" width="500">
       <UpdateGroupForm
-        :name="usergroup.name"
-        :description="usergroup.description"
-        :usergroupId="usergroup.id"
+        :name="userGroup.name"
+        :description="userGroup.description"
+        :userGroupId="userGroup.id"
         :closeDialog="closeEditDialog"
         :rollbackCheckpoint="rollbackCheckpoint"
       />
@@ -40,7 +40,7 @@
 <script>
 import UpdateGroupForm from "./UpdateGroupForm";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let usergroupRepository = RepositoryFactory.get("userGroup");
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   components: {
@@ -54,7 +54,7 @@ export default {
   },
 
   props: {
-    usergroup: Object,
+    userGroup: Object,
     isSelected: Boolean,
     selectUserGroup: Function,
     updateUserGroups: Function,
@@ -64,7 +64,7 @@ export default {
 
   computed: {
     isUserAdminOrOwner() {
-      return (this.checkIfUserIsOwner(this.$store.getters.getUser.id, this.usergroup) || this.$store.getters.getIsUserAdmin)
+      return (this.checkIfUserIsOwner(this.$store.getters.getUser.id, this.userGroup) || this.$store.getters.getIsUserAdmin)
     }
   },
 
@@ -81,10 +81,10 @@ export default {
      * Deletes the user group
      */
     deleteUserGroup() {
-      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_deleted`;
-      usergroupRepository.deleteSingleUserGroup(
+      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.userGroup.id}/toggle_deleted`;
+      userGroupRepository.deleteSingleUserGroup(
         this.$store.getters.getUser.id,
-        this.usergroup.id
+        this.userGroup.id
       ).then(() => {
         this.updateUserGroups();
         this.rollbackCheckpoint(

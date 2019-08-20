@@ -26,7 +26,7 @@
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let usergroupRepository = RepositoryFactory.get("userGroup");
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   props: {
@@ -61,7 +61,7 @@ export default {
     createGroup() {
       this.successful = false;
       this.failure = false;
-      usergroupRepository
+      userGroupRepository
         .createUserGroup(this.$store.getters.getUser.id, {
           name: this.name,
           description: this.description

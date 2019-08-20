@@ -15,7 +15,7 @@
           :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
-          :usergroups="usergroups"
+          :userGroups="userGroups"
           :updateUserGroups="getUserGroups"
           :checkpoint="rollbackCheckpoint"
           :isOwnerOrAdmin="isOwnerOrAdmin"
@@ -57,7 +57,7 @@ export default {
       search: "",
       isError: false,
       selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
-      usergroups: [],
+      userGroups: [],
       isOwner: true
     };
   },
@@ -91,7 +91,7 @@ export default {
     getUserGroups() {
       userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
       .then(result => {
-        this.usergroups = result.data;
+        this.userGroups = result.data;
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];

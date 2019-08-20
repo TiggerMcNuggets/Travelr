@@ -1,6 +1,6 @@
 <template>
   <v-container class="section-container">
-    <SectionHeader title="User Groups List" disableUndoRedo :options="usergroupsOptions"/>
+    <SectionHeader title="User Groups List" disableUndoRedo :options="userGroupsOptions"/>
     <v-flex v-if="searchActive" xs12 pb-4 pt-4 pr-2 pl-2>
       <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
     </v-flex>
@@ -9,9 +9,9 @@
       <UserGroupNavItem
         class="usergroup-nav-item"
         v-bind:key="index"
-        v-for="(usergroup, index) in userGroupsFiltered"
-        :usergroup="usergroup"
-        :isSelected="selectedGroup == usergroup"
+        v-for="(userGroup, index) in userGroupsFiltered"
+        :userGroup="userGroup"
+        :isSelected="selectedGroup == userGroup"
         :selectUserGroup="selectUserGroup"
         :updateUserGroups="updateUserGroups"
         :rollbackCheckpoint="rollbackCheckpoint"
@@ -42,7 +42,7 @@ export default {
   },
 
   props: {
-    usergroups: Array,
+    userGroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
     updateUserGroups: Function,
@@ -73,7 +73,7 @@ export default {
     /**
      * Options used in the header component.
      */
-    usergroupsOptions() {
+    userGroupsOptions() {
       return [
         {
           action: this.toggleAddUserGroup,
@@ -90,9 +90,9 @@ export default {
      * Filtered User Groups
      */
     userGroupsFiltered() {
-      const filteredList = this.usergroups.filter(
-        usergroup =>
-          usergroup.name.toLowerCase().search(this.search.toLowerCase()) !== -1
+      const filteredList = this.userGroups.filter(
+        userGroup =>
+          userGroup.name.toLowerCase().search(this.search.toLowerCase()) !== -1
       );
 
       // sorting alphabetically by name
