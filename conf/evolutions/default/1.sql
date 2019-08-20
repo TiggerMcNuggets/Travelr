@@ -113,6 +113,16 @@ create table node (
   constraint pk_node primary key (id)
 );
 
+create table node_user_status (
+  id                            bigint auto_increment not null,
+  user_id                       bigint,
+  trip_id                       bigint,
+  trip_status                   integer,
+  deleted                       boolean default false not null,
+  constraint ck_node_user_status_trip_status check ( trip_status in (0,1,2)),
+  constraint pk_node_user_status primary key (id)
+);
+
 create table personal_photo (
   id                            bigint auto_increment not null,
   user_id                       bigint,
@@ -252,6 +262,12 @@ alter table node add constraint fk_node_user_id foreign key (user_id) references
 create index ix_node_destination_id on node (destination_id);
 alter table node add constraint fk_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
+create index ix_node_user_status_user_id on node_user_status (user_id);
+alter table node_user_status add constraint fk_node_user_status_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_node_user_status_trip_id on node_user_status (trip_id);
+alter table node_user_status add constraint fk_node_user_status_trip_id foreign key (trip_id) references node (id) on delete restrict on update restrict;
+
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -343,6 +359,12 @@ drop index if exists ix_node_user_id;
 alter table node drop constraint if exists fk_node_destination_id;
 drop index if exists ix_node_destination_id;
 
+alter table node_user_status drop constraint if exists fk_node_user_status_user_id;
+drop index if exists ix_node_user_status_user_id;
+
+alter table node_user_status drop constraint if exists fk_node_user_status_trip_id;
+drop index if exists ix_node_user_status_trip_id;
+
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
@@ -396,6 +418,8 @@ drop table if exists media_album;
 drop table if exists nationality;
 
 drop table if exists node;
+
+drop table if exists node_user_status;
 
 drop table if exists personal_photo;
 

@@ -79,6 +79,12 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<UserGroup> userGroups;
 
+    /**
+     * Status values for the trips which the user is associated with.
+     */
+    @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
+    public List<NodeUserStatus> tripStatus;
+
     @ManyToMany(cascade=CascadeType.ALL)
     public List<TravellerType> travellerTypes;
 
@@ -268,6 +274,31 @@ public class User extends BaseModel {
     public List<Album> getAlbums() {
         return albums;
     }
+
+    /**
+     * Adds user status
+     * @param status the user status to add
+     */
+    public void addStatus(NodeUserStatus status) {
+        this.tripStatus.add(status);
+    }
+
+    /**
+     * Removes user status
+     * @param status the user status to remove
+     */
+    public void removeStatus(NodeUserStatus status) {
+        this.tripStatus.remove(status);
+    }
+
+    /**
+     * Get all status associated with the user
+     * @return the user statuses associated with the user
+     */
+    public List<NodeUserStatus> getUserStatuses() {
+        return this.tripStatus;
+    }
+
 
     public User(CreateUserReq request) {
         this.firstName = request.firstName;
