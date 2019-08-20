@@ -73,7 +73,6 @@ export default {
   },
 
   methods: {
-    
 
     /**
      * Retrieves user groups from api
