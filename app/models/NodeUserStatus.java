@@ -7,13 +7,6 @@ import play.data.validation.Constraints;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-
-public enum TripStatus {
-    GOING,
-    NOT_GOING,
-    MAYBE
-}
-
 @Entity
 public class NodeUserStatus extends BaseModel {
 
@@ -43,8 +36,8 @@ public class NodeUserStatus extends BaseModel {
 
     /**
      *
-     * @param user the User value
-     * @param trip the Trip value
+     * @param user       the User value
+     * @param trip       the Trip value
      * @param tripStatus the TripStatus value
      */
     public NodeUserStatus(User user, Node trip, TripStatus tripStatus) {
