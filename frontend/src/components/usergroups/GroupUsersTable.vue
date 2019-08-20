@@ -203,10 +203,10 @@ export default {
     userTableOptions() {
       const options = [];
       if (this.isOwnerOrAdmin) {
-          options.push({
-              action: this.toggleAddUser,
-              icon: "add"
-          })
+        options.push({
+          action: this.toggleAddUser,
+          icon: "add"
+        })
       }
       return options;
     },
