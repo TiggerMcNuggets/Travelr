@@ -163,6 +163,19 @@ public class TripService {
 
                 trip.setName(tripDTO.name);
 
+
+                /**
+                 * Get list of old deleted children
+                 */
+                List<Long> oldDeletedIds = Node
+                        .find
+                        .query()
+                        .setIncludeSoftDeletes()
+                        .where()
+                        .eq("parent", trip)
+                        .eq("deleted", true)
+                        .findIds();
+
                 /**
                  * Get list of old deleted children
                  */
@@ -178,8 +191,8 @@ public class TripService {
                     tripDTO.setNodes(new ArrayList<>());
                 }
 
-                for (NodeDTO node : tripDTO.getNodes()) {
-                    if (node.getId() == null) {
+                for(NodeDTO node : tripDTO.getNodes()) {
+                    if(node.getId() == null) {
                         if (node.getType().equals("trip")) {
                             TripNode newNode = new TripNode(node.getName(), user);
                             newNode.setParent(trip);
@@ -188,8 +201,7 @@ public class TripService {
 
                         } else {
 
-                            Optional<Destination> destination = Optional
-                                    .ofNullable(Destination.find.byId(node.destination.id));
+                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
                             if (!destination.isPresent()) {
                                 throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
                             }
@@ -224,6 +236,8 @@ public class TripService {
                     }
                 }
 
+
+
                 for (NodeDTO node : tripDTO.getNodes()) {
                     if (node.type.toLowerCase().equals("trip")) {
                         Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.getId()));
@@ -235,8 +249,7 @@ public class TripService {
                         tNode.setOrdinal(node.getOrdinal());
                         tNode.update();
                     } else {
-                        Optional<DestinationNode> dNodeOptional = Optional
-                                .ofNullable(DestinationNode.find.byId(node.getId()));
+                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.getId()));
                         if (!dNodeOptional.isPresent()) {
                             throw new CustomException(Http.Status.NOT_FOUND, "Destination node not found");
                         }
@@ -276,7 +289,7 @@ public class TripService {
     public CompletableFuture<Boolean> deleteTrip(Long tripId) {
         return supplyAsync(() -> {
             TripNode trip = TripNode.find.byId(tripId);
-            if (trip != null) {
+            if(trip != null) {
                 trip.delete();
 
                 return true;
