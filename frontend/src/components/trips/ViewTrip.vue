@@ -368,33 +368,6 @@
         });
       },
 
-      /**
-       * Action performed as soon a destination starts being dragged, slices the destination
-       * children and temporarily adds them to a variable in the data.
-       */
-      startDrag(event) {
-        // this.drag = true;
-        // const childrenCount = getChildrenCount(this.trip.destinations, this.trip.destinations[event.oldIndex]);
-        // const copy = JSON.parse(JSON.stringify(this.trip.destinations));
-        // if (childrenCount > 0) {
-        //     this.draggedSublist = copy.splice(event.oldIndex + 1, event.oldIndex + childrenCount - 1);
-        // }
-        // for (let d of copy) {
-        //     d.hidden = false;
-        // }
-        // this.trip.destinations = this.setOrdinal(copy);
-      },
-
-      /**
-       * Action performed as soon a destination ends being dragged,
-       * reattaches the sub list stored on start drag at the right index.
-       */
-      endDrag(event) {
-        // const copy = JSON.parse(JSON.stringify(this.trip.destinations));
-        // copy.splice(event.newIndex + 1, 0, ...this.draggedSublist);
-        // this.draggedSublist = [];
-        // this.trip.destinations = this.setOrdinal(copy);
-      },
 
       changeNodeType(index) {
         const destinationType = this.trip.trip.nodes[index].type.toLowerCase() === 'destination';
@@ -551,9 +524,6 @@
       },
 
       tripWithDates: function (trip) {
-        // trip.destinations = trip.destinations.sort(function(a, b){
-        //     return a.ordinal - b.ordinal;
-        // });
         this.hasMissingDates = false;
         let numOfMissingDates = 0;
         // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
@@ -584,43 +554,7 @@
 
         return trip;
       },
-
-
-      // getTrip: function() {
-      //     return tripRepo.getTrip(this.userId, this.tripId).then((result) => {
-      //         let trip = result.data;
-      //         trip.destinations = trip.destinations.sort(function(a, b){
-      //             return a.ordinal - b.ordinal;
-      //         });
-      //         this.hasMissingDates = false;
-      //         let numOfMissingDates = 0;
-      //         // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
-      //         for (let i = 0; i < trip.destinations.length; i++) {
-      //             trip.destinations[i].expanded = false;
-      //             trip.destinations[i].hidden = false;
-      //             if (trip.destinations[i].arrivalDate === 0) {
-      //                 this.hasMissingDates = true;
-      //                 numOfMissingDates++;
-      //             }
-      //
-      //             if (trip.destinations[i].arrivalDate !== 0) {
-      //                 trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-      //             } else {
-      //                 trip.destinations[i].arrivalDate = null;
-      //             }
-      //             if (trip.destinations[i].departureDate !== 0) {
-      //                 trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
-      //             } else {
-      //                 trip.destinations[i].departureDate = null;
-      //             }
-      //         }
-      //         if (numOfMissingDates === trip.destinations.length) {
-      //             this.canDownloadTrip = false;
-      //         }
-      //         this.trip = trip;
-      //         return this.trip;
-      //     });
-      // },
+      
 
       getSelectedTrip(tripId) {
         this._getTrip(this.userId, tripId).then(() => {
