@@ -11,13 +11,15 @@
     />
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
-        <UserGroupList
+        <UserGroupNav
           :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
           :updateUserGroups="getUserGroups"
           :checkpoint="rollbackCheckpoint"
+          :isOwnerOrAdmin="isOwnerOrAdmin"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
@@ -29,7 +31,7 @@
           :isError="isError"
           :group="selectedGroup"
           :getUserGroups="getUserGroups"
-          :isOwner="isOwner"
+          :isOwnerOrAdmin="isOwnerOrAdmin"
           :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
@@ -39,11 +41,12 @@
 
 <script>
 import GroupUsersTable from "../components/usergroups/GroupUsersTable";
-import UserGroupList from "../components/usergroups/UserGroupNav";
+import UserGroupNav from "../components/usergroups/UserGroupNav";
 
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
 import { RepositoryFactory } from "../repository/RepositoryFactory";
+import {deepCopy} from "../tools/deepCopy";
 let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
@@ -59,7 +62,7 @@ export default {
   },
   components: {
     GroupUsersTable,
-    UserGroupList,
+    UserGroupNav,
     PageHeader
   },
 
@@ -69,6 +72,13 @@ export default {
      */
     groupUsers() {
       return this.selectedGroup.members;
+    },
+
+    /**
+     * Returns {boolean} stating if user is admin or group owner
+     */
+    isOwnerOrAdmin() {
+      return (this.$store.getters.getIsUserAdmin || this.isOwner);
     },
   },
 
@@ -92,12 +102,13 @@ export default {
     },
 
     /**
-     * Checks to see if the given user is an owner of the currently selected group
+     * Checks to see if the given user is an owner of a given group or a site admin
      */
-    checkIfUserIsOwner(userId) {
-        if (this.selectedGroup.owners.length != 0) {
-          return this.selectedGroup.owners.some((owner) => owner === userId);
-        }
+    checkIfUserIsOwner(userId, selectedGroup) {
+      let group = selectedGroup ? deepCopy(selectedGroup) : deepCopy(this.selectedGroup);
+      if (group.owners.length > 0) {
+        return group.owners.some((owner) => owner === userId);
+      }
     },
 
     /**
@@ -171,9 +182,6 @@ export default {
   created: async function() {
     this.getUserGroups();
     await this.$store.dispatch("getUsers", false);
-    if (this.$store.getters.getIsUserAdmin) {
-      this.isAdmin = true;
-    }
   }
 };
 </script>
