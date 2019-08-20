@@ -30,7 +30,7 @@ Feature: Create User Group
     }
     """
     And I send the request
-    Then I will receive the response code 400
+    Then I will receive the response code 201
 
   Scenario: Create a user group when not logged in
     Given I am not authenticated
