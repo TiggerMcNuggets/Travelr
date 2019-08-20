@@ -1,4 +1,7 @@
--- !Ups
+# --- Created by Ebean DDL
+# To stop Ebean DDL generation, remove this comment and start using Evolutions
+
+# --- !Ups
 
 create table album (
   id                            bigint auto_increment not null,
@@ -176,7 +179,7 @@ create table user_traveller_type (
 create table user_group (
   id                            bigint auto_increment not null,
   user_id                       bigint,
-  group_id                      bigint,
+  grouping_id                   bigint,
   is_owner                      boolean not null default false not null,
   deleted                       boolean default false not null,
   constraint pk_user_group primary key (id)
@@ -270,8 +273,8 @@ alter table user_traveller_type add constraint fk_user_traveller_type_traveller_
 create index ix_user_group_user_id on user_group (user_id);
 alter table user_group add constraint fk_user_group_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
-create index ix_user_group_group_id on user_group (group_id);
-alter table user_group add constraint fk_user_group_group_id foreign key (group_id) references grouping (id) on delete restrict on update restrict;
+create index ix_user_group_grouping_id on user_group (grouping_id);
+alter table user_group add constraint fk_user_group_grouping_id foreign key (grouping_id) references grouping (id) on delete restrict on update restrict;
 
 create index ix_user_nationality_user_id on user_nationality (user_id);
 alter table user_nationality add constraint fk_user_nationality_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -280,7 +283,7 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
--- !Downs
+# --- !Downs
 
 alter table album drop constraint if exists fk_album_user_id;
 drop index if exists ix_album_user_id;
@@ -361,8 +364,8 @@ drop index if exists ix_user_traveller_type_traveller_type;
 alter table user_group drop constraint if exists fk_user_group_user_id;
 drop index if exists ix_user_group_user_id;
 
-alter table user_group drop constraint if exists fk_user_group_group_id;
-drop index if exists ix_user_group_group_id;
+alter table user_group drop constraint if exists fk_user_group_grouping_id;
+drop index if exists ix_user_group_grouping_id;
 
 alter table user_nationality drop constraint if exists fk_user_nationality_user_id;
 drop index if exists ix_user_nationality_user_id;
