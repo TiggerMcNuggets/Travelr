@@ -258,7 +258,7 @@ export default {
   created: function() {
     this.checkIfProfileOwner();
     this.isAdminUser = store.getters.getIsUserAdmin;
-    this._getTrips(this.userId)
+    this._getTrips(this.userId);
   }
 };
 </script>

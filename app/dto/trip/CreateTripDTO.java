@@ -8,8 +8,6 @@ public class CreateTripDTO {
 
     @Constraints.Required
     public String name;
-    @Constraints.Required
-    public String description;
 
     public String getName() {
         return name;
@@ -19,11 +17,4 @@ public class CreateTripDTO {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }
