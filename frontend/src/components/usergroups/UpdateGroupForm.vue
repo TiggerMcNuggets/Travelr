@@ -10,14 +10,14 @@
         label="New Group Name"
         placeholder="Your group name"
         outlined
-        v-model="usergroup.name"
+        v-model="userGroup.name"
         maxlength="50"
       ></v-text-field>
       <v-textarea
         label="New Group Description"
         placeholder="Your group description"
         outlined
-        v-model="usergroup.description"
+        v-model="userGroup.description"
         maxlength="50"
       ></v-textarea>
     </v-card-text>
@@ -34,19 +34,21 @@
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let usergroupRepository = RepositoryFactory.get("userGroup");
-
+let userGroupRepository = RepositoryFactory.get("userGroup");
+import {deepCopy} from "../../tools/deepCopy";
 export default {
   props: {
     name: String,
     description: String,
-    usergroupId: Number,
-    closeDialog: Function
+    userGroupId: Number,
+    closeDialog: Function,
+    rollbackCheckpoint: Function
   },
 
   data() {
     return {
-      usergroup: {
+      rollbackBody: {name: "", description: ""},
+      userGroup: {
         name: "",
         description: ""
       }
@@ -58,13 +60,27 @@ export default {
      * Updates a user group for the user.
      */
     updateGroup() {
-      usergroupRepository
+      userGroupRepository
         .updateUserGroup(
           this.$store.getters.getUser.id,
-          this.usergroupId,
-          this.usergroup
+          this.userGroupId,
+          this.userGroup
         )
         .then(() => {
+          // Pushes checkpoint containing type of action, action body, and reaction body
+          const url = `/users/${this.$store.getters.getUser.id}/group/${this.userGroupId}`
+          this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                    url: url,
+                    body: this.userGroup
+                  },
+                  {
+                    url: url,
+                    body: this.rollbackBody
+                  }
+          );
+          this.rollbackBody = this.userGroup;
           this.closeDialog();
         });
     }
@@ -74,8 +90,9 @@ export default {
    * Sets the user group name and description from the props on mount
    */
   mounted() {
-    this.usergroup.name = this.name;
-    this.usergroup.description = this.description;
+    this.userGroup.name = deepCopy(this.name);
+    this.userGroup.description = deepCopy(this.description);
+    this.rollbackBody = deepCopy(this.userGroup);
   }
 };
 </script>

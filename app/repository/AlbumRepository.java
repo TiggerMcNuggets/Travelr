@@ -30,19 +30,21 @@ public class AlbumRepository {
     }
 
     /**
-     * Returns all photos assoociated with a user.
+     * Returns all photos assoociated with a particular album.
      * 
      * @param albumId      user id The user id
      * @param privateMedia if true will not return the public photos that are
      *                     available to the user
-     * @return CompletionStage<List<PersonalPhoto>> The list of personal photos
-     *         associated with the user.
+     * @return CompletionStage<List<Media>> The list of personal photos associated
+     *         with the user.
      */
     public CompletableFuture<List<Media>> list(Long albumId, Boolean privateMedia) {
         return supplyAsync(() -> {
             ExpressionList<Media> query = Media.find.query().where().eq("albums.id", albumId)
                     .or(Expr.eq("is_public", true), Expr.eq("is_public", !privateMedia));
-            return query.findList();
+
+            List<Media> mediaList = query.findList();
+            return mediaList;
         }, executionContext);
     }
 
@@ -62,7 +64,8 @@ public class AlbumRepository {
                 }
             }
 
-            if (user == null || duplicateName) return null;
+            if (user == null || duplicateName)
+                return null;
 
             Album album = new Album(user, name, false);
             album.save();
@@ -96,17 +99,19 @@ public class AlbumRepository {
     public CompletionStage<List<Album>> listUserAlbums(Long userId) {
         return supplyAsync(() -> {
             User user = User.find.findById(userId);
-            if (user == null) return null;
+            if (user == null)
+                return null;
             return user.getAlbums();
         }, executionContext);
     }
 
     /**
      * Updates an album
-     * @param userId The user's id
+     * 
+     * @param userId  The user's id
      * @param albumId The album's id
      * @param isAdmin Whether the user is an admin
-     * @param req The request object
+     * @param req     The request object
      * @return
      */
     public CompletableFuture<Album> updateAlbum(Long albumId, Long userId, boolean isAdmin, CreateAlbumReq req) {
@@ -114,7 +119,8 @@ public class AlbumRepository {
             Album album = Album.find.findAlbumById(albumId);
 
             // Not found check
-            if (album == null) return null;
+            if (album == null)
+                return null;
 
             // Forbidden check
             boolean forbidden = !isAdmin && album.getUser().getId() != userId;

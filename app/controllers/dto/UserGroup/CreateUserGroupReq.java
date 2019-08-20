@@ -31,6 +31,5 @@ public class CreateUserGroupReq {
     @Constraints.Required
     public String name;
 
-    @Constraints.Required
     public String description;
 }
