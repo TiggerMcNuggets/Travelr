@@ -33,6 +33,12 @@ public class Grouping extends BaseModel {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     public List<UserGroup> userGroups;
 
+    /**
+     * Associated trips for the group.
+     */
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Trip> associatedTrips;
+
 
     /**
      * The constructor for the user grouping
@@ -90,5 +96,29 @@ public class Grouping extends BaseModel {
      */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    /**
+     * Adds a trip to the grouping trips
+     * @param trip the trip to add
+     */
+    public void addTrip(Trip trip) {
+        this.associatedTrips.add(trip);
+    }
+
+    /**
+     * Removes a trip from the grouping associated trips
+     * @param trip the trip to remove
+     */
+    public void removeTrip(Trip trip) {
+        this.associatedTrips.remove(trip);
+    }
+
+    /**
+     * Get all trips associated with the grouping
+     * @return the trips associated with the grouping
+     */
+    public List<Trip> getTrips() {
+        return associatedTrips;
     }
 }

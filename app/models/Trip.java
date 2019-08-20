@@ -27,6 +27,12 @@ public class Trip extends BaseModel {
     @Column(columnDefinition = "boolean default 0")
     public boolean published;
 
+    /**
+     * The user group associated with the trip
+     */
+    @ManyToOne
+    public Grouping userGroup;
+
     public Trip(String name, String description, User user) {
         this.name = name;
         this.description = description;
@@ -65,6 +71,14 @@ public class Trip extends BaseModel {
 
     public void setPublished(boolean published) {
         this.published = published;
+    }
+
+    public Grouping getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(Grouping userGroup) {
+        this.userGroup = userGroup;
     }
 }
 

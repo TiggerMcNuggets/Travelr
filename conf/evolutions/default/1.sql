@@ -121,6 +121,7 @@ create table trip (
   name                          varchar(255),
   description                   varchar(255),
   published                     boolean default 0 not null,
+  user_group_id                 bigint,
   deleted                       boolean default false not null,
   constraint pk_trip primary key (id)
 );
@@ -235,6 +236,9 @@ alter table personal_photo add constraint fk_personal_photo_user_id foreign key 
 create index ix_trip_user_id on trip (user_id);
 alter table trip add constraint fk_trip_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+create index ix_trip_user_group_id on trip (user_group_id);
+alter table trip add constraint fk_trip_user_group_id foreign key (user_group_id) references grouping (id) on delete restrict on update restrict;
+
 create index ix_trip_destination_trip_id on trip_destination (trip_id);
 alter table trip_destination add constraint fk_trip_destination_trip_id foreign key (trip_id) references trip (id) on delete restrict on update restrict;
 
@@ -316,6 +320,9 @@ drop index if exists ix_personal_photo_user_id;
 
 alter table trip drop constraint if exists fk_trip_user_id;
 drop index if exists ix_trip_user_id;
+
+alter table trip drop constraint if exists fk_trip_user_group_id;
+drop index if exists ix_trip_user_group_id;
 
 alter table trip_destination drop constraint if exists fk_trip_destination_trip_id;
 drop index if exists ix_trip_destination_trip_id;
