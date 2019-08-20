@@ -75,7 +75,6 @@
           </template>
           <span>Update trip</span>
         </v-tooltip>
-
         <v-tooltip v-if="hasMissingDates && canDownloadTrip" bottom>
           <template v-slot:activator="{on}">
             <v-btn

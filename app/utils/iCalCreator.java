@@ -41,6 +41,9 @@ public class iCalCreator {
 
         int UID = 0;
         for (TripDestination destination: trip.destinations) {
+            //need to change this part to cater for new trip set up, we only want the destinations
+            //we want to get all the destinations that have this trip as parent
+            //we can get this list from a new method in destinationNodeFinder
 
             if (destination.getArrivalDate() != 0 && destination.getDepartureDate() != 0) {
                 //Addition of 24*60*60 will add one day to the date which in turn will make it export to .ics file with correct dates.
