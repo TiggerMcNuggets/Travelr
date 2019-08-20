@@ -163,12 +163,12 @@ public class TripService {
                 }
 
                 for(NodeDTO node : tripDTO.getNodes()) {
-                    if(node.id == null) {
-                        if(node.type.equals("trip")) {
-                            TripNode newNode = new TripNode(node.name, user);
+                    if(node.getId() == null) {
+                        if(node.getType().equals("trip")) {
+                            TripNode newNode = new TripNode(node.getName(), user);
                             newNode.setParent(trip);
                             newNode.save();
-                            node.id = newNode.getId();
+                            node.setId(newNode.getId());
 
                         } else {
 
@@ -177,15 +177,15 @@ public class TripService {
                                 throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
                             }
 
-                            DestinationNode newNode = new DestinationNode(node.name, user, destination.get());
+                            DestinationNode newNode = new DestinationNode(node.getName(), user, destination.get());
                             newNode.setParent(trip);
                             newNode.save();
 
-                            node.id = newNode.getId();
+                            node.setId(newNode.getId());
                         }
 
                     }
-                    newNodeIds.add(node.id);
+                    newNodeIds.add(node.getId());
                 }
 
                 for(Node oldNode : children) {
@@ -198,24 +198,24 @@ public class TripService {
 
                 for (NodeDTO node : tripDTO.getNodes()) {
                     if (node.type.toLowerCase().equals("trip")) {
-                        Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.id));
+                        Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.getId()));
                         if (!tNodeOptional.isPresent()) {
                             throw new CustomException(Http.Status.NOT_FOUND, "Trip node not found");
                         }
                         TripNode tNode = tNodeOptional.get();
-                        tNode.setName(node.name);
-                        tNode.setOrdinal(node.ordinal);
+                        tNode.setName(node.getName());
+                        tNode.setOrdinal(node.getOrdinal());
                         tNode.update();
                     } else {
-                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.id));
+                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.getId()));
                         if (!dNodeOptional.isPresent()) {
                             throw new CustomException(Http.Status.NOT_FOUND, "Destination node not found");
                         }
                         DestinationNode dNode = dNodeOptional.get();
-                        dNode.setName(node.name);
-                        dNode.setOrdinal(node.ordinal);
-                        dNode.setArrivalDate(node.arrivalDate);
-                        dNode.setDepartureDate(node.departureDate);
+                        dNode.setName(node.getName());
+                        dNode.setOrdinal(node.getOrdinal());
+                        dNode.setArrivalDate(node.getArrivalDate());
+                        dNode.setDepartureDate(node.getDepartureDate());
 
                         Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(node.getDestination().getId()));
                         if (!destinationOptional.isPresent()) {
