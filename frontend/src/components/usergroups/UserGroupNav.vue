@@ -14,6 +14,7 @@
         :isSelected="selectedGroup == usergroup"
         :selectUserGroup="selectUserGroup"
         :updateUserGroups="updateUserGroups"
+        :rollbackCheckpoint="rollbackCheckpoint"
       />
     </v-flex>
   </v-container>
@@ -43,7 +44,8 @@ export default {
     usergroups: Array,
     selectUserGroup: Function,
     selectedGroup: Object,
-    updateUserGroups: Function
+    updateUserGroups: Function,
+    rollbackCheckpoint: Function
   },
 
   methods: {

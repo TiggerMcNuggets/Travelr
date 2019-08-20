@@ -12,10 +12,12 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
+          :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
           :updateUserGroups="getUserGroups"
+          :checkpoint="rollbackCheckpoint"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
@@ -27,6 +29,8 @@
           :isError="isError"
           :group="selectedGroup"
           :getUserGroups="getUserGroups"
+          :isOwner="isOwner"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
     </v-layout>
@@ -50,6 +54,7 @@ export default {
       isError: false,
       selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
       usergroups: [],
+      isOwner: true
     };
   },
   components: {
@@ -79,10 +84,20 @@ export default {
         this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
         if (!this.selectedGroup && result.data.length > 0) {
           this.selectedGroup = result.data[0];
-        } else {
+        } else if (result.data.length == 0) {
           this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
+        this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
       })
+    },
+
+    /**
+     * Checks to see if the given user is an owner of the currently selected group
+     */
+    checkIfUserIsOwner(userId) {
+        if (this.selectedGroup.owners.length != 0) {
+          return this.selectedGroup.owners.some((owner) => owner === userId);
+        }
     },
 
     /**
@@ -90,6 +105,9 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
+      // This is set to later be pushed as a reaction to the rollback stack
+      this.rollbackSetPreviousBody(group);
     },
 
     /**
@@ -98,12 +116,23 @@ export default {
      */
     async deleteUser(groupId, memberId) {
       this.isError = false;
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/toggle_deleted`;
+
       userGroupRepository.removeUserInUserGroup(
         this.$store.getters.getUser.id, 
         groupId, 
         memberId
       ).then(() => {
-        this.getUserGroups()
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
       });
     },
 
@@ -123,6 +152,16 @@ export default {
       this.isError = false;
       const actions = [this.getUserGroups];
       this.rollbackRedo(actions);
+    },
+
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
+    checkpoint: function(type, action, reaction) {
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 

@@ -31,6 +31,7 @@
         :description="usergroup.name"
         :usergroupId="usergroup.id"
         :closeDialog="closeEditDialog"
+        :rollbackCheckpoint="rollbackCheckpoint"
       />
     </v-dialog>
   </v-flex>
@@ -56,7 +57,8 @@ export default {
     usergroup: Object,
     isSelected: Boolean,
     selectUserGroup: Function,
-    updateUserGroups: Function
+    updateUserGroups: Function,
+    rollbackCheckpoint: Function
   },
 
   methods: {
@@ -72,11 +74,21 @@ export default {
      * Deletes the user group
      */
     deleteUserGroup() {
+      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_deleted`;
       usergroupRepository.deleteSingleUserGroup(
         this.$store.getters.getUser.id,
         this.usergroup.id
       ).then(() => {
         this.updateUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+              url: url
+          },
+          {
+              url: url
+          }
+        );
       });
     }
   }

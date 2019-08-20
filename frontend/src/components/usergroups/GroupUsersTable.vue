@@ -42,8 +42,8 @@
               </li>
             </ul>
           </td>
-          <td v-if="isAdmin" class="text-xs-right">
-            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)">
+          <td v-if="(isAdmin || isOwner)" class="text-xs-right">
+            <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)" v-if="isDeletable(props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
           </td>
@@ -68,7 +68,9 @@ export default {
     name: String,
     deleteUser: Function,
     isError: Boolean,
-    group: Object
+    group: Object,
+    isOwner: Boolean,
+    checkIfUserIsOwner: Function
   },
 
   components: {
@@ -85,6 +87,7 @@ export default {
   },
 
   methods: {
+
     /**
      * Takes in a users id and redirects current page to that users account.
      * @param id
@@ -117,6 +120,16 @@ export default {
       }).then(() => {
         this.getUserGroups();
       });
+    },
+
+    /**
+     * Checks if a given user id can be deleted by the currently logged in user.
+     * Admins and group owners have the same permissions.
+     * Group owners cannot delete other group owners.
+     * Group owners cannot remove themselves from the group.
+     */
+    isDeletable(targetUserId) {
+      return !!((this.isAdmin || this.isOwner) && !this.checkIfUserIsOwner(targetUserId));
     }
   },
 
@@ -152,7 +165,7 @@ export default {
       ];
 
       // Checking if user is admin and adding delete button if they are
-      if (this.isAdmin) {
+      if (this.isAdmin || this.isOwner) {
         columns.push({ text: "Delete", align: "left", sortable: false });
       }
       return columns;
