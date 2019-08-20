@@ -176,11 +176,12 @@ public class TripService {
                         .eq("deleted", true)
                         .findIds();
 
-                /**
-                 * Get list of old deleted children
-                 */
-                List<Long> oldDeletedIds = Node.find.query().setIncludeSoftDeletes().where().eq("parent", trip)
-                        .eq("deleted", true).findIds();
+                // TODO: Delete one not sure which.
+//                /**
+//                 * Get list of old deleted children
+//                 */
+//                List<Long> oldDeletedIds = Node.find.query().setIncludeSoftDeletes().where().eq("parent", trip)
+//                        .eq("deleted", true).findIds();
 
                 /**
                  * Get Updated Ids
