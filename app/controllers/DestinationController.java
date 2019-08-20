@@ -59,7 +59,7 @@ public class DestinationController extends Controller {
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(list);
-                    return ok(jsonResponse);
+                    return created(jsonResponse);
                 });
     }
 

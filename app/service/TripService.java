@@ -153,10 +153,23 @@ public class TripService {
 
                 trip.setName(tripDTO.name);
 
+
+                /**
+                 * Get list of old deleted children
+                 */
+                List<Long> oldDeletedIds = Node
+                        .find
+                        .query()
+                        .setIncludeSoftDeletes()
+                        .where()
+                        .eq("parent", trip)
+                        .eq("deleted", true)
+                        .findIds();
+
                 /**
                  * Get Updated Ids
                  */
-                ArrayList<Long> newNodeIds = new ArrayList<>();
+                List<Long> newNodeIds = new ArrayList<>();
 
                 if(tripDTO.getNodes() == null) {
                     tripDTO.setNodes(new ArrayList<>());
@@ -164,7 +177,7 @@ public class TripService {
 
                 for(NodeDTO node : tripDTO.getNodes()) {
                     if(node.getId() == null) {
-                        if(node.getType().equals("trip")) {
+                        if (node.getType().equals("trip")) {
                             TripNode newNode = new TripNode(node.getName(), user);
                             newNode.setParent(trip);
                             newNode.save();
@@ -173,7 +186,7 @@ public class TripService {
                         } else {
 
                             Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
-                            if(!destination.isPresent()) {
+                            if (!destination.isPresent()) {
                                 throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
                             }
 
@@ -185,6 +198,19 @@ public class TripService {
                         }
 
                     }
+
+                    else {
+                        if (node.getType().equals("trip") && oldDeletedIds.contains(node.getId())) {
+                            Optional<Node> tripNode = Node.find.findByIdIncludeDeleted(node.getId());
+                            if (!tripNode.isPresent()) {
+                                throw new CustomException(Http.Status.NOT_FOUND, "trip not found");
+                            }
+                            tripNode.get().setDeleted(false);
+                            tripNode.get().save();
+                        }
+
+                    }
+
                     newNodeIds.add(node.getId());
                 }
 
