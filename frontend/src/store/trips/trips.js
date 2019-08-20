@@ -3,7 +3,7 @@ import TripRepository from "../../repository/TripRepository.js";
 export default {
     state: {
         trips: [],
-        selected_trip: undefined
+        selectedTrip: undefined
     },
 
     mutations: {
@@ -11,7 +11,7 @@ export default {
             state.trips = trips
         },
         setTrip(state, trip) {
-            state.selected_trip = trip
+            state.selectedTrip = trip
         }
     },
 
@@ -92,7 +92,7 @@ export default {
          * @returns {Object}
          */
         getSelectedTrip: state => {
-            return state.selected_trip;
+            return state.selectedTrip;
         },
     },
 }
