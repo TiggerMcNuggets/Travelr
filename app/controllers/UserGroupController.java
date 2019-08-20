@@ -182,18 +182,22 @@ public class UserGroupController extends Controller {
             }
         }
 
-        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+        // Check to see if the person sending the request is in the group
+        User user = request.attrs().get(Attrs.USER);
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", user.getId()).eq("grouping_id", groupId).findOne();
 
-        if (userGroup == null) {
+        // Check to see if grouping exists
+        Grouping grouping = Grouping.find.byId(groupId);
+
+        if (grouping == null) {
             return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
-        }
-        else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
+        } else if ((!isAdmin && userGroup == null) || (userGroup != null && !userGroup.isOwner())) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
-        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
+        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(updatedGrouping -> {
 
-            if (grouping == null) {
+            if (updatedGrouping == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
             }
 
