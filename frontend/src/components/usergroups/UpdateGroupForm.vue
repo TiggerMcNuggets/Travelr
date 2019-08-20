@@ -35,11 +35,8 @@
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let usergroupRepository = RepositoryFactory.get("userGroup");
-import RollbackMixin from "../mixins/RollbackMixin.vue";
 import {deepCopy} from "../../tools/deepCopy";
 export default {
-  mixins: [RollbackMixin],
-  
   props: {
     name: String,
     description: String,
