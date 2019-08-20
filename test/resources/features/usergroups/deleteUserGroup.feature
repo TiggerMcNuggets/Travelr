@@ -1,7 +1,7 @@
 Feature: Delete User Group
   Description: The purpose of this feature is to test the api endpoint related to deleting a user group
 
-  Scenario: Delete an user group and all its members successfully
+  Scenario: Delete a user group without soft deleting all its members
     Given I am authenticated
     And I own the user group
       | name         | description         |
@@ -17,7 +17,7 @@ Feature: Delete User Group
       Group removed
       """
     And The user group does not exist
-    And All its group members are removed
+    And All its group members are in the group
 
 
   Scenario: Toggle delete twice a user group and all its members successfully

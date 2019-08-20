@@ -12,7 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
-          :rollbackCheckpoint="checkpoint"
+          :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
@@ -29,6 +29,8 @@
           :isError="isError"
           :group="selectedGroup"
           :getUserGroups="getUserGroups"
+          :isOwner="isOwner"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
     </v-layout>
@@ -71,7 +73,6 @@ export default {
   },
 
   methods: {
-    
 
     /**
      * Retrieves user groups from api
@@ -86,18 +87,16 @@ export default {
         } else if (result.data.length == 0) {
           this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
         }
-        this.checkIfUserIsOwner();
+        this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
       })
     },
 
     /**
-     * Checks to see if user is an owner
+     * Checks to see if the given user is an owner of the currently selected group
      */
-    checkIfUserIsOwner() {
+    checkIfUserIsOwner(userId) {
         if (this.selectedGroup.owners.length != 0) {
-          this.isOwner = this.selectedGroup.owners.some((owner) => owner === this.$store.getters.getUser.id);
-        } else {
-          this.isOwner = false;
+          return this.selectedGroup.owners.some((owner) => owner === userId);
         }
     },
 
@@ -106,10 +105,9 @@ export default {
      */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
       // This is set to later be pushed as a reaction to the rollback stack
       this.rollbackSetPreviousBody(group);
-
-      this.checkIfUserIsOwner();
     },
 
     /**
@@ -118,12 +116,23 @@ export default {
      */
     async deleteUser(groupId, memberId) {
       this.isError = false;
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/toggle_deleted`;
+
       userGroupRepository.removeUserInUserGroup(
         this.$store.getters.getUser.id, 
         groupId, 
         memberId
       ).then(() => {
-        this.getUserGroups()
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
       });
     },
 
