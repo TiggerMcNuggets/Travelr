@@ -83,6 +83,7 @@ GET         /api/users/:user_id/group/:group_id                                 
 POST        /api/users/:user_id/group                                               controllers.UserGroupController.createUserGroup(request: Request, user_id: Long)
 GET         /api/users/:user_id/group                                               controllers.UserGroupController.getUserGroups(request: Request, user_id: Long)
 
+
 # Trips (trips within trips)
 POST        /api/users/:userId/trips                        controllers.TripController.createTrip(request: Request, userId: Long)
 GET         /api/users/:userId/trips                        controllers.TripController.getUserTrips(request: Request, userId: Long)
