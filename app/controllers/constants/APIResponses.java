@@ -33,9 +33,8 @@ public class APIResponses {
     public static final String MEMBER_EXISTS_IN_GROUP = "Member already exists in the group";
     public static final String FAILED_TO_PROMOTE = "Failed to promote member to group owner";
 
-
-
-
+    public static final String TRIP_STATUS_INVALID = "Trip Status Invalid";
+    public static final String TRIP_STATUS_UPDATED = "Trip Status Updated";
 
 
 }
