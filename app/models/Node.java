@@ -25,7 +25,7 @@ public abstract class Node extends BaseModel {
     private User user;
 
     /**
-     * The user group associated with the trip
+     * The user group associated with the trip. Intentionally defaults to null.
      */
     @ManyToOne
     public Grouping userGroup;

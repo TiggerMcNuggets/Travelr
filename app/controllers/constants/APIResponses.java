@@ -11,8 +11,8 @@ public class APIResponses {
     public static final String DESTINATION_NOT_FOUND = "Destination not found";
     public static final String LESS_THAN_TWO_DESTINATIONS = "Less than two destinations";
     public static final String TWO_SAME_DESTINATIONS_IN_A_ROW = "Two same destinations in a row";
-    public static final String TRIP_NOT_FOUND = "Trip not found";
-    public static final String TRAVELLER_NOT_FOUND = "Traveller not found";
+
+    public static final String TRAVELLER_NOT_FOUND = "User not found";
     public static final String NOT_LOGGED_IN_ACCESS_DENIED = "Not Logged In: Access Denied";
     public static final String FORBIDDEN_DESTINATION_EDIT = "Permission denied: Trying to edit a public destination and not admin";
     public static final String ALBUM_OR_MEDIA_NOT_FOUND = "The existing album or existing media was not found";
@@ -32,6 +32,10 @@ public class APIResponses {
     public static final String DUPLICATE_GROUP_NAME = "There is already a group with this name";
     public static final String MEMBER_EXISTS_IN_GROUP = "Member already exists in the group";
     public static final String FAILED_TO_PROMOTE = "Failed to promote member to group owner";
+
+    public static final String TRIP_NOT_FOUND = "Trip not found";
+    public static final String TRIP_GROUP_UPDATED = "Trip group updated successfully";
+
 
 
 
