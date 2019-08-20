@@ -62,7 +62,6 @@
 import { store } from "../../store/index";
 import base_url from "../../repository/BaseUrl";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-import { getAlbumContent } from "../../repository/MediaRepository";
 
 let mediaRepository = RepositoryFactory.get("media");
 
@@ -81,7 +80,6 @@ export default {
   },
 
   // props methods being passed in from parent.
-  // props: ["closeDialog", "setDestinationImages"],
   props: {
     closeDialog: Function,
     setDestinationImages: Function

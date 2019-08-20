@@ -110,9 +110,7 @@ export default {
 
       if (this.isMyProfile || this.isAdminUser) {
         options.push({
-          action: () => {
-            this.chooseExistingDialog = true;
-          },
+          action: this.uploadExisting,
           icon: "add_photo_alternate"
         });
       }
