@@ -238,7 +238,7 @@ public class MediaController extends Controller {
     public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long user_id, Long album_id, Long media_id) {
         return mediaRepository.addMediaToAlbum(album_id, media_id).thenApplyAsync(updated_album_id -> {
             // not found check, repository checks that both album and media exist
-            if (updated_album_id != null) {
+            if (updated_album_id == null) {
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
 
             }
