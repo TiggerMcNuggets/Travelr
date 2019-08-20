@@ -246,7 +246,7 @@ export default {
     },
 
     /**
-     * Uploads the given media files the backend.
+     * Uploads the given media files to the backend.
      */
     uploadMedia(files) {
       let albumId = this.destination.defaultAlbumId;
