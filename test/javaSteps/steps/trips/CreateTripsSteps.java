@@ -1,6 +1,5 @@
 package javaSteps.steps.trips;
 
-
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 

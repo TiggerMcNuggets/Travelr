@@ -194,6 +194,8 @@ public class TripService {
                     }
                 }
 
+
+
                 for (NodeDTO node : tripDTO.getNodes()) {
                     if (node.type.toLowerCase().equals("trip")) {
                         Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.id));
@@ -242,7 +244,7 @@ public class TripService {
      */
     public CompletableFuture<Boolean> deleteTrip(Long tripId) {
         return supplyAsync(() -> {
-            Trip trip = Trip.find.byId(tripId);
+            TripNode trip = TripNode.find.byId(tripId);
             if(trip != null) {
                 trip.delete();
 
