@@ -85,7 +85,7 @@ public class TripController extends Controller {
         }
     }
 
-        /**
+    /**
      * Create a trip endpoint
      *
      * @param request
