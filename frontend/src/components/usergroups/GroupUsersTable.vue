@@ -42,6 +42,14 @@
               </li>
             </ul>
           </td>
+          <td v-if="isAdmin || isOwner" class="text-xs-right">
+            {{ isUserOwner(props.item.id) ? "Owner" : "Member" }} 
+            <v-btn flat icon @click="togglePromoteUser(group.id, props.item.id)">
+              <v-icon v-if="isAdmin || isOwner">
+                {{ isUserOwner(props.item.id) ? "arrow_downward" : "arrow_upward" }}
+              </v-icon>
+            </v-btn>
+          </td>
           <td v-if="isOwnerOrAdmin" class="text-xs-right">
             <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)" v-if="isDeletable(props.item.id)">
               <v-icon>delete</v-icon>
@@ -69,7 +77,7 @@ export default {
     deleteUser: Function,
     isError: Boolean,
     group: Object,
-    isOwnerOrAdmin: Boolean,
+    isOwner: Boolean,
     checkIfUserIsOwner: Function
   },
 
@@ -125,6 +133,14 @@ export default {
     },
 
     /**
+     * Checks if user is owner in the group
+     * @param: userId The user's id
+     */
+    isUserOwner(userId) {
+      return this.selectedGroup.owners.some((owner) => owner === userId);
+    },
+    
+    /*
      * Checks if a given user id can be deleted by the currently logged in user.
      * Admins and group owners have the same permissions.
      * Group owners cannot delete other group owners.
@@ -162,6 +178,12 @@ export default {
         {
           text: "Traveller Types",
           value: "types",
+          align: "left",
+          sortable: true
+        },
+        {
+          text: "Status",
+          value: "isOwner",
           align: "left",
           sortable: true
         }
