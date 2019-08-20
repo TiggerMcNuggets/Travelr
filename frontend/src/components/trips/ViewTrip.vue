@@ -112,9 +112,7 @@
         <draggable
           class="list-group"
           tag="ul"
-          v-model="trip.trip.nodes"
-          @start="startDrag"
-          @end="endDrag">
+          v-model="trip.trip.nodes">
           <transition-group type="transition" :name="!drag ? 'flip-list' : null">
             <li v-for="(node, i) in trip.trip.nodes"
                 :key="i"
@@ -183,7 +181,14 @@
                       @input="node.departureDateMenu = false"
                     ></v-date-picker>
                   </v-menu>
-
+                  <v-btn icon>
+                    <v-icon 
+                      color="red lighten-1"
+                      @click="deleteNode(i)"
+                    >
+                      delete
+                    </v-icon>
+                  </v-btn>
                 </v-card>
               </v-timeline-item>
               <v-timeline-item
@@ -203,6 +208,12 @@
                       <v-icon color="error">arrow_right_alt</v-icon>
                     </div>
                   </div>
+                    <v-icon 
+                      color="red lighten-1"
+                      @click="deleteNode(i)"
+                    >
+                      delete
+                    </v-icon>
                 </v-card>
               </v-timeline-item>
             </li>
@@ -268,8 +279,8 @@
   import tripRepo from "../../repository/TripRepository";
   import {store} from "../../store/index";
   import draggable from 'vuedraggable';
-  import TripMap from "./TripMap.vue";
-  import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
+  // import TripMap from "./TripMap.vue";
+  // import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
   import PageHeader from "../common/header/PageHeader";
   import dateTime from "../common/dateTime/dateTime.js";
   import {
@@ -278,7 +289,7 @@
     rules
   } from "../form_rules";
   import {deepCopy} from "../../tools/deepCopy";
-  import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
+  import {getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
   import {RepositoryFactory} from "../../repository/RepositoryFactory";
 
   let tripRepository = RepositoryFactory.get("trip")
@@ -288,8 +299,8 @@
     store,
     components: {
       draggable,
-      TripMap,
-      UndoRedoButtons,
+      // TripMap,
+      // UndoRedoButtons,
       PageHeader
     },
     mixins: [RollbackMixin, StoreTripsMixin],
@@ -307,19 +318,19 @@
         isAdmin: store.getters.getIsUserAdmin,
         tripId: this.$route.params.trip_id,
         userId: this.$route.params.id,
-        is_inset: true,
+        isInset: true,
         trip: {
-          "root": {
+          root: {
             user: {},
-            "id": 1,
-            "name": "trip1"
+            id: this.$route.params.trip_id,
+            name: undefined
           },
-          "trip": {
+          trip: {
             id: undefined,
             name: undefined,
             nodes: []
           },
-          "navigation": []
+          navigation: []
         },
         userDestinations: [],
         shouldDisplayDialog: false,
@@ -412,10 +423,10 @@
       },
 
       /**
-       * Ensures the list of destinations ordinal value is up to date
+       * Ensures the list of nodes ordinal value is up to date
        */
-      setOrdinal(destinations) {
-        const copy = JSON.parse(JSON.stringify(destinations));
+      setOrdinal(nodes) {
+        const copy = deepCopy(nodes);
         copy.forEach((d, i) => {
           d.ordinal = i;
         });
@@ -463,7 +474,7 @@
             tripRepository
               .updateTrip(userId, tripId, trip)
               .then(() => {
-                const url = `/users/${userId}/trips/${tripId}`;
+                const url = `/users/${userId}/trips/${this.trip.root.id}`;
                 this.rollbackCheckpoint(
                   'PUT',
                   {
@@ -492,10 +503,10 @@
 
       /**
        * Redirects users page to the destination page of the provided destination id
-       * @param dest_id the id of the destination
+       * @param destId the id of the destination
        */
-      viewDestination(dest_id) {
-        this.$router.push("/user/" + this.userId + "/destinations/" + dest_id);
+      viewDestination(destId) {
+        this.$router.push("/user/" + this.userId + "/destinations/" + destId);
       },
 
       /**
@@ -510,10 +521,10 @@
           // });
 
           // Sorts the destinations ensure they are in the order of their ordinal
-          let ordered_dests = trip.trip.nodes.sort(function (a, b) {
+          let orderedDests = trip.trip.nodes.sort(function (a, b) {
             return a.ordinal - b.ordinal;
           });
-          trip.destinations = ordered_dests;
+          trip.destinations = orderedDests;
           // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
           for (let i = 0; i < trip.destinations.length; i++) {
             trip.destinations[i].expanded = false;
@@ -533,12 +544,11 @@
       },
 
       /**
-       * Deletes the given destination from the created/modified trip
+       * Deletes the given node from the created/modified trip
        */
-      deleteDestination: function (index) {
-        let newDestinations = JSON.parse(JSON.stringify(this.trip.destinations));
-        newDestinations.splice(index, 1);
-        this.trip.destinations = this.setOrdinal(newDestinations);
+      deleteNode: function (index) {
+        this.trip.trip.nodes.splice(index, 1);
+        this.trip.trip.nodes = this.setOrdinal(this.trip.trip.nodes);
       },
 
       /**
@@ -594,7 +604,7 @@
 
       getSelectedTrip(tripId) {
         this._getTrip(this.userId, tripId).then(() => {
-          this.trip = deepCopy(this.selected_trip);
+          this.trip = deepCopy(this.selectedTrip);
           this.trip.trip = this.tripWithDates(this.trip.trip);
           this.tripId = tripId;
         });
@@ -605,7 +615,7 @@
        * Undoes the last action and calls setDestination() afterwards
        */
       undo: function () {
-        const actions = [this.getTrip];
+        const actions = [() => this.getSelectedTrip(this.trip.root.id), () => this.rollbackSetPreviousBody(tripAssembler(this.trip))];
         this.rollbackUndo(actions);
       },
 
@@ -613,7 +623,7 @@
        * Redoes the last action and calls setDestination() afterwards
        */
       redo: function () {
-        const actions = [this.getTrip];
+        const actions = [() => this.getSelectedTrip(this.trip.root.id), () => this.rollbackSetPreviousBody(tripAssembler(this.trip))];
         this.rollbackRedo(actions);
       },
     },
@@ -627,7 +637,8 @@
         this.$router.go(-1);
       }
       this._getTrip(this.userId, this.tripId).then(() => {
-        this.trip = deepCopy(this.selected_trip);
+        this.trip = deepCopy(this.selectedTrip);
+        this.rollbackSetPreviousBody(tripAssembler(this.trip));
 
         // this.trip.trip.nodes.forEach((node, index) => {
         //   console.log("dest name on creation is" + node.destination.name);
