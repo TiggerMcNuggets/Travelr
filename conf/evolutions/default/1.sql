@@ -108,6 +108,7 @@ create table node (
   ordinal                       integer not null,
   parent_id                     bigint,
   user_id                       bigint,
+  user_group_id                 bigint,
   deleted                       boolean default false not null,
   destination_id                bigint,
   constraint pk_node primary key (id)
@@ -226,6 +227,9 @@ alter table node add constraint fk_node_parent_id foreign key (parent_id) refere
 create index ix_node_user_id on node (user_id);
 alter table node add constraint fk_node_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+create index ix_node_user_group_id on node (user_group_id);
+alter table node add constraint fk_node_user_group_id foreign key (user_group_id) references grouping (id) on delete restrict on update restrict;
+
 create index ix_node_destination_id on node (destination_id);
 alter table node add constraint fk_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
@@ -307,6 +311,9 @@ drop index if exists ix_node_parent_id;
 
 alter table node drop constraint if exists fk_node_user_id;
 drop index if exists ix_node_user_id;
+
+alter table node drop constraint if exists fk_node_user_group_id;
+drop index if exists ix_node_user_group_id;
 
 alter table node drop constraint if exists fk_node_destination_id;
 drop index if exists ix_node_destination_id;

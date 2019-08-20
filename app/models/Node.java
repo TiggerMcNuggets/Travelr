@@ -25,6 +25,12 @@ public abstract class Node extends BaseModel {
     @ManyToOne
     private User user;
 
+    /**
+     * The user group associated with the trip
+     */
+    @ManyToOne
+    public Grouping userGroup;
+
     public static final NodeFinder find = new NodeFinder();
 
     public Node(String name, User user) {
@@ -73,6 +79,14 @@ public abstract class Node extends BaseModel {
 
     public int getOrdinal() {
         return ordinal;
+    }
+
+    public Grouping getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(Grouping userGroup) {
+        this.userGroup = userGroup;
     }
 
     public void setOrdinal(int ordinal) {
