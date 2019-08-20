@@ -74,7 +74,7 @@ export default {
      * Deletes the user group
      */
     deleteUserGroup() {
-      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_delete`;
+      const url =  `/users/${this.$store.getters.getUser.id}/group/${this.usergroup.id}/toggle_deleted`;
       usergroupRepository.deleteSingleUserGroup(
         this.$store.getters.getUser.id,
         this.usergroup.id
