@@ -20,7 +20,7 @@ public class DeleteUserGroupSteps {
     @When("I want to remove the user group and all its members")
     public void i_want_to_remove_the_user_group_and_all_its_members() {
         state.getRequest().method("PUT");
-        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/group/%s/toggle_delete", state.getUser().getId(), state.getGroup().getId()));
+        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/group/%s/toggle_deleted", state.getUser().getId(), state.getGroup().getId()));
     }
 
     /**
