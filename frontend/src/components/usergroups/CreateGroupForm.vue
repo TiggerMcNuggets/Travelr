@@ -26,15 +26,22 @@
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-let usergroupRepository = RepositoryFactory.get("userGroup");
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
+  props: {
+    title: String,
+    album: Object,
+    updateUserGroups: Function
+  },
+
   data() {
     return {
       name: "",
       description: "",
       successful: false,
-      failure: false
+      failure: false,
+      failureMessage: ""
     };
   },
 
@@ -54,13 +61,14 @@ export default {
     createGroup() {
       this.successful = false;
       this.failure = false;
-      usergroupRepository
+      userGroupRepository
         .createUserGroup(this.$store.getters.getUser.id, {
           name: this.name,
           description: this.description
         })
         .then(() => {
           this.successful = true;
+          this.updateUserGroups();
         })
         .catch(error => {
           this.failure = true;

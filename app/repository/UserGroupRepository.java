@@ -11,6 +11,7 @@ import models.UserGroup;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -47,9 +48,11 @@ public class UserGroupRepository {
      */
     public CompletableFuture<Long> remove(Long groupId, Long memberId) {
         return supplyAsync(() -> {
-            UserGroup userGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
+            UserGroup userGroup = UserGroup.find.query().setIncludeSoftDeletes()
+                    .where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
             if (userGroup != null) {
-                userGroup.delete();
+                userGroup.setDeleted(!userGroup.isDeleted());
+                userGroup.update();
                 return userGroup.user.getId();
             }
             return null;
@@ -61,17 +64,15 @@ public class UserGroupRepository {
      * @param groupId The group id
      * @return The id of the deleted group otherwise null if not found.
      */
-    public CompletableFuture<Long> remove(Long groupId) {
+    public CompletableFuture<Long> removeGroupAndMembers(Long groupId) {
         return supplyAsync(() -> {
-            List<UserGroup> userGroupsToBeDeleted = UserGroup.find.query().where().eq("grouping_id", groupId).findList();;
-            for (UserGroup userGroup : userGroupsToBeDeleted) {
-                userGroup.delete();
-            }
 
-            Grouping groupToBeDeleted = Grouping.find.byId(groupId);
+            Grouping groupToBeDeleted =
+                    Grouping.find.findByIdWithSoftDeletes(groupId);
 
             if (groupToBeDeleted != null) {
-                groupToBeDeleted.delete();
+                groupToBeDeleted.setDeleted(!groupToBeDeleted.isDeleted());
+                groupToBeDeleted.update();
                 return groupToBeDeleted.getId();
             }
 
@@ -135,8 +136,18 @@ public class UserGroupRepository {
             if (user == null) throw new NotFoundException(APIResponses.GROUP_MEMBER_NOT_FOUND);
 
             // Check if member already belongs to group
-            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).findOne();
-            if (memberGroup != null) throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
+            UserGroup memberGroup = UserGroup.find.query().where().eq("user_id", memberId).eq("grouping_id", groupId).setIncludeSoftDeletes().findOne();
+            if (memberGroup != null) {
+
+                // Checks if the user is soft deleted and in the group already
+                if (memberGroup.isDeleted()) {
+                    memberGroup.setDeleted(!memberGroup.isDeleted());
+                    memberGroup.update();
+                    return null;
+                } else {
+                    throw new ForbiddenException(APIResponses.MEMBER_EXISTS_IN_GROUP);
+                }
+            }
 
             // Check that user is an admin or is the owner of the group
             UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
@@ -166,7 +177,50 @@ public class UserGroupRepository {
                     .fetch("userGroups.user.nationalities.nationality")
                     .where()
                     .eq("userGroups.user.id", userId)
+                    .and()
+                    .eq("userGroups.deleted", false)
+                    .orderBy("userGroups.user.id")
                     .findList()
         , context);
+    }
+
+    /**
+     *
+     * @param memberId
+     * @param groupId
+     * @return the group id if successfull, null otherwise
+     */
+    public CompletableFuture<Long> promoteUser(Long memberId, Long groupId) {
+        return supplyAsync(() -> {
+            Grouping group = Grouping.find.byId(groupId);
+
+            // Not found check
+            if (group == null) return null;
+
+            // Check if member already belongs to group
+            Optional<UserGroup> memberGroup = UserGroup.find.findByUserAndGroupId(memberId, groupId);
+            if (!memberGroup.isPresent()) {
+                return null;
+            }
+
+            UserGroup userGroup = memberGroup.get();
+
+            // Check if there is less than two members
+            List<UserGroup> userGroups = UserGroup
+                    .find
+                    .query()
+                    .where()
+                    .eq("grouping_id", groupId)
+                    .and()
+                    .eq("is_owner", true)
+                    .findList();
+
+            if (userGroups.size() < 2 && userGroup.isOwner()) throw new ForbiddenException("Cannot demote when only one owner left");
+
+            userGroup.setOwner(!userGroup.isOwner());
+            userGroup.update();
+            return group.id;
+
+            }, context);
     }
 }

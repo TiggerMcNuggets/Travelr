@@ -30,6 +30,24 @@ Feature: Create User Group
     }
     """
     And I send the request
+    Then I will receive the response code 201
+    And I will receive the response body
+    """
+    {
+      "id": 1
+    }
+    """
+
+  Scenario: Create a user group without description
+    Given I am authenticated
+    When I want to create a group
+    And The body is
+    """
+    {
+      "description": "The fam from SENG302 2019 YEET!"
+    }
+    """
+    And I send the request
     Then I will receive the response code 400
 
   Scenario: Create a user group when not logged in
