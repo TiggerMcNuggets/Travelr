@@ -68,24 +68,6 @@ export const isDemotable = (destinations, index) => {
     return ((parent.depth - child.depth) > -1 && (parentParent.depth - parent.depth) < 1);
 };
 
-
-// /**
-//  * Creates a trip object from the data passed that conforms with the API specs
-//  **/
-// export const tripAssembler = (tripBody) => {
-//     let trip = { name: tripBody.name, destinations: [] };
-//     tripBody.destinations.forEach((destination, index) => {
-//         trip.destinations.push({
-//             destination: {...destination.destination},
-//             ordinal: index,
-//             depth: destination.depth,
-//             arrivalDate: moment(destination.arrivalDate).unix(),
-//             departureDate: moment(destination.departureDate).unix()
-//         });
-//     });
-//     return trip;
-// };
-
 /**
  * Creates a trip object from the data passed that conforms with the API specs
  **/
