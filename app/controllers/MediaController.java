@@ -68,8 +68,6 @@ public class MediaController extends Controller {
 
         return albumRepository.list(album_id, ((user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
             PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
-            System.out.println("here");
-            System.out.println(media);
             return ok(Ebean.json().toJson(media, pathProperties));
         });
     }
