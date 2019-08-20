@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
@@ -59,7 +60,12 @@ public class DestinationController extends Controller {
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResponse = mapper.valueToTree(list);
-                    return created(jsonResponse);
+
+                    for (int i = 0; i < jsonResponse.size(); i++) {
+                        ((ObjectNode)jsonResponse.get(i)).remove("public");
+                    }
+
+                    return ok(jsonResponse);
                 });
     }
 
@@ -86,7 +92,9 @@ public class DestinationController extends Controller {
         Object response;
         response = new GetDestinationsRes(destination);
         ObjectMapper mapper = new ObjectMapper();
+
         JsonNode jsonResponse = mapper.valueToTree(response);
+        ((ObjectNode)jsonResponse).remove("public");
         return CompletableFuture.completedFuture(ok(jsonResponse));
     }
 
