@@ -68,6 +68,7 @@ Description: The purpose of this feature is to test the api endpoint related to 
       |   2     | Place Two  | 2           | 2             | 3            | 2     |
       |   3     | Place Three| 3           | 3             | 2            | 3     |
 
+
   Scenario: Edit another user's trip as an admin
     Given I am authenticated
     And I am an admin
@@ -177,6 +178,7 @@ Description: The purpose of this feature is to test the api endpoint related to 
     And I send the request
     Then I will receive the response code 400
 
+
   Scenario: Edit a trip with missing name field
   # TODO: Implement, (expect 400)
 
@@ -237,6 +239,7 @@ Description: The purpose of this feature is to test the api endpoint related to 
     """
     And I send the request
     Then I will receive the response code 401
+
 
   Scenario: Edit another user's trip as a normal user
     Given I am authenticated

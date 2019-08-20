@@ -99,6 +99,21 @@ create table nationality (
   constraint pk_nationality primary key (id)
 );
 
+create table node (
+  dtype                         varchar(31) not null,
+  id                            bigint auto_increment not null,
+  name                          varchar(255),
+  arrival_date                  integer not null,
+  departure_date                integer not null,
+  ordinal                       integer not null,
+  parent_id                     bigint,
+  user_id                       bigint,
+  user_group_id                 bigint,
+  deleted                       boolean default false not null,
+  destination_id                bigint,
+  constraint pk_node primary key (id)
+);
+
 create table personal_photo (
   id                            bigint auto_increment not null,
   user_id                       bigint,
@@ -230,6 +245,18 @@ alter table media_album add constraint fk_media_album_media foreign key (media_i
 create index ix_media_album_album on media_album (album_id);
 alter table media_album add constraint fk_media_album_album foreign key (album_id) references album (id) on delete restrict on update restrict;
 
+create index ix_node_parent_id on node (parent_id);
+alter table node add constraint fk_node_parent_id foreign key (parent_id) references node (id) on delete restrict on update restrict;
+
+create index ix_node_user_id on node (user_id);
+alter table node add constraint fk_node_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_node_user_group_id on node (user_group_id);
+alter table node add constraint fk_node_user_group_id foreign key (user_group_id) references grouping (id) on delete restrict on update restrict;
+
+create index ix_node_destination_id on node (destination_id);
+alter table node add constraint fk_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
+
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -315,6 +342,18 @@ drop index if exists ix_media_album_media;
 alter table media_album drop constraint if exists fk_media_album_album;
 drop index if exists ix_media_album_album;
 
+alter table node drop constraint if exists fk_node_parent_id;
+drop index if exists ix_node_parent_id;
+
+alter table node drop constraint if exists fk_node_user_id;
+drop index if exists ix_node_user_id;
+
+alter table node drop constraint if exists fk_node_user_group_id;
+drop index if exists ix_node_user_group_id;
+
+alter table node drop constraint if exists fk_node_destination_id;
+drop index if exists ix_node_destination_id;
+
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
@@ -369,6 +408,8 @@ drop table if exists media;
 drop table if exists media_album;
 
 drop table if exists nationality;
+
+drop table if exists node;
 
 drop table if exists personal_photo;
 

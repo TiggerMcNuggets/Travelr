@@ -37,7 +37,7 @@ public class Grouping extends BaseModel {
      * Associated trips for the group.
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    public List<Trip> associatedTrips;
+    public List<Node> associatedTrips;
 
 
     /**
@@ -102,7 +102,7 @@ public class Grouping extends BaseModel {
      * Adds a trip to the grouping trips
      * @param trip the trip to add
      */
-    public void addTrip(Trip trip) {
+    public void addTrip(Node trip) {
         this.associatedTrips.add(trip);
     }
 
@@ -110,7 +110,7 @@ public class Grouping extends BaseModel {
      * Removes a trip from the grouping associated trips
      * @param trip the trip to remove
      */
-    public void removeTrip(Trip trip) {
+    public void removeTrip(Node trip) {
         this.associatedTrips.remove(trip);
     }
 
@@ -118,7 +118,7 @@ public class Grouping extends BaseModel {
      * Get all trips associated with the grouping
      * @return the trips associated with the grouping
      */
-    public List<Trip> getTrips() {
+    public List<Node> getTrips() {
         return associatedTrips;
     }
 }

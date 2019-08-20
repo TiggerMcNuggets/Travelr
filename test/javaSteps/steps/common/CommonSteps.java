@@ -18,6 +18,7 @@ import play.test.Helpers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.route;
@@ -27,7 +28,7 @@ import static play.test.Helpers.route;
  */
 public class CommonSteps  {
 
-    // Singleton object that holds shared values across features
+    // Singleton objeI am not authenticatedct that holds shared values across features
     private StateSingleton state = StateSingleton.getInstance();
 
     @Given("I am authenticated")
@@ -68,15 +69,6 @@ public class CommonSteps  {
 
         // Remove public field as it only shows up in CI and is a duplicate of isPublic
         JsonNode res = Json.parse(contentAsString(state.getResult()));
-        if (res.isArray()) {
-            for (int i = 0; i < res.size(); i++) {
-                ((ObjectNode)(res.get(i))).remove("public");
-            }
-
-        } else {
-            ((ObjectNode)res).remove("public");
-        }
-
         Assert.assertEquals(Json.parse(resBody), res);
     }
 

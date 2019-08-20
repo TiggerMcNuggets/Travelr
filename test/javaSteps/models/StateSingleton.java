@@ -29,7 +29,7 @@ public class StateSingleton {
     private Media media;
     private Grouping group;
     private User groupMember;
-    private Trip trip;
+    private TripNode trip;
 
 
     private ArrayList<Destination> destinationList;
@@ -128,11 +128,11 @@ public class StateSingleton {
         this.media = media;
     }
 
-    public Trip getTrip() {
+    public TripNode getTrip() {
         return trip;
     }
 
-    public void setTrip(Trip trip) {
+    public void setTrip(TripNode trip) {
         this.trip = trip;
     }
 }
