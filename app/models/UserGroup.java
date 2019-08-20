@@ -1,6 +1,8 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import finders.GroupingFinder;
+import finders.UserGroupFinder;
 import io.ebean.Finder;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ public class UserGroup extends BaseModel {
     /**
      * The user grouping finder
      */
-    public static final Finder<Long, UserGroup> find = new Finder<>(UserGroup.class);
+    public static final UserGroupFinder find = new UserGroupFinder();
 
     /**
      * The grouping member

@@ -29,12 +29,19 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let usergroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
+  props: {
+    title: String,
+    album: Object,
+    updateUserGroups: Function
+  },
+
   data() {
     return {
       name: "",
       description: "",
       successful: false,
-      failure: false
+      failure: false,
+      failureMessage: ""
     };
   },
 
@@ -61,6 +68,7 @@ export default {
         })
         .then(() => {
           this.successful = true;
+          this.updateUserGroups();
         })
         .catch(error => {
           this.failure = true;

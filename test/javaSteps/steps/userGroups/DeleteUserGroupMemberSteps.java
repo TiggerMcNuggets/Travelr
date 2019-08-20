@@ -34,8 +34,8 @@ public class DeleteUserGroupMemberSteps {
      */
     @When("I want to remove the group member in the user group")
     public void i_want_to_remove_the_group_member_in_the_user_group() {
-        state.getRequest().method("DELETE");
-        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/group/%s/member/%s", state.getUser().getId(), state.getGroup().getId(), state.getGroupMember().getId()));
+        state.getRequest().method("PUT");
+        state.getRequest().uri(String.format("https://localhost:9000/api/users/%s/group/%s/member/%s/toggle_deleted", state.getUser().getId(), state.getGroup().getId(), state.getGroupMember().getId()));
     }
 
     /**
@@ -43,8 +43,9 @@ public class DeleteUserGroupMemberSteps {
      */
     @Then("The group member does not exist in the user group")
     public void the_group_member_does_not_exist_in_the_user_group() {
-        UserGroup deletedGroupMember = UserGroup.find.query().where().eq("user_id", state.getGroupMember().getId()).findOne();
-        Assert.assertNull(deletedGroupMember);
+        UserGroup deletedGroupMember = UserGroup.find.query().setIncludeSoftDeletes().where().eq("user_id", state.getGroupMember().getId()).findOne();
+        Assert.assertNotNull(deletedGroupMember);
+        Assert.assertTrue(deletedGroupMember.isDeleted());
     }
 
 }

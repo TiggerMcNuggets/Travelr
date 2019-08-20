@@ -12,18 +12,25 @@
     <v-layout row wrap>
       <v-flex xs12 sm4 md3 pr-4>
         <UserGroupList
+          :rollbackCheckpoint="rollbackCheckpoint"
           :selectUserGroup="selectUserGroup"
           :selectedGroup="selectedGroup"
           :usergroups="usergroups"
           :updateUserGroups="getUserGroups"
+          :checkpoint="rollbackCheckpoint"
         />
       </v-flex>
       <v-flex xs12 sm8 md9>
         <GroupUsersTable
-          :users="users"
+          :groupUsers="groupUsers"
+          :selectedGroup="selectedGroup"
           :name="selectedGroup.name"
           :deleteUser="deleteUser"
           :isError="isError"
+          :group="selectedGroup"
+          :getUserGroups="getUserGroups"
+          :isOwner="isOwner"
+          :checkIfUserIsOwner="checkIfUserIsOwner"
         />
       </v-flex>
     </v-layout>
@@ -36,7 +43,8 @@ import UserGroupList from "../components/usergroups/UserGroupNav";
 
 import PageHeader from "../components/common/header/PageHeader";
 import RollbackMixin from "../components/mixins/RollbackMixin.vue";
-import sampleUserGroups from "./usergroups.json";
+import { RepositoryFactory } from "../repository/RepositoryFactory";
+let userGroupRepository = RepositoryFactory.get("userGroup");
 
 export default {
   mixins: [RollbackMixin],
@@ -44,8 +52,9 @@ export default {
     return {
       search: "",
       isError: false,
-      selectedGroup: sampleUserGroups[0],
-      usergroups: sampleUserGroups,
+      selectedGroup: {id: null, name: null, description: null, owners: [], members: []},
+      usergroups: [],
+      isOwner: true
     };
   },
   components: {
@@ -55,9 +64,12 @@ export default {
   },
 
   computed: {
-    users() {
+    /**
+     * returns a list of members/users in the selected group
+     */
+    groupUsers() {
       return this.selectedGroup.members;
-    }
+    },
   },
 
   methods: {
@@ -66,22 +78,62 @@ export default {
      * Retrieves user groups from api
      */
     getUserGroups() {
-      // TODO: Connect to uesr groups endpoint
+      userGroupRepository.getGroupsForUser(this.$store.getters.getUser.id)
+      .then(result => {
+        this.usergroups = result.data;
+        this.selectedGroup = result.data.find((res) => res.id === this.selectedGroup.id);
+        if (!this.selectedGroup && result.data.length > 0) {
+          this.selectedGroup = result.data[0];
+        } else if (result.data.length == 0) {
+          this.selectedGroup = {id: null, name: null, description: null, owners: [], members: []};
+        }
+        this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
+      })
     },
 
+    /**
+     * Checks to see if the given user is an owner of the currently selected group
+     */
+    checkIfUserIsOwner(userId) {
+        if (this.selectedGroup.owners.length != 0) {
+          return this.selectedGroup.owners.some((owner) => owner === userId);
+        }
+    },
+
+    /**
+     * Sets the selected user group
+     */
     selectUserGroup(group) {
       this.selectedGroup = group;
+      this.isOwner = this.checkIfUserIsOwner(this.$store.getters.getUser.id);
+      // This is set to later be pushed as a reaction to the rollback stack
+      this.rollbackSetPreviousBody(group);
     },
 
     /**
      * Removes user from a user group
      * @param userId the id of the user group to remove
      */
-    async deleteUser() {
+    async deleteUser(groupId, memberId) {
       this.isError = false;
-      // TODO: Connect to delete user from group
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/toggle_deleted`;
 
-      this.getUserGroups();
+      userGroupRepository.removeUserInUserGroup(
+        this.$store.getters.getUser.id, 
+        groupId, 
+        memberId
+      ).then(() => {
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "DELETE",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
+      });
     },
 
     /**
@@ -100,6 +152,16 @@ export default {
       this.isError = false;
       const actions = [this.getUserGroups];
       this.rollbackRedo(actions);
+    },
+
+    /**
+     * Callback for rollback mixin rollbackCheckpoint function
+     * @param {string} type The original action http method
+     * @param {url: string, body: Object} actionBody The url and json body for the action request
+     * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
+     */
+    checkpoint: function(type, action, reaction) {
+        this.rollbackCheckpoint(type, action, reaction);
     }
   },
 
@@ -108,6 +170,7 @@ export default {
    */
   created: async function() {
     this.getUserGroups();
+    await this.$store.dispatch("getUsers", false);
     if (this.$store.getters.getIsUserAdmin) {
       this.isAdmin = true;
     }

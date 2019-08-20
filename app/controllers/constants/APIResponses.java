@@ -31,6 +31,7 @@ public class APIResponses {
     public static final String GROUP_NOT_FOUND = "Group not found";
     public static final String DUPLICATE_GROUP_NAME = "There is already a group with this name";
     public static final String MEMBER_EXISTS_IN_GROUP = "Member already exists in the group";
+    public static final String FAILED_TO_PROMOTE = "Failed to promote member to group owner";
 
 
 

@@ -48,7 +48,7 @@ export default {
    * @param {number} groupId The user group id
    */
   deleteSingleUserGroup(userId, groupId) {
-    return Repository.delete(`/users/${userId}/group/${groupId}`);
+    return Repository.put(`/users/${userId}/group/${groupId}/toggle_deleted`);
   },
 
   /**
@@ -57,9 +57,10 @@ export default {
    * @param {number} groupId The user group id
    * @param {number} memberId The id of the user to add to the group
    */
-  addUserToUserGroup(userId, groupId, memberId) {
+  addUserToUserGroup(userId, groupId, memberId, payload) {
     return Repository.post(
-      `/users/${userId}/group/${groupId}/member/${memberId}`
+      `/users/${userId}/group/${groupId}/member/${memberId}`,
+      payload
     );
   },
 
@@ -85,14 +86,12 @@ export default {
   },
 
   /**
-   * Removes a group member given a user and group id and the id of the user to remove.
+   * Toggles the deletion of a group member given a user and group id and the id of the user to remove.
    * @param {number} userId The user id
    * @param {number} groupId The user group id
    * @param {number} memberId The id of the user to remove in the group
    */
   removeUserInUserGroup(userId, groupId, memberId) {
-    return Repository.delete(
-      `/users/${userId}/group/${groupId}/member/${memberId}`
-    );
+    return Repository.put(`/users/${userId}/group/${groupId}/member/${memberId}/toggle_deleted`);
   }
 };
