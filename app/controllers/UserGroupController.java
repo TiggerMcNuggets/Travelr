@@ -51,12 +51,25 @@ public class UserGroupController extends Controller {
      * @param memberId the member id to be deleted
      * @return result of operation
      */
-    @Authorization.RequireAuth
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> removeGroupMember(Http.Request request, Long userId, Long groupId, Long memberId) {
-        // middleware stack
-        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
-        if (middlewareRes != null)
-            return middlewareRes;
+
+        User user = request.attrs().get(Attrs.USER);
+        Optional<UserGroup> userGroup =
+                Optional.ofNullable(
+                        UserGroup.find.query().where()
+                                .eq("user", user).eq("grouping_id", groupId).findOne()
+                );
+
+        // Can't find the user group in the database
+        if(!userGroup.isPresent()) {
+            return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+        // The user is not the owner of the user group and not an admin.
+        if (!userGroup.get().isOwner() && !user.isAdmin()) {
+            return completedFuture(forbidden(APIResponses.FORBIDDEN));
+        }
 
         return userGroupRepository.remove(groupId, memberId).thenApplyAsync(deletedUserId -> {
             if(deletedUserId == null) {
@@ -74,24 +87,21 @@ public class UserGroupController extends Controller {
      * @param groupId the group id
      * @return whether the deletion of the group was successful in the form of a request
      */
-    @Authorization.RequireAuth
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> deleteGroup(Http.Request request, Long userId, Long groupId) {
 
-        // middleware stack
-        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(request, userId);
-        if (middlewareRes != null)
-            return middlewareRes;
+        User user = request.attrs().get(Attrs.USER);
 
         UserGroup userGroup =
-                UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+                UserGroup.find.query().where().eq("user", user).eq("grouping_id", groupId).findOne();
 
         // Can't find the user group in the database
         if(userGroup == null) {
             return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
         }
 
-        // The user is not the owner of the user group.
-        if (!userGroup.isOwner()) {
+        // The user is not the owner of the user group and not an admin.
+        if (!userGroup.isOwner() && !user.isAdmin()) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
@@ -132,13 +142,12 @@ public class UserGroupController extends Controller {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
-
         return userGroupRepository.promoteUser(memberId, groupId).thenApplyAsync(group -> {
             if (group == null) {
                 return notFound(APIResponses.FAILED_TO_PROMOTE);
             }
             return ok(APIResponses.SUCCESSFUL_GROUP_UPDATE);
-        });
+        }).handle(AsyncHandler::handleResult);
 
     }
 
@@ -173,18 +182,22 @@ public class UserGroupController extends Controller {
             }
         }
 
-        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", userId).eq("grouping_id", groupId).findOne();
+        // Check to see if the person sending the request is in the group
+        User user = request.attrs().get(Attrs.USER);
+        UserGroup userGroup = UserGroup.find.query().where().eq("user_id", user.getId()).eq("grouping_id", groupId).findOne();
 
-        if (userGroup == null) {
+        // Check to see if grouping exists
+        Grouping grouping = Grouping.find.byId(groupId);
+
+        if (grouping == null) {
             return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
-        }
-        else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
+        } else if ((!isAdmin && userGroup == null) || (userGroup != null && !userGroup.isOwner())) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
-        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(grouping -> {
+        return userGroupRepository.updateUserGroup(userId, groupId, isAdmin, req).thenApplyAsync(updatedGrouping -> {
 
-            if (grouping == null) {
+            if (updatedGrouping == null) {
                 return notFound(APIResponses.GROUP_NOT_FOUND);
             }
 

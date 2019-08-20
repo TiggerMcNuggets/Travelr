@@ -422,6 +422,10 @@ export default {
       this.activeAlbumMetadata = null;
     },
 
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
     uploadToAlbum(albumId, file) {
       let formData = new FormData();
       formData.append("picture", file);

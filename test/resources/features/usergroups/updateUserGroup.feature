@@ -22,14 +22,14 @@ Feature: Update User Group
 
 
   Scenario: Edit an user group successfully for a user as an admin
-    Given I am authenticated
-    And I am an admin
-    And The user exists
+    Given The user exists
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
       | name         | description         |
       | Team 300     | The best team eva   |
+    And I am authenticated
+    And I am an admin
     When I want to edit the user group
     And The body is
     """
