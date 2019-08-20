@@ -2,8 +2,6 @@ package finders;
 
 import io.ebean.Finder;
 import models.Node;
-import models.PersonalPhoto;
-import models.Trip;
 
 import java.util.Optional;
 
