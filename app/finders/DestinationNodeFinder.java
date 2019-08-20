@@ -15,5 +15,14 @@ public class DestinationNodeFinder extends Finder<Long, DestinationNode> {
         return query().setIncludeSoftDeletes().where().eq("id", id).findOneOrEmpty();
     }
 
+    /**
+     * returns a list of destinations with the same parent trip
+     * @param id the id of the parent trip
+     * @return the destinations that have trip as their parent
+     */
+    public Optional<DestinationNode> findByParentId(Long id) {
+        return query().setIncludeSoftDeletes().where().eq("id", id).findOneOrEmpty();
+    }
+
 
 }
