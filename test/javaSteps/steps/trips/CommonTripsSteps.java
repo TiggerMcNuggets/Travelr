@@ -1,10 +1,8 @@
 package javaSteps.steps.trips;
 
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
 import javaSteps.models.StateSingleton;
 import models.*;
-import org.junit.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -80,11 +78,4 @@ public class CommonTripsSteps {
             dest.save();
         }
     }
-
-    @Then("The user has the trip")
-    public void the_trip_exists() {
-        Trip trip = Trip.find.query().where().eq("user", state.getUser()).findOne();
-        Assert.assertNotNull(trip);
-    }
-
 }

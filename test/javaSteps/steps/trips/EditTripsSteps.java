@@ -1,5 +1,6 @@
 
 package javaSteps.steps.trips;
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
@@ -44,6 +45,28 @@ public class EditTripsSteps {
             Assert.assertEquals(tripDestination.getName(), destInfo.get("customName"));
             Assert.assertEquals(tripDestination.getOrdinal(), Integer.parseInt(destInfo.get("arrivalDate")));
             Assert.assertEquals(tripDestination.getOrdinal(), Integer.parseInt(destInfo.get("departureDate")));
+        }
+    }
+
+    @Then("The trip's sub trips are")
+    public void the_trip_s_sub_trips_are(List<Map<String, String>> dataTable) {
+        List<Node> children = Node
+                .find
+                .query()
+                .where()
+                .eq("parent", state.getTrip()).findList();
+        Assert.assertEquals(children.size(), dataTable.size());
+
+        for (int i = 0; i < children.size(); i++) {
+            Assert.assertEquals(children.get(i).getName(), dataTable.get(i).get("name"));
+        }
+    }
+
+    @Given("I own the sub trips")
+    public void i_own_the_sub_trips(List<Map<String, String>> dataTable) {
+        for (Map<String, String> tripData : dataTable) {
+            TripNode newTrip = new TripNode(tripData.get("name"), state.getUser());
+            newTrip.insert();
         }
     }
 }
