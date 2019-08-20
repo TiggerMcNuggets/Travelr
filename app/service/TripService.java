@@ -225,6 +225,8 @@ public class TripService {
                     }
                 }
 
+                trip.save();
+
                 return trip;
 
             }).toCompletableFuture().join();
