@@ -132,13 +132,12 @@ public class UserGroupController extends Controller {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
-
         return userGroupRepository.promoteUser(memberId, groupId).thenApplyAsync(group -> {
             if (group == null) {
                 return notFound(APIResponses.FAILED_TO_PROMOTE);
             }
             return ok(APIResponses.SUCCESSFUL_GROUP_UPDATE);
-        });
+        }).handle(AsyncHandler::handleResult);
 
     }
 

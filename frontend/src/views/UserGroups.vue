@@ -31,6 +31,7 @@
           :getUserGroups="getUserGroups"
           :isOwner="isOwner"
           :checkIfUserIsOwner="checkIfUserIsOwner"
+          :togglePromoteUser="togglePromoteUser"
         />
       </v-flex>
     </v-layout>
@@ -134,6 +135,34 @@ export default {
           }
         );
       });
+    },
+
+    /**
+     * Sends a request to toggle the member's ownership status
+     * @param: memberId The member's id
+     */
+    togglePromoteUser(groupId, memberId) {
+      this.isError = false;
+      const url = `/users/${this.$store.getters.getUser.id}/group/${groupId}/member/${memberId}/promote`
+
+      userGroupRepository.togglePromoteUser(
+        this.$store.getters.getUser.id, 
+        groupId, 
+        memberId
+      ).then(() => {
+        this.getUserGroups();
+        this.rollbackCheckpoint(
+          "PUT",
+          {
+            url: url
+          },
+          {
+            url: url
+          }
+        );
+      }).catch(() => {
+        this.isError = true;
+      })
     },
 
     /**

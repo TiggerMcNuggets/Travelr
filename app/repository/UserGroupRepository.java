@@ -205,6 +205,18 @@ public class UserGroupRepository {
 
             UserGroup userGroup = memberGroup.get();
 
+            // Check if there is less than two members
+            List<UserGroup> userGroups = UserGroup
+                    .find
+                    .query()
+                    .where()
+                    .eq("grouping_id", groupId)
+                    .and()
+                    .eq("is_owner", true)
+                    .findList();
+
+            if (userGroups.size() < 2 && userGroup.isOwner()) throw new ForbiddenException("Cannot demote when only one owner left");
+
             userGroup.setOwner(!userGroup.isOwner());
             userGroup.update();
             return group.id;
