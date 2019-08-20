@@ -1,6 +1,12 @@
 <template>
   <v-container fluid>
-    <PageHeader :title="destination.name" disableUndoRedo enableBackButton :options="options"/>
+    <PageHeader
+      :title="destination.name"
+      disableUndoRedo
+      enableBackButton
+      :options="options"
+      :multiOptions="multiOptions"
+    />
 
     <v-layout row wrap>
       <v-flex md2 pr-3>
@@ -66,6 +72,7 @@
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import base_url from "../../repository/BaseUrl";
 import MediaUpload from "../media/MediaUpload";
+import PhotoSelect from "../photos/PhotoSelect";
 import SuggestTravellerTypes from "./destination_dialogs/SuggestTravellerTypes";
 import { store } from "../../store/index";
 import PageHeader from "../common/header/PageHeader";
@@ -80,7 +87,8 @@ export default {
     SuggestTravellerTypes,
     PageHeader,
     MediaGrid,
-    MediaUpload
+    MediaUpload,
+    PhotoSelect
   },
 
   // local variables
@@ -118,21 +126,6 @@ export default {
         options.push({ action: this.editDestination, icon: "edit" });
       }
 
-      if (this.isMyProfile || this.isAdminUser) {
-        options.push({
-          action: this.uploadExisting,
-          icon: "add_photo_alternate",
-          dropDown: true,
-          actions: [
-            { text: "Upload Existing", callback: () => this.uploadExisting }
-          ]
-        });
-        options.push({
-          action: this.uploadExisting,
-          icon: "add_photo_alternate"
-        });
-      }
-
       if (
         this.destination.isPublic &&
         this.destination.ownerId !== parseInt(this.userId)
@@ -143,6 +136,21 @@ export default {
         });
       }
 
+      return options;
+    },
+
+    multiOptions() {
+      let options = [];
+
+      if (this.isMyProfile || this.isAdminUser) {
+        options.push({
+          icon: "add_photo_alternate",
+          actions: [
+            { text: "Upload Existing", callback: this.uploadExisting },
+            { text: "Upload New", callback: this.toggleShowUploadPhoto }
+          ]
+        });
+      }
       return options;
     }
   },
@@ -204,7 +212,6 @@ export default {
           this.files = this.groupImages(result.data);
         })
         .catch(error => {
-          console.log(error);
           this.uploadError = true;
           this.errorText = error.response.data;
         });
@@ -228,6 +235,10 @@ export default {
      */
     uploadExisting() {
       this.chooseExistingDialog = true;
+    },
+
+    toggleShowUploadPhoto() {
+      this.showUploadSection = !this.showUploadSection;
     },
 
     /**
