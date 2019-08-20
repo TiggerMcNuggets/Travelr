@@ -105,8 +105,6 @@ export default {
       uploadError: false,
       chooseExistingDialog: false,
       uploadSuccessful: false,
-      errorText:
-        "You are trying to upload a duplicate image or an error occured while uploading.",
       showSuggestTravellerTypes: false,
       showUploadSection: false
     };
@@ -139,6 +137,9 @@ export default {
       return options;
     },
 
+    /**
+     * Multi options used in the header component.
+     */
     multiOptions() {
       let options = [];
 
@@ -205,15 +206,7 @@ export default {
       mediaRepository
         .uploadMediaToAlbum(this.userId, albumId, formData)
         .then(() => {
-          return getImages(this.userId, this.destination.defaultAlbumId);
-        })
-        .then(result => {
-          this.uploadExisting = true;
-          this.files = this.groupImages(result.data);
-        })
-        .catch(error => {
-          this.uploadError = true;
-          this.errorText = error.response.data;
+          return this.getDestinationImages();
         });
     },
 
