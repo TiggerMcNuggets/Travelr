@@ -4,59 +4,11 @@ Feature: Create Trip
 
   Scenario: Create a trip successfully
     Given I am authenticated
-    And The destinations are
-      | name         | latitude | longitude | type     | district   | country    |
-      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
-      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
-      | Small River  | 3.0      | 3.0       | River    | Otago      | New Zealand|
     When I want to create a trip
     And The body is
     """
     {
-      "name": "My Trip",
-      "description": "My Updated Description",
-      "destinations": [
-          {
-              "customName": "customName",
-              "ordinal": 0,
-              "depth": 0,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 1
-              }
-          },
-          {
-              "customName": "customName",
-              "ordinal": 2,
-              "depth": 1,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 3
-              }
-          },
-          {
-              "customName": "customName",
-              "ordinal": 2,
-              "depth": 1,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 2
-              }
-          },
-          {
-              "customName": "customName",
-              "ordinal": 3,
-              "depth": 0,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 3
-              }
-          }
-      ]
+      "name": "My Trip"
     }
     """
     And I send the request
@@ -67,7 +19,6 @@ Feature: Create Trip
       "id": 1
     }
     """
-    And The user has the trip
 
   Scenario: Create a trip for another user as an admin
     Given I am authenticated
@@ -84,50 +35,7 @@ Feature: Create Trip
     And The body is
     """
     {
-      "name": "My Trip",
-      "description": "My Updated Description",
-      "destinations": [
-          {
-              "customName": "customName",
-              "ordinal": 0,
-              "depth": 0,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 1
-              }
-          },
-          {
-              "customName": "customName",
-              "ordinal": 2,
-              "depth": 1,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 3
-              }
-          },
-          {
-              "customName": "customName",
-              "ordinal": 2,
-              "depth": 1,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 2
-              }
-          },
-          {
-              "customName": "customName",
-              "ordinal": 3,
-              "depth": 0,
-              "arrivalDate": 0,
-              "departureDate": 1,
-              "destination": {
-                  "id": 3
-              }
-          }
-      ]
+      "name": "My Trip"
     }
     """
     And I send the request
@@ -138,7 +46,6 @@ Feature: Create Trip
       "id": 1
     }
     """
-    And The user has the trip
 
 
   Scenario: Create a trip with only one destination

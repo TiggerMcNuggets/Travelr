@@ -12,83 +12,51 @@ Scenario: Get a trip successfully
     | name         | description |
     | My First Trip| A trip      |
   And The trip contains the trip destinations
-    | ordinal | customName | arrivalDate | departureDate | destinationId| depth |
-    |   1     | Place One  | 1           | 2             | 1            | 0     |
-    |   2     | Place Two  | 2           | 3             | 2            | 0     |
-    |   3     | Place Three| 3           | 4             | 3            | 0     |
+    | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+    | Destination 3 | destination | 1           | 2             | 0            | 1             |
   When I want to get the trip
   And I send the request
   Then I will receive the response code 200
   And I will receive the response body
-      """
-      {
-         "id":1,
-         "name":"My First Trip",
-         "description":"A trip",
-         "user":{
-            "firstName":"Test",
-            "lastName":"User",
-            "id":2
+  """
+  {"navigation":[
+      {"id":1,"name":"My First Trip"}
+    ],
+    "trip": {
+      "id":1,
+      "name":"My First Trip",
+      "nodes":[
+        {
+        "id":2,
+        "name":"Destination 3",
+        "arrivalDate":1,
+        "departureDate":2,
+        "ordinal":0,
+        "destination":{
+          "id":1,
+          "name":"Eiffel Tower",
+          "latitude":5.0,
+          "longitude":5.0,
+          "type":"Landmark",
+          "district":"Paris",
+          "country":"France",
+          "googleId":null
          },
-         "destinations":[
-            {
-               "id":1,
-               "depth":0,
-               "customName":"Place One",
-               "ordinal":1,
-               "arrivalDate":1,
-               "departureDate":2,
-               "destination":{
-                  "id":1,
-                  "name":"Eiffel Tower",
-                  "latitude":5.0,
-                  "longitude":5.0,
-                  "type":"Landmark",
-                  "district":"Paris",
-                  "country":"France",
-                  "googleId":null
-               }
-            },
-            {
-               "id":2,
-               "depth":0,
-               "customName":"Place Two",
-               "ordinal":2,
-               "arrivalDate":2,
-               "departureDate":3,
-               "destination":{
-                  "id":2,
-                  "name":"Big River",
-                  "latitude":3.0,
-                  "longitude":3.0,
-                  "type":"River",
-                  "district":"Canterbury",
-                  "country":"New Zealand",
-                  "googleId":null
-               }
-            },
-            {
-               "id":3,
-               "depth":0,
-               "customName":"Place Three",
-               "ordinal":3,
-               "arrivalDate":3,
-               "departureDate":4,
-               "destination":{
-                  "id":3,
-                  "name":"Small River",
-                  "latitude":3.0,
-                  "longitude":3.0,
-                  "type":"River",
-                  "district":"Otago",
-                  "country":"New Zealand",
-                  "googleId":null
-               }
-            }
-         ],
-         "published":false
+        "type":"destination"
+        }
+       ]
+      },
+      "root":{
+        "id":1,
+        "name":"My First Trip",
+        "user":{
+          "firstName":"Test",
+          "lastName":"User",
+          "id":2
+          }
+        }
       }
-      """
+  """
 
 Scenario: Get another user's trip as an admin
   Given I am authenticated
@@ -105,85 +73,93 @@ Scenario: Get another user's trip as an admin
     | name         | description |
     | My First Trip| A trip      |
   And The trip contains the trip destinations
-    | ordinal | customName | arrivalDate | departureDate | destinationId| depth |
-    |   1     | Place One  | 1           | 2             | 1            | 0     |
-    |   2     | Place Two  | 2           | 3             | 2            | 0     |
-    |   3     | Place Three| 3           | 4             | 3            | 0     |
+    | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+    | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+    | Big River     | destination | 4           | 6             | 1            | 2             |
+    | Small River   | destination | 10          | 22            | 2            | 3             |
   When I want to get the trip
   And I send the request
   Then I will receive the response code 200
   And I will receive the response body
-      """
+  """
+    {
+    "navigation":[
       {
-         "id":1,
-         "name":"My First Trip",
-         "description":"A trip",
-         "user":{
-            "firstName":"John",
-            "lastName":"Smith",
-            "id":3
+        "id":1,
+        "name":"My First Trip"
+      }],
+    "trip": {
+      "id":1,
+      "name":"My First Trip",
+      "nodes":[
+        {
+        "id":2,
+        "name":"Eiffel Tower",
+        "arrivalDate":1,
+        "departureDate":2,
+        "ordinal":0,
+        "destination":{
+          "id":1,
+          "name":"Eiffel Tower",
+          "latitude":5.0,
+          "longitude":5.0,
+          "type":"Landmark",
+          "district":"Paris",
+          "country":"France",
+          "googleId":null
+        },
+        "type":"destination"
+       },
+       {
+        "id":3,
+        "name":"Big River",
+        "arrivalDate":4,
+        "departureDate":6,
+        "ordinal":1,
+        "destination": {
+          "id":2,
+          "name":"Big River",
+          "latitude":3.0,
+          "longitude":3.0,
+          "type":"River",
+          "district":"Canterbury",
+          "country":"New Zealand",
+          "googleId":null
+        },
+        "type":"destination"
+      },
+      {
+        "id":4,
+        "name":"Small River",
+        "arrivalDate":10,
+        "departureDate":22,
+        "ordinal":2,
+        "destination": {
+          "id":3,
+          "name":"Small River",
+          "latitude":3.0,
+          "longitude":3.0,
+          "type":"River",
+          "district":"Otago",
+          "country":"New Zealand",
+          "googleId":null
          },
-         "destinations":[
-            {
-               "id":1,
-               "depth":0,
-               "customName":"Place One",
-               "ordinal":1,
-               "arrivalDate":1,
-               "departureDate":2,
-               "destination":{
-                  "id":1,
-                  "name":"Eiffel Tower",
-                  "latitude":5.0,
-                  "longitude":5.0,
-                  "type":"Landmark",
-                  "district":"Paris",
-                  "country":"France",
-                  "googleId":null
-               }
-            },
-            {
-               "id":2,
-               "depth":0,
-               "customName":"Place Two",
-               "ordinal":2,
-               "arrivalDate":2,
-               "departureDate":3,
-               "destination":{
-                  "id":2,
-                  "name":"Big River",
-                  "latitude":3.0,
-                  "longitude":3.0,
-                  "type":"River",
-                  "district":"Canterbury",
-                  "country":"New Zealand",
-                  "googleId":null
-               }
-            },
-            {
-               "id":3,
-               "depth":0,
-               "customName":"Place Three",
-               "ordinal":3,
-               "arrivalDate":3,
-               "departureDate":4,
-               "destination":{
-                  "id":3,
-                  "name":"Small River",
-                  "latitude":3.0,
-                  "longitude":3.0,
-                  "type":"River",
-                  "district":"Otago",
-                  "country":"New Zealand",
-                  "googleId":null
-               }
-            }
-         ],
-         "published":false
+         "type":"destination"
+        }]},
+      "root": {
+        "id":1,
+        "name":"My First Trip",
+        "user": {
+          "firstName":"John",
+          "lastName":"Smith",
+          "id":3
+        }
       }
-      """
+    }
+  """
 
-Scenario: Get a trip when not logged in
+
+  Scenario: Get a trip when not logged in
   Given I am not authenticated
   And The destinations are
     | name         | latitude | longitude | type     | district   | country    |
@@ -193,11 +169,11 @@ Scenario: Get a trip when not logged in
   And I own the trip
     | name         | description |
     | My First Trip| A trip      |
-  And The trip contains the trip destinations
-    | ordinal | customName | arrivalDate | departureDate | destinationId| depth |
-    |   1     | Place One  | 1           | 2             | 1            | 0     |
-    |   2     | Place Two  | 2           | 3             | 2            | 0     |
-    |   3     | Place Three| 3           | 4             | 3            | 0     |
+    And The trip contains the trip destinations
+    | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+    | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+    | Big River     | destination | 4           | 6             | 1            | 2             |
+    | Small River   | destination | 10          | 22            | 2            | 3             |
   When I want to get the trip
   And I send the request
   Then I will receive the response code 401
@@ -218,10 +194,10 @@ Scenario:Get another user's trip as a normal user
     | name         | description |
     | My First Trip| A trip      |
   And The trip contains the trip destinations
-    | ordinal | customName | arrivalDate | departureDate | destinationId| depth |
-    |   1     | Place One  | 1           | 2             | 1            | 0     |
-    |   2     | Place Two  | 2           | 3             | 2            | 0     |
-    |   3     | Place Three| 3           | 4             | 3            | 0     |
+    | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+    | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+    | Big River     | destination | 4           | 6             | 1            | 2             |
+    | Small River   | destination | 10          | 22            | 2            | 3             |
   When I want to get the trip
   And I send the request
   Then I will receive the response code 403
