@@ -102,7 +102,13 @@
           <v-icon>calendar_today</v-icon>
         </v-btn>
 
+
       </v-layout>
+      <v-container>
+        <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination
+          consecutive.
+        </v-alert>
+      </v-container>
       <v-timeline align-top dense>
         <draggable
           class="list-group"
@@ -184,7 +190,7 @@
               <v-timeline-item
                 v-else
                 color="red"
-                >
+              >
                 <v-card>
                   <v-text-field
                     class="v-timeline-trip-item-style"
@@ -193,10 +199,10 @@
                     :counter="60"
                     label="Trip Name"></v-text-field>
                   <div class="view-trip-button">
-                  <div v-on:click="getSelectedTrip(node.id)">
-                    <v-btn flat text small color="error" class="align-with-arrow">View Trip</v-btn>
-                    <v-icon color="error">arrow_right_alt</v-icon>
-                  </div>
+                    <div v-on:click="getSelectedTrip(node.id)">
+                      <v-btn flat text small color="error" class="align-with-arrow">View Trip</v-btn>
+                      <v-icon color="error">arrow_right_alt</v-icon>
+                    </div>
                   </div>
                 </v-card>
               </v-timeline-item>
@@ -206,13 +212,18 @@
       </v-timeline>
     </v-form>
     <!--<TripMap-->
-      <!--:nodes="trip.trip.nodes"-->
-      <!--class="trip-map"/>-->
+    <!--:nodes="trip.trip.nodes"-->
+    <!--class="trip-map"/>-->
   </v-container>
 
 </template>
 
 <style>
+  .same-dist-alert {
+    width: 32%;
+    margin-left: 0;
+  }
+
   .align-with-arrow {
     padding: 0px 0px 30px 30px;
     margin-right: 2px;
@@ -320,6 +331,7 @@
         isPromotable: isPromotable,
         isDemotable: isDemotable,
         arrivalDateMenu: false,
+        hasAdjacentIdentical: false,
 
         // rules
         ...rules,
@@ -424,39 +436,59 @@
       },
 
       /**
+       * Checks if we have any identical destinations that are consecutive before updating trip
+       */
+      noAdjacentIdenticalDestinations() {
+        for (let i = 0; i < (this.trip.trip.nodes.length - 1); i++) {
+          if ((this.trip.trip.nodes[i].type === 'destination') && (this.trip.trip.nodes[i + 1].type === 'destination')) {
+            if (this.trip.trip.nodes[i].destination.id === this.trip.trip.nodes[i + 1].destination.id) {
+              //same consecutive destination
+              return false;
+            }
+          }
+        }
+        return true;
+      },
+
+      /**
        * Checks if the update trip form passes validation
        * If it does then updates trip and updates the view trip page
        */
       updateTrip() {
-        if (this.$refs.form.validate()) {
+        if (this.noAdjacentIdenticalDestinations()) {
+          this.hasAdjacentIdentical = false;
+          if (this.$refs.form.validate()) {
+            const trip = tripAssembler(this.trip);
+            const userId = this.userId;
+            const tripId = parseInt(this.trip.trip.id);
+            tripRepository
+              .updateTrip(userId, tripId, trip)
+              .then(() => {
+                const url = `/users/${userId}/trips/${tripId}`;
+                this.rollbackCheckpoint(
+                  'PUT',
+                  {
+                    url: url,
+                    body: trip
+                  },
+                  {
+                    url: url,
+                    body: this.rollbackPreviousBody
+                  }
+                );
 
-          const trip = tripAssembler(this.trip);
-          const userId = this.userId;
-          const tripId = parseInt(this.trip.trip.id);
-          tripRepository
-            .updateTrip(userId, tripId, trip)
-            .then(() => {
-              const url = `/users/${userId}/trips/${tripId}`;
-              this.rollbackCheckpoint(
-                'PUT',
-                {
-                  url: url,
-                  body: trip
-                },
-                {
-                  url: url,
-                  body: this.rollbackPreviousBody
-                }
-              );
-
-              // Update previous body to be used for the next checkpoints reaction
-              this.rollbackSetPreviousBody(trip);
-              this.updateViewTripPage();
-            })
-            .catch(e => {
-              console.log(e);
-            });
+                // Update previous body to be used for the next checkpoints reaction
+                this.rollbackSetPreviousBody(trip);
+                this.updateViewTripPage();
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          }
+        } else {
+          this.hasAdjacentIdentical = true;
         }
+
       },
 
       /**
@@ -473,6 +505,11 @@
       updateViewTripPage: function () {
         tripRepo.getTrip(this.userId, this.tripId).then((result) => {
           let trip = result.data;
+
+          // trip.trip.nodes.nodes.forEach((node, index) => {
+          //   console.log("dest name is" + node.destination.name);
+          // });
+
           // Sorts the destinations ensure they are in the order of their ordinal
           let ordered_dests = trip.trip.nodes.sort(function (a, b) {
             return a.ordinal - b.ordinal;
@@ -592,6 +629,10 @@
       }
       this._getTrip(this.userId, this.tripId).then(() => {
         this.trip = deepCopy(this.selected_trip);
+
+        // this.trip.trip.nodes.forEach((node, index) => {
+        //   console.log("dest name on creation is" + node.destination.name);
+        // });
         this.trip.trip = this.tripWithDates(this.trip.trip);
 
 
