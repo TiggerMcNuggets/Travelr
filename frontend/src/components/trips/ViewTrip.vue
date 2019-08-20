@@ -269,8 +269,8 @@
   import tripRepo from "../../repository/TripRepository";
   import {store} from "../../store/index";
   import draggable from 'vuedraggable';
-  import TripMap from "./TripMap.vue";
-  import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
+  // import TripMap from "./TripMap.vue";
+  // import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
   import PageHeader from "../common/header/PageHeader";
   import dateTime from "../common/dateTime/dateTime.js";
   import {
@@ -279,7 +279,7 @@
     rules
   } from "../form_rules";
   import {deepCopy} from "../../tools/deepCopy";
-  // import {getChildrenCount, getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
+  import {getDepthData, isDemotable, isPromotable, tripAssembler} from "./trips_destinations_util"
   import {RepositoryFactory} from "../../repository/RepositoryFactory";
 
   let tripRepository = RepositoryFactory.get("trip")
