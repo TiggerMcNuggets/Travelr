@@ -188,7 +188,7 @@ public class UserGroupController extends Controller {
         if (userGroup == null) {
             return completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
         }
-        else if (!isAdmin && userGroup != null || !userGroup.isOwner()) {
+        else if (!isAdmin && userGroup != null && !userGroup.isOwner()) {
             return completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
