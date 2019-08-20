@@ -1,13 +1,17 @@
 package dto.trip;
 
+import play.data.validation.Constraints;
+
 import java.util.List;
 
 public class GetTripDTO {
 
     public long id;
 
+    @Constraints.Required
     public String name;
 
+    @Constraints.Required
     public List<NodeDTO> nodes;
 
     public long getId() {
