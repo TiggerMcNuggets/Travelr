@@ -1,51 +1,43 @@
-#Feature: Create Trip
-#  Description: The purpose of this feature is to test the api endpoint related to creating trips
-#
-#
-#  Scenario: Create a trip successfully
-#    Given I am authenticated
-#    When I want to create a trip
-#    And The body is
-#    """
-#    {
-#      "name": "My Trip"
-#    }
-#    """
-#    And I send the request
-#    Then I will receive the response code 201
-#    And I will receive the response body
-#    """
-#    {
-#      "id": 1
-#    }
-#    """
-#
-#  Scenario: Create a trip for another user as an admin
-#    Given I am authenticated
-#    And I am an admin
-#    And The user exists
-#      | first | last  | email               | dob |
-#      | John  | Smith | johnsmith@email.com | 1   |
-#    And The destinations are
-#      | name         | latitude | longitude | type     | district   | country    |
-#      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
-#      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
-#      | Small River  | 3.0      | 3.0       | River    | Otago      | New Zealand|
-#    When I want to create a trip
-#    And The body is
-#    """
-#    {
-#      "name": "My Trip"
-#    }
-#    """
-#    And I send the request
-#    Then I will receive the response code 201
-#    And I will receive the response body
-#    """
-#    {
-#      "id": 1
-#    }
-#    """
+Feature: Create Trip
+  Description: The purpose of this feature is to test the api endpoint related to creating trips
+
+  Scenario: Create a trip successfully
+    Given I am authenticated
+    When I want to create a trip
+    And The body is
+    """
+    {
+      "name": "My Trip"
+    }
+    """
+    And I send the request
+    Then I will receive the response code 201
+
+  Scenario: Create a trip for another user as an admin
+    Given I am authenticated
+    And I am an admin
+    When I want to create a trip
+    And The body is
+    """
+    {
+      "name": "My Trip"
+    }
+    """
+    And I send the request
+    Then I will receive the response code 201
+
+  Scenario: Create an invalid trip with no name
+    Given I am authenticated
+    And I am an admin
+    When I want to create a trip
+    And The body is
+    """
+    {
+    }
+    """
+    And I send the request
+    Then I will receive the response code 400
+
 #
 #
 #  Scenario: Create a trip with only one destination
