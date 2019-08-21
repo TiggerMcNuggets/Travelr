@@ -160,7 +160,7 @@ public class TripController extends Controller {
             if (success) {
                 return ok();
             } else {
-                return badRequest();
+                return notFound();
             }
         });
     }
