@@ -313,7 +313,7 @@ public class TripService {
     public CompletableFuture<Long> changeUserTripStatus(TripStatusDTO tripStatusDTO, User user, Node trip) {
         return supplyAsync(() -> {
 
-            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user_id", user.id).eq("node_id", trip.id).findOne();
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", user).eq("trip", trip).findOne();
             TripStatus tripStatus = TripStatus.valueOf(tripStatusDTO.getStatus());
 
             if (userStatus == null) {
@@ -324,7 +324,7 @@ public class TripService {
                 userStatus.update();
             }
 
-            List<Node> childrenDestinations = Node.find.query().where().eq("parent", trip).eq("type", "destination").findList();
+            List<Node> childrenDestinations = Node.find.query().where().eq("parent", trip).eq("dtype", "destination").findList();
 
             for (Node destinationNode : childrenDestinations) {
                 NodeUserStatus userDestStatus = NodeUserStatus.find.query().where().eq("user_id", user.id).eq("node_id", destinationNode.id).findOne();

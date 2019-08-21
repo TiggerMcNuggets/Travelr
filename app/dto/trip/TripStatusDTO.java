@@ -11,7 +11,7 @@ public class TripStatusDTO {
         return status;
     }
 
-    public void setStatus(String name) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -340,8 +340,10 @@ public class TripController extends Controller {
 
         TripStatusDTO tripStatusDTO = updateTripForm.get();
 
-        if (TripStatus.valueOf(tripStatusDTO.getStatus()) == null) {
-            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_STATUS_INVALID));
+        try {
+            TripStatus.valueOf(tripStatusDTO.getStatus());
+        } catch (IllegalArgumentException e) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.TRIP_STATUS_INVALID));
         }
 
         return tripService.changeUserTripStatus(tripStatusDTO, user.get(), node.get()).thenApplyAsync(id -> ok(APIResponses.TRIP_STATUS_UPDATED));
