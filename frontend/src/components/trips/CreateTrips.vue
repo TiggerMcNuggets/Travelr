@@ -390,7 +390,7 @@ export default {
     createTrip: function() {
       if (this.$refs.form.validate()) {
         const trip = this.tripAssembler();
-        const tripCreation = {name: this.trip.name};
+        const tripCreation = {name: trip.name};
         this._postTrip(this.id, tripCreation)
           .then(res => {
             this.checkpointCreateTrip(res.data.id)
@@ -413,6 +413,7 @@ export default {
       let trip = { name: this.trip.name, nodes: [] };
       this.trip.nodes.forEach((destination, index) => {
         trip.nodes.push({
+          name: destination.name ? destination.name : undefined, 
           ordinal: index,
           type: destination.isTrip ? 'trip': 'destination',
           destination: {...destination.destination}, 
