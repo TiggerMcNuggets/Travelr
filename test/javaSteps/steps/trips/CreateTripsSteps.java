@@ -19,7 +19,7 @@ public class CreateTripsSteps {
 
     @When("I want to add destinations to my trip which has id {int}")
     public void i_want_to_add_destinations_to_my_trip_which_had_id(int int1) {
-        Long tripId = new Long(int1);
+        Long tripId = Long.valueOf(int1);
         TripNode createdTrip = TripNode.find.byId(tripId);
         state.setTrip(createdTrip);
         state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/trips/%s", state.getUser().getId(), state.getTrip().getId())));
