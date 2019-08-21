@@ -53,6 +53,10 @@ export default {
   },
 
   computed: {
+
+    /**
+     * Returns true if user is admin, owner or media is public
+     */
     allowedToViewMedia() {
       return this.filteredMedia.filter((media) => {
         const isMyProfile = parseInt(store.getters.getUser.id) === parseInt(this.$route.params.id);
