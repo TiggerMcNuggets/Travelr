@@ -40,11 +40,11 @@ public class GetAlbumRes {
 
     public Boolean findPrivacy(List<Media> media) {
         for (Media mediaItem : media) {
-            if (!mediaItem.getIs_public()) {
-                return false;
+            if (mediaItem.getIs_public()) {
+                return true;
             }
         }
-        return true; 
+        return false;
     }
 
     /**
