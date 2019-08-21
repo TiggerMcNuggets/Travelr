@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card flat tile hover class="media-element" @click="openElement">
     <v-icon v-if="!media.is_public" class="lock-icon" left>lock</v-icon>
     <div v-if="!media.is_public" class="triangle"></div>
