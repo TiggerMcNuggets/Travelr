@@ -3,7 +3,6 @@ package controllers.actions;
 
 import controllers.SecurityController;
 import controllers.constants.APIResponses;
-import models.Trip;
 import models.User;
 import play.mvc.*;
 

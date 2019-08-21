@@ -1,19 +1,20 @@
 package service;
 
 import dto.trip.CreateTripDTO;
-import dto.trip.TripDTO;
-import dto.trip.TripDestinationDTO;
-import models.Destination;
-import models.Trip;
-import models.TripDestination;
-import models.User;
+import dto.trip.GetTripDTO;
+import dto.trip.NodeDTO;
+import exceptions.CustomException;
+import models.*;
+import play.mvc.Http;
 import repository.DatabaseExecutionContext;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
@@ -26,75 +27,16 @@ public class TripService {
     @Inject
     public TripService(DatabaseExecutionContext context) { this.context = context; }
 
-    public CompletableFuture<Trip> updateTrip(Long tripId, TripDTO tripDTO, User user) {
-        return supplyAsync(() -> {
-            Trip trip = Trip.find.byId(tripId);
-
-            if(trip == null) {
-                return null;
-            }
-
-            trip.setName(tripDTO.name);
-
-            for(TripDestination td: trip.getDestinations()) {
-                td.delete();
-            }
-            trip.setDestinations(new ArrayList<>());
-            trip.save();
-
-
-            ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
-
-            for(TripDestinationDTO destDTO : tripDTO.destinations) {
-                Destination destination = Destination.find.byId(destDTO.destination.id);
-
-                TripDestination tripDestination = new TripDestination(
-                        destDTO.customName,
-                        destDTO.ordinal,
-                        destDTO.depth,
-                        destDTO.arrivalDate,
-                        destDTO.departureDate,
-                        destination);
-
-                newTripDestinations.add(tripDestination);
-            }
-
-            trip.setDestinations(newTripDestinations);
-
-            trip.save();
-
-            return trip;
-        }, context);
-    }
-
     /**
-     * Creates a trip from a CreateTripDTO and sets the owner of the trip to user
+     * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to user
      * @param tripDTO
      * @param user
      * @return
      */
-    public CompletableFuture<Long> createTrip(TripDTO tripDTO, User user) {
+    public CompletableFuture<Long> createTrip(CreateTripDTO tripDTO, User user) {
         return supplyAsync(() -> {
 
-            Trip trip = new Trip(tripDTO.name, tripDTO.description, user);
-
-            ArrayList<TripDestination> newTripDestinations = new ArrayList<>();
-
-            for(TripDestinationDTO destDTO : tripDTO.destinations) {
-                Destination destination = Destination.find.byId(destDTO.destination.id);
-
-                TripDestination tripDestination = new TripDestination(
-                        destDTO.customName,
-                        destDTO.ordinal,
-                        destDTO.depth,
-                        destDTO.arrivalDate,
-                        destDTO.departureDate,
-                        destination);
-
-                newTripDestinations.add(tripDestination);
-            }
-
-            trip.setDestinations(newTripDestinations);
+            TripNode trip = new TripNode(tripDTO.name, user);
 
             trip.insert();
 
@@ -107,11 +49,59 @@ public class TripService {
      * @param tripId
      * @return
      */
-    public CompletableFuture<Trip> getTripById(Long tripId) {
+    public CompletableFuture<Optional<TripNode>> getTripById(Long tripId) {
         return supplyAsync(() -> {
 
-            return Trip.find.byId(tripId);
+            Optional<TripNode> trip = Optional.ofNullable(TripNode.find.byId(tripId));
 
+            return trip;
+
+        }, context);
+    }
+
+    /**
+     * Gets the children for a given trip Id
+     * Ordered by ordinal to remove as much logic as possible from frontend
+     * @param tripId
+     * @return
+     */
+    public CompletableFuture<List<Node>> getChildrenByTripId(Long tripId) {
+        return supplyAsync(() -> {
+
+            List<Node> tNodes = Node.find.query().where().eq("parent.id", tripId).orderBy().asc("ordinal").findList();
+
+            return tNodes;
+
+        }, context);
+
+    }
+
+    /**
+     * Creates a list that can be used for breadcrumbs on the frontend
+     * @param tripId of the currently viewed trip
+     * @return a list of TripNodes in order from top of the tree to the bottom
+     */
+    public CompletableFuture<List<TripNode>> getNavigationForTrip(Long tripId) {
+        return supplyAsync(() -> {
+
+            TripNode trip = TripNode.find.byId(tripId);
+
+            if(trip == null) {
+                return null;
+            }
+
+            ArrayList<TripNode> navigation = new ArrayList<>();
+
+            navigation.add(trip);
+
+            TripNode parentNode = trip.getParent();
+
+            while(parentNode != null) {
+                navigation.add(0, parentNode);
+                parentNode = parentNode.getParent();
+            }
+
+            return navigation;
         }, context);
     }
 
@@ -120,10 +110,156 @@ public class TripService {
      * @param userId
      * @return
      */
-    public CompletableFuture<List<Trip>> getTripsForUser(Long userId) {
+    public CompletableFuture<List<TripNode>> getTripsForUser(Long userId) {
         return supplyAsync(() -> {
-            return Trip.find.query().where().eq("user.id", userId).findList();
+            return TripNode.find.query().where().and().eq("user.id", userId).eq("parent", null).findList();
         }, context);
+    }
+
+    // TODO Adam: uncouple function from DTO??? unsure if possible or best practise at this point
+
+    /**
+     * updates a trips based on information chamnged by the user
+     * @param tripId trip to be updated
+     * @param tripDTO
+     * @param user user who owns the trip
+     * @return the updated trip
+     */
+    public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
+        return supplyAsync(() -> {
+
+
+            CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
+
+            CompletionStage<List<Node>> childrenStage = getChildrenByTripId(tripId);
+
+            return tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
+
+                /**
+                 * Check Trip Exists
+                 */
+                if(!tripNodeOptional.isPresent()) {
+                    throw new CustomException(Http.Status.NOT_FOUND, "Trip not found");
+                }
+
+                TripNode trip = tripNodeOptional.get();
+
+                /**
+                 * Check User can edit
+                 */
+                if(trip.getUser().getId() != user.getId()) {
+                    throw new CustomException(Http.Status.UNAUTHORIZED, "You do not have permission to update this trip");
+                }
+
+                trip.setName(tripDTO.name);
+
+
+                /**
+                 * Get list of old deleted children
+                 */
+                List<Long> oldDeletedIds = Node
+                        .find
+                        .query()
+                        .setIncludeSoftDeletes()
+                        .where()
+                        .eq("parent", trip)
+                        .eq("deleted", true)
+                        .findIds();
+
+                /**
+                 * Get Updated Ids
+                 */
+                List<Long> newNodeIds = new ArrayList<>();
+
+                if(tripDTO.getNodes() == null) {
+                    tripDTO.setNodes(new ArrayList<>());
+                }
+
+                for(NodeDTO node : tripDTO.getNodes()) {
+                    if(node.getId() == null) {
+                        if (node.getType().equals("trip")) {
+                            TripNode newNode = new TripNode(node.getName(), user);
+                            newNode.setParent(trip);
+                            newNode.save();
+                            node.setId(newNode.getId());
+
+                        } else {
+
+                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+                            if (!destination.isPresent()) {
+                                throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
+                            }
+
+                            DestinationNode newNode = new DestinationNode(node.getName(), user, destination.get());
+                            newNode.setParent(trip);
+                            newNode.save();
+
+                            node.setId(newNode.getId());
+                        }
+
+                    }
+
+                    else {
+                        if (oldDeletedIds.contains(node.getId())) {
+                            Optional<Node> optionalNode = Node.find.findByIdIncludeDeleted(node.getId());
+                            if (!optionalNode.isPresent()) {
+                                throw new CustomException(Http.Status.NOT_FOUND, "trip not found");
+                            }
+                            optionalNode.get().setDeleted(false);
+                            optionalNode.get().save();
+                        }
+
+                    }
+
+                    newNodeIds.add(node.getId());
+                }
+
+                for(Node oldNode : children) {
+                    if (!newNodeIds.contains(oldNode.getId())) {
+                        oldNode.delete();
+                    }
+                }
+
+
+
+                for (NodeDTO node : tripDTO.getNodes()) {
+                    if (node.type.toLowerCase().equals("trip")) {
+                        Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.getId()));
+                        if (!tNodeOptional.isPresent()) {
+                            throw new CustomException(Http.Status.NOT_FOUND, "Trip node not found");
+                        }
+                        TripNode tNode = tNodeOptional.get();
+                        tNode.setName(node.getName());
+                        tNode.setOrdinal(node.getOrdinal());
+                        tNode.update();
+                    } else {
+                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.getId()));
+                        if (!dNodeOptional.isPresent()) {
+                            throw new CustomException(Http.Status.NOT_FOUND, "Destination node not found");
+                        }
+                        DestinationNode dNode = dNodeOptional.get();
+                        dNode.setName(node.getName());
+                        dNode.setOrdinal(node.getOrdinal());
+                        dNode.setArrivalDate(node.getArrivalDate());
+                        dNode.setDepartureDate(node.getDepartureDate());
+
+                        Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(node.getDestination().getId()));
+                        if (!destinationOptional.isPresent()) {
+                            throw new CustomException(Http.Status.NOT_FOUND, "Destination for destination node not found");
+                        }
+                        dNode.setDestination(destinationOptional.get());
+
+                        dNode.update();
+                    }
+                }
+
+                trip.save();
+
+                return trip;
+
+            }).toCompletableFuture().join();
+        }, context);
+
     }
 
 
@@ -134,7 +270,7 @@ public class TripService {
      */
     public CompletableFuture<Boolean> deleteTrip(Long tripId) {
         return supplyAsync(() -> {
-            Trip trip = Trip.find.byId(tripId);
+            TripNode trip = TripNode.find.byId(tripId);
             if(trip != null) {
                 trip.delete();
 
@@ -153,10 +289,17 @@ public class TripService {
      */
     public CompletableFuture<Boolean> toggleTripDeleted(Long id) {
         return supplyAsync(() -> {
-            Trip trip = Trip.find.findByIdIncludeDeleted(id);
-            trip.setDeleted(!trip.isDeleted());
-            trip.update();
-            return trip.isDeleted();
+            Optional<TripNode> tripNodeOptional = TripNode.find.findByIdIncludeDeleted(id);
+
+            if(tripNodeOptional.isPresent()) {
+                TripNode tripNode = tripNodeOptional.get();
+                tripNode.setDeleted(!tripNode.isDeleted());
+                tripNode.update();
+                return tripNode.isDeleted();
+            }
+
+            return false;
+
         }, context);
     }
 }

@@ -15,6 +15,9 @@
              */
             trips() {
                 return this.$store.getters.getTrips;
+            },
+            selectedTrip() {
+                return this.$store.getters.getSelectedTrip;
             }
         },
 
@@ -28,6 +31,20 @@
             _getTrips: async function(userId) {
                 try {
                     await this.$store.dispatch('getTrips', {userId});
+                } catch (e) {
+                    console.log(e);
+                }
+            },
+
+            /**
+             * Gets a user's trip and saves to the store
+             * @param userId The user's id
+             * @param tripId The trip's id
+             * @returns {Promise<void>}
+             */
+            _getTrip: async function(userId, tripId) {
+                try {
+                    return await this.$store.dispatch('getTrip', {userId, tripId});
                 } catch (e) {
                     console.log(e);
                 }
@@ -80,7 +97,6 @@
 
         },
         async mounted() {
-            console.log('Created in dest mixin is called and userId =', this.userId);
             await this._getTrips(this.userId);
         },
     };
