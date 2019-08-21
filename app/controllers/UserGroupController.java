@@ -62,9 +62,18 @@ public class UserGroupController extends Controller {
                                 .eq("user", user).eq("grouping_id", groupId).findOne()
                 );
 
-        // The user is not the owner of the user group and not an admin.
-        if (!user.isAdmin() && (!userGroup.isPresent() || !userGroup.get().isOwner())) {
-            return completedFuture(forbidden(APIResponses.FORBIDDEN));
+        if(!user.isAdmin()) {
+            if(userGroup.isPresent()) {
+                if(userGroup.get().isOwner()) {
+                    if(user.getId() == memberId) {
+                        return completedFuture(forbidden(APIResponses.FORBIDDEN));
+                    }
+                } else {
+                    if(user.getId() != memberId) {
+                        return completedFuture(forbidden(APIResponses.FORBIDDEN));
+                    }
+                }
+            }
         }
 
         return userGroupRepository.remove(groupId, memberId).thenApplyAsync(deletedUserId -> {

@@ -38,15 +38,15 @@
               </li>
             </ul>
           </td>
-          <td v-if="isOwnerOrAdmin" class="text-xs-right">
+          <td class="text-xs-right">
             {{ isUserOwner(props.item.id) ? "Owner" : "Member" }} 
-            <v-btn flat icon @click="togglePromoteUser(group.id, props.item.id)">
+            <v-btn flat icon @click="togglePromoteUser(group.id, props.item.id)" v-if="isOwnerOrAdmin">
               <v-icon v-if="isOwnerOrAdmin">
                 {{ isUserOwner(props.item.id) ? "arrow_downward" : "arrow_upward" }}
               </v-icon>
             </v-btn>
           </td>
-          <td v-if="isOwnerOrAdmin" class="text-xs-right">
+          <td class="text-xs-right">
             <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(group.id, props.item.id)" v-if="isDeletable(props.item.id)">
               <v-icon>delete</v-icon>
             </v-btn>
@@ -144,7 +144,7 @@ export default {
      * Group owners cannot remove themselves from the group.
      */
     isDeletable(targetUserId) {
-      return !!(this.isOwnerOrAdmin && !this.checkIfUserIsOwner(targetUserId, this.group));
+      return !!((this.isOwnerOrAdmin && !this.checkIfUserIsOwner(targetUserId, this.group)) || targetUserId === this.$store.getters.getUser.id);
     }
   },
 
@@ -217,6 +217,8 @@ export default {
         id: user.id
       }));
     },
+
+
   }
 };
 </script>
