@@ -177,7 +177,7 @@ public class UserGroupController extends Controller {
 
         // Bad Request check
         for (Grouping grouping : Grouping.find.all()) {
-            if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(grouping)) {
+            if (grouping.getName().toLowerCase().equals(req.getName().toLowerCase()) && !grouping.getId().equals(grouping.getId())) {
                 return completedFuture(badRequest(APIResponses.BAD_REQUEST));
             }
         }
