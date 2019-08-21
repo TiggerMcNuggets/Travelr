@@ -3,9 +3,8 @@ package models;
 import finders.NodeFinder;
 import io.ebean.Finder;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Inheritance
@@ -26,10 +25,17 @@ public abstract class Node extends BaseModel {
     private User user;
 
     /**
-     * The user group associated with the trip
+     * The user group associated with the trip. Intentionally defaults to null.
      */
     @ManyToOne
     public Grouping userGroup;
+
+//    /**
+//     * The user statuses for trip attendance
+//     */
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    public List<NodeUserStatus> userStatuses;
+
 
     public static final NodeFinder find = new NodeFinder();
 
@@ -92,4 +98,28 @@ public abstract class Node extends BaseModel {
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
     }
+
+    /**
+     * Adds user status
+     * @param status the user status to add
+     */
+//    public void addStatus(NodeUserStatus status) {
+//        this.userStatuses.add(status);
+//    }
+//
+//    /**
+//     * Removes user status
+//     * @param status the user status to remove
+//     */
+//    public void removeStatus(NodeUserStatus status) {
+//        this.userStatuses.remove(status);
+//    }
+//
+//    /**
+//     * Get all status associated with the trip
+//     * @return the user statuses associated with the trip
+//     */
+//    public List<NodeUserStatus> getUserStatuses() {
+//        return userStatuses;
+//    }
 }

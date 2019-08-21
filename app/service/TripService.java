@@ -25,10 +25,14 @@ public class TripService {
     private DatabaseExecutionContext context;
 
     @Inject
-    public TripService(DatabaseExecutionContext context) { this.context = context; }
+    public TripService(DatabaseExecutionContext context) {
+        this.context = context;
+    }
 
     /**
-     * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to user
+     * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to
+     * user
+     *
      * @param tripDTO
      * @param user
      * @return
@@ -46,6 +50,7 @@ public class TripService {
 
     /**
      * Get a trip by Id
+     *
      * @param tripId
      * @return
      */
@@ -60,8 +65,9 @@ public class TripService {
     }
 
     /**
-     * Gets the children for a given trip Id
-     * Ordered by ordinal to remove as much logic as possible from frontend
+     * Gets the children for a given trip Id Ordered by ordinal to remove as much
+     * logic as possible from frontend
+     *
      * @param tripId
      * @return
      */
@@ -78,6 +84,7 @@ public class TripService {
 
     /**
      * Creates a list that can be used for breadcrumbs on the frontend
+     *
      * @param tripId of the currently viewed trip
      * @return a list of TripNodes in order from top of the tree to the bottom
      */
@@ -86,7 +93,7 @@ public class TripService {
 
             TripNode trip = TripNode.find.byId(tripId);
 
-            if(trip == null) {
+            if (trip == null) {
                 return null;
             }
 
@@ -96,7 +103,7 @@ public class TripService {
 
             TripNode parentNode = trip.getParent();
 
-            while(parentNode != null) {
+            while (parentNode != null) {
                 navigation.add(0, parentNode);
                 parentNode = parentNode.getParent();
             }
@@ -107,6 +114,7 @@ public class TripService {
 
     /**
      * Get all trips for a user
+     *
      * @param userId
      * @return
      */
@@ -116,18 +124,19 @@ public class TripService {
         }, context);
     }
 
-    // TODO Adam: uncouple function from DTO??? unsure if possible or best practise at this point
+    // TODO Adam: uncouple function from DTO??? unsure if possible or best practise
+    // at this point
 
     /**
      * updates a trips based on information chamnged by the user
-     * @param tripId trip to be updated
+     *
+     * @param tripId  trip to be updated
      * @param tripDTO
-     * @param user user who owns the trip
+     * @param user    user who owns the trip
      * @return the updated trip
      */
     public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
         return supplyAsync(() -> {
-
 
             CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
 
@@ -138,7 +147,7 @@ public class TripService {
                 /**
                  * Check Trip Exists
                  */
-                if(!tripNodeOptional.isPresent()) {
+                if (!tripNodeOptional.isPresent()) {
                     throw new CustomException(Http.Status.NOT_FOUND, "Trip not found");
                 }
 
@@ -147,8 +156,9 @@ public class TripService {
                 /**
                  * Check User can edit
                  */
-                if(trip.getUser().getId() != user.getId()) {
-                    throw new CustomException(Http.Status.UNAUTHORIZED, "You do not have permission to update this trip");
+                if (trip.getUser().getId() != user.getId()) {
+                    throw new CustomException(Http.Status.UNAUTHORIZED,
+                            "You do not have permission to update this trip");
                 }
 
                 trip.setName(tripDTO.name);
@@ -171,7 +181,7 @@ public class TripService {
                  */
                 List<Long> newNodeIds = new ArrayList<>();
 
-                if(tripDTO.getNodes() == null) {
+                if (tripDTO.getNodes() == null) {
                     tripDTO.setNodes(new ArrayList<>());
                 }
 
@@ -214,7 +224,7 @@ public class TripService {
                     newNodeIds.add(node.getId());
                 }
 
-                for(Node oldNode : children) {
+                for (Node oldNode : children) {
                     if (!newNodeIds.contains(oldNode.getId())) {
                         oldNode.delete();
                     }
@@ -243,9 +253,11 @@ public class TripService {
                         dNode.setArrivalDate(node.getArrivalDate());
                         dNode.setDepartureDate(node.getDepartureDate());
 
-                        Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(node.getDestination().getId()));
+                        Optional<Destination> destinationOptional = Optional
+                                .ofNullable(Destination.find.byId(node.getDestination().getId()));
                         if (!destinationOptional.isPresent()) {
-                            throw new CustomException(Http.Status.NOT_FOUND, "Destination for destination node not found");
+                            throw new CustomException(Http.Status.NOT_FOUND,
+                                    "Destination for destination node not found");
                         }
                         dNode.setDestination(destinationOptional.get());
 
@@ -262,9 +274,9 @@ public class TripService {
 
     }
 
-
     /**
      * Deletes a trip given an Id
+     *
      * @param tripId
      * @return true if successful deletion, false if not
      */
@@ -284,6 +296,7 @@ public class TripService {
 
     /**
      * Toggles the deletion of a trip given an Id
+     *
      * @param id
      * @return true if the trip is deleted
      */
@@ -291,7 +304,7 @@ public class TripService {
         return supplyAsync(() -> {
             Optional<TripNode> tripNodeOptional = TripNode.find.findByIdIncludeDeleted(id);
 
-            if(tripNodeOptional.isPresent()) {
+            if (tripNodeOptional.isPresent()) {
                 TripNode tripNode = tripNodeOptional.get();
                 tripNode.setDeleted(!tripNode.isDeleted());
                 tripNode.update();
@@ -302,4 +315,25 @@ public class TripService {
 
         }, context);
     }
+
+    /**
+     * Updates a Group value to the group property of a Trip object
+     * 
+     * @param trip  the Trip object
+     * @param group the Group object
+     * @return the Trip id of the user that has been updated
+     */
+    public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
+        return supplyAsync(() -> {
+            if (trip.getUserGroup() == null) {
+                trip.setUserGroup(group);
+            } else {
+                trip.setUserGroup(null);
+            }
+
+            trip.update();
+            return trip.getId();
+        }, context);
+    }
+
 }

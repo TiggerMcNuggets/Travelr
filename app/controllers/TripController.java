@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import dto.shared.CreatedDTO;
 import dto.trip.*;
 
@@ -308,5 +309,34 @@ public class TripController extends Controller {
         }
 
         return ok(Json.toJson(nodeDTOS));
+    }
+
+    /**
+     * Toggles a relation between a trip and a group
+     * @param request the http request
+     * @param tripId the id of the trip object
+     * @param userId the id of the user
+     * @param groupId the id of the group
+     * @return 200 for updating successfully, 404 for not found user/group/trip, 401 for unauthenticated, 403 for unauthorised
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> toggleGroupToTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
+        Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
+        Optional<Grouping> group = Optional.ofNullable(Grouping.find.byId(groupId));
+
+
+        if (!node.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+        if (!user.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRAVELLER_NOT_FOUND));
+        }
+        if (!group.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+
+        return tripService.toggleGroupInTrip(node.get(), group.get()).thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
     }
 }
