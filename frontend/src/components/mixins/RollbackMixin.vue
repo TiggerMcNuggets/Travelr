@@ -31,6 +31,14 @@ export default {
     },
 
     /**
+     * Pushes payload to stack
+     * @param payload The payload
+     */
+    pushStack: function(payload) {
+      this.rollbackManager.pushStack(payload);
+    },
+
+    /**
      * Sets the previous body to be used for a future reaction
      * @param {Object} previousBody The object to set the previous body to
      */

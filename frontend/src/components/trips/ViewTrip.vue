@@ -220,9 +220,6 @@
         </draggable>
       </v-timeline>
     </v-form>
-    <!--<TripMap-->
-    <!--:nodes="trip.trip.nodes"-->
-    <!--class="trip-map"/>-->
   </v-container>
 
 </template>
@@ -278,8 +275,6 @@
   import tripRepo from "../../repository/TripRepository";
   import {store} from "../../store/index";
   import draggable from 'vuedraggable';
-  // import TripMap from "./TripMap.vue";
-  // import UndoRedoButtons from '../common/rollback/UndoRedoButtons';
   import PageHeader from "../common/header/PageHeader";
   import dateTime from "../common/dateTime/dateTime.js";
   import {
@@ -298,8 +293,6 @@
     store,
     components: {
       draggable,
-      // TripMap,
-      // UndoRedoButtons,
       PageHeader
     },
     mixins: [RollbackMixin, StoreTripsMixin],
@@ -316,6 +309,7 @@
         hasMissingDates: true,
         isAdmin: store.getters.getIsUserAdmin,
         tripId: this.$route.params.trip_id,
+        previousTripId: undefined,
         userId: this.$route.params.id,
         isInset: true,
         trip: {
@@ -349,9 +343,13 @@
     },
 
     computed: {
+      /**
+       * Checks that no same destinations are consecutive
+       */
       noSameDestinationNameConsecutiveRule() {
         return noSameDestinationNameConsecutiveRule(this.trip.trip.nodes);
       },
+
       /**
        * A rule to enforce arrival and departure times are in a valid order.
        */
@@ -363,15 +361,16 @@
     },
     methods: {
 
-
+      /**
+       * Returns a color based on the node type
+       * @param the node ("destination or trip")
+       */
       getColor: function (node) {
         if (node.type === "destination") {
           return 'error';
         } else {
           return 'blue';
         }
-
-
       },
 
       /**
@@ -390,6 +389,10 @@
       },
 
 
+      /**
+       * Toggles the type of the node (trip or destination)
+       * @param index the index of the node
+       */
       changeNodeType(index) {
         const destinationType = this.trip.trip.nodes[index].type.toLowerCase() === 'destination';
         this.trip.trip.nodes[index].type = destinationType ? 'trip' : 'destination';
@@ -460,44 +463,80 @@
       },
 
       /**
-       * Checks if the update trip form passes validation
-       * If it does then updates trip and updates the view trip page
+       * Updates and refetches trip
+       * @param userId the user's id
+       * @param tripId the trip's id
+       * @param trip the trip body
        */
-      updateTrip() {
+      async updateTripAndPopulate(userId, tripId, trip) {
+        await tripRepository.updateTrip(userId, tripId, trip);
+        await this.updateViewTripPage(userId, tripId);
+      },
+
+      /**
+       * Updates and refetches trip and pushes to undo redo stack
+       */
+      async updateTrip() {
+        // Get request parameters and body
+        const userId = this.userId;
+        const tripId = parseInt(this.trip.trip.id);
+        let trip = tripAssembler(this.trip);
+
+        // Get undo request parameters and body
+        const previousTripId = this.previousTripId;
+        const rollbackPreviousBody = this.rollbackPreviousBody;
+
+        // Validate
         if (this.noAdjacentIdenticalDestinations()) {
           this.hasAdjacentIdentical = false;
           if (this.$refs.form.validate()) {
-            const trip = tripAssembler(this.trip);
-            const userId = this.userId;
-            const tripId = parseInt(this.trip.trip.id);
-            tripRepository
-              .updateTrip(userId, tripId, trip)
-              .then(() => {
-                const url = `/users/${userId}/trips/${this.trip.root.id}`;
-                this.rollbackCheckpoint(
-                  'PUT',
-                  {
-                    url: url,
-                    body: trip
-                  },
-                  {
-                    url: url,
-                    body: this.rollbackPreviousBody
-                  }
-                );
+            try {
 
-                // Update previous body to be used for the next checkpoints reaction
-                this.rollbackSetPreviousBody(trip);
-                this.updateViewTripPage();
-              })
-              .catch(e => {
-                console.log(e);
-              });
+              await this.updateTripAndPopulate(userId, tripId, trip);
+
+              // Add to undo redo stack
+              trip = tripAssembler(this.trip);
+              let checkpoint = {
+                action: async () => await this.updateTripAndPopulate(userId, tripId, trip),
+                reaction: async () => await this.updateTripAndPopulate(userId, previousTripId, rollbackPreviousBody),
+              };
+              this.pushStack(checkpoint);
+              this.rollbackSetPreviousBody(trip);
+              this.previousTripId = tripId;
+            } catch(e) {
+              console.log(e);
+            }
           }
         } else {
           this.hasAdjacentIdentical = true;
         }
+      },
 
+      async updateViewTripPage(userId, tripId) {
+        const result = await tripRepo.getTrip(userId, tripId);
+        let trip = result.data;
+
+        // Sorts the destinations ensure they are in the order of their ordinal
+        let orderedDests = trip.trip.nodes.sort(function (a, b) {
+          return a.ordinal - b.ordinal;
+        });
+
+        trip.destinations = orderedDests;
+        // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
+        for (let i = 0; i < trip.destinations.length; i++) {
+          trip.destinations[i].expanded = false;
+          if (trip.destinations[i].arrivalDate) {
+            trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
+          } else {
+            trip.destinations[i].arrivalDate = null;
+          }
+          if (trip.destinations[i].departureDate) {
+            trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
+          } else {
+            trip.destinations[i].departureDate = null;
+          }
+        }
+        this.trip = trip;
       },
 
       /**
@@ -508,39 +547,6 @@
         this.$router.push("/user/" + this.userId + "/destinations/" + destId);
       },
 
-      /**
-       * Invoked by child component create-trip once the trip has been modified, is passed as prop
-       */
-      updateViewTripPage: function () {
-        tripRepo.getTrip(this.userId, this.tripId).then((result) => {
-          let trip = result.data;
-
-          // trip.trip.nodes.nodes.forEach((node, index) => {
-          //   console.log("dest name is" + node.destination.name);
-          // });
-
-          // Sorts the destinations ensure they are in the order of their ordinal
-          let orderedDests = trip.trip.nodes.sort(function (a, b) {
-            return a.ordinal - b.ordinal;
-          });
-          trip.destinations = orderedDests;
-          // Converts the timestamps from unix utc to locale time. If the timestamp is null allows it to remain null.
-          for (let i = 0; i < trip.destinations.length; i++) {
-            trip.destinations[i].expanded = false;
-            if (trip.destinations[i].arrivalDate) {
-              trip.destinations[i].arrivalDate = dateTime.convertTimestampToString(trip.destinations[i].arrivalDate);
-            } else {
-              trip.destinations[i].arrivalDate = null;
-            }
-            if (trip.destinations[i].departureDate) {
-              trip.destinations[i].departureDate = dateTime.convertTimestampToString(trip.destinations[i].departureDate);
-            } else {
-              trip.destinations[i].departureDate = null;
-            }
-          }
-          this.trip = trip;
-        });
-      },
 
       /**
        * Deletes the given node from the created/modified trip
@@ -614,7 +620,7 @@
        * Undoes the last action and calls setDestination() afterwards
        */
       undo: function () {
-        const actions = [() => this.getSelectedTrip(this.trip.root.id), () => this.rollbackSetPreviousBody(tripAssembler(this.trip))];
+        const actions = [];
         this.rollbackUndo(actions);
       },
 
@@ -622,7 +628,7 @@
        * Redoes the last action and calls setDestination() afterwards
        */
       redo: function () {
-        const actions = [() => this.getSelectedTrip(this.trip.root.id), () => this.rollbackSetPreviousBody(tripAssembler(this.trip))];
+        const actions = [];
         this.rollbackRedo(actions);
       },
     },
@@ -638,17 +644,10 @@
       this._getTrip(this.userId, this.tripId).then(() => {
         this.trip = deepCopy(this.selectedTrip);
         this.rollbackSetPreviousBody(tripAssembler(this.trip));
+        this.previousTripId = this.trip.trip.id;
 
-        // this.trip.trip.nodes.forEach((node, index) => {
-        //   console.log("dest name on creation is" + node.destination.name);
-        // });
         this.trip.trip = this.tripWithDates(this.trip.trip);
-
-
       });
-      // this._getTrip(this.userId, this.tripId).then((trip) => this.rollbackSetPreviousBody(tripAssembler(trip)));
-
-
     }
-  };
+  }
 </script>
