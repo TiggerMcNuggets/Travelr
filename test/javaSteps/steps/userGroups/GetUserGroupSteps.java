@@ -17,5 +17,12 @@ public class GetUserGroupSteps {
         state.getRequest().method("GET");
     }
 
-
+    /**
+     * Sets the request for getting a user group
+     */
+    @When("I want to get all user groups")
+    public void i_want_to_get_all_user_groups() {
+        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/group", state.getUser().getId())));
+        state.getRequest().method("GET");
+    }
 }
