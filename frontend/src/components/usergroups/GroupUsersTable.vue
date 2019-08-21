@@ -7,10 +7,6 @@
       :v-model="selectedUserId"
       v-on:change="selectUser"
       ></v-autocomplete>
-      <v-checkbox
-        v-model="isMaintainer"
-        label="Group Admin"
-      ></v-checkbox>
       <v-btn
         color="error"
         v-on:click="addUserToGroup">
