@@ -36,7 +36,7 @@ public class TripService {
     public CompletableFuture<Long> createTrip(CreateTripDTO tripDTO, User user) {
         return supplyAsync(() -> {
 
-            TripNode trip = new TripNode(tripDTO.name, user);
+            TripNode trip = new TripNode(tripDTO.getName(), user);
 
             trip.insert();
 
