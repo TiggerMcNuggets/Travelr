@@ -19,6 +19,9 @@ http://csse-s302g3.canterbury.ac.nz:443/
 
 To access the latest development version of the application:
 http://csse-s302g3.canterbury.ac.nz:8443/ 
+
+### Email Notifications
+Before using email notifications you will need email Flynn at frd15@uclive.ac.nz. Then you must accept an invitation email from 'Mail Gun' to be authorized.
     
 ## Running the Project (Lab Machine)
 To run the project for **production**:
