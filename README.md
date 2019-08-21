@@ -38,3 +38,9 @@ To run the project for **development**:
 4. Once the backend is built and running, navigate to: `localhost:9000`
 5. To run the **frontend**, navigate to `/frontend` and run the commands: `npm install` and `npm run serve`
 6. Navigate to: `localhost:8080` OR whatever the console states when running the previous command
+
+
+## Admin Login:
+
+Username: admin@admin.com  
+Password: sprint5
