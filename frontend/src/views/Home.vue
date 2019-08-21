@@ -5,7 +5,7 @@
         <v-flex col sm6 pa-5 ma-3 mt-5 ml-5>
           <div class="heading-container">
             <img class="home__logo" src="../assets/logo2_dark.png" />
-            <h3 mt-2 class="home__tagline">Taking the hassle out of your next business trip</h3>
+            <h3 mt-2 class="home__tagline">Business trips made easy</h3>
           </div>
           <router-view class="home__login_area"></router-view>
         </v-flex>
