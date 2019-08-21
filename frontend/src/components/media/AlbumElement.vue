@@ -21,8 +21,8 @@
         </v-menu>
       </v-flex>
       <v-card flat tile @click="openElement">
-        <v-icon v-if="!album.public" class="lock-icon" left>lock</v-icon>
-        <div v-if="!album.public" class="triangle"></div>
+        <v-icon v-if="!album.isPublic" class="lock-icon" left>lock</v-icon>
+        <div v-if="!album.isPublic" class="triangle"></div>
         <div class="grid-4-container">
           <v-img
             v-for="(thumbnail, id) in albumThumbnails"
@@ -118,7 +118,7 @@ export default {
      * Returns if the user has edit permissions
      */
     hasEditPermissions: function() {
-      let isMyProfile = store.getters.getUser.id == this.userId;
+      let isMyProfile = parseInt(store.getters.getUser.id) === parseInt(this.$route.params.id);
       let isAdminUser = store.getters.getIsUserAdmin;
       return isMyProfile || isAdminUser
     }

@@ -1,7 +1,7 @@
 <template>
   <v-container v-bind="{ [`grid-list-xl`]: true }" fluid pt-2 pl-0 pr-0>
     <v-layout row wrap>
-      <v-flex v-for="(item, index) in filteredMedia" :key="index" xs12 sm6 md4 lg3 xl2>
+      <v-flex v-for="(item, index) in allowedToViewMedia" :key="index" xs12 sm6 md4 lg3 xl2>
         <AlbumElement
           v-if="item.content"
           :album="item"
@@ -27,10 +27,11 @@
 import AlbumElement from "./AlbumElement";
 import MediaElement from "./MediaElement";
 import base_url from "../../repository/BaseUrl";
+import {store} from "../../store";
 
 export default {
   name: "MediaGrid",
-
+  store,
   props: {
     filteredMedia: Array,
     viewingAlbum: Boolean,
@@ -51,7 +52,23 @@ export default {
     };
   },
 
+  computed: {
+
+    /**
+     * Returns true if user is admin, owner or media is public
+     */
+    allowedToViewMedia() {
+      return this.filteredMedia.filter((media) => {
+        const isMyProfile = parseInt(store.getters.getUser.id) === parseInt(this.$route.params.id);
+        const isAdminUser = store.getters.getIsUserAdmin;
+        const publicMedia = media.content ? media.isPublic : media.is_public;
+        return isMyProfile || isAdminUser || publicMedia;
+      })
+    }
+  },
+
   methods: {
+
     /**
      * Gets the image src url for the server
      * @param filename The photo item to get the image for.
