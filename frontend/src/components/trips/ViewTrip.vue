@@ -75,7 +75,6 @@
           </template>
           <span>Update trip</span>
         </v-tooltip>
-
         <v-tooltip v-if="hasMissingDates && canDownloadTrip" bottom>
           <template v-slot:activator="{on}">
             <v-btn
@@ -92,7 +91,6 @@
         <v-btn
           v-else-if="!canDownloadTrip"
           icon
-          disabled
           flat
           @click="downloadTrip()">
           <v-icon>calendar_today</v-icon>
@@ -385,7 +383,7 @@
           const url = window.URL.createObjectURL(new Blob([res.data]));
           const link = document.createElement('a');
           link.href = url;
-          link.setAttribute('download', `${this.trip.name}.ics`);
+          link.setAttribute('download', `${this.trip.trip.name}.ics`);
           document.body.appendChild(link);
           link.click();
         });
