@@ -72,11 +72,7 @@ Feature: Delete User Group
       | Team 300     | The best team eva   |
     When I want to remove the user group and all its members
     And I send the request
-    Then I will receive the response code 404
-    And I will receive the response body text
-      """
-      Group not found
-      """
+    Then I will receive the response code 403
 
   Scenario: Delete an user group when not its owner
     Given I am authenticated

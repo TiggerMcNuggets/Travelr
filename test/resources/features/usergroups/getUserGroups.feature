@@ -232,8 +232,65 @@ Feature: Get User Groups
     ]
     """
 
+  Scenario: Get all groups on the website when logged in as an admin
+    Given I am authenticated
+    And I am an admin
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    And They own the user group
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    When I want to get all user groups
+    And I send the request
+    Then I will receive the response code 200
+    And I will receive the response body
+    """
+    [
+       {
+          "id":1,
+          "name":"Team 300",
+          "description":"The best team eva",
+          "owners":[
+             3
+          ],
+          "members":[
+             {
+                "id":3,
+                "firstName":"John",
+                "middleName":null,
+                "lastName":"Smith",
+                "dateOfBirth":1,
+                "gender":"Male",
+                "nationalities":[
 
-  Scenario: Do not get group that I am not a part off
+                ],
+                "travellerTypes":[
+
+                ],
+                "userProfilePhoto":"defaultPic.png",
+                "defaultAlbumId":3
+             }
+          ]
+       }
+    ]
+    """
+
+
+  Scenario: Do not get all groups when I am not an admin
+    Given I am authenticated
+    And The user exists
+      | first | last  | email               | dob |
+      | John  | Smith | johnsmith@email.com | 1   |
+    And They own the user group
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    When I want to get all user groups
+    And I send the request
+    Then I will receive the response code 403
+
+
+  Scenario: Do not get group that I am not a part of
     Given The user exists
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
