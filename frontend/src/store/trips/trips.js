@@ -91,8 +91,8 @@ export default {
          * @param {Object} state
          * @returns {Object}
          */
-        getSelectedTrip: state => {
-            return state.selectedTrip;
-        },
+        // getSelectedTrip: state => {
+        //     return state.selectedTrip;
+        // },
     },
 }

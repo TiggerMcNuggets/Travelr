@@ -4,6 +4,7 @@ import { store } from "../store/index";
 
 // Components
 import Trips from "../components/trips/Trips";
+import Trip from "../views/Trip";
 import Profile from "../components/profile/Profile";
 import userSearch from "../components/userSearch/userSearch";
 import Signup from "../components/signup/Signup.vue";
@@ -171,7 +172,7 @@ let router = new Router({
         {
           path: "/user/:id/trips/:trip_id",
           name: "view-trip",
-          component: ViewTrip
+          component: Trip
         },
         {
           path: "media",
@@ -209,7 +210,12 @@ let router = new Router({
           name: "userSearch",
           component: userSearch,
           beforeEnter: authGuard
-        }
+        },
+        {
+          path: "trip",
+          name: "travellerTrips",
+          component: Trips
+        },
       ]
     },
 
