@@ -10,6 +10,10 @@
         <h3 class="headline font-weight-light traveller-name">{{fname}} {{mname}} {{lname}}</h3>
         <p class="caption font-weight-light">{{traveller.email}}</p>
       </div>
+
+      <a href="https://slack.com/oauth/authorize?scope=incoming-webhook,commands,admin,channels:write,team:read&client_id=737773912711.735910477760&redirect_uri=http://localhost:8080">
+        <img alt="Add to Slack" height="40" src="../../assets/connect_slack.png"/>
+      </a>
     </v-flex>
 
     <v-container fluid>
