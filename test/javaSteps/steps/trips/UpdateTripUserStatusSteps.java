@@ -5,6 +5,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import models.DestinationNode;
+import models.Node;
 import models.NodeUserStatus;
 import models.TripStatus;
 import org.junit.Assert;
@@ -30,25 +31,24 @@ public class UpdateTripUserStatusSteps {
         Assert.assertEquals(TripStatus.valueOf(status), userStatus.getTripStatus());
     }
 
-//    @Given("the trip has a destination")
-//    public void the_trip_has_a_destination(List<Map<String, String>> dataTable) {
-//        Map<String, String> destInfo = dataTable.get(0);
-//        DestinationNode dest = new DestinationNode(destInfo.get("name"))
-//        Map<String, String> albumInfo = dataTable.get(0);
-//
-//        Assert.assertEquals(albumInfo.get("name"), grouping.getName());
-//        Assert.assertEquals(albumInfo.get("description"), grouping.getDescription());
-//    }
-
     @Given("the trip has this destination added as a part of the trip")
     public void the_trip_has_this_destination_added_as_a_part_of_the_trip() {
+        DestinationNode dest_node = new DestinationNode("Custom Destination 2 Name", state.getUser(), state.getDestination());
+        dest_node.setOrdinal(0);
 
+        dest_node.setParent(state.getTrip());
+        dest_node.save();
     }
 
-
     @Then("the status for the sub destination are also {string}")
-    public void the_status_for_the_sub_destination_are_also(List<Map<String, String>> dataTable) {
-        throw new cucumber.api.PendingException();
+    public void the_status_for_the_sub_destination_are_also(String status) {
+        List< Node > childrenDestinations = Node.find.query().where().eq("parent", state.getTrip()).eq("dtype", "destination").findList();
+
+        for (Node destinationNode : childrenDestinations) {
+            NodeUserStatus userDestStatus = NodeUserStatus.find.query().where().eq("user", state.getUser()).eq("node_id", destinationNode.id).findOne();
+            Assert.assertEquals(status, userDestStatus);
+        }
+
     }
 
 }

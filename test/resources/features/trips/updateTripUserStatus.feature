@@ -152,32 +152,30 @@ Feature: Update Trip User Attendance Status
 
 
 
-#  Scenario: Update status of a trip with a sub destination to GOING
-#    Given I am authenticated
-#    And I own the trip
-#      | name         |
-#      | My First Trip|
-#    And I own the destination
-#      | name         | latitude | longitude | type     | district   | country    |
-#      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
-#    And the trip has this destination added as a part of the trip
-#    When I want to change my status for this trip
-#    And The body is
-#    """
-#    {
-#      "status": "GOING"
-#    }
-#    """
-#    And I send the request
-#    Then I will receive the response code 200
-#    And I will receive the response body text
-#      """
-#      Trip Status Updated
-#      """
-#    And my status for this trip is "GOING"
-#    And the status for the sub destination are also "GOING"
-#      | name         | latitude | longitude | type     | district   | country    |
-#      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+  Scenario: Update status of a trip with a sub destination to GOING
+    Given I am authenticated
+    And I own the destination
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+    And I own the trip
+      | name         |
+      | My First Trip|
+    And the trip has this destination added as a part of the trip
+    When I want to change my status for this trip
+    And The body is
+    """
+    {
+      "status": "GOING"
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And I will receive the response body text
+      """
+      Trip Status Updated
+      """
+    And my status for this trip is "GOING"
+    And the status for the sub destination are also "GOING"
 
 
 
