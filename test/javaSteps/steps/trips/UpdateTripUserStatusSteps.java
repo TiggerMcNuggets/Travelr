@@ -11,8 +11,10 @@ import models.TripStatus;
 import org.junit.Assert;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Update user trip status test steps
+ */
 public class UpdateTripUserStatusSteps {
 
     // Singleton object that holds shared values across steps

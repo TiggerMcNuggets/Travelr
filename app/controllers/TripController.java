@@ -130,7 +130,6 @@ public class TripController extends Controller {
                     List<NodeDTO> childrenDTO = new ArrayList<>();
 
                     for (Node node : children) {
-                        System.out.println(node.getClass());
                         childrenDTO.add(new NodeDTO(node));
                     }
 
@@ -228,15 +227,15 @@ public class TripController extends Controller {
     }
 
     /**
-     * // * Soft Deletes a trip // * @param req the http request // * @param userId
-     * the id of the user // * @param tripId the id of the destination //
+     * Soft Deletes a trip
+     * @param request req the http request
+     * @param tripId the id of the trip
+     * @param userId the id of the user
+     * @return
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
-
-        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
-            return ok(Json.toJson(deleted));
-        });
+        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> ok(Json.toJson(deleted)));
     }
 
     /**
