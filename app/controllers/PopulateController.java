@@ -1,11 +1,17 @@
 package controllers;
 
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static utils.PDFCreator.generatePDF;
 
 public class PopulateController extends Controller {
     /**
@@ -13,6 +19,7 @@ public class PopulateController extends Controller {
      * @return 200 with string if all ok
      */
     public Result populateDatabase() {
+        generatePDF();
         Nationality nationality = new Nationality("Australian");
         nationality.insert();
         new Nationality("Spain").insert();
