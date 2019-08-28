@@ -23,6 +23,7 @@ import play.mvc.Result;
 
 import service.MailgunService;
 import service.TripService;
+import utils.PDFCreator;
 import utils.iCalCreator;
 
 import java.io.BufferedWriter;
@@ -52,6 +53,23 @@ public class TripController extends Controller {
         this.tripService = tripService;
     }
 
+
+    /**
+     * Creates a .ics file to return to the user with the trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the trip
+     * @return The .ics file generated for the trip
+     */
+//    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
+        PDFCreator pdfCreator = new PDFCreator();
+        File file = pdfCreator.generatePDF();
+        if (file == null) {
+            return CompletableFuture.completedFuture(internalServerError());
+        }
+        return CompletableFuture.completedFuture(ok(file));
+    }
 
     /**
      * Creates a .ics file to return to the user with the trip

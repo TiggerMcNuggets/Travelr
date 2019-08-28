@@ -11,15 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static utils.PDFCreator.generatePDF;
-
 public class PopulateController extends Controller {
     /**
      * Populates the database with example values
      * @return 200 with string if all ok
      */
     public Result populateDatabase() {
-        generatePDF();
         Nationality nationality = new Nationality("Australian");
         nationality.insert();
         new Nationality("Spain").insert();
