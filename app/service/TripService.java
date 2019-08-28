@@ -3,6 +3,7 @@ package service;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
+import dto.trip.TripStatusDTO;
 import exceptions.CustomException;
 import models.*;
 import play.mvc.Http;
@@ -163,18 +164,11 @@ public class TripService {
 
                 trip.setName(tripDTO.name);
 
-
                 /**
                  * Get list of old deleted children
                  */
-                List<Long> oldDeletedIds = Node
-                        .find
-                        .query()
-                        .setIncludeSoftDeletes()
-                        .where()
-                        .eq("parent", trip)
-                        .eq("deleted", true)
-                        .findIds();
+                List<Long> oldDeletedIds = Node.find.query().setIncludeSoftDeletes().where().eq("parent", trip)
+                        .eq("deleted", true).findIds();
 
                 /**
                  * Get Updated Ids
@@ -185,8 +179,8 @@ public class TripService {
                     tripDTO.setNodes(new ArrayList<>());
                 }
 
-                for(NodeDTO node : tripDTO.getNodes()) {
-                    if(node.getId() == null) {
+                for (NodeDTO node : tripDTO.getNodes()) {
+                    if (node.getId() == null) {
                         if (node.getType().equals("trip")) {
                             TripNode newNode = new TripNode(node.getName(), user);
                             newNode.setParent(trip);
@@ -195,7 +189,8 @@ public class TripService {
 
                         } else {
 
-                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+                            Optional<Destination> destination = Optional
+                                    .ofNullable(Destination.find.byId(node.destination.id));
                             if (!destination.isPresent()) {
                                 throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
                             }
@@ -230,8 +225,6 @@ public class TripService {
                     }
                 }
 
-
-
                 for (NodeDTO node : tripDTO.getNodes()) {
                     if (node.type.toLowerCase().equals("trip")) {
                         Optional<TripNode> tNodeOptional = Optional.ofNullable(TripNode.find.byId(node.getId()));
@@ -243,7 +236,8 @@ public class TripService {
                         tNode.setOrdinal(node.getOrdinal());
                         tNode.update();
                     } else {
-                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.getId()));
+                        Optional<DestinationNode> dNodeOptional = Optional
+                                .ofNullable(DestinationNode.find.byId(node.getId()));
                         if (!dNodeOptional.isPresent()) {
                             throw new CustomException(Http.Status.NOT_FOUND, "Destination node not found");
                         }
@@ -283,7 +277,7 @@ public class TripService {
     public CompletableFuture<Boolean> deleteTrip(Long tripId) {
         return supplyAsync(() -> {
             TripNode trip = TripNode.find.byId(tripId);
-            if(trip != null) {
+            if (trip != null) {
                 trip.delete();
 
                 return true;
@@ -319,10 +313,50 @@ public class TripService {
     /**
      * Updates a Group value to the group property of a Trip object
      * 
-     * @param trip  the Trip object
-     * @param group the Group object
+     * @param trip the Trip object
+     * @param user the User object
      * @return the Trip id of the user that has been updated
      */
+    public CompletableFuture<Long> changeUserTripStatus(TripStatusDTO tripStatusDTO, User user, Node trip) {
+        return supplyAsync(() -> {
+
+            // Gets the current user status and the status from the request
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", user).eq("trip", trip).findOne();
+            TripStatus tripStatus = TripStatus.valueOf(tripStatusDTO.getStatus());
+
+            // Updates the user status if it exists otherwise creates a new user status entry.
+            if (userStatus == null) {
+                userStatus = new NodeUserStatus(user, trip, tripStatus);
+                userStatus.insert();
+            } else {
+                userStatus.setTripStatus(tripStatus);
+                userStatus.update();
+            }
+
+            // Finds all the children destinations of the trip which is being updated
+            List<Node> childrenDestinations = Node.find.query().where().eq("parent", trip).eq("dtype", "destination")
+                    .findList();
+
+            // Updates the status of each of the child destinations to the same status as the parent trip.
+            for (Node destinationNode : childrenDestinations) {
+                NodeUserStatus userDestStatus = NodeUserStatus.find.query().where().eq("user", user)
+                        .eq("node", destinationNode).findOne();
+                userDestStatus.setTripStatus(tripStatus);
+                userDestStatus.update();
+            }
+
+            return trip.id;
+
+        }, context);
+    }
+
+    /**
+     * 
+     * @param trip  the Trip object*
+     * @param group the Group object*@return the Trip id of the user that has been
+     *              updated
+     */
+
     public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
         return supplyAsync(() -> {
             if (trip.getUserGroup() == null) {

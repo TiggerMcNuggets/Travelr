@@ -1,22 +1,19 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.ebean.Finder;
 import play.data.validation.Constraints;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-
-enum TripStatus {
-    GOING,
-    NOT_GOING,
-    MAYBE
-}
-
 @Entity
 public class NodeUserStatus extends BaseModel {
 
-
+    /**
+     * Finder instance
+     */
+    public static final Finder<Long, NodeUserStatus> find = new Finder<>(NodeUserStatus.class);
 
     /**
      * The trip member
@@ -38,9 +35,9 @@ public class NodeUserStatus extends BaseModel {
     public TripStatus tripStatus;
 
     /**
-     *
-     * @param user the User value
-     * @param trip the Trip value
+     * Node user status constructor
+     * @param user       the User value
+     * @param trip       the Trip value
      * @param tripStatus the TripStatus value
      */
     public NodeUserStatus(User user, Node trip, TripStatus tripStatus) {
