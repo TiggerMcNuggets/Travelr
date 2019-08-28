@@ -30,12 +30,6 @@ public abstract class Node extends BaseModel {
     @ManyToOne
     public Grouping userGroup;
 
-    // /**
-    // * The user statuses for trip attendance
-    // */
-    // @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    // public List<NodeUserStatus> userStatuses;
-
     public static final NodeFinder find = new NodeFinder();
 
     public Node(String name, User user) {

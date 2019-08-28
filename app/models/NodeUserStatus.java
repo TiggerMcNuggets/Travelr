@@ -35,13 +35,9 @@ public class NodeUserStatus extends BaseModel {
     public TripStatus tripStatus;
 
     /**
-     *
-     * <<<<<<< HEAD
-     * 
+     * Node user status constructor
      * @param user       the User value
-     * @param trip       the Trip value =======
-     * @param user       the User value
-     * @param trip       the Trip value >>>>>>> S553-trips-organising
+     * @param trip       the Trip value
      * @param tripStatus the TripStatus value
      */
     public NodeUserStatus(User user, Node trip, TripStatus tripStatus) {
