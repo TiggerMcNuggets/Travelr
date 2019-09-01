@@ -4,21 +4,18 @@
 
 ### Project Structure
 -   app/  					Application source code    
--   doc/  					User and design documentation    
--   doc/examples/  	        Demo example files for use with the application    
 -   conf/  					Configuration files required to build the project
-
-### SonarQube Analytics
-To view project analytics, simply navigate to the url: `http://csse-s302g3.canterbury.ac.nz:8080`
-
-To login as the PO, you may login with the credentials: Login: *Moffat*, Password: *Moffat*.
+-   test/ Unit and Integration tests for backend
 
 ### Live Urls
-To access the latest production version of the application:
-http://csse-s302g3.canterbury.ac.nz:443/ 
+To access the latest production (tagged) version of the application:
+[https://csse-s302g3.canterbury.ac.nz/](https://csse-s302g3.canterbury.ac.nz/)
 
-To access the latest development version of the application:
-http://csse-s302g3.canterbury.ac.nz:8443/ 
+To access the latest development (master commit) version of the application:
+[https://csse-s302g3.canterbury.ac.nz:8443/](https://csse-s302g3.canterbury.ac.nz:8443/)
+
+### Email Notifications
+Before using email notifications you will need email Flynn at frd15@uclive.ac.nz. Then you must accept an invitation email from 'Mail Gun' to be authorized.
     
 ## Running the Project (Lab Machine)
 To run the project for **production**:
@@ -38,3 +35,18 @@ To run the project for **development**:
 4. Once the backend is built and running, navigate to: `localhost:9000`
 5. To run the **frontend**, navigate to `/frontend` and run the commands: `npm install` and `npm run serve`
 6. Navigate to: `localhost:8080` OR whatever the console states when running the previous command
+
+
+## Admin Login:
+
+Username: admin@admin.com  
+Password: sprint5
+
+## Running the Project Locally with MySQL Database
+
+1. Follow steps 1-5 above from "To run the project for production"
+2. From here, you can run the command: `bash team300-travelea -Dconfig.resource=production.conf`.
+
+This will run the application and connect to our production database.   
+**NOTE**: If trying this after the next sprint 
+has ended may fail due to different database schemas.

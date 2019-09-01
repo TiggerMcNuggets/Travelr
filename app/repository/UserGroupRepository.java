@@ -169,18 +169,38 @@ public class UserGroupRepository {
      */
     public CompletableFuture<List<Grouping>> getUserGroups(Long userId) throws CustomException {
         return supplyAsync(() -> Grouping
-                    .find
-                    .query()
-                    .fetch("userGroups")
-                    .fetch("userGroups.user")
-                    .fetch("userGroups.user.nationalities")
-                    .fetch("userGroups.user.nationalities.nationality")
-                    .where()
-                    .eq("userGroups.user.id", userId)
-                    .and()
-                    .eq("userGroups.deleted", false)
-                    .orderBy("userGroups.user.id")
-                    .findList()
+            .find
+            .query()
+            .fetch("userGroups")
+            .fetch("userGroups.user")
+            .fetch("userGroups.user.nationalities")
+            .fetch("userGroups.user.nationalities.nationality")
+            .where()
+            .eq("userGroups.user.id", userId)
+            .and()
+            .eq("userGroups.deleted", false)
+            .orderBy("userGroups.user.id")
+            .findList()
+        , context);
+    }
+
+    /**
+     * Gets all user groups that exist and aren't deleted on the website
+     * @return the list of all user groups
+     * @throws CustomException
+     */
+    public CompletableFuture<List<Grouping>> getAllUserGroups() throws CustomException {
+        return supplyAsync(() -> Grouping
+            .find
+            .query()
+            .fetch("userGroups")
+            .fetch("userGroups.user")
+            .fetch("userGroups.user.nationalities")
+            .fetch("userGroups.user.nationalities.nationality")
+            .where()
+            .eq("userGroups.deleted", false)
+            .orderBy("userGroups.user.id")
+            .findList()
         , context);
     }
 
@@ -204,6 +224,18 @@ public class UserGroupRepository {
             }
 
             UserGroup userGroup = memberGroup.get();
+
+            // Check if there is less than two members
+            List<UserGroup> userGroups = UserGroup
+                    .find
+                    .query()
+                    .where()
+                    .eq("grouping_id", groupId)
+                    .and()
+                    .eq("is_owner", true)
+                    .findList();
+
+            if (userGroups.size() < 2 && userGroup.isOwner()) throw new ForbiddenException("Cannot demote when only one owner left");
 
             userGroup.setOwner(!userGroup.isOwner());
             userGroup.update();

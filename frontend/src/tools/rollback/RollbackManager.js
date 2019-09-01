@@ -29,22 +29,30 @@ export default class RollbackManager {
      * @param {url: string, body: Object} reactionBody The url and json body for the reaction request
      */
     checkpoint(type, actionBody, reactionBody) {
-        let response;
-        switch(type) {
-            case Types.POST:
-                response = this.rollbackWorker.postDeleteActionReaction(actionBody, reactionBody);
-                break;
-            case Types.PUT:
-                response = this.rollbackWorker.putActionReaction(actionBody, reactionBody);
-                break;
-            case Types.DELETE:
-                response = this.rollbackWorker.postDeleteActionReaction(actionBody, reactionBody);
-                break;
-            default:
-                return;
-        }
+      let response;
+      switch(type) {
+          case Types.POST:
+              response = this.rollbackWorker.postDeleteActionReaction(actionBody, reactionBody);
+              break;
+          case Types.PUT:
+              response = this.rollbackWorker.putActionReaction(actionBody, reactionBody);
+              break;
+          case Types.DELETE:
+              response = this.rollbackWorker.postDeleteActionReaction(actionBody, reactionBody);
+              break;
+          default:
+              return;
+      }
 
-        this.stack.push(response);
+      this.stack.push(response);
+    }
+
+    /**
+     * Pushes payload to stack
+     * @param {Object} payload 
+     */
+    pushStack(payload) {
+      this.stack.push(payload);
     }
  
     /** 

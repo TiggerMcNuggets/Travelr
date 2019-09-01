@@ -1,5 +1,6 @@
 package controllers;
 
+
 import com.google.inject.Inject;
 
 import controllers.actions.Attrs;
@@ -10,6 +11,7 @@ import dto.trip.*;
 
 import exceptions.CustomException;
 import models.*;
+import net.fortuna.ical4j.model.Calendar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.data.Form;
@@ -21,7 +23,12 @@ import play.mvc.Result;
 
 import service.MailgunService;
 import service.TripService;
+import utils.iCalCreator;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,10 +51,44 @@ public class TripController extends Controller {
         this.tripService = tripService;
     }
 
+
+    /**
+     * Creates a .ics file to return to the user with the trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the trip
+     * @return The .ics file generated for the trip
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTripAsICalFile(Http.Request req, Long userId, Long tripId){
+
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+
+        if (middlewareRes != null) return middlewareRes;
+
+        TripNode trip = TripNode.find.byId(tripId);
+
+        if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+
+        iCalCreator creator = new iCalCreator();
+        Calendar iCalString = creator.createCalendarFromTrip(trip);
+        try {
+            File tempFile = File.createTempFile(trip.getName(), ".ics");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
+            bw.write(iCalString.toString());
+            bw.close();
+            return CompletableFuture.completedFuture(ok(tempFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CompletableFuture.completedFuture(internalServerError());
+        }
+    }
+
     /**
      * Create a trip endpoint
      *
      * @param request
+     * @param userId
      * @return
      */
     @Authorization.RequireAuthOrAdmin
@@ -63,9 +104,9 @@ public class TripController extends Controller {
 
         CreateTripDTO dto = createTripForm.get();
 
-        return tripService.createTrip(dto, user)
-                .thenApplyAsync((tripId) -> created(Json.toJson(new CreatedDTO(tripId))));
+        return tripService.createTrip(dto, user).thenApplyAsync((tripId) -> created(Json.toJson(new CreatedDTO(tripId))));
     }
+
 
     /**
      * Get all trips for a given user
@@ -88,15 +129,14 @@ public class TripController extends Controller {
     }
 
     /**
-     * Fetches a trip by Id The three parts of the response are root, trip, and
-     * navigation. Root: Is the first level root trip which it belongs to Trip: Is
-     * the trip that was fetched by the Id Navigation: Is the list of nodes which
-     * make up the breadcrumbs
-     * 
+     * Fetches a trip by Id
+     * The three parts of the response are root, trip, and navigation.
+     * Root: Is the first level root trip which it belongs to
+     * Trip: Is the trip that was fetched by the Id
+     * Navigation: Is the list of nodes which make up the breadcrumbs
      * @param request the request object
-     * @param tripId  the Id of the trip being fetched
-     * @param userId  the User who the request is being sent for (used in
-     *                middleware)
+     * @param tripId the Id of the trip being fetched
+     * @param userId the User who the request is being sent for (used in middleware)
      * @returna GetTripResponse object
      */
     @Authorization.RequireAuthOrAdmin
@@ -108,45 +148,48 @@ public class TripController extends Controller {
 
         CompletionStage<List<TripNode>> navigationStage = tripService.getNavigationForTrip(tripId);
 
+
         /**
-         * Wait for trip and children to be fetched. Then create TripDTO
+         * Wait for trip and children to be fetched.
+         * Then create TripDTO
          */
-        CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage,
-                (tripNodeOptional, children) -> {
+        CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
-                    if (!tripNodeOptional.isPresent()) {
-                        throw new CustomException(404, "Trip not found");
-                    }
+            if(!tripNodeOptional.isPresent()) {
+                throw new CustomException(404, "Trip not found");
+            }
 
-                    TripNode trip = tripNodeOptional.get();
+            TripNode trip = tripNodeOptional.get();
 
-                    GetTripDTO dto = new GetTripDTO();
+            GetTripDTO dto = new GetTripDTO();
 
-                    // Trip Details
-                    dto.setName(trip.getName());
-                    dto.setId(trip.getId());
+            // Trip Details
+            dto.setName(trip.getName());
+            dto.setId(trip.getId());
 
-                    // Format trip's children
-                    List<NodeDTO> childrenDTO = new ArrayList<>();
+            // Format trip's children
+            List<NodeDTO> childrenDTO = new ArrayList<>();
 
-                    for (Node node : children) {
-                        childrenDTO.add(new NodeDTO(node));
-                    }
+            for (Node node : children) {
+                System.out.println(node.getClass());
+                childrenDTO.add(new NodeDTO(node));
+            }
 
-                    dto.setNodes(childrenDTO);
+            dto.setNodes(childrenDTO);
 
-                    return dto;
-                });
+            return dto;
+        });
+
 
         /**
-         * Wait for TripDTO and navigation to be ready Then create and return
-         * GetTripResponse
+         * Wait for TripDTO and navigation to be ready
+         * Then create and return GetTripResponse
          */
         return tripDtoStage.thenCombineAsync(navigationStage, (tripDto, navigation) -> {
 
             List<NavigationDTO> navigationDTOS = new ArrayList<>();
 
-            for (TripNode node : navigation) {
+            for(TripNode node : navigation) {
                 navigationDTOS.add(new NavigationDTO(node));
             }
 
@@ -159,10 +202,11 @@ public class TripController extends Controller {
             response.setRoot(rootNodeDTO);
 
             return ok(Json.toJson(response));
-        }).handle((result, ex) -> {
+        }).handle((result, ex)-> {
             return handleTrips(result, ex);
         });
     }
+
 
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> updateTrip(Http.Request request, Long tripId, Long userId) {
@@ -182,6 +226,7 @@ public class TripController extends Controller {
 
             List<Node> children = tripService.getChildrenByTripId(tripId).join();
 
+
             GetTripDTO dto = new GetTripDTO();
 
             // Trip Details
@@ -197,24 +242,25 @@ public class TripController extends Controller {
 
             dto.setNodes(childrenDTO);
 
+
             return ok(Json.toJson(dto));
 
-        }).handle((result, ex) -> {
+
+        }).handle((result, ex)-> {
             return handleTrips(result, ex);
         });
     }
 
     /**
      * Function for handling the async code within trips
-     * 
      * @param result the result of the async code passed in
-     * @param ex     any errors thrown by the code
+     * @param ex any errors thrown by the code
      * @return the result unless there is an error
      */
     private Result handleTrips(Result result, Throwable ex) {
-        if (ex != null) {
-            if (ex.getMessage().equals(CustomException.class.getCanonicalName())) {
-                CustomException exception = (CustomException) ex.getCause();
+        if(ex != null) {
+            if(ex.getMessage().equals(CustomException.class.getCanonicalName())) {
+                CustomException exception = (CustomException)ex.getCause();
                 return status(exception.getResult(), exception.getResultMessage());
             }
 
@@ -226,80 +272,25 @@ public class TripController extends Controller {
         return result;
     }
 
+
     /**
-     * Soft Deletes a trip
-     * @param request req the http request
-     * @param tripId the id of the trip
-     * @param userId the id of the user
-     * @return
+     * //     * Soft Deletes a trip
+     * //     * @param req the http request
+     * //     * @param userId the id of the user
+     * //     * @param tripId the id of the destination
+     * //
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
-        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> ok(Json.toJson(deleted)));
-    }
 
-    /**
-     * TEST FUNCTION DELETE BEFORE MASTER MERGE
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * 
-     * @return
-     * @throws Exception
-     */
-    public Result test() throws Exception {
-
-        User user = User.find.findById(3L);
-
-        Destination dest1 = new Destination("Destination 1", 1.0, 1.0, "type", "district", "country", user);
-        dest1.insert();
-
-        Destination dest2 = new Destination("Destination 2", 2.0, 2.0, "type2", "district2", "country2", user);
-        dest2.insert();
-
-        DestinationNode tdf1 = new DestinationNode("Custom Destination 1 Name", user, dest1);
-        tdf1.setOrdinal(1);
-        DestinationNode tdf2 = new DestinationNode("Custom Destination 2 Name", user, dest2);
-        tdf2.setOrdinal(0);
-
-        TripNode tc = new TripNode("Level 1 Inner Trip", user);
-        tc.setOrdinal(1);
-        tc.save();
-
-        tdf1.setParent(tc);
-        tdf1.save();
-        tdf2.setParent(tc);
-        tdf2.save();
-
-        Destination dest3 = new Destination("Destination 3", 3.0, 3.0, "type3", "district3", "country3", user);
-        dest3.insert();
-
-        DestinationNode tdf3 = new DestinationNode("Custom Destination 3 Name", user, dest3);
-        tdf3.setOrdinal(0);
-
-        TripNode tc2 = new TripNode("Root Trip", user);
-
-        tc2.save();
-
-        tc.setParent(tc2);
-        tc.save();
-
-        tdf3.setParent(tc2);
-        tdf3.save();
-
-        List<Node> tNodes = Node.find.query().where().eq("parent", tc2).findList();
-
-        List<NodeDTO> nodeDTOS = new ArrayList<>();
-
-        for (Node node : tNodes) {
-            System.out.println(node.getClass());
-            nodeDTOS.add(new NodeDTO(node));
-        }
-
-        return ok(Json.toJson(nodeDTOS));
+        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+            return ok(Json.toJson(deleted));
+        });
     }
 
     /**
      * Changing the user trip attendance status.
-     * 
+     *
      * @param request the http request
      * @param tripId  the id of the trip object
      * @param userId  the id of the user
@@ -330,9 +321,10 @@ public class TripController extends Controller {
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_STATUS_UPDATED));
     }
 
+
     /**
      * Toggles a relation between a trip and a group
-     * 
+     *
      * @param request the http request
      * @param tripId  the id of the trip object
      * @param userId  the id of the user
@@ -359,4 +351,5 @@ public class TripController extends Controller {
         return tripService.toggleGroupInTrip(node.get(), group.get())
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
     }
+
 }

@@ -79,6 +79,8 @@ public class MediaRepository {
                 if (!album.id.equals(defaultAlbum.id)) {
                     defaultAlbum.addMedia(mediaToAdd);
                     defaultAlbum.save();
+                    mediaToAdd.addAlbum(defaultAlbum);
+                    mediaToAdd.update();
                 }
                 album.save();
                 mediaToAdd.save();

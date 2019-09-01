@@ -57,10 +57,9 @@ export default {
    * @param {number} groupId The user group id
    * @param {number} memberId The id of the user to add to the group
    */
-  addUserToUserGroup(userId, groupId, memberId, payload) {
+  addUserToUserGroup(userId, groupId, memberId) {
     return Repository.post(
-      `/users/${userId}/group/${groupId}/member/${memberId}`,
-      payload
+      `/users/${userId}/group/${groupId}/member/${memberId}`
     );
   },
 
@@ -93,5 +92,17 @@ export default {
    */
   removeUserInUserGroup(userId, groupId, memberId) {
     return Repository.put(`/users/${userId}/group/${groupId}/member/${memberId}/toggle_deleted`);
+  },
+
+  /**
+   * Toggles a user's ownership leve in a group
+   * @param {number} userId The user id
+   * @param {number} groupId The user id
+   * @param {*} memberId  The member id
+   */
+  togglePromoteUser(userId, groupId, memberId) {
+    return Repository.put(
+      `/users/${userId}/group/${groupId}/member/${memberId}/promote`
+    );
   }
 };
