@@ -64,7 +64,7 @@ public class TripController extends Controller {
 //    @Authorization.RequireAuth
     public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
         PDFCreator pdfCreator = new PDFCreator();
-        File file = pdfCreator.generatePDF();
+        File file = pdfCreator.generateTripEmailPDF();
         if (file == null) {
             return CompletableFuture.completedFuture(internalServerError());
         }
