@@ -241,10 +241,8 @@ public class UserController extends Controller {
      *
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> slackRequestAuth(Http.Request request, Long userId) {
-        // Filler code for now
-        User user = request.attrs().get(Attrs.USER);
-        return getUser(request, user.id);
+    public void slackRequestAuth(Http.Request request, Long userId) {
+        // TODO: Add slack logic
     }
 
 
