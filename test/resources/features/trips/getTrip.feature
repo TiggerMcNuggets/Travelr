@@ -14,6 +14,14 @@ Scenario: Get a trip successfully
   And The trip contains the trip destinations
     | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
     | Destination 3 | destination | 1           | 2             | 0            | 1             |
+  And the trip is associated with the user group
+    | name         | description         |
+    | Team 300     | The best team eva   |
+  And the group has the members, ownership and statuses
+    | first | last   | email               | dob | status     | owner
+    | Joe   | Bloggs | joebloggs@email.com | 1   | GOING      | false
+    | John  | Smith  | johnsmith@email.com | 1   | MAYBE      | true
+    | Mary  | Smith  | marysmith@email.com | 1   | NOT GOING  | false
   When I want to get the trip
   And I send the request
   Then I will receive the response code 200
@@ -55,7 +63,32 @@ Scenario: Get a trip successfully
           "id":2
           }
         }
-      }
+      },
+      "usergroup": [
+        {
+          "userId": 3,
+          "firstName": "Joe",
+          "lastName": "Bloggs",
+          "status": "GOING",
+          "owner": "false"
+        },
+        {
+          "userId": 4,
+          "firstName": "John",
+          "lastName": "Smith",
+          "status": "MAYBE",
+          "owner": "true"
+        },
+        {
+          "userId": 5,
+          "firstName": "Mary",
+          "lastName": "Smith",
+          "status": "NOT_GOING"
+          "owner": "false"
+        }
+
+  ]
+
   """
 
 Scenario: Get another user's trip as an admin
