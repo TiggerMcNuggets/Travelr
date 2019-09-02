@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import dto.trip.NodeDTO;
 import dto.shared.CreatedDTO;
 import dto.trip.*;
 
@@ -171,7 +172,6 @@ public class TripController extends Controller {
             List<NodeDTO> childrenDTO = new ArrayList<>();
 
             for (Node node : children) {
-                System.out.println(node.getClass());
                 childrenDTO.add(new NodeDTO(node));
             }
 
