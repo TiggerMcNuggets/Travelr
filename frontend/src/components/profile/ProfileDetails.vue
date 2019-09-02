@@ -11,9 +11,7 @@
         <p class="caption font-weight-light">{{traveller.email}}</p>
       </div>
 
-      <a href="https://slack.com/oauth/authorize?scope=incoming-webhook,commands,admin,channels:write,team:read&client_id=737773912711.735910477760&redirect_uri=http://localhost:8080">
-        <img alt="Add to Slack" height="40" src="../../assets/connect_slack.png"/>
-      </a>
+      <SlackBtn></SlackBtn>
     </v-flex>
 
     <v-container fluid>
@@ -76,6 +74,7 @@
 import { store } from "../../store/index";
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
+import SlackBtn from "../common/SlackBtn";
 
 export default {
   store,
@@ -100,6 +99,10 @@ export default {
       isMyProfile: false,
       id: this.$route.params.id
     };
+  },
+
+  components: {
+    SlackBtn
   },
 
   /**
