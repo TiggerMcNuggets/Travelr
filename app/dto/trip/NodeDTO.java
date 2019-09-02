@@ -1,8 +1,8 @@
 package dto.trip;
 
-import models.DestinationNode;
-import models.Node;
-import models.TripNode;
+import models.*;
+
+import java.util.List;
 
 public class NodeDTO {
     public Long id;
@@ -19,6 +19,8 @@ public class NodeDTO {
 
     public String type;
 
+    public List<NodeUserDTO> usergroup;
+
     public NodeDTO(Node node) {
         this.id = node.getId();
         this.name = node.getName();
@@ -32,10 +34,15 @@ public class NodeDTO {
             this.type = "destination";
             this.destination = new DestinationDTO(((DestinationNode)node).getDestination());
         }
+
+        findUsergroups(node.getUserGroup(), node);
     }
 
-    public NodeDTO() {
 
+    public void findUsergroups(Grouping grouping, Node node) {
+        for (UserGroup user : grouping.getUserGroups()) {
+            this.usergroup.add(new NodeUserDTO(user, node));
+        }
     }
 
     public Long getId() {
@@ -92,5 +99,13 @@ public class NodeDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<NodeUserDTO> getUsergroup() {
+        return usergroup;
+    }
+
+    public void setUsergroup(List<NodeUserDTO> usergroup) {
+        this.usergroup = usergroup;
     }
 }
