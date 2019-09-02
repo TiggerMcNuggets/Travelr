@@ -237,6 +237,16 @@ public class UserController extends Controller {
         });
     }
 
+    /**
+     *
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> slackRequestAuth(Http.Request request, Long userId) {
+        // Filler code for now
+        User user = request.attrs().get(Attrs.USER);
+        return getUser(request, user.id);
+    }
+
 
     public Result index() {
         return ok("Travel EA - Home");
