@@ -122,6 +122,15 @@ create table personal_photo (
   constraint pk_personal_photo primary key (id)
 );
 
+create table slack_user (
+  id                            bigint auto_increment not null,
+  user_id                       bigint not null,
+  access_token                  varchar(300) not null,
+  deleted                       boolean default false not null,
+  constraint uq_slack_user_user_id unique (user_id),
+  constraint pk_slack_user primary key (id)
+);
+
 create table traveller_type (
   id                            bigint auto_increment not null,
   name                          varchar(255),
@@ -232,6 +241,8 @@ alter table node add constraint fk_node_destination_id foreign key (destination_
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+alter table slack_user add constraint fk_slack_user_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
 create index ix_user_traveller_type_user on user_traveller_type (user_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_user foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -314,6 +325,8 @@ drop index if exists ix_node_destination_id;
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
+alter table slack_user drop constraint if exists fk_slack_user_user_id;
+
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_user;
 drop index if exists ix_user_traveller_type_user;
 
@@ -357,6 +370,8 @@ drop table if exists nationality;
 drop table if exists node;
 
 drop table if exists personal_photo;
+
+drop table if exists slack_user;
 
 drop table if exists traveller_type;
 
