@@ -4,7 +4,6 @@
       :href="`https://slack.com/oauth/authorize?scope=${this.permissionScope}&client_id=${this.clientId}&redirect_uri=${redirectUrl}`">
       <img alt="Add to Slack" height="40" src="../../assets/connect_slack.png"/>
     </a>
-    {{ authorisationCode }}
   </div>
 </template>
 
@@ -35,26 +34,22 @@
        * @returns The authorisation code from Slack
        */
       authorisationCode() {
-        if (this.$route.query.code) {
-          return this.$route.query.code;
-        }
-        return null;
-      }
-    },
-
-    watch: {
-      authorisationCode: function() {
-        console.log("watcher here");
-        this.attemptAuthorisationGrant();
+        return this.$route.query.code;
       }
     },
 
     methods: {
       attemptAuthorisationGrant() {
-        userRepository.slackOAuthStep3(this.$route.params.id, this.authorisationCode)
+        userRepository.slackOAuthStep3(this.$route.params.id, {code: this.authorisationCode})
           .then(response => {
             console.log(response)
           });
+      }
+    },
+
+    mounted() {
+      if (this.$route.query.code) {
+        this.attemptAuthorisationGrant();
       }
     }
   };
