@@ -4,12 +4,14 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonElement;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
+import models.SlackUser;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -18,6 +20,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
 import service.MailgunService;
+import service.SlackService;
 
 
 import javax.inject.Inject;
@@ -25,6 +28,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -36,12 +40,15 @@ public class UserController extends Controller {
 
     private UserRepository userRepository;
     private final MailgunService mailgunService;
+    private final SlackService slackService;
 
 
     @Inject
-    public UserController(UserRepository userRepository, MailgunService mailgunService) {
+    public UserController(UserRepository userRepository, MailgunService mailgunService, SlackService slackService) {
         this.userRepository = userRepository;
         this.mailgunService = mailgunService;
+        this.slackService = slackService;
+
     }
 
     /**
@@ -241,15 +248,42 @@ public class UserController extends Controller {
      *
      */
     @Authorization.RequireAuth
-    public void slackRequestAuth(Http.Request request, Long userId) {
+    public CompletionStage<Result>  slackRequestAuth(Http.Request request, Long userId) {
         // TODO: Add slack logic
-    }
+        Optional<String> code = Optional.ofNullable(request.body().asJson().get("code").asText());
+        if (!code.isPresent()) {
+            return CompletableFuture.completedFuture(badRequest("code is null or not found"));
+        }
 
+        return slackService.requestAccessToken(code.get(), userId).thenApplyAsync(resHandler -> {
+            Optional<User> user = Optional.ofNullable(User.find.findById(userId));
+            Optional<JsonElement> accessTokenJson = Optional.ofNullable(resHandler.getBody().get("access_token"));
+            if (!user.isPresent()) {
+                return badRequest("user is null or not found");
+            }
+
+            if (!accessTokenJson.isPresent()) {
+                return badRequest("Invalid access token");
+            }
+
+            Optional<SlackUser> slackUser = Optional.ofNullable(SlackUser.find.findByUserId(user.get().getId()));
+
+            if (!slackUser.isPresent()) {
+                // create a new slack user in the table
+                SlackUser newSlackUser = new SlackUser(user.get(), accessTokenJson.get().toString());
+                newSlackUser.insert();
+            } else {
+                // update access token in the table
+                SlackUser existingSlackUser = slackUser.get();
+                existingSlackUser.setAccessToken(accessTokenJson.get().toString());
+                existingSlackUser.update();
+            }
+
+            return ok("Slack token saved");
+        });
+    }
 
     public Result index() {
         return ok("Travel EA - Home");
     }
-
-
-
 }
