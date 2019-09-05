@@ -55,9 +55,6 @@ public class GroupTripsSteps {
         group.insert();
         state.setGroup(group);
 
-        UserGroup userGroup = new UserGroup(state.getUser(), group, true);
-        userGroup.insert();
-
         state.getTrip().setUserGroup(group);
         state.getTrip().update();
     }
@@ -65,9 +62,13 @@ public class GroupTripsSteps {
     @Given("the group has the members, ownership and statuses")
     public void the_group_has_the_members_ownership_and_statuses(List<Map<String, String>> dataTable) {
         for (Map<String, String> memberInfo : dataTable) {
-            User user = new User(memberInfo.get("firstName"), memberInfo.get("lastName"), memberInfo.get("email"),
+            User user = new User(memberInfo.get("first"), memberInfo.get("last"), memberInfo.get("email"),
                     Integer.valueOf(memberInfo.get("dob")));
+
+            user.insert();
             UserGroup userGroup = new UserGroup(user, state.getGroup(), Boolean.valueOf(memberInfo.get("owner")));
+            System.out.println("owner");
+            System.out.println(userGroup.isOwner());
             userGroup.insert();
 
             if (!memberInfo.get("status").equals("NOT GOING")) {
