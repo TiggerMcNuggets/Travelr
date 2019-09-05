@@ -35,7 +35,9 @@ public class NodeDTO {
             this.destination = new DestinationDTO(((DestinationNode)node).getDestination());
         }
 
-        findUsergroups(node.getUserGroup(), node);
+        Grouping nodeUsergroup = node.getUserGroup();
+        if (nodeUsergroup != null)
+            findUsergroups(nodeUsergroup, node);
     }
 
 

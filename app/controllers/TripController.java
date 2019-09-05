@@ -156,13 +156,15 @@ public class TripController extends Controller {
          */
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
-            if(!tripNodeOptional.isPresent()) {
+            if (!tripNodeOptional.isPresent()) {
                 throw new CustomException(404, "Trip not found");
             }
 
-            TripNode trip = tripNodeOptional.get();
+            Node trip = tripNodeOptional.get();
 
             GetTripDTO dto = new GetTripDTO();
+
+            // TODO: Move this logic to DTO not sure why it is in the controller??
 
             // Trip Details
             dto.setName(trip.getName());
@@ -176,6 +178,19 @@ public class TripController extends Controller {
             }
 
             dto.setNodes(childrenDTO);
+
+
+            // Format trip's usergroup
+            List<NodeUserDTO> usergroupDTO = new ArrayList<>();
+            Grouping grouping = trip.getUserGroup();
+
+            if (grouping != null) {
+                for (UserGroup user : grouping.getUserGroups()) {
+                    usergroupDTO.add(new NodeUserDTO(user, trip));
+                }
+            }
+
+            dto.setUsergroup(usergroupDTO);
 
             return dto;
         });

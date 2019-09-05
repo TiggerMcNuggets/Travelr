@@ -25,7 +25,7 @@ public class NodeUserDTO {
     }
 
     public String findStatus(UserGroup usergroup, Node node) {
-        NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", usergroup.getUser()).eq("node", node).findOne();
+        NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", usergroup.getUser()).eq("trip", node).findOne();
         if (userStatus == null) {
             return "NOT GOING";
         } else {
