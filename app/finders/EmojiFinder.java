@@ -37,6 +37,16 @@ public class EmojiFinder extends Finder<Long, CommentEmoji> {
     }
 
     /**
+     * Finds the emoji by its comment and string
+     * @param comment The comment
+     * @param emoji The emoji string
+     * @return The optional emoji
+     */
+    public Optional<CommentEmoji> findByCommentAndEmoji(Comment comment, String emoji) {
+        return emojiFetcher().where().eq("comment", comment).eq("emoji", emoji).findOneOrEmpty();
+    }
+
+    /**
      * Fetches users related to an emoji
      * @return The query
      */
