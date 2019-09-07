@@ -20,6 +20,29 @@ create table album_media (
   constraint pk_album_media primary key (album_id,media_id)
 );
 
+create table comment (
+  id                            bigint auto_increment not null,
+  message                       varchar(255),
+  trip_node_id                  bigint,
+  user_id                       bigint,
+  deleted                       boolean default false not null,
+  constraint pk_comment primary key (id)
+);
+
+create table comment_emoji (
+  id                            bigint auto_increment not null,
+  emoji                         varchar(255),
+  comment_id                    bigint,
+  deleted                       boolean default false not null,
+  constraint pk_comment_emoji primary key (id)
+);
+
+create table comment_emoji_user (
+  comment_emoji_id              bigint not null,
+  user_id                       bigint not null,
+  constraint pk_comment_emoji_user primary key (comment_emoji_id,user_id)
+);
+
 create table destination (
   id                            bigint auto_increment not null,
   name                          varchar(255),
@@ -182,6 +205,21 @@ alter table album_media add constraint fk_album_media_album foreign key (album_i
 create index ix_album_media_media on album_media (media_id);
 alter table album_media add constraint fk_album_media_media foreign key (media_id) references media (id) on delete restrict on update restrict;
 
+create index ix_comment_trip_node_id on comment (trip_node_id);
+alter table comment add constraint fk_comment_trip_node_id foreign key (trip_node_id) references node (id) on delete restrict on update restrict;
+
+create index ix_comment_user_id on comment (user_id);
+alter table comment add constraint fk_comment_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_comment_emoji_comment_id on comment_emoji (comment_id);
+alter table comment_emoji add constraint fk_comment_emoji_comment_id foreign key (comment_id) references comment (id) on delete restrict on update restrict;
+
+create index ix_comment_emoji_user_comment_emoji on comment_emoji_user (comment_emoji_id);
+alter table comment_emoji_user add constraint fk_comment_emoji_user_comment_emoji foreign key (comment_emoji_id) references comment_emoji (id) on delete restrict on update restrict;
+
+create index ix_comment_emoji_user_user on comment_emoji_user (user_id);
+alter table comment_emoji_user add constraint fk_comment_emoji_user_user foreign key (user_id) references user (id) on delete restrict on update restrict;
+
 alter table destination add constraint fk_destination_default_album_id foreign key (default_album_id) references album (id) on delete restrict on update restrict;
 
 create index ix_destination_user_id on destination (user_id);
@@ -264,6 +302,21 @@ drop index if exists ix_album_media_album;
 alter table album_media drop constraint if exists fk_album_media_media;
 drop index if exists ix_album_media_media;
 
+alter table comment drop constraint if exists fk_comment_trip_node_id;
+drop index if exists ix_comment_trip_node_id;
+
+alter table comment drop constraint if exists fk_comment_user_id;
+drop index if exists ix_comment_user_id;
+
+alter table comment_emoji drop constraint if exists fk_comment_emoji_comment_id;
+drop index if exists ix_comment_emoji_comment_id;
+
+alter table comment_emoji_user drop constraint if exists fk_comment_emoji_user_comment_emoji;
+drop index if exists ix_comment_emoji_user_comment_emoji;
+
+alter table comment_emoji_user drop constraint if exists fk_comment_emoji_user_user;
+drop index if exists ix_comment_emoji_user_user;
+
 alter table destination drop constraint if exists fk_destination_default_album_id;
 
 alter table destination drop constraint if exists fk_destination_user_id;
@@ -335,6 +388,12 @@ drop index if exists ix_user_nationality_nationality_id;
 drop table if exists album;
 
 drop table if exists album_media;
+
+drop table if exists comment;
+
+drop table if exists comment_emoji;
+
+drop table if exists comment_emoji_user;
 
 drop table if exists destination;
 
