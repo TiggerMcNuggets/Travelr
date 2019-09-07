@@ -10,6 +10,7 @@ import dto.shared.CreatedDTO;
 import dto.trip.*;
 
 import exceptions.CustomException;
+import finders.TripNodeFinder;
 import models.*;
 import net.fortuna.ical4j.model.Calendar;
 import org.slf4j.Logger;
@@ -64,6 +65,17 @@ public class TripController extends Controller {
 //    @Authorization.RequireAuth
     public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
         PDFCreator pdfCreator = new PDFCreator();
+        TripNode trip = TripNode.find.byId(tripId);
+//        TripNodeFinder finder = new TripNodeFinder();
+//        Optional<TripNode> trip = finder.findByIdIncludeDeleted(tripId);
+
+        List<TripNode> dests = new ArrayList<>();
+        System.out.println("############################################################");
+        for (Node dest: trip.getNodes()) {
+            System.out.println(dest.getName());
+        }
+        System.out.println("############################################################");
+//        CompletionStage<Result> res = this.fetchTrip(req, tripId, userId);
         File file = pdfCreator.generateTripEmailPDF();
         if (file == null) {
             return CompletableFuture.completedFuture(internalServerError());
