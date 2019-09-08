@@ -270,12 +270,12 @@ public class UserController extends Controller {
 
             if (!slackUser.isPresent()) {
                 // create a new slack user in the table
-                SlackUser newSlackUser = new SlackUser(user.get(), accessTokenJson.get().toString());
+                SlackUser newSlackUser = new SlackUser(user.get(), accessTokenJson.get().getAsString());
                 newSlackUser.insert();
             } else {
                 // update access token in the table
                 SlackUser existingSlackUser = slackUser.get();
-                existingSlackUser.setAccessToken(accessTokenJson.get().toString());
+                existingSlackUser.setAccessToken(accessTokenJson.get().getAsString());
                 existingSlackUser.update();
             }
 
