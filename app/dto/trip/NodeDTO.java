@@ -21,6 +21,10 @@ public class NodeDTO {
 
     public List<NodeUserDTO> usergroup;
 
+    public NodeDTO() {
+
+    }
+
     public NodeDTO(Node node) {
         this.id = node.getId();
         this.name = node.getName();
@@ -110,4 +114,6 @@ public class NodeDTO {
     public void setUsergroup(List<NodeUserDTO> usergroup) {
         this.usergroup = usergroup;
     }
+
+
 }
