@@ -319,7 +319,7 @@ public class TripService {
 
             // Gets the current user status and the status from the request
             NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", user).eq("trip", trip).findOne();
-            TripStatus tripStatus = TripStatus.valueOf(tripStatusDTO.getStatus());
+            TripStatus tripStatus = tripStatusDTO.getStatus();
 
             // Updates the user status if it exists otherwise creates a new user status entry.
             if (userStatus == null) {
