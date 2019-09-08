@@ -73,7 +73,6 @@ POST        /api/destinations/edit_requests                          controllers
 POST        /api/destinations/edit_requests/:requestId/accept        controllers.DestinationEditRequestController.acceptRequest(request: Request, requestId: Long)
 POST        /api/destinations/edit_requests/:requestId/deny          controllers.DestinationEditRequestController.denyRequest(request: Request, requestId: Long)
 
-GET        /api/test controllers.TripController.test()
 # Groups
 POST        /api/users/:user_id/group/:group_id/member/:member_id                   controllers.UserGroupController.addUserToGroup(request: Request, user_id: Long, group_id: Long, member_id: Long)
 PUT         /api/users/:user_id/group/:group_id/member/:member_id/toggle_deleted    controllers.UserGroupController.removeGroupMember(request: Request, user_id: Long, group_id: Long, member_id: Long)
@@ -92,6 +91,8 @@ GET         /api/users/:userId/trips/:tripId                controllers.TripCont
 PUT         /api/users/:userId/trips/:tripId                controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
 PUT         /api/users/:userId/trips/:tripId/toggle_deleted controllers.TripController.softDeleteTrip(request: Request, tripId: Long, userId: Long)
 GET         /api/users/:user_id/trips/:trip_id/iCal         controllers.TripController.getUserTripAsICalFile(request: Request, user_id: Long, trip_id: Long)
+PUT         /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripController.toggleGroupToTrip(request: Request, tripId: Long, userId: Long, groupId: Long)    
+PUT         /api/users/:userId/trips/:nodeId/status        controllers.TripController.changeUserTripStatus(request: Request, nodeId: Long, userId: Long)
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)

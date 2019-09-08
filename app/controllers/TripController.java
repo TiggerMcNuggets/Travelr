@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
+import dto.trip.NodeDTO;
 import dto.shared.CreatedDTO;
 import dto.trip.*;
 
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
 
 public class TripController extends Controller {
 
@@ -89,6 +89,7 @@ public class TripController extends Controller {
      * Create a trip endpoint
      *
      * @param request
+     * @param userId
      * @return
      */
     @Authorization.RequireAuthOrAdmin
@@ -155,13 +156,15 @@ public class TripController extends Controller {
          */
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
-            if(!tripNodeOptional.isPresent()) {
+            if (!tripNodeOptional.isPresent()) {
                 throw new CustomException(404, "Trip not found");
             }
 
-            TripNode trip = tripNodeOptional.get();
+            Node trip = tripNodeOptional.get();
 
             GetTripDTO dto = new GetTripDTO();
+
+            // TODO: Move this logic to DTO not sure why it is in the controller??
 
             // Trip Details
             dto.setName(trip.getName());
@@ -171,11 +174,23 @@ public class TripController extends Controller {
             List<NodeDTO> childrenDTO = new ArrayList<>();
 
             for (Node node : children) {
-                System.out.println(node.getClass());
                 childrenDTO.add(new NodeDTO(node));
             }
 
             dto.setNodes(childrenDTO);
+
+
+            // Format trip's usergroup
+            List<NodeUserDTO> usergroupDTO = new ArrayList<>();
+            Grouping grouping = trip.getUserGroup();
+
+            if (grouping != null) {
+                for (UserGroup user : grouping.getUserGroups()) {
+                    usergroupDTO.add(new NodeUserDTO(user, trip));
+                }
+            }
+
+            dto.setUsergroup(usergroupDTO);
 
             return dto;
         });
@@ -206,6 +221,7 @@ public class TripController extends Controller {
             return handleTrips(result, ex);
         });
     }
+
 
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> updateTrip(Http.Request request, Long tripId, Long userId) {
@@ -272,7 +288,6 @@ public class TripController extends Controller {
     }
 
 
-
     /**
      * //     * Soft Deletes a trip
      * //     * @param req the http request
@@ -289,64 +304,61 @@ public class TripController extends Controller {
     }
 
     /**
-     * TEST FUNCTION DELETE BEFORE MASTER MERGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * @return
-     * @throws Exception
+     * Changing the user trip attendance status.
+     *
+     * @param request the http request
+     * @param tripId  the id of the trip object
+     * @param userId  the id of the user
+     * @return 200 for updating successfully, 404 for not found user/trip, 401 for
+     *         unauthenticated, 403 for unauthorised
      */
-    public Result test() throws Exception {
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> changeUserTripStatus(Http.Request request, Long tripId, Long userId) {
+        Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
 
-        User user = User.find.findById(3L);
+        Form<TripStatusDTO> updateTripForm = formFactory.form(TripStatusDTO.class).bindFromRequest(request);
 
-        Destination dest1 = new Destination("Destination 1", 1.0, 1.0, "type", "district", "country", user);
-        dest1.insert();
-
-        Destination dest2 = new Destination("Destination 2", 2.0, 2.0, "type2", "district2", "country2", user);
-        dest2.insert();
-
-        DestinationNode tdf1 = new DestinationNode("Custom Destination 1 Name", user, dest1);
-        tdf1.setOrdinal(1);
-        DestinationNode tdf2 = new DestinationNode("Custom Destination 2 Name", user, dest2);
-        tdf2.setOrdinal(0);
-
-        TripNode tc = new TripNode("Level 1 Inner Trip", user);
-        tc.setOrdinal(1);
-        tc.save();
-
-
-        tdf1.setParent(tc);
-        tdf1.save();
-        tdf2.setParent(tc);
-        tdf2.save();
-
-
-        Destination dest3 = new Destination("Destination 3", 3.0, 3.0, "type3", "district3", "country3", user);
-        dest3.insert();
-
-
-        DestinationNode tdf3 = new DestinationNode("Custom Destination 3 Name", user, dest3);
-        tdf3.setOrdinal(0);
-
-        TripNode tc2 = new TripNode("Root Trip", user);
-
-        tc2.save();
-
-
-        tc.setParent(tc2);
-        tc.save();
-
-        tdf3.setParent(tc2);
-        tdf3.save();
-
-
-        List<Node> tNodes = Node.find.query().where().eq("parent", tc2).findList();
-
-        List<NodeDTO> nodeDTOS = new ArrayList<>();
-
-        for (Node node : tNodes) {
-            System.out.println(node.getClass());
-            nodeDTOS.add(new NodeDTO(node));
+        if (updateTripForm.hasErrors()) {
+            logger.error("Trip object is not valid");
+            return CompletableFuture.completedFuture(badRequest());
         }
 
-        return ok(Json.toJson(nodeDTOS));
+        TripStatusDTO tripStatusDTO = updateTripForm.get();
+
+        return tripService.changeUserTripStatus(tripStatusDTO, user.get(), node.get())
+                .thenApplyAsync(id -> ok(APIResponses.TRIP_STATUS_UPDATED));
     }
+
+
+    /**
+     * Toggles a relation between a trip and a group
+     *
+     * @param request the http request
+     * @param tripId  the id of the trip object
+     * @param userId  the id of the user
+     * @param groupId the id of the group
+     * @return 200 for updating successfully, 404 for not found user/group/trip, 401
+     *         for unauthenticated, 403 for unauthorised
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> toggleGroupToTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
+        Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
+        Optional<Grouping> group = Optional.ofNullable(Grouping.find.byId(groupId));
+
+        if (!node.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+        if (!user.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRAVELLER_NOT_FOUND));
+        }
+        if (!group.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+        return tripService.toggleGroupInTrip(node.get(), group.get())
+                .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
+    }
+
 }

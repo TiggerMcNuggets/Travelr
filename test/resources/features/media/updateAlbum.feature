@@ -62,7 +62,7 @@ Feature: EditAlbum
       | Album |
 
 
-  Scenario: Edit an album with incorrect request body
+  Scenario: Edit an album with a duplicate name
     Given I am authenticated
     And I own the album
       | name  |

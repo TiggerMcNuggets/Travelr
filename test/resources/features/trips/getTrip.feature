@@ -14,48 +14,84 @@ Scenario: Get a trip successfully
   And The trip contains the trip destinations
     | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
     | Destination 3 | destination | 1           | 2             | 0            | 1             |
+  And the trip is associated with the user group
+    | name         | description         |
+    | Team 300     | The best team eva   |
+  And the group has the members, ownership and statuses
+    | first | last   | email               | dob | status     | owner |
+    | Joe   | Bloggs | joebloggs@email.com | 1   | GOING      | false |
+    | John  | Smith  | johnsmith@email.com | 1   | MAYBE      | true  |
+    | Mary  | Smith  | marysmith@email.com | 1   | NOT GOING  | false |
   When I want to get the trip
   And I send the request
   Then I will receive the response code 200
   And I will receive the response body
   """
-  {"navigation":[
-      {"id":1,"name":"My First Trip"}
+  {
+    "navigation": [
+        {
+            "id": 1,
+            "name": "My First Trip"
+        }
     ],
     "trip": {
-      "id":1,
-      "name":"My First Trip",
-      "nodes":[
+        "id": 1,
+        "name": "My First Trip",
+         "usergroup": [
         {
-        "id":2,
-        "name":"Destination 3",
-        "arrivalDate":1,
-        "departureDate":2,
-        "ordinal":0,
-        "destination":{
-          "id":1,
-          "name":"Eiffel Tower",
-          "latitude":5.0,
-          "longitude":5.0,
-          "type":"Landmark",
-          "district":"Paris",
-          "country":"France",
-          "googleId":null
-         },
-        "type":"destination"
+            "userId": 3,
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "status": "GOING",
+            "owner": false
+        },
+        {
+            "userId": 4,
+            "firstName": "John",
+            "lastName": "Smith",
+            "status": "MAYBE",
+            "owner": true
+        },
+        {
+            "userId": 5,
+            "firstName": "Mary",
+            "lastName": "Smith",
+            "status": "NOT GOING",
+            "owner": false
         }
-       ]
-      },
-      "root":{
-        "id":1,
-        "name":"My First Trip",
-        "user":{
-          "firstName":"Test",
-          "lastName":"User",
-          "id":2
-          }
+    ],
+        "nodes": [
+            {
+                "id": 2,
+                "name": "Destination 3",
+                "arrivalDate": 1,
+                "departureDate": 2,
+                "ordinal": 0,
+                "destination": {
+                    "id": 1,
+                    "name": "Eiffel Tower",
+                    "latitude": 5.0,
+                    "longitude": 5.0,
+                    "type": "Landmark",
+                    "district": "Paris",
+                    "country": "France",
+                    "googleId": null
+                },
+                "type": "destination",
+                "usergroup": null
+            }
+        ]
+    },
+    "root": {
+        "id": 1,
+        "name": "My First Trip",
+        "user": {
+            "firstName": "Test",
+            "lastName": "User",
+            "id": 2
         }
-      }
+    }
+}
   """
 
 Scenario: Get another user's trip as an admin
@@ -91,6 +127,7 @@ Scenario: Get another user's trip as an admin
     "trip": {
       "id":1,
       "name":"My First Trip",
+      "usergroup": [],
       "nodes":[
         {
         "id":2,
@@ -108,7 +145,8 @@ Scenario: Get another user's trip as an admin
           "country":"France",
           "googleId":null
         },
-        "type":"destination"
+        "type":"destination",
+        "usergroup": null
        },
        {
         "id":3,
@@ -126,7 +164,8 @@ Scenario: Get another user's trip as an admin
           "country":"New Zealand",
           "googleId":null
         },
-        "type":"destination"
+        "type":"destination",
+        "usergroup": null
       },
       {
         "id":4,
@@ -144,7 +183,8 @@ Scenario: Get another user's trip as an admin
           "country":"New Zealand",
           "googleId":null
          },
-         "type":"destination"
+         "type":"destination",
+         "usergroup": null
         }]},
       "root": {
         "id":1,

@@ -3,6 +3,7 @@ package service;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
+import dto.trip.TripStatusDTO;
 import exceptions.CustomException;
 import models.*;
 import play.mvc.Http;
@@ -25,7 +26,9 @@ public class TripService {
     private DatabaseExecutionContext context;
 
     @Inject
-    public TripService(DatabaseExecutionContext context) { this.context = context; }
+    public TripService(DatabaseExecutionContext context) {
+        this.context = context;
+    }
 
     /**
      * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to user
@@ -262,9 +265,9 @@ public class TripService {
 
     }
 
-
     /**
      * Deletes a trip given an Id
+     *
      * @param tripId
      * @return true if successful deletion, false if not
      */
@@ -284,6 +287,7 @@ public class TripService {
 
     /**
      * Toggles the deletion of a trip given an Id
+     *
      * @param id
      * @return true if the trip is deleted
      */
@@ -291,7 +295,7 @@ public class TripService {
         return supplyAsync(() -> {
             Optional<TripNode> tripNodeOptional = TripNode.find.findByIdIncludeDeleted(id);
 
-            if(tripNodeOptional.isPresent()) {
+            if (tripNodeOptional.isPresent()) {
                 TripNode tripNode = tripNodeOptional.get();
                 tripNode.setDeleted(!tripNode.isDeleted());
                 tripNode.update();
@@ -299,7 +303,69 @@ public class TripService {
             }
 
             return false;
+        });
+
+    }
+
+    /**
+     * Updates a Group value to the group property of a Trip object
+     * 
+     * @param trip the Trip object
+     * @param user the User object
+     * @return the Trip id of the user that has been updated
+     */
+    public CompletableFuture<Long> changeUserTripStatus(TripStatusDTO tripStatusDTO, User user, Node trip) {
+        return supplyAsync(() -> {
+
+            // Gets the current user status and the status from the request
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", user).eq("trip", trip).findOne();
+            TripStatus tripStatus = tripStatusDTO.getStatus();
+
+            // Updates the user status if it exists otherwise creates a new user status entry.
+            if (userStatus == null) {
+                userStatus = new NodeUserStatus(user, trip, tripStatus);
+                userStatus.insert();
+            } else {
+                userStatus.setTripStatus(tripStatus);
+                userStatus.update();
+            }
+
+            // Finds all the children destinations of the trip which is being updated
+            List<Node> childrenDestinations = Node.find.query().where().eq("parent", trip).eq("dtype", "destination")
+                    .findList();
+
+            // Updates the status of each of the child destinations to the same status as the parent trip.
+            for (Node destinationNode : childrenDestinations) {
+                NodeUserStatus userDestStatus = NodeUserStatus.find.query().where().eq("user", user)
+                        .eq("node", destinationNode).findOne();
+                userDestStatus.setTripStatus(tripStatus);
+                userDestStatus.update();
+            }
+
+            return trip.id;
 
         }, context);
     }
+
+    /**
+     * 
+     * @param trip  the Trip object*
+     * @param group the Group object*@return the Trip id of the user that has been
+     *              updated
+     */
+
+    public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
+        return supplyAsync(() -> {
+            if (trip.getUserGroup() == null) {
+                trip.setUserGroup(group);
+            } else {
+                trip.setUserGroup(null);
+            }
+
+            trip.update();
+            return trip.getId();
+
+        }, context);
+    }
+
 }
