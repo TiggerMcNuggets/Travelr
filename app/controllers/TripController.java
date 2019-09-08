@@ -32,9 +32,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -55,6 +53,26 @@ public class TripController extends Controller {
     }
 
 
+    private List<HashMap<TripNode, DestinationNode>> getAllNodes(TripNode tNode) {
+
+        List<HashMap<TripNode, DestinationNode>> destinations = new ArrayList<>();
+
+        List<Node> tripNodes = tripService.getChildrenByTripId(tNode.getId()).join();
+
+        for (Node node: tripNodes) {
+            if(node.getClass() == TripNode.class) {
+                destinations.addAll(getAllNodes((TripNode) node));
+            } else {
+                HashMap <TripNode, DestinationNode> map = new HashMap<>();
+                map.put(tNode, (DestinationNode) node);
+                destinations.add(map);
+            }
+        }
+
+        return destinations;
+    }
+
+
     /**
      * Creates a .ics file to return to the user with the trip
      * @param req the http request
@@ -66,17 +84,15 @@ public class TripController extends Controller {
     public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
         PDFCreator pdfCreator = new PDFCreator();
         TripNode trip = TripNode.find.byId(tripId);
-//        TripNodeFinder finder = new TripNodeFinder();
-//        Optional<TripNode> trip = finder.findByIdIncludeDeleted(tripId);
-
-        List<TripNode> dests = new ArrayList<>();
-        System.out.println("############################################################");
-        for (Node dest: trip.getNodes()) {
-            System.out.println(dest.getName());
+        List<HashMap<TripNode, DestinationNode>> dests = this.getAllNodes(trip);
+        for (HashMap dest: dests) {
+            TripNode tripNode = (TripNode) dest.keySet().toArray()[0];
+            System.out.println(tripNode.getName());
+            DestinationNode node = (DestinationNode) dest.get(dest.keySet().toArray()[0]);
+            System.out.println(node.getDestination().getName());
         }
-        System.out.println("############################################################");
-//        CompletionStage<Result> res = this.fetchTrip(req, tripId, userId);
-        File file = pdfCreator.generateTripEmailPDF();
+
+        File file = pdfCreator.generateTripEmailPDF(trip, dests);
         if (file == null) {
             return CompletableFuture.completedFuture(internalServerError());
         }
