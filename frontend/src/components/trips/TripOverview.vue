@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "Trip Overview",
+  name: "TripOverview",
 
   props: {},
 

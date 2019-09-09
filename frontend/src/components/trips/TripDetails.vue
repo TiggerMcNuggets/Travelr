@@ -24,13 +24,12 @@
 </style>
 
 <script>
-import PageHeader from "../common/header/PageHeader";
 import TripOverview from "./TripOverview";
 import TripComments from "./TripComments";
 import TripAlbum from "./TripAlbum";
 
 export default {
-  name: "Trip Details",
+  name: "TripDetails",
 
   data() {
     return {
@@ -39,7 +38,6 @@ export default {
   },
 
   components: {
-    PageHeader,
     TripOverview,
     TripComments,
     TripAlbum
