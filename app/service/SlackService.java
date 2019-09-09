@@ -29,6 +29,12 @@ public class SlackService {
         this.frontendUrl = ConfigFactory.load().getString("baseRedirectUrl");
     }
 
+    /**
+     * Builds an authorisation request
+     * @param code the slack authorization grant code
+     * @param userId the user's id
+     * @return the constructed request
+     */
     private WSRequest addParamsToSlackAccessTokenRequest(String code, Long userId) {
         WSRequest request = ws.url(slackApi).setContentType("application/x-www-form-urlencoded");
         request.addQueryParameter("client_id", slackClientID);
@@ -38,11 +44,23 @@ public class SlackService {
         return request;
     }
 
+    /**
+     * Construct and send an authorisation request for the access token to the Slack API
+     * Refer to: https://a.slack-edge.com/80588/img/api/slack_oauth_flow_diagram@2x.png
+     * @param code the slack authorization grant code
+     * @param userId the user's id
+     * @return the status of the sent request
+     */
     public CompletableFuture<ResponseHandler> requestAccessToken(String code, Long userId) {
         WSRequest slackAccessTokenRequest = addParamsToSlackAccessTokenRequest(code, userId);
         return sendSlackRequest(slackAccessTokenRequest).toCompletableFuture();
     }
 
+    /**
+     * Sends any POST request to the slack API
+     * @param request to be sent to the Slack API
+     * @return the response handler with the status and body
+     */
     private CompletionStage<ResponseHandler> sendSlackRequest(WSRequest request) {
         return request.post("").thenApplyAsync(wsResponse -> {
             JsonObject resBody = new JsonParser().parse(wsResponse.getBody()).getAsJsonObject();

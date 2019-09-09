@@ -22,12 +22,9 @@ import repository.UserRepository;
 import service.MailgunService;
 import service.SlackService;
 
-
 import javax.inject.Inject;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -84,7 +81,6 @@ public class UserController extends Controller {
             return ok(jsonResponse);
         });
     }
-
 
     /**
      * Creates a new user and sends a welcome email when successfully created.
@@ -200,7 +196,6 @@ public class UserController extends Controller {
         });
     }
 
-
     /**
      * Toggles a user's deletion status
      * @param request the http request
@@ -245,10 +240,14 @@ public class UserController extends Controller {
     }
 
     /**
-     *
+     * Takes a request and checks it for errors. If the access token request is fine, execute it with the Slack service.
+     * Once a valid authorisation grant is returned, create a new slackUser object and store this in the database.
+     * @param request the http request
+     * @param userId the user's id
+     * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result>  slackRequestAuth(Http.Request request, Long userId) {
+    public CompletionStage<Result> slackRequestAuth(Http.Request request, Long userId) {
         // TODO: Add slack logic
         Optional<String> code = Optional.ofNullable(request.body().asJson().get("code").asText());
         if (!code.isPresent()) {
