@@ -6,7 +6,7 @@
     <v-divider></v-divider>
     <v-card-text>
       <v-layout row wrap>
-        <v-flex xs12 ml-3 mr-3>
+        <v-flex xs12>
           <v-autocomplete
             :items="filteredGroups"
             :v-model="selectedUserGroup"
@@ -14,6 +14,7 @@
           ></v-autocomplete>
         </v-flex>
       </v-layout>
+      <v-alert :value="isError" :dismissible="true" type="error" class="mb-4">{{errorMessage}}</v-alert>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -28,7 +29,6 @@
 
 <script>
 import { RepositoryFactory } from "../../../repository/RepositoryFactory";
-import { deepCopy } from "../../../tools/deepCopy";
 
 let userGroupRepository = RepositoryFactory.get("userGroup");
 let tripRepository = RepositoryFactory.get("trip");
@@ -42,7 +42,9 @@ export default {
   data() {
     return {
       selectedUserGroup: {},
-      userGroups: []
+      userGroups: [],
+      errorMessage: "",
+      isError: false
     };
   },
 
@@ -77,11 +79,20 @@ export default {
      * Calls API to add a user group to the trip.
      */
     addUserGroup() {
-      tripRepository.toggleGroupTrip(
-        this.$store.getters.getUser.id,
-        this.tripId,
-        this.selectedUserGroup
-      );
+      this.isError = false;
+      tripRepository
+        .toggleGroupTrip(
+          this.$store.getters.getUser.id,
+          this.tripId,
+          this.selectedUserGroup
+        )
+        .then(this.closeGroupDialog)
+        .catch(this.setErrorMessage("Error adding group to trip."));
+    },
+
+    setErrorMessage(error) {
+      this.isError = true;
+      this.errorMessage = error;
     },
 
     /**
