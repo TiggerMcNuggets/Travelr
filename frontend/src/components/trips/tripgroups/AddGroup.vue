@@ -8,7 +8,7 @@
       <v-layout row wrap>
         <v-flex xs12 ml-3 mr-3>
           <v-autocomplete
-            :items="getFilteredUserGroups()"
+            :items="filteredGroups"
             :v-model="selectedUserGroup"
             v-on:change="selectGroup"
           ></v-autocomplete>
@@ -46,7 +46,33 @@ export default {
     };
   },
 
+  computed: {
+    /**
+     * Gets the groups which the user is owner for to populate the list.
+     */
+    filteredGroups() {
+      let filteredGroups = this.userGroups.filter(group => {
+        return this.isUserOwner(this.$store.getters.getUser.id, group);
+      });
+
+      return filteredGroups.map(group => ({
+        text: group.name,
+        value: group.id,
+        id: group.id
+      }));
+    }
+  },
+
   methods: {
+    /**
+     * Checks to see if the given user is an owner of a given group or a site admin
+     */
+    isUserOwner(userId, selectedGroup) {
+      if (selectedGroup.owners.length > 0) {
+        return selectedGroup.owners.some(owner => owner === userId);
+      }
+    },
+
     /**
      * Calls API to add a user group to the trip.
      */
@@ -63,21 +89,6 @@ export default {
      */
     selectGroup(groupId) {
       this.selectedUserGroup = groupId;
-    },
-
-    /**
-     * Gets the groups which the user is owner for to populate the list.
-     */
-    getFilteredUserGroups() {
-      let filteredGroups = this.userGroups.filter(group => {
-        return this.checkIfUserIsOwner(this.$store.getters.getUser.id, group);
-      });
-
-      return filteredGroups.map(group => ({
-        text: group.name,
-        value: group.id,
-        id: group.id
-      }));
     },
 
     /**
@@ -100,16 +111,6 @@ export default {
         .then(result => {
           this.userGroups = result.data;
         });
-    },
-
-    /**
-     * Checks to see if the given user is an owner of a given group or a site admin
-     */
-    checkIfUserIsOwner(userId, selectedGroup) {
-      let group = deepCopy(selectedGroup);
-      if (group.owners.length > 0) {
-        return group.owners.some(owner => owner === userId);
-      }
     }
   },
 
