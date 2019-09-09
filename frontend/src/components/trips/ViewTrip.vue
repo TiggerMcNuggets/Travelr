@@ -6,15 +6,21 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
+      :options="getHeaderOptions()"
       enableBackButton
     />
-
     <!-- <v-breadcrumbs :items="trip.navigation">
       <template v-slot:item="props">
         <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
       </template>
     </v-breadcrumbs>-->
 
+    <v-dialog v-model="addUsergroupDialogActive" width="500">
+      <AddGroup
+        :closeGroupDialog="() => {addUsergroupDialogActive = false}"
+        :tripId="Number(trip.root.id)"
+      />
+    </v-dialog>
     <v-layout row wrap>
       <v-flex md3 pa-2>
         <v-form lazy-validation ref="form" v-model="isFormValid">
@@ -248,6 +254,8 @@ import { store } from "../../store/index";
 import draggable from "vuedraggable";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
+import AddGroup from "./tripgroups/AddGroup";
+
 import dateTime from "../common/dateTime/dateTime.js";
 import {
   noSameDestinationNameConsecutiveRule,
@@ -271,7 +279,8 @@ export default {
   components: {
     draggable,
     PageHeader,
-    TripDetails
+    TripDetails,
+    AddGroup
   },
   mixins: [RollbackMixin, StoreTripsMixin],
   // local variables
@@ -282,6 +291,8 @@ export default {
       draggedSublist: [],
 
       isFormValid: true,
+
+      addUsergroupDialogActive: false,
 
       isMyProfile: false,
       hasMissingDates: true,
@@ -347,6 +358,17 @@ export default {
       } else {
         return "blue";
       }
+    },
+
+    getHeaderOptions() {
+      return [
+        {
+          action: () => {
+            this.addUsergroupDialogActive = true;
+          },
+          icon: "people_alt"
+        }
+      ];
     },
 
     /**
