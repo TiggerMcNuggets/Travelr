@@ -151,8 +151,10 @@ create table user (
   user_profile_photo            varchar(255),
   timestamp                     bigint not null,
   account_type                  integer default 0 not null,
+  slack_user_id                 bigint,
   deleted                       boolean default false not null,
   constraint uq_user_email unique (email),
+  constraint uq_user_slack_user_id unique (slack_user_id),
   constraint pk_user primary key (id)
 );
 
@@ -243,6 +245,8 @@ alter table personal_photo add constraint fk_personal_photo_user_id foreign key 
 
 alter table slack_user add constraint fk_slack_user_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+alter table user add constraint fk_user_slack_user_id foreign key (slack_user_id) references slack_user (id) on delete restrict on update restrict;
+
 create index ix_user_traveller_type_user on user_traveller_type (user_id);
 alter table user_traveller_type add constraint fk_user_traveller_type_user foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -326,6 +330,8 @@ alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
 
 alter table slack_user drop constraint if exists fk_slack_user_user_id;
+
+alter table user drop constraint if exists fk_user_slack_user_id;
 
 alter table user_traveller_type drop constraint if exists fk_user_traveller_type_user;
 drop index if exists ix_user_traveller_type_user;

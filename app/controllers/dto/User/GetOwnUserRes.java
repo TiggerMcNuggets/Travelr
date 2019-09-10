@@ -1,5 +1,6 @@
 package controllers.dto.User;
 
+import models.SlackUser;
 import models.TravellerType;
 import models.User;
 import models.UserNationality;
@@ -20,6 +21,7 @@ public class GetOwnUserRes {
     private int accountType;
     private String userProfilePhoto;
     private Long defaultAlbumId;
+    private boolean isSlack;
 
     public GetOwnUserRes(User user) {
         this.id = user.id;
@@ -34,7 +36,8 @@ public class GetOwnUserRes {
         this.accountType = user.accountType;
         this.userProfilePhoto = user.userProfilePhoto;
         this.defaultAlbumId = user.getDefaultAlbum().getId();
-
+        SlackUser slackUser = SlackUser.find.findByUserId(user.id);
+        this.isSlack =  slackUser != null && slackUser.getAccessToken() != null;
     }
 
     public void setNationalities(List<UserNationality> nationalities) {
@@ -96,5 +99,13 @@ public class GetOwnUserRes {
 
     public Long getDefaultAlbumId() {
         return defaultAlbumId;
+    }
+
+    public boolean isSlack() {
+        return isSlack;
+    }
+
+    public void setSlack(boolean slack) {
+        isSlack = slack;
     }
 }
