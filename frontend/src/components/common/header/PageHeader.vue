@@ -1,5 +1,10 @@
 <template>
   <div>
+    <v-breadcrumbs v-if="breadcrumbs" :items="breadcrumbs.items" class="header-breadcrumbs">
+      <template v-slot:item="props">
+        <v-breadcrumbs-item v-on:click="breadcrumbs.action(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
+      </template>
+    </v-breadcrumbs>
     <div class="section">
       <!-- Right side of page header with optional back button and page title -->
       <div class="page__title_container">
@@ -23,10 +28,11 @@
         >
           <v-icon dark>keyboard_arrow_left</v-icon>
         </v-btn>
+
         <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
       </div>
 
-      <v-spacer/>
+      <v-spacer />
 
       <!-- Optional undo redo buttons -->
       <UndoRedoButtons
@@ -39,25 +45,43 @@
 
       <!-- Page options such as add or search to be displayed on the right side of the header -->
       <div v-if="options">
-        <v-btn
-          v-for="(option, i) in options"
-          :key="i"
-          class="upload-toggle-button"
-          fab
-          small
-          dark
-          color="indigo"
-          @click="option.action"
-        >
-          <v-icon dark>{{option.icon}}</v-icon>
-        </v-btn>
+        <v-tooltip bottom v-for="(option, i) in options" :key="i">
+          <template v-slot:activator="{ on }">
+            <!-- --------- BUTTON VARIATION WITH TEXT --------- -->
+            <!-- --------- TODO: CHECK WITH TEAM WHICH VARIANT IS PERFEFFED ---------- -->
+            <!-- <v-btn
+              v-on="on"
+              color='error'
+              :flat="!option.title"
+              :small="!option.title"
+              :fab="!option.title"
+              :class="option.title !== '' ? 'header-button flat' : 'flat fab small header-button'"
+              @click="option.action"
+            >
+            <v-icon :class="option.title ? 'header-button-icon' : ''" dark>{{option.icon}}</v-icon>
+            {{option.title}}
+            </v-btn> -->
+            <v-btn
+              v-on="on"
+              color="error"
+              flat
+              fab
+              class="header-button flat"
+              @click="option.action"
+            >
+              <v-icon dark>{{option.icon}}</v-icon>
+            </v-btn>
+          </template>
+          <span>{{option.title}}</span>
+        </v-tooltip>
       </div>
 
       <div v-if="multiOptions">
         <v-menu v-for="(option, i) in multiOptions" :key="i">
           <template v-slot:activator="{ on }">
-            <v-btn class="upload-toggle-button" icon v-on="on" fab small dark color="indigo">
+            <v-btn class="header-button" icon v-on="on" fab small dark color="indigo">
               <v-icon dark>{{option.icon}}</v-icon>
+              {{option.title}}
             </v-btn>
           </template>
 
@@ -109,7 +133,8 @@ export default {
     canRedo: Function,
     disableUndoRedo: Boolean,
     enableBackButton: Boolean,
-    backButtonOverride: Function
+    backButtonOverride: Function,
+    breadcrumbs: Object
   }
 };
 </script>
