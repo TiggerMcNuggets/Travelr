@@ -282,6 +282,57 @@ public class UserController extends Controller {
         });
     }
 
+
+    /**
+     *
+     * @param request the http request
+     * @param userId the user's id
+     * @param groupName
+     * @return 200 if the request is executed
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId, String groupName) {
+        // TODO: Add slack logic
+
+        SlackUser groupOwner = SlackUser.find.findByUserId(userId);
+        if (groupOwner == null) {
+            return CompletableFuture.completedFuture(badRequest("slack user is null or not found, user may not have connected to slack"));
+        }
+
+        /* Private channel names can only contain lowercase letters, numbers,
+        hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
+        if this is given */
+
+        //here
+        // make sure it catches any error slack returns
+        return slackService.requestAccessToken(code.get(), userId).thenApplyAsync(resHandler -> {
+            Optional<User> user = Optional.ofNullable(User.find.findById(userId));
+            Optional<JsonElement> accessTokenJson = Optional.ofNullable(resHandler.getBody().get("access_token"));
+            if (!user.isPresent()) {
+                return badRequest("user is null or not found");
+            }
+
+            if (!accessTokenJson.isPresent()) {
+                return badRequest("Invalid access token");
+            }
+
+            Optional<SlackUser> slackUser = Optional.ofNullable(SlackUser.find.findByUserId(user.get().getId()));
+
+            if (!slackUser.isPresent()) {
+                // create a new slack user in the table
+                SlackUser newSlackUser = new SlackUser(user.get(), accessTokenJson.get().getAsString());
+                newSlackUser.insert();
+            } else {
+                // update access token in the table
+                SlackUser existingSlackUser = slackUser.get();
+                existingSlackUser.setAccessToken(accessTokenJson.get().getAsString());
+                existingSlackUser.update();
+            }
+
+            return ok("Slack token saved");
+        });
+    }
+
     public Result index() {
         return ok("Travel EA - Home");
     }
