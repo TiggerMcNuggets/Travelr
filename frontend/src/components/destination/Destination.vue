@@ -212,8 +212,8 @@ export default {
      */
     options() {
       return [
-        { action: this.toggleShowCreateDestination, icon: "add" },
-        { action: this.toggleShowSearch, icon: "search" }
+        { action: this.toggleShowCreateDestination, icon: "add", title: "Create Destination" },
+        { action: this.toggleShowSearch, icon: "search", title: "Search"  }
       ];
     },
 
