@@ -6,15 +6,9 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
+      :breadcrumbs="{items: trip.navigation, action: getSelectedTrip}"
       enableBackButton
     />
-
-    <!-- <v-breadcrumbs :items="trip.navigation">
-      <template v-slot:item="props">
-        <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>-->
-
     <v-layout row wrap>
       <v-flex md3 pa-2>
         <v-form lazy-validation ref="form" v-model="isFormValid">
@@ -74,11 +68,12 @@
             </v-btn>
           </v-layout>
 
-          <!-- <v-container>
-        <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination
-          consecutive.
-        </v-alert>
-          </v-container>-->
+          <v-container>
+            <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">
+              Cannot have same destination
+              consecutive.
+            </v-alert>
+          </v-container>
 
           <v-timeline align-top dense>
             <draggable class="list-group" tag="ul" v-model="trip.trip.nodes">
@@ -180,7 +175,7 @@
       </v-flex>
 
       <v-flex md5 pa-2>
-        <TripDetails/>
+        <TripDetails />
       </v-flex>
 
       <v-flex md4 pa-2>
@@ -211,12 +206,6 @@
   display: flex;
   justify-content: flex-end;
 }
-
-/* .trip-timeline-item-width {
-  min-width: 300px;
-  width: 25%;
-  padding: 0;
-} */
 
 .trip-map {
   width: 55%;
