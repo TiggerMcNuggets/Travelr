@@ -10,8 +10,14 @@ import org.jsoup.nodes.Document;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimeZone;
 
 public class PDFCreator {
 
@@ -30,13 +36,16 @@ public class PDFCreator {
         //Returns a string representation of the html for trip email to be converted to a pdf
         String destinations_and_details = "";
         for (HashMap dest: dests) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
             TripNode tripNode = (TripNode) dest.keySet().toArray()[0];
             DestinationNode node = (DestinationNode) dest.get(dest.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
             destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
                     "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
-                    "<td style=\"width: 25%; text-align: center;\">" + node.getArrivalDate() + "</td>\n" +
-                    "<td style=\"width: 25%; text-align: center;\">" + node.getDepartureDate() + "</td>\n" +
-                    "<td style=\"width: 25%; text-align: center;\">Santa doesn't exist</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
                     "</tr>";
         }
         html_template = html_template.replace("destinations_and_details", destinations_and_details);
