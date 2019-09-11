@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.typesafe.config.ConfigFactory;
 import dto.HttpHandlerModels.ResponseHandler;
+import models.SlackUser;
 import play.api.Configuration;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
@@ -18,7 +19,9 @@ public class SlackService {
     private DatabaseExecutionContext context;
     private String slackClientID = "737773912711.735910477760";
     private String slackClientSecret = "08b8f234097b1ccd346c87dfd3277c0c";
-    private String slackApi = "https://slack.com/api/oauth.access";
+//    private String slackApi = "https://slack.com/api/oauth.access";
+    private String slackApiURL = "https://slack.com/api";
+
     private String frontendUrl;
     private WSClient ws;
 
@@ -36,7 +39,8 @@ public class SlackService {
      * @return the constructed request
      */
     private WSRequest addParamsToSlackAccessTokenRequest(String code, Long userId) {
-        WSRequest request = ws.url(slackApi).setContentType("application/x-www-form-urlencoded");
+        String slackURL = slackApiURL + "/oauth.access";
+        WSRequest request = ws.url(slackURL).setContentType("application/x-www-form-urlencoded");
         request.addQueryParameter("client_id", slackClientID);
         request.addQueryParameter("client_secret", slackClientSecret);
         request.addQueryParameter("code", code);
@@ -54,6 +58,20 @@ public class SlackService {
     public CompletableFuture<ResponseHandler> requestAccessToken(String code, Long userId) {
         WSRequest slackAccessTokenRequest = addParamsToSlackAccessTokenRequest(code, userId);
         return sendSlackRequest(slackAccessTokenRequest).toCompletableFuture();
+    }
+
+    /**
+     * Construct and send an request for creating a private channel to the Slack API
+     * @param groupOwner the slack information for the user who owns the group
+     * @param groupName the name of the group
+     * @return the status of the sent request
+     */
+    public CompletableFuture<ResponseHandler> requestPrivateChannel(SlackUser groupOwner, String groupName) {
+        String slackURL = slackApiURL + "/groups.create";
+        WSRequest request = ws.url(slackURL).setContentType("application/x-www-form-urlencoded");
+        request.addQueryParameter("token", groupOwner.getAccessToken());
+        request.addQueryParameter("name", groupName);
+        return sendSlackRequest(request).toCompletableFuture();
     }
 
     /**

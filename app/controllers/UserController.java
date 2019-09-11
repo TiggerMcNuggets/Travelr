@@ -9,8 +9,6 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
-import io.ebean.Ebean;
-import io.ebean.text.PathProperties;
 import models.SlackUser;
 import models.User;
 import play.data.Form;
@@ -303,33 +301,31 @@ public class UserController extends Controller {
         hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
         if this is given */
 
-        //here
-        // make sure it catches any error slack returns
-        return slackService.requestAccessToken(code.get(), userId).thenApplyAsync(resHandler -> {
+        return slackService.requestPrivateChannel(groupOwner, groupName).thenApplyAsync(resHandler -> {
+
+
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
-            Optional<JsonElement> accessTokenJson = Optional.ofNullable(resHandler.getBody().get("access_token"));
             if (!user.isPresent()) {
                 return badRequest("user is null or not found");
             }
 
-            if (!accessTokenJson.isPresent()) {
-                return badRequest("Invalid access token");
+            Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
+            if (!(success.get().getAsBoolean())) {
+                // how do i get the problem directly from slack returned?
+
+                return badRequest("request not successful");
             }
 
-            Optional<SlackUser> slackUser = Optional.ofNullable(SlackUser.find.findByUserId(user.get().getId()));
+            Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
+            System.out.println("do i have the correct name???    " + slackGroupName);
 
-            if (!slackUser.isPresent()) {
-                // create a new slack user in the table
-                SlackUser newSlackUser = new SlackUser(user.get(), accessTokenJson.get().getAsString());
-                newSlackUser.insert();
-            } else {
-                // update access token in the table
-                SlackUser existingSlackUser = slackUser.get();
-                existingSlackUser.setAccessToken(accessTokenJson.get().getAsString());
-                existingSlackUser.update();
-            }
+            
+            // store group name with slack user and update
+            groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
+            groupOwner.update();
 
-            return ok("Slack token saved");
+
+            return ok("Slack channel created");
         });
     }
 
