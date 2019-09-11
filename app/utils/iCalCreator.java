@@ -14,6 +14,12 @@ import java.util.List;
 
 public class iCalCreator {
 
+    /**
+     * Takes in any trip and returns a calendar object if there is at least one destination with arrival date
+     * @param trip
+     * @param destinations
+     * @return a Calendar object from the trip provided
+     */
     public Calendar createCalendarFromTripDestinations(TripNode trip, List<HashMap<TripNode, DestinationNode>> destinations) {
 
         Calendar calendar = new Calendar();
@@ -55,5 +61,4 @@ public class iCalCreator {
         return calendar;
 
     }
-
 }

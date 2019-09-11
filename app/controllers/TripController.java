@@ -88,15 +88,8 @@ public class TripController extends Controller {
     public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
         PDFCreator pdfCreator = new PDFCreator();
         TripNode trip = TripNode.find.byId(tripId);
-        List<HashMap<TripNode, DestinationNode>> dests = this.getAllNodes(trip);
-        for (HashMap dest: dests) {
-            TripNode tripNode = (TripNode) dest.keySet().toArray()[0];
-            System.out.println(tripNode.getName());
-            DestinationNode node = (DestinationNode) dest.get(dest.keySet().toArray()[0]);
-            System.out.println(node.getDestination().getName());
-        }
-
-        File file = pdfCreator.generateTripEmailPDF(trip, dests);
+        List<HashMap<TripNode, DestinationNode>> destinations = this.getAllNodes(trip);
+        File file = pdfCreator.generateTripEmailPDF(trip, destinations);
         if (file == null) {
             return CompletableFuture.completedFuture(internalServerError());
         }

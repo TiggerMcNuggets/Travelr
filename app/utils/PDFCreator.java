@@ -16,7 +16,14 @@ import java.util.List;
 
 public class PDFCreator {
 
-    public File generateTripEmailPDF(TripNode trip, List<HashMap<TripNode, DestinationNode>> dests) {
+    /**
+     * Takes in a trip and a list of hashmaps containing trip -> destination
+     * and generates a pdf of the trip
+     * @param trip
+     * @param destinations
+     * @return a PDF with the trip details
+     */
+    public File generateTripEmailPDF(TripNode trip, List<HashMap<TripNode, DestinationNode>> destinations) {
         Document doc = null;
         try {
             //Grabs the html file for trip email to be converted to a string
@@ -26,13 +33,297 @@ public class PDFCreator {
             e.printStackTrace();
         }
         String html_template = doc.toString();
-
-        //Returns a string representation of the html for trip email to be converted to a pdf
         String destinations_and_details = "";
-        for (HashMap dest: dests) {
+        for (HashMap destination: destinations) {
             SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
-            TripNode tripNode = (TripNode) dest.keySet().toArray()[0];
-            DestinationNode node = (DestinationNode) dest.get(dest.keySet().toArray()[0]);
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
+            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
+            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            destinations_and_details = destinations_and_details + "<tr>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + arrival + "</td>\n" +
+                    "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
+                    "</tr>";
+        }
+        for (HashMap destination: destinations) {
+            SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
+            TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
+            DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
             String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
             String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
             destinations_and_details = destinations_and_details + "<tr>\n" +
@@ -44,13 +335,9 @@ public class PDFCreator {
         }
         html_template = html_template.replace("destinations_and_details", destinations_and_details);
         String start_date = "<td style=\"width: 65.9508%; text-align: center;\"><span>30-07-1998</span></td>";
-
         html_template = html_template.replace("start_date", start_date);
         String end_date = "<td style=\"width: 65.9508%; text-align: center;\"><span>25-12-2019</span></td>";
-
         html_template = html_template.replace("end_date", end_date);
-
-
         if (trip.getUserGroup() != null) {
             String num_of_travellers = "<td style=\"width: 65.9508%; text-align: center;\"><span>" + Integer.toString(trip.getUserGroup().getUserGroups().size()) + "</span></td>";
             html_template = html_template.replace("num_of_travellers", num_of_travellers);
@@ -71,6 +358,12 @@ public class PDFCreator {
         return generatePDF(new W3CDom().fromJsoup(newDoc));
     }
 
+    /**
+     * Takes in a org.w3c.dom.Document processed html template and
+     * returns a pdf file
+     * @param htmlTemplate
+     * @return a pdf file
+     */
     private File generatePDF(org.w3c.dom.Document htmlTemplate) {
         /**
          * Creates a pdf file when given a string representation of an html file.
@@ -84,7 +377,6 @@ public class PDFCreator {
             builder.toStream(os);
             builder.run();
             os.close();
-
             return tempFile;
         } catch (Exception e) {
             System.out.println(e);
