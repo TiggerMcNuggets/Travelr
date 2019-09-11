@@ -11,6 +11,7 @@ import dto.shared.CreatedDTO;
 import dto.trip.*;
 
 import exceptions.CustomException;
+import finders.TripNodeFinder;
 import models.*;
 import net.fortuna.ical4j.model.Calendar;
 import org.slf4j.Logger;
@@ -24,15 +25,14 @@ import play.mvc.Result;
 
 import service.MailgunService;
 import service.TripService;
+import utils.PDFCreator;
 import utils.iCalCreator;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -46,12 +46,58 @@ public class TripController extends Controller {
     private final MailgunService mailgunService;
 
     @Inject
-
     public TripController(TripService tripService, MailgunService mailgunService) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
     }
 
+    /**
+     * Gets a list of all destinations in a trip including sub trips
+     * and returns them in a list of hashmaps Trip -> Destination
+     * @param tNode
+     * @return destinations a list of hashmaps Trip -> Destination
+     */
+    private List<HashMap<TripNode, DestinationNode>> getAllNodes(TripNode tNode) {
+
+        List<HashMap<TripNode, DestinationNode>> destinations = new ArrayList<>();
+
+        List<Node> tripNodes = tripService.getChildrenByTripId(tNode.getId()).join();
+
+        for (Node node: tripNodes) {
+            if(node.getClass() == TripNode.class) {
+                destinations.addAll(getAllNodes((TripNode) node));
+            } else {
+                HashMap <TripNode, DestinationNode> map = new HashMap<>();
+                map.put(tNode, (DestinationNode) node);
+                destinations.add(map);
+            }
+        }
+
+        return destinations;
+    }
+
+
+    /**
+     * Creates a .ics file to return to the user with the trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the trip
+     * @return The .ics file generated for the trip
+     */
+//    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
+        PDFCreator pdfCreator = new PDFCreator();
+        TripNode trip = TripNode.find.byId(tripId);
+        if (trip == null) {
+            return CompletableFuture.completedFuture(notFound("Trip not found"));
+        }
+        List<HashMap<TripNode, DestinationNode>> destinations = this.getAllNodes(trip);
+        File file = pdfCreator.generateTripEmailPDF(trip, destinations);
+        if (file == null) {
+            return CompletableFuture.completedFuture(internalServerError());
+        }
+        return CompletableFuture.completedFuture(ok(file));
+    }
 
     /**
      * Creates a .ics file to return to the user with the trip
@@ -71,8 +117,10 @@ public class TripController extends Controller {
 
         if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
 
+        List<HashMap<TripNode, DestinationNode>> dests = this.getAllNodes(trip);
+
         iCalCreator creator = new iCalCreator();
-        Calendar iCalString = creator.createCalendarFromTrip(trip);
+        Calendar iCalString = creator.createCalendarFromTripDestinations(trip, dests);
         try {
             File tempFile = File.createTempFile(trip.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
