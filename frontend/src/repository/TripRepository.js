@@ -87,5 +87,14 @@ export default {
    */
   toggleGroupTrip(userId, tripId, groupId) {
     return Repository.put(`/users/${userId}/trips/${tripId}/groups/${groupId}`);
+  },
+
+  /**
+   * Updates a user particiption status within a trip.
+   * @param {Number} userId The user id
+   * @param {Number} tripId The trip id.
+   */
+  updateGroupTripStatus(userId, tripId, payload) {
+    return Repository.put(`/users/${userId}/trips/${tripId}/status`, payload);
   }
 };

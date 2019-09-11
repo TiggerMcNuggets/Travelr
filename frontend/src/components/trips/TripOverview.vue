@@ -1,9 +1,9 @@
 
 
 <template>
-  <v-layout row wrap>
+  <v-layout >
     <v-flex xs12 ma-2>
-      <UserStatusList :usergroup="trip.trip.usergroup"/>
+      <UserStatusList :tripId="trip.trip.id"/>
     </v-flex>
   </v-layout>
 </template>
@@ -22,22 +22,10 @@ export default {
     UserStatusList
   },
 
-  
-  updated() {
-    console.log("Trip!!!!!!!!!!!!!!!!!!!")
-    console.log(this.trip.trip.usergroup)
-  },
-
   data() {
     return {};
   },
 
-  computed: {
-    // usergroup() {
-    //   console.log(this.$store.getters.getSelectedTrip.trip)
-    //   return this.$store.getters.getSelectedTrip.trip.usergroup
-    // }
-  },
 
   methods: {}
 };
