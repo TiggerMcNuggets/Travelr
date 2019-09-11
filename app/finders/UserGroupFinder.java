@@ -4,6 +4,7 @@ import io.ebean.Finder;
 import models.Grouping;
 import models.UserGroup;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -25,5 +26,4 @@ public class UserGroupFinder extends Finder<Long, UserGroup> {
                     .eq("grouping_id", groupId)
                 .findOne());
     }
-
 }
