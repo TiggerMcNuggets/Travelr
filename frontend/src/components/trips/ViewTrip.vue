@@ -186,7 +186,7 @@
       </v-flex>
 
       <v-flex md5 pa-2>
-        <TripDetails/>
+        <TripDetails :trip="trip"/>
       </v-flex>
 
       <v-flex md4 pa-2>

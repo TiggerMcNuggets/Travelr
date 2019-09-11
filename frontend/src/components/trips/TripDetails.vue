@@ -6,15 +6,15 @@
       <v-tab :key="3" ripple>Files</v-tab>
 
       <v-tab-item :key="1">
-        <TripOverview/>
+        <TripOverview :trip="trip"/>
       </v-tab-item>
 
       <v-tab-item :key="2">
-        <TripComments/>
+        <TripComments :trip="trip"/>
       </v-tab-item>
 
       <v-tab-item :key="3">
-        <TripAlbum/>
+        <TripAlbum  :trip="trip"/>
       </v-tab-item>
     </v-tabs>
   </v-container>
@@ -30,6 +30,10 @@ import TripAlbum from "./TripAlbum";
 
 export default {
   name: "TripDetails",
+
+  props: {
+    trip: Object
+  },
 
   data() {
     return {
