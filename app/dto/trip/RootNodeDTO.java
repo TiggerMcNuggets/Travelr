@@ -8,12 +8,14 @@ public class RootNodeDTO {
     public long id;
     public String name;
     public UserSimpleDTO user;
+    public long albumId;
 
 
     public RootNodeDTO(TripNode node) {
         this.id = node.getId();
         this.name = node.getName();
         this.user = new UserSimpleDTO(node.getUser());
+        this.albumId = node.getDefaultAlbum().getId();
     }
 
     public long getId() {

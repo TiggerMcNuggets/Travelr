@@ -134,6 +134,8 @@ create table node (
   user_group_id                 bigint,
   deleted                       boolean default false not null,
   destination_id                bigint,
+  default_album_id              bigint,
+  constraint uq_node_default_album_id unique (default_album_id),
   constraint pk_node primary key (id)
 );
 
@@ -281,6 +283,8 @@ alter table node add constraint fk_node_user_group_id foreign key (user_group_id
 create index ix_node_destination_id on node (destination_id);
 alter table node add constraint fk_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
+alter table node add constraint fk_node_default_album_id foreign key (default_album_id) references album (id) on delete restrict on update restrict;
+
 create index ix_node_user_status_user_id on node_user_status (user_id);
 alter table node_user_status add constraint fk_node_user_status_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -386,6 +390,8 @@ drop index if exists ix_node_user_group_id;
 
 alter table node drop constraint if exists fk_node_destination_id;
 drop index if exists ix_node_destination_id;
+
+alter table node drop constraint if exists fk_node_default_album_id;
 
 alter table node_user_status drop constraint if exists fk_node_user_status_user_id;
 drop index if exists ix_node_user_status_user_id;
