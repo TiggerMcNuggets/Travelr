@@ -1,10 +1,5 @@
 <template>
   <div>
-    <v-breadcrumbs v-if="breadcrumbs" :items="breadcrumbs.items" class="header-breadcrumbs">
-      <template v-slot:item="props">
-        <v-breadcrumbs-item v-on:click="breadcrumbs.action(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>
     <div class="section">
       <!-- Right side of page header with optional back button and page title -->
       <div class="page__title_container">
@@ -27,6 +22,11 @@
           <v-icon class="back-button-icon">keyboard_arrow_left</v-icon>
         </v-btn>
 
+        <v-breadcrumbs v-if="breadcrumbs" :items="breadcrumbs.items" class="header-breadcrumbs">
+          <template v-slot:item="props">
+            <v-breadcrumbs-item v-on:click="breadcrumbs.action(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
       </div>
 
@@ -143,8 +143,7 @@ export default {
     canRedo: Function,
     disableUndoRedo: Boolean,
     enableBackButton: Boolean,
-    backButtonOverride: Function,
-    breadcrumbs: Object
+    backButtonOverride: Function
   }
 };
 </script>
