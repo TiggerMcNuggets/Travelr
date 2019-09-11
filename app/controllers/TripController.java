@@ -121,8 +121,10 @@ public class TripController extends Controller {
 
         if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
 
+        List<HashMap<TripNode, DestinationNode>> dests = this.getAllNodes(trip);
+
         iCalCreator creator = new iCalCreator();
-        Calendar iCalString = creator.createCalendarFromTrip(trip);
+        Calendar iCalString = creator.createCalendarFromTripDestinations(trip, dests);
         try {
             File tempFile = File.createTempFile(trip.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
