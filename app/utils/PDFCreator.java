@@ -5,19 +5,14 @@ import models.DestinationNode;
 import models.TripNode;
 import models.UserGroup;
 import org.jsoup.*;
+import org.jsoup.helper.W3CDom;
 import org.jsoup.nodes.Document;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
 
 public class PDFCreator {
 
@@ -26,7 +21,6 @@ public class PDFCreator {
         try {
             //Grabs the html file for trip email to be converted to a string
             File input = new File("resources/templates/trip_template_test.html");
-            System.out.println(input.toString());
             doc = Jsoup.parse(input, "UTF-8", "http://example.com/");
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,11 +67,11 @@ public class PDFCreator {
             html_template = html_template.replace("num_of_travellers", "<td style=\"width: 65.9508%; text-align: center;\"><span>0</span></td>");
             html_template = html_template.replace("traveller_list", "<tr><td>No Travellers</td><td></td></tr>");
         }
-
-        return generatePDF(html_template);
+        Document newDoc = Jsoup.parse(html_template);
+        return generatePDF(new W3CDom().fromJsoup(newDoc));
     }
 
-    private File generatePDF(String htmlTemplate) {
+    private File generatePDF(org.w3c.dom.Document htmlTemplate) {
         /**
          * Creates a pdf file when given a string representation of an html file.
          */
@@ -86,11 +80,11 @@ public class PDFCreator {
             OutputStream os = new FileOutputStream(tempFile);
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.useFastMode();
-            //takes a string object representing an html file and converts it to a pdf
-            builder.withHtmlContent(htmlTemplate, "");
+            builder.withW3cDocument(htmlTemplate, "");
             builder.toStream(os);
             builder.run();
             os.close();
+
             return tempFile;
         } catch (Exception e) {
             System.out.println(e);

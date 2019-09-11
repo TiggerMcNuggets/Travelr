@@ -46,13 +46,17 @@ public class TripController extends Controller {
     private final MailgunService mailgunService;
 
     @Inject
-
     public TripController(TripService tripService, MailgunService mailgunService) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
     }
 
-
+    /**
+     * Gets a list of all destinations in a trip including sub trips
+     * and returns them in a list of hashmaps Trip -> Destination
+     * @param tNode
+     * @return destinations a list of hashmaps Trip -> Destination
+     */
     private List<HashMap<TripNode, DestinationNode>> getAllNodes(TripNode tNode) {
 
         List<HashMap<TripNode, DestinationNode>> destinations = new ArrayList<>();
