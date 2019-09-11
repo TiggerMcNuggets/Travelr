@@ -32,6 +32,16 @@ javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
 
 libraryDependencies += javaJdbc % Test
 
+// https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-core
+libraryDependencies += "com.openhtmltopdf" % "openhtmltopdf-core" % "1.0.0"
+// https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox
+libraryDependencies += "com.openhtmltopdf" % "openhtmltopdf-pdfbox" % "1.0.0"
+// https://mvnrepository.com/artifact/org.jsoup/jsoup
+libraryDependencies += "org.jsoup" % "jsoup" % "1.12.1"
+
+
+
+
 // Dependecy for iCal4j
 // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
 libraryDependencies += "org.mnode.ical4j" % "ical4j" % "3.0.0"
