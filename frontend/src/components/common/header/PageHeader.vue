@@ -9,30 +9,28 @@
       <!-- Right side of page header with optional back button and page title -->
       <div class="page__title_container">
         <v-btn
+          color="error"
+          flat
           fab
-          small
-          dark
-          color="indigo"
           @click="$router.go(-1)"
           v-if="enableBackButton && !backButtonOverride"
         >
-          <v-icon dark>keyboard_arrow_left</v-icon>
+          <v-icon class="back-button-icon">keyboard_arrow_left</v-icon>
         </v-btn>
         <v-btn
+          color="error"
+          flat
           fab
-          small
-          dark
-          color="indigo"
           @click="backButtonOverride"
           v-if="enableBackButton && backButtonOverride"
         >
-          <v-icon dark>keyboard_arrow_left</v-icon>
+          <v-icon class="back-button-icon">keyboard_arrow_left</v-icon>
         </v-btn>
 
         <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
       </div>
 
-      <v-spacer />
+      <v-spacer/>
 
       <!-- Optional undo redo buttons -->
       <UndoRedoButtons
@@ -60,7 +58,7 @@
             >
             <v-icon :class="option.title ? 'header-button-icon' : ''" dark>{{option.icon}}</v-icon>
             {{option.title}}
-            </v-btn> -->
+            </v-btn>-->
             <v-btn
               v-on="on"
               color="error"
@@ -77,20 +75,28 @@
       </div>
 
       <div v-if="multiOptions">
-        <v-menu v-for="(option, i) in multiOptions" :key="i">
-          <template v-slot:activator="{ on }">
-            <v-btn class="header-button" icon v-on="on" fab small dark color="indigo">
-              <v-icon dark>{{option.icon}}</v-icon>
-              {{option.title}}
-            </v-btn>
-          </template>
+        <v-tooltip bottom v-for="(option, i) in multiOptions" :key="i">
+          <template v-slot:activator="{ onHover }">
+            <v-menu>
+              <template v-slot:activator="{ on }">
+                <v-btn class="header-button" icon v-on="on" color="error" flat fab>
+                  <v-icon dark>{{option.icon}}</v-icon>
+                </v-btn>
+              </template>
 
-          <v-list>
-            <v-list-tile v-for="(action, i) in option.actions" :key="i" @click="action.callback">
-              <v-list-tile-title>{{ action.text }}</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
+              <v-list>
+                <v-list-tile
+                  v-for="(action, i) in option.actions"
+                  :key="i"
+                  @click="action.callback"
+                >
+                  <v-list-tile-title>{{ action.text }}</v-list-tile-title>
+                </v-list-tile>
+              </v-list>
+            </v-menu>
+          </template>
+          <span>{{option.title}}</span>
+        </v-tooltip>
       </div>
     </div>
 
@@ -99,6 +105,10 @@
 </template>
 
 <style >
+.back-button-icon {
+  font-size: 40px;
+}
+
 .page__title_container {
   display: flex;
   justify-content: flex-start;
