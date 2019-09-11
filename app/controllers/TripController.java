@@ -84,12 +84,10 @@ public class TripController extends Controller {
      * @param tripId the id of the trip
      * @return The .ics file generated for the trip
      */
-    @Authorization.RequireAuthOrAdmin
+//    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
         PDFCreator pdfCreator = new PDFCreator();
         TripNode trip = TripNode.find.byId(tripId);
-        List<HashMap<TripNode, DestinationNode>> destinations = this.getAllNodes(trip);
-        File file = pdfCreator.generateTripEmailPDF(trip, destinations);
         if (trip == null) {
             return CompletableFuture.completedFuture(notFound("Trip not found"));
         }
