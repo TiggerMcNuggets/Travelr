@@ -241,6 +241,44 @@ public class UserGroupRepository {
             userGroup.update();
             return group.id;
 
-            }, context);
+        }, context);
+    }
+
+    /**
+     * Checks if the user can view the group information
+     * @param groupId The group's id
+     * @param user The user
+     * @return true or false
+     */
+    public CompletableFuture<Boolean> isPermittedToRead(Long groupId, User user) {
+        return supplyAsync(() -> {
+            if (user.isAdmin()) return true;
+
+            Optional<UserGroup> userGroupOptional = UserGroup.find.findByUserAndGroupId(user.getId(), groupId);
+            if(userGroupOptional.isPresent()) {
+                return true;
+            } else {
+                return false;
+            }
+        }, context);
+    }
+
+    /**
+     * Checks if the user is allowed to change group information
+     * @param groupId The group's id
+     * @param user The user
+     * @return true or false
+     */
+    public CompletableFuture<Boolean> isPermittedToWrite(Long groupId, User user) {
+        return supplyAsync(() -> {
+            if (user.isAdmin()) return true;
+
+            Optional<UserGroup> userGroupOptional = UserGroup.find.findByUserAndGroupId(user.getId(), groupId);
+            if(userGroupOptional.isPresent()) {
+                UserGroup userGroup = userGroupOptional.get();
+                return userGroup.isOwner();
+            }
+            return false;
+        }, context);
     }
 }
