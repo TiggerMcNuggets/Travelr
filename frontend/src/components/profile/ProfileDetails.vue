@@ -11,7 +11,7 @@
         <p class="caption font-weight-light">{{traveller.email}}</p>
       </div>
 
-      <SlackBtn></SlackBtn>
+      <ConnectWithSlackButton></ConnectWithSlackButton>
     </v-flex>
 
     <v-container fluid>
@@ -74,7 +74,7 @@
 import { store } from "../../store/index";
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
-import SlackBtn from "../common/slack/SlackBtn";
+import ConnectWithSlackButton from "../common/slack/ConnectWithSlackButton";
 
 export default {
   store,
@@ -102,7 +102,7 @@ export default {
   },
 
   components: {
-    SlackBtn
+    ConnectWithSlackButton
   },
 
   /**
