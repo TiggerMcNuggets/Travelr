@@ -121,7 +121,7 @@ public class TripService {
             return TripNode.find.query().where().and()
                     .or()
                     .eq("user.id", userId)
-                    .eq("trip.userGroup.userGroups.user.id", userId)
+                    .eq("userGroup.userGroups.user.id", userId)
                     .endOr()
                     .eq("parent", null)
                     .endAnd()
