@@ -1,6 +1,7 @@
 package repository;
 
 import com.google.inject.Inject;
+import controllers.dto.Comment.CreateCommentReq;
 import models.Comment;
 import models.TripNode;
 import models.User;
@@ -23,9 +24,9 @@ public class CommentRepository {
      * @param user The user
      * @return The comment id
      */
-    public CompletableFuture<Long> insert(String message, TripNode tripNode, User user) {
+    public CompletableFuture<Long> insert(CreateCommentReq request, TripNode tripNode, User user) {
         return supplyAsync(() -> {
-           Comment comment = new Comment(message, tripNode, user);
+           Comment comment = new Comment(request.getMessage(), tripNode, user);
            comment.insert();
            return comment.getId();
         });

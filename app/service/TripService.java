@@ -1,10 +1,14 @@
 package service;
 
+import controllers.constants.APIResponses;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
 import dto.trip.TripStatusDTO;
+import exceptions.BadRequestException;
 import exceptions.CustomException;
+import exceptions.ForbiddenException;
+import exceptions.NotFoundException;
 import models.*;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
@@ -63,6 +67,20 @@ public class TripService {
             return trip;
 
         }, context);
+    }
+
+    /**
+     * Gets a trip by Id and handles not found exception
+     * @param tripId The trip's id
+     * @return Completable future of trip node
+     */
+    public CompletableFuture<TripNode> getTripByIdHandler(Long tripId) {
+        return getTripById(tripId).thenApplyAsync((optionalTripNode) -> {
+            if (!optionalTripNode.isPresent()) {
+                throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
+            }
+            return optionalTripNode.get();
+        });
     }
 
     /**
@@ -400,6 +418,15 @@ public class TripService {
             CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToWrite(trip.getUserGroup().getId(), user);
             return groupPermissionStage.join();
         }, context);
+    }
+
+    public CompletableFuture<Void> isPermittedToWriteHandler(TripNode trip, User user) {
+        return isPermittedToRead(trip, user).thenApplyAsync(isPermitted -> {
+            if (!isPermitted) {
+                throw new ForbiddenException(APIResponses.TRIP_WRITE_DENIED);
+            }
+            return null;
+        });
     }
 
 }
