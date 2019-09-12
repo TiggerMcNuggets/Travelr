@@ -26,7 +26,8 @@ Feature: Create Comment
       "id": 1
     }
     """
-    And The comment is
+    When I check the comment
+    Then The comment is
     | message |
     | Comment |
 
@@ -59,7 +60,8 @@ Feature: Create Comment
       "id": 1
     }
     """
-    And The comment is
+    When I check the comment
+    Then The comment is
       | message |
       | Comment |
 
