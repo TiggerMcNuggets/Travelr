@@ -1,29 +1,37 @@
 package controllers;
 
-import play.api.mvc.MultipartFormData;
+import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import service.FileService;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class FileController extends Controller {
 
-    public FileController() {
+    private FileService fileService;
 
+    @Inject
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
     }
 
 
-    public CompletionStage<Result> uploadFiles(Http.Request request) {
+    public CompletionStage<Result> uploadFiles(Http.Request request, Long nodeId, Long userId) {
 
         Http.MultipartFormData mfd = request.body().asMultipartFormData();
 
-        List<MultipartFormData.FilePart> fileList = mfd.getFiles();
+        List<Http.MultipartFormData.FilePart<Files.TemporaryFile>> fileList = new ArrayList<>();
 
+        fileList = mfd.getFiles();
 
-
+        return fileService.createNewFiles(fileList).thenApplyAsync(files -> {
+            return ok();
+        });
     }
 
 
