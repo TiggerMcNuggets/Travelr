@@ -75,5 +75,9 @@ export default {
   // Refer to:  https://a.slack-edge.com/1ab09/img/api/slack_oauth_flow_diagram@2x.png
   slackOAuthStep3(id, payload) {
     return Repository.post(`/travellers/${id}/slackRequestAuth`, payload);
+  },
+
+  createSlackChannel(id, payload) {
+    return Repository.post(`/travellers/${id}/slackPrivateChannel`, payload);
   }
 }

@@ -33,9 +33,10 @@
             <div class="top-destination-content" v-on:click="openTrip(item.id)">
               <h2>{{ item.name }}</h2>
             </div>
-            <div class="crud-options">
+            <div class="crud-options" v-if="(isMyProfile || isAdminUser)">
+              <CreateSlackChannelButton :tripName="item.name"></CreateSlackChannelButton>
               <v-btn
-                v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                v-if="!item.isPublic"
                 icon
                 @click="deleteTrip(item.id)"
               >
@@ -94,15 +95,15 @@ import CreateTrips from "./CreateTrips.vue";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
 import PageHeader from "../common/header/PageHeader";
+import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
 
 
 export default {
   store,
 
    mixins: [
-           RollbackMixin, StoreTripsMixin
+     RollbackMixin, StoreTripsMixin
    ],
-
 
   // local variables
   data() {
@@ -144,7 +145,8 @@ export default {
   // child components
   components: {
     CreateTrip: CreateTrips,
-    PageHeader
+    PageHeader,
+    CreateSlackChannelButton
   },
 
   methods: {
