@@ -285,12 +285,13 @@ public class UserController extends Controller {
      *
      * @param request the http request
      * @param userId the user's id
-     * @param groupName
      * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId, String groupName) {
+    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
         // TODO: Add slack logic
+
+        Optional<String> groupName = Optional.ofNullable(request.body().asJson().get("groupName").asText());
 
         SlackUser groupOwner = SlackUser.find.findByUserId(userId);
         if (groupOwner == null) {
@@ -301,7 +302,7 @@ public class UserController extends Controller {
         hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
         if this is given */
 
-        return slackService.requestPrivateChannel(groupOwner, groupName).thenApplyAsync(resHandler -> {
+        return slackService.requestPrivateChannel(groupOwner, groupName.get()).thenApplyAsync(resHandler -> {
 
 
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
