@@ -45,20 +45,6 @@
       <div v-if="options">
         <v-tooltip bottom v-for="(option, i) in options" :key="i">
           <template v-slot:activator="{ on }">
-            <!-- --------- BUTTON VARIATION WITH TEXT --------- -->
-            <!-- --------- TODO: CHECK WITH TEAM WHICH VARIANT IS PERFEFFED ---------- -->
-            <!-- <v-btn
-              v-on="on"
-              color='error'
-              :flat="!option.title"
-              :small="!option.title"
-              :fab="!option.title"
-              :class="option.title !== '' ? 'header-button flat' : 'flat fab small header-button'"
-              @click="option.action"
-            >
-            <v-icon :class="option.title ? 'header-button-icon' : ''" dark>{{option.icon}}</v-icon>
-            {{option.title}}
-            </v-btn>-->
             <v-btn
               v-on="on"
               color="error"
