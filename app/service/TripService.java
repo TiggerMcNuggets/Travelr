@@ -358,12 +358,7 @@ public class TripService {
      */
     public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
         return supplyAsync(() -> {
-            if (trip.getUserGroup() == null) {
-                trip.setUserGroup(group);
-            } else {
-                trip.setUserGroup(null);
-            }
-
+            trip.setUserGroup(group);
             trip.update();
             return trip.getId();
 
