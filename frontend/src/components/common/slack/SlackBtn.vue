@@ -2,13 +2,13 @@
   <div>
     <a
       :href="`https://slack.com/oauth/authorize?scope=${this.permissionScope}&client_id=${this.clientId}&redirect_uri=${redirectUrl}`">
-      <img alt="Add to Slack" height="40" src="../../assets/connect_slack.png"/>
+      <img alt="Add to Slack" height="40" src="../../../assets/connect_slack.png"/>
     </a>
   </div>
 </template>
 
 <script>
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import { RepositoryFactory } from "../../../repository/RepositoryFactory";
   let userRepository = RepositoryFactory.get("user");
 
   export default {

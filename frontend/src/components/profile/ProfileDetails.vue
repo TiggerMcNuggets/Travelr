@@ -74,7 +74,7 @@
 import { store } from "../../store/index";
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
-import SlackBtn from "../common/SlackBtn";
+import SlackBtn from "../common/slack/SlackBtn";
 
 export default {
   store,
