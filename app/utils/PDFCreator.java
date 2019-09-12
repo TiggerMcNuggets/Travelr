@@ -34,12 +34,20 @@ public class PDFCreator {
         }
         String html_template = doc.toString();
         String destinations_and_details = "";
+        String tripFirstDate = null;
+        String tripLastDate = null;
         for (HashMap destination: destinations) {
+
             SimpleDateFormat jdf = new SimpleDateFormat("yyyy-MM-dd");
             TripNode tripNode = (TripNode) destination.keySet().toArray()[0];
             DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
-            String arrival = jdf.format(new Date(node.getArrivalDate() * 1000L));
-            String departure = jdf.format(new Date(node.getDepartureDate() * 1000L));
+            String arrival = node.getArrivalDate() > 0 ? jdf.format(new Date(node.getArrivalDate() * 1000L)): "N/A";
+            String departure = node.getDepartureDate() > 0 ? jdf.format(new Date(node.getDepartureDate() * 1000L)) : "N/A";
+
+            tripFirstDate = !arrival.equals("N/A") && tripFirstDate == null ? arrival : tripFirstDate;
+            tripLastDate = !departure.equals("N/A") ? departure : tripLastDate;
+
+
             destinations_and_details = destinations_and_details + "<tr>\n" +
                     "<td style=\"width: 25%; text-align: center;\">" + tripNode.getName() + "</td>\n" +
                     "<td style=\"width: 25%; text-align: center;\">" + node.getDestination().getName() + "</td>\n" +
@@ -47,10 +55,17 @@ public class PDFCreator {
                     "<td style=\"width: 25%; text-align: center;\">" + departure + "</td>\n" +
                     "</tr>";
         }
+
+        tripFirstDate = tripFirstDate == null ? "N/A" : tripFirstDate;
+        tripLastDate = tripLastDate == null ? "N/A" : tripLastDate;
+
+
+
+
         html_template = html_template.replace("destinations_and_details", destinations_and_details);
-        String start_date = "<td style=\"width: 65.9508%; text-align: center;\"><span>30-07-1998</span></td>";
+        String start_date = "<td style=\"width: 65.9508%; text-align: center;\"><span>" + tripFirstDate + "</span></td>";
         html_template = html_template.replace("start_date", start_date);
-        String end_date = "<td style=\"width: 65.9508%; text-align: center;\"><span>25-12-2019</span></td>";
+        String end_date = "<td style=\"width: 65.9508%; text-align: center;\"><span>" + tripLastDate + "</span></td>";
         html_template = html_template.replace("end_date", end_date);
         if (trip.getUserGroup() != null) {
             String num_of_travellers = "<td style=\"width: 65.9508%; text-align: center;\"><span>" + Integer.toString(trip.getUserGroup().getUserGroups().size()) + "</span></td>";
