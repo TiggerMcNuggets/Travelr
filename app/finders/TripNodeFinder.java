@@ -16,7 +16,7 @@ public class TripNodeFinder extends Finder<Long, TripNode> {
     }
 
     public TripNode findByAlbumIdIncludeDeleted(Long id) {
-        return query().setIncludeSoftDeletes().where().eq("default_album_id", id).findOne();
+        return query().setIncludeSoftDeletes().where().eq("defaultAlbum.id", id).findOne();
     }
 
 }
