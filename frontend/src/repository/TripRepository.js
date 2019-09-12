@@ -79,6 +79,27 @@ export default {
     return Repository.get(`/users/${userId}/trips/${tripId}/iCal`);
   },
 
+    /**
+     * Downloads a users trip iCal file
+     * @param {*} userId The user id    
+     * @param {*} tripId The trip id to download.
+     */
+    downloadTrip(userId, tripId) {
+        return Repository.get(`/users/${userId}/trips/${tripId}/iCal`);
+    },
+
+    /**
+     * Downloads a users trip PDF file.
+     * NOTE: 'arraybuffer' as response type is needed to format the response in a javascript-friendly pdf file
+     * @param {number} userId The user id
+     * @param {number} tripId The trip id to download.
+     */
+    downloadTripPdf(userId, tripId) {
+        return Repository.get(`/users/${userId}/trips/${tripId}/PDF`, {responseType: 'arraybuffer'});
+
+    }
+
+}
   /**
    * Toggles addition/deletion of a group trip
    * @param {Number} userId The user id
