@@ -5,16 +5,22 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
 import controllers.dto.Media.UpdateMediaReq;
+import exceptions.ForbiddenException;
+import exceptions.NotFoundException;
+import models.Comment;
 import models.TripNode;
 import models.User;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.CommentRepository;
+import service.CommentService;
 import service.TripService;
 
 import javax.inject.Inject;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -27,11 +33,14 @@ public class CommentController {
 
     private final CommentRepository commentRepository;
     private final TripService tripService;
+    private final CommentService commentService;
 
     @Inject
-    public CommentController(CommentRepository commentRepository, TripService tripService) {
+    public CommentController(CommentRepository commentRepository, TripService tripService, CommentService commentService) {
         this.commentRepository = commentRepository;
         this.tripService = tripService;
+        this.commentService = commentService;
+
     }
 
     /**
@@ -62,4 +71,22 @@ public class CommentController {
         CompletionStage<Long> insert = isWritePermittedStage.thenComposeAsync(tripNode -> commentRepository.insert(createCommentReq, tripNode, user));
         return insert.thenApplyAsync(id -> created(id.toString()));
     }
+
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> toggleDeleteComment(Http.Request request, Long userId,Long tripId, Long commentId) {
+        User user = request.attrs().get(Attrs.ACCESS_USER);
+
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
+        CompletionStage<User> isWritePermittedStage = tripStage.thenApplyAsync(tripNode -> {
+            tripService.isPermittedToWriteHandler(tripNode, user);
+            return user;
+        });
+
+        CompletionStage<Comment> isUserComment = isWritePermittedStage.thenComposeAsync(
+                (currentUser) -> commentService.isUserComment(commentId, currentUser));
+
+        CompletionStage<Long> deleted = isUserComment.thenComposeAsync(commentRepository::delete);
+        return deleted.thenApplyAsync(id -> created(id.toString()));
+    }
+
 }

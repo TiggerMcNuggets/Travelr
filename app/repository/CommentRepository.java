@@ -19,7 +19,6 @@ public class CommentRepository {
 
     /**
      * Inserts a comment on a trip
-     * @param message The comment message
      * @param tripNode The trip
      * @param user The user
      * @return The comment id
@@ -51,10 +50,12 @@ public class CommentRepository {
      * @param comment The comment
      * @return null
      */
-    public CompletableFuture<Void> delete(Comment comment) {
+    public CompletableFuture<Long> delete(Comment comment) {
         return supplyAsync(() -> {
+            Long id = comment.getId();
             comment.setDeleted(!comment.isDeleted());
-            return null;
+            comment.update();
+            return id;
         });
     }
 }
