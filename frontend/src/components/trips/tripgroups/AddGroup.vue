@@ -9,6 +9,7 @@
         <v-flex xs12>
           <v-autocomplete
             :items="filteredGroups"
+            :value="selectedTrip.root.groupName"
             :v-model="selectedUserGroup"
             v-on:change="selectGroup"
           ></v-autocomplete>
@@ -28,6 +29,7 @@
 </template>
 
 <script>
+import StoreTripsMixin from "../../mixins/StoreTripsMixin";
 import { RepositoryFactory } from "../../../repository/RepositoryFactory";
 
 let userGroupRepository = RepositoryFactory.get("userGroup");
@@ -39,12 +41,14 @@ export default {
     tripId: Number
   },
 
+  mixins: [StoreTripsMixin],
+
   data() {
     return {
-      selectedUserGroup: {},
       userGroups: [],
       errorMessage: "",
-      isError: false
+      isError: false,
+      userId: this.$route.params.id
     };
   },
 
@@ -86,8 +90,13 @@ export default {
           this.tripId,
           this.selectedUserGroup
         )
-        .then(this.closeGroupDialog)
-        .catch(this.setErrorMessage("Error adding group to trip."));
+        .then(() => {
+          this._getTrip(this.$store.getters.getUser.id, this.tripId);
+          this.closeGroupDialog();
+        })
+        .catch(error => {
+          this.setErrorMessage("Error adding group to trip.");
+        });
     },
 
     setErrorMessage(error) {
@@ -103,29 +112,17 @@ export default {
     },
 
     /**
-     * function to get a list of users mapping first and last name to text and id to value for the v-select
-     */
-    users() {
-      return this.$store.state.users.users.map(user => ({
-        text: user.firstName + " " + user.lastName,
-        value: user.id,
-        id: user.id
-      }));
-    },
-
-    /**
      * Retrieves user groups from api
      */
     getUserGroups() {
-      userGroupRepository
-        .getGroupsForUser(this.$store.getters.getUser.id)
-        .then(result => {
-          this.userGroups = result.data;
-        });
+      userGroupRepository.getGroupsForUser(this.userId).then(result => {
+        this.userGroups = result.data;
+      });
     }
   },
 
   mounted() {
+    console.log(this.selectedTrip.root.groupName);
     this.getUserGroups();
   }
 };

@@ -6,7 +6,7 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
-      :options="getHeaderOptions()"
+      :options="headerOptions"
       enableBackButton
     />
 
@@ -341,6 +341,20 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.trip.nodes
       );
+    },
+
+    headerOptions() {
+      return this.selectedTrip.trip.id == this.selectedTrip.root.id
+        ? [
+            {
+              action: () => {
+                this.addUsergroupDialogActive = true;
+              },
+              icon: "people_alt",
+              title: "Manage Group"
+            }
+          ]
+        : [];
     }
   },
   methods: {
@@ -354,17 +368,6 @@ export default {
       } else {
         return "blue";
       }
-    },
-
-    getHeaderOptions() {
-      return [
-        {
-          action: () => {
-            this.addUsergroupDialogActive = true;
-          },
-          icon: "people_alt"
-        }
-      ];
     },
 
     /**
