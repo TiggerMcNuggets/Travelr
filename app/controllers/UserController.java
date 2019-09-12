@@ -9,8 +9,6 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
-import io.ebean.Ebean;
-import io.ebean.text.PathProperties;
 import models.SlackUser;
 import models.User;
 import play.data.Form;
@@ -279,6 +277,55 @@ public class UserController extends Controller {
             }
 
             return ok("Slack token saved");
+        });
+    }
+
+
+    /**
+     *
+     * @param request the http request
+     * @param userId the user's id
+     * @param groupName
+     * @return 200 if the request is executed
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId, String groupName) {
+        // TODO: Add slack logic
+
+        SlackUser groupOwner = SlackUser.find.findByUserId(userId);
+        if (groupOwner == null) {
+            return CompletableFuture.completedFuture(badRequest("slack user is null or not found, user may not have connected to slack"));
+        }
+
+        /* Private channel names can only contain lowercase letters, numbers,
+        hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
+        if this is given */
+
+        return slackService.requestPrivateChannel(groupOwner, groupName).thenApplyAsync(resHandler -> {
+
+
+            Optional<User> user = Optional.ofNullable(User.find.findById(userId));
+            if (!user.isPresent()) {
+                return badRequest("user is null or not found");
+            }
+
+            Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
+            if (!(success.get().getAsBoolean())) {
+                // how do i get the problem directly from slack returned?
+
+                return badRequest("request not successful");
+            }
+
+            Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
+            System.out.println("do i have the correct name???    " + slackGroupName);
+
+            
+            // store group name with slack user and update
+            groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
+            groupOwner.update();
+
+
+            return ok("Slack channel created");
         });
     }
 
