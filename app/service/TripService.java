@@ -8,6 +8,7 @@ import exceptions.CustomException;
 import models.*;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
+import repository.UserGroupRepository;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -24,10 +25,12 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class TripService {
 
     private DatabaseExecutionContext context;
+    private final UserGroupRepository userGroupRepository;
 
     @Inject
-    public TripService(DatabaseExecutionContext context) {
+    public TripService(DatabaseExecutionContext context, UserGroupRepository userGroupRepository) {
         this.context = context;
+        this.userGroupRepository = userGroupRepository;
     }
 
     /**
@@ -353,7 +356,6 @@ public class TripService {
      * @param group the Group object*@return the Trip id of the user that has been
      *              updated
      */
-
     public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
         return supplyAsync(() -> {
             if (trip.getUserGroup() == null) {
@@ -365,6 +367,38 @@ public class TripService {
             trip.update();
             return trip.getId();
 
+        }, context);
+    }
+
+    /**
+     * Checks if the user can view the trip information
+     * @param trip The trip
+     * @param user The user
+     * @return true or false
+     */
+    public CompletableFuture<Boolean> isPermittedToRead(TripNode trip, User user) {
+        return supplyAsync(() -> {
+            // Check if admin or trip owner
+            if (user.isAdmin() || trip.getUser().equals(user)) return true;
+
+            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToRead(trip.getUserGroup().getId(), user);
+            return groupPermissionStage.join();
+        }, context);
+    }
+
+    /**
+     * Checks if the user is allowed to change trip information
+     * @param trip The trip
+     * @param user The user
+     * @return true or false
+     */
+    public CompletableFuture<Boolean> isPermittedToWrite(TripNode trip, User user) {
+        return supplyAsync(() -> {
+            // Check if admin or trip owner
+            if (user.isAdmin() || trip.getUser().equals(user)) return true;
+
+            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToWrite(trip.getUserGroup().getId(), user);
+            return groupPermissionStage.join();
         }, context);
     }
 
