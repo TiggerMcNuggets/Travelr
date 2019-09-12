@@ -3,7 +3,14 @@
 <template>
   <v-card>
     <v-container fluid>
-      <PageHeader title="Destinations" :undo="undo" :redo="redo" :canRedo="rollbackCanRedo" :canUndo="rollbackCanUndo"  :options="options" />
+      <PageHeader
+        title="Destinations"
+        :undo="undo"
+        :redo="redo"
+        :canRedo="rollbackCanRedo"
+        :canUndo="rollbackCanUndo"
+        :options="options"
+      />
 
       <v-text-field
         v-if="searchActive"
@@ -12,72 +19,66 @@
         prepend-icon="search"
       ></v-text-field>
 
-      <v-tabs v-model="active" slider-color="blue">
-        <v-tab :key="1" ripple>Browse</v-tab>
-
-        <v-tab-item :key="1">
-        <div class="scrollable list-height">
-          <li
-            class="destination-list-element"
-            v-for="item in destinationsFiltered"
-            :value="item.value"
-            :key="item.value"
-          >
-            <v-card class="top-destination-content destination-container">
-              <div class="row-container">
-                <div
-                  class="private-public-side-bar side-border"
-                  v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
-                ></div>
-                <div class="hoverable destination-container" v-on:click="viewDestination(item.id)">
-                  <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
-                  <div class="row-container">
-                    <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
-                  </div>
-                  <div class="row-container">
-                    <h3>Type: {{item.type}}</h3>
-                  </div>
-                  <div class="row-container">
-                    <h3>Traveller Types:</h3>
-                    <v-list v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
-                      <v-chip small>{{type.name}}</v-chip>
-                    </v-list>
-                  </div>
+      <div class="scrollable list-height">
+        <li
+          class="destination-list-element"
+          v-for="item in destinationsFiltered"
+          :value="item.value"
+          :key="item.value"
+        >
+          <v-card class="top-destination-content destination-container">
+            <div class="row-container">
+              <div
+                class="private-public-side-bar side-border"
+                v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
+              ></div>
+              <div class="hoverable destination-container" v-on:click="viewDestination(item.id)">
+                <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
+                <div class="row-container">
+                  <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
+                </div>
+                <div class="row-container">
+                  <h3>Type: {{item.type}}</h3>
+                </div>
+                <div class="row-container">
+                  <h3>Traveller Types:</h3>
+                  <v-list v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
+                    <v-chip small>{{type.name}}</v-chip>
+                  </v-list>
                 </div>
               </div>
-              <div>
-                <v-btn
-                  v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
-                  icon
-                  @click="deleteDestination(item.id)"
-                >
-                  <v-icon color="red lighten-1">delete</v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
-                  icon
-                  @click="editDestination(item.id)"
-                >
-                  <v-icon color="orange lighten-1">edit</v-icon>
-                </v-btn>
-                <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
-                  <v-icon color="blue lighten-1">lock</v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="item.isPublic && item.ownerId === parseInt(userId)"
-                  color="#FF69B4"
-                  flat
-                  icon
-                  @click="makePrivate(item.id)"
-                >
-                  <v-icon color="hotpink lighten-1">lock_open</v-icon>
-                </v-btn>
-              </div>
-            </v-card>
-          </li>
-        </div>
-        </v-tab-item>
-      </v-tabs>
+            </div>
+            <div>
+              <v-btn
+                v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
+                icon
+                @click="deleteDestination(item.id)"
+              >
+                <v-icon color="red lighten-1">delete</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
+                icon
+                @click="editDestination(item.id)"
+              >
+                <v-icon color="orange lighten-1">edit</v-icon>
+              </v-btn>
+              <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
+                <v-icon color="blue lighten-1">lock</v-icon>
+              </v-btn>
+              <v-btn
+                v-if="item.isPublic && item.ownerId === parseInt(userId)"
+                color="#FF69B4"
+                flat
+                icon
+                @click="makePrivate(item.id)"
+              >
+                <v-icon color="hotpink lighten-1">lock_open</v-icon>
+              </v-btn>
+            </div>
+          </v-card>
+        </li>
+      </div>
 
       <v-dialog v-model="dialog" width="800">
         <destination-create :createDestinationCallback="createDestinationCallback"/>
@@ -151,7 +152,7 @@ ul {
 }
 
 .blue-background {
-  background-color: rgb(63,81,181);
+  background-color: rgb(63, 81, 181);
 }
 
 .list-height {
@@ -174,13 +175,10 @@ let destinationRepository = RepositoryFactory.get("destination");
 
 export default {
   store,
-  mixins: [
-    RollbackMixin,
-    StoreDestinationsMixin
-  ],
+  mixins: [RollbackMixin, StoreDestinationsMixin],
   components: {
     PageHeader,
-    DestinationCreate,
+    DestinationCreate
   },
 
   data() {
@@ -212,8 +210,12 @@ export default {
      */
     options() {
       return [
-        { action: this.toggleShowCreateDestination, icon: "add" },
-        { action: this.toggleShowSearch, icon: "search" }
+        {
+          action: this.toggleShowCreateDestination,
+          icon: "add",
+          title: "Create Destination"
+        },
+        { action: this.toggleShowSearch, icon: "search", title: "Search" }
       ];
     },
 
@@ -267,7 +269,7 @@ export default {
      */
     editDestination(id) {
       this.$router.push("/user/" + this.userId + "/destinations/edit/" + id);
-    },    
+    },
 
     /**
      * Toggles the dialog to create a new destination.
@@ -290,7 +292,9 @@ export default {
     deleteDestination: function(destId) {
       this.clearAlerts();
       this._deleteDestination(this.userId, destId).then(() => {
-        const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
+        const url = `/users/${
+          this.userId
+        }/destinations/${destId}/toggle_deleted`;
         this.rollbackCheckpoint(
           "DELETE",
           {
@@ -302,7 +306,6 @@ export default {
         );
       });
     },
-
 
     /**
      * Makes a destination public and checks for error.
@@ -364,13 +367,13 @@ export default {
       this.clearAlerts();
       const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
       this.rollbackCheckpoint(
-            'POST',
-            {
-                url: url,
-            },
-            {
-                url: url,
-            }
+        "POST",
+        {
+          url: url
+        },
+        {
+          url: url
+        }
       );
       this.dialog = false;
     },
@@ -379,7 +382,10 @@ export default {
      * Undoes the last action and gets destinations afterwards
      */
     undo: function() {
-      const actions = [() => this._getDestinations(this.userId), this.clearAlerts];
+      const actions = [
+        () => this._getDestinations(this.userId),
+        this.clearAlerts
+      ];
       try {
         this.rollbackUndo(actions);
       } catch (err) {
@@ -391,7 +397,10 @@ export default {
      * Redoes the last action and gets destinations afterwards
      */
     redo: function() {
-      const actions = [() => this._getDestinations(this.userId), this.clearAlerts];
+      const actions = [
+        () => this._getDestinations(this.userId),
+        this.clearAlerts
+      ];
       try {
         this.rollbackRedo(actions);
       } catch (err) {
@@ -413,8 +422,7 @@ export default {
      */
     log: function(evt) {
       window.console.log(evt);
-    },
-
+    }
   },
 
   /**

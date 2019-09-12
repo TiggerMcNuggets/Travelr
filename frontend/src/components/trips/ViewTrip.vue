@@ -9,11 +9,6 @@
       :options="getHeaderOptions()"
       enableBackButton
     />
-    <!-- <v-breadcrumbs :items="trip.navigation">
-      <template v-slot:item="props">
-        <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>-->
 
     <v-dialog v-model="addUsergroupDialogActive" width="500">
       <AddGroup
@@ -23,6 +18,12 @@
     </v-dialog>
     <v-layout row wrap>
       <v-flex md3 pa-2>
+        <v-breadcrumbs :items="trip.navigation" class="trip-breadcrumbs">
+          <template v-slot:item="props">
+            <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
+
         <v-form lazy-validation ref="form" v-model="isFormValid">
           <v-text-field
             v-model="trip.trip.name"
@@ -80,11 +81,12 @@
             </v-btn>
           </v-layout>
 
-          <!-- <v-container>
-        <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination
-          consecutive.
-        </v-alert>
-          </v-container>-->
+          <v-container>
+            <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">
+              Cannot have same destination
+              consecutive.
+            </v-alert>
+          </v-container>
 
           <v-timeline align-top dense>
             <draggable class="list-group" tag="ul" v-model="trip.trip.nodes">
@@ -217,12 +219,6 @@
   display: flex;
   justify-content: flex-end;
 }
-
-/* .trip-timeline-item-width {
-  min-width: 300px;
-  width: 25%;
-  padding: 0;
-} */
 
 .trip-map {
   width: 55%;
