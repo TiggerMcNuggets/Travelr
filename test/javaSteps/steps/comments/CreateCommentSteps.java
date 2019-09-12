@@ -8,7 +8,7 @@ public class CreateCommentSteps {
 
     @When("I want to add a comment")
     public void iWantToAddAComment() {
-        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/destinations", state.getUser().getId())));
+        state.getRequest().uri(String.format("http://localhost:9000/api/users/%s/trips/%s/comments", state.getUser().getId(), state.getTrip().getId()));
         state.getRequest().method("POST");
     }
 }
