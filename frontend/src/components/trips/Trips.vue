@@ -23,26 +23,46 @@
         v-for="item in tripsFiltered"
         :value="item.value"
         :key="item.value"
+        v-on:click="openTrip(item.id)"
       >
-        <v-card class="hoverable pa-2">
-          <v-flex
-                  d-flex
-                  justify-space-between
-                  align-center
+        <!--<v-card class="hoverable pa-2">-->
+          <!--<v-flex-->
+                  <!--d-flex-->
+                  <!--justify-space-between-->
+                  <!--align-center-->
+          <!--&gt;-->
+            <!--<div class="top-destination-content" v-on:click="openTrip(item.id)">-->
+              <!--<h2>{{ item.name }}</h2>-->
+            <!--</div>-->
+            <!--<div class="crud-options">-->
+              <!--<v-btn-->
+                <!--v-if="(isMyProfile || isAdminUser) && !item.isPublic"-->
+                <!--icon-->
+                <!--@click="deleteTrip(item.id)"-->
+              <!--&gt;-->
+                <!--<v-icon color="red lighten-1">delete</v-icon>-->
+              <!--</v-btn>-->
+            <!--</div>-->
+          <!--</v-flex>-->
+        <!--</v-card>-->
+
+        <v-card>
+          <v-img
+            class="white--text"
+            height="200px"
+            src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
           >
-            <div class="top-destination-content" v-on:click="openTrip(item.id)">
-              <h2>{{ item.name }}</h2>
-            </div>
-            <div class="crud-options">
-              <v-btn
-                v-if="(isMyProfile || isAdminUser) && !item.isPublic"
-                icon
-                @click="deleteTrip(item.id)"
-              >
-                <v-icon color="red lighten-1">delete</v-icon>
-              </v-btn>
-            </div>
-          </v-flex>
+            <v-card-title class="align-end fill-height">item.name</v-card-title>
+          </v-img>
+
+          <v-card-text>I'm card text</v-card-text>
+          <v-card-actions v-if="actions">
+            <v-btn icon>
+              <v-icon>mdi-heart</v-icon>
+            </v-btn>
+            <v-btn text>Click</v-btn>
+            <v-btn outlined>Click</v-btn>
+          </v-card-actions>
         </v-card>
       </li>
     </ul>
@@ -84,6 +104,7 @@ ul {
 
 .trips-list-element {
   padding-top: 20px;
+  width: 20%;
 }
 </style>
 
