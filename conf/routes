@@ -95,8 +95,16 @@ PUT         /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripCon
 PUT         /api/users/:userId/trips/:nodeId/status        controllers.TripController.changeUserTripStatus(request: Request, nodeId: Long, userId: Long)
 GET         /api/users/:userId/trips/:tripId/comments/      controllers.TripController.fetchTripComments(request: Request, tripId: Long, userId: Long)
 
+
+# Comments
+POST        /api/users/:userId/trips/:tripId/comments       controllers.CommentController.createComment(request: Request, userId: Long, tripId: Long)
+PUT         /api/users/:user_id/trips/:trip_id/comments/:comment_id/toggle_deleted  controllers.CommentController.toggleDeleteComment(request: Request, userId: Long, tripId: Long, commentId: Long)
+
+
+
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)
 GET     /*file                                  controllers.FrontendController.assetOrDefault(file)
+
 

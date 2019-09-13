@@ -1,6 +1,7 @@
 package repository;
 
 import com.google.inject.Inject;
+import controllers.dto.Comment.CreateCommentReq;
 import models.Comment;
 import models.TripNode;
 import models.User;
@@ -18,14 +19,13 @@ public class CommentRepository {
 
     /**
      * Inserts a comment on a trip
-     * @param message The comment message
      * @param tripNode The trip
      * @param user The user
      * @return The comment id
      */
-    public CompletableFuture<Long> insert(String message, TripNode tripNode, User user) {
+    public CompletableFuture<Long> insert(CreateCommentReq request, TripNode tripNode, User user) {
         return supplyAsync(() -> {
-           Comment comment = new Comment(message, tripNode, user);
+           Comment comment = new Comment(request.getMessage(), tripNode, user);
            comment.insert();
            return comment.getId();
         });
@@ -50,10 +50,12 @@ public class CommentRepository {
      * @param comment The comment
      * @return null
      */
-    public CompletableFuture<Void> delete(Comment comment) {
+    public CompletableFuture<Long> delete(Comment comment) {
         return supplyAsync(() -> {
+            Long id = comment.getId();
             comment.setDeleted(!comment.isDeleted());
-            return null;
+            comment.update();
+            return id;
         });
     }
 }
