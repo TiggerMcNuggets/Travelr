@@ -22,6 +22,7 @@ public class APIResponses {
     public static final String FORBIDDEN_ALBUM_UPDATE = FORBIDDEN_ALBUM_DELETION;
     public static final String SUCCESSFUL_ALBUM_UPDATE = "Album updated";
     public static final String DUPLICATE_ALBUM_NAME = "Duplicate album name";
+    public static final String USER_NOT_PERMITTED = "User is no permitted to do this action";
 
     // Groups
     public static final String SUCCESSFUL_GROUP_MEMBER_DELETION = "Group member removed";
