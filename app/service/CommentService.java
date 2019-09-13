@@ -30,7 +30,7 @@ public class CommentService {
     public CompletableFuture<Comment> isUserComment(Long commentId, User user) {
         return CompletableFuture.supplyAsync(() -> {
 
-            Optional<Comment> optionalComment = Optional.ofNullable(Comment.find.byId(commentId));
+            Optional<Comment> optionalComment = Comment.find.findByIdIncludingSoftDelete(commentId);
             if (!optionalComment.isPresent()) {
                 throw new NotFoundException("Comment not found");
             }

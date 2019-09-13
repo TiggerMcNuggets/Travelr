@@ -33,7 +33,9 @@ Feature: Create Comment
 
 
   Scenario: Create a comment successfully as an admin
-    Given The user exists
+    Given I am authenticated
+    And I am an admin
+    And The user exists
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
@@ -43,8 +45,6 @@ Feature: Create Comment
       | name         | description |
       | My First Trip| A trip      |
     And The trip belongs to the user group
-    And I am authenticated
-    And I am an admin
     When I want to add a comment
     And The body is
     """

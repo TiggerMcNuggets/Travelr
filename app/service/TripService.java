@@ -426,7 +426,7 @@ public class TripService {
      * @param user The user
      * @return null
      */
-    public CompletableFuture<Void> checkWritePermissiHandler(TripNode trip, User user) {
+    public CompletableFuture<Void> checkWritePermissionHandler(TripNode trip, User user) {
         return isPermittedToWrite(trip, user).thenApplyAsync(isPermitted -> {
             if (!isPermitted) {
                 throw new ForbiddenException(APIResponses.TRIP_WRITE_DENIED);

@@ -42,8 +42,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @Inject
-    public CommentController(CommentRepository commentRepository, TripService tripService, CommentService commentService) {
-    public CommentController(CommentRepository commentRepository, TripService tripService, UserRepository userRepository) {
+    public CommentController(CommentRepository commentRepository, TripService tripService, UserRepository userRepository, CommentService commentService) {
         this.commentRepository = commentRepository;
         this.tripService = tripService;
         this.commentService = commentService;
@@ -70,7 +69,7 @@ public class CommentController {
 
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
-        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissiHandler(tripNode, user).join());
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
 
         // Get tripNode without nesting
         CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
@@ -84,21 +83,20 @@ public class CommentController {
         }).handle(AsyncHandler::handleResult);
     }
 
-    @Authorization.RequireAuthOrAdmin
+    @Authorization.RequireAuth
     public CompletionStage<Result> toggleDeleteComment(Http.Request request, Long userId,Long tripId, Long commentId) {
-        User user = request.attrs().get(Attrs.ACCESS_USER);
-
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
-        CompletionStage<User> isWritePermittedStage = tripStage.thenApplyAsync(tripNode -> {
-            tripService.isPermittedToWriteHandler(tripNode, user);
+        CompletionStage<User> userStage = userRepository.getUserHandler(userId);
+        CompletionStage<User> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> {
+            tripService.checkWritePermissionHandler(tripNode, user).join();
             return user;
         });
 
-        CompletionStage<Comment> isUserComment = isWritePermittedStage.thenComposeAsync(
+        CompletionStage<Comment> isUserComment = permissionStage.thenComposeAsync(
                 (currentUser) -> commentService.isUserComment(commentId, currentUser));
 
         CompletionStage<Long> deleted = isUserComment.thenComposeAsync(commentRepository::delete);
-        return deleted.thenApplyAsync(id -> created(id.toString()));
+        return deleted.thenApplyAsync(id -> ok(id.toString())).handle(AsyncHandler::handleResult);
     }
 
 }
