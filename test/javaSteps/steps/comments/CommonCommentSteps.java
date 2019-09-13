@@ -24,7 +24,7 @@ public class CommonCommentSteps {
 
     @Then("The comment is")
     public void theCommentIs(List<Map<String, String>> dataTable) {
-        Assert.assertEquals(state.getComment(), dataTable.get(0).get("message"));
+        Assert.assertEquals(state.getComment().getMessage(), dataTable.get(0).get("message"));
 
     }
 }

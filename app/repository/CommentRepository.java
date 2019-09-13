@@ -19,7 +19,7 @@ public class CommentRepository {
 
     /**
      * Inserts a comment on a trip
-     * @param message The comment message
+     * @param request The comment request DTO
      * @param tripNode The trip
      * @param user The user
      * @return The comment id
