@@ -104,14 +104,16 @@ public class MediaController extends Controller {
         // Check if the album is for a trip and if the person is in the trip
         TripNodeFinder tripNodeFinder = new TripNodeFinder();
         Boolean isInGroup = true;
+        Boolean ownsTrip = false;
         TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
         if (trip != null) {
             isInGroup = tripService.isPermittedToWrite(trip, user).join();
+            ownsTrip = trip.getUser().getId() == user.getId();
         }
 
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-        if (picture != null && isInGroup) {
+        if (picture != null && (isInGroup || ownsTrip)) {
             if (!fh.isValidFile(picture.getFilename())) {
                 return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
             }
@@ -316,11 +318,14 @@ public class MediaController extends Controller {
         // Check if the album is for a trip and if the person is in the trip
         TripNodeFinder tripNodeFinder = new TripNodeFinder();
         Boolean isOwner = false;
+        Boolean ownsTrip = false;
         TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
         if (trip != null) {
             isOwner = tripService.userOwnsTripGroup(user.getId(), trip.getId());
+            ownsTrip = trip.getUser().getId() == user.getId();
         }
-        if (isOwner || trip == null) {
+
+        if (isOwner || trip == null || ownsTrip) {
             return mediaRepository.remove(album_id, media_id, removeAll).thenApplyAsync(deleted_media_id -> {
                 //not found check, repository checks that both album and media exist
                 if(deleted_media_id == null) {
