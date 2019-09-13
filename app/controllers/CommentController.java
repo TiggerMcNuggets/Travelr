@@ -1,19 +1,13 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
-import controllers.dto.Media.UpdateMediaReq;
-import exceptions.ForbiddenException;
-import exceptions.NotFoundException;
 import models.Comment;
 import models.TripNode;
 import models.User;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Http;
@@ -23,14 +17,11 @@ import service.CommentService;
 import repository.UserRepository;
 import service.TripService;
 import utils.AsyncHandler;
-
 import javax.inject.Inject;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import static java.util.concurrent.CompletableFuture.completedFuture;
 import static play.mvc.Results.*;
+
 
 public class CommentController {
     @Inject
