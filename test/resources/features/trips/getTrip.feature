@@ -38,6 +38,7 @@ Scenario: Get a trip successfully
         "id":1,
         "name":"My First Trip",
         "usergroup":[
+           {"userId":2,"firstName":"Test","lastName":"User","status":"NOT GOING","owner":true},
            {
               "userId":3,
               "firstName":"Joe",
@@ -90,7 +91,9 @@ Scenario: Get a trip successfully
            "lastName":"User",
            "id":2
         },
-        "albumId":6
+        "albumId":6,
+        "groupName":"Team 300",
+        "groupId":1
      }
   }
   """
@@ -200,7 +203,9 @@ Scenario: Get another user's trip as an admin
            "lastName":"Smith",
            "id":3
         },
-        "albumId":7
+        "albumId":7,
+        "groupName":"",
+        "groupId":null
      }
   }
   """

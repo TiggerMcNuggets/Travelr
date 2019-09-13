@@ -11,6 +11,7 @@ public class RootNodeDTO {
     public long albumId;
 
     public String groupName = "";
+    public Long groupId = null;
 
 
     public RootNodeDTO(TripNode node) {
@@ -21,6 +22,7 @@ public class RootNodeDTO {
 
         if (node.getUserGroup() != null) {
             this.groupName = node.getUserGroup().getName();
+            this.groupId = node.getUserGroup().getId();
         }
 
     }
