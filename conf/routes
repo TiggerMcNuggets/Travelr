@@ -93,6 +93,7 @@ PUT         /api/users/:userId/trips/:tripId/toggle_deleted controllers.TripCont
 GET         /api/users/:user_id/trips/:trip_id/iCal         controllers.TripController.getUserTripAsICalFile(request: Request, user_id: Long, trip_id: Long)
 PUT         /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripController.toggleGroupToTrip(request: Request, tripId: Long, userId: Long, groupId: Long)    
 PUT         /api/users/:userId/trips/:nodeId/status        controllers.TripController.changeUserTripStatus(request: Request, nodeId: Long, userId: Long)
+GET         /api/users/:userId/trips/:tripId/comments/      controllers.TripController.fetchTripComments(request: Request, tripId: Long, userId: Long)
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)

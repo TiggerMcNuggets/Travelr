@@ -22,6 +22,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import repository.CommentRepository;
 import service.MailgunService;
 import service.TripService;
 import utils.iCalCreator;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import repository.CommentRepository;
 
 public class TripController extends Controller {
 
@@ -44,12 +46,14 @@ public class TripController extends Controller {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
     private final MailgunService mailgunService;
+    private final CommentRepository commentRepository;
 
     @Inject
 
-    public TripController(TripService tripService, MailgunService mailgunService) {
+    public TripController(TripService tripService, MailgunService mailgunService, CommentRepository commentRepository) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -359,6 +363,40 @@ public class TripController extends Controller {
 
         return tripService.toggleGroupInTrip(node.get(), group.get())
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
+    }
+
+    /**
+     * returns a
+     * @param request the request containing two option query parameters, page and comments
+     * @param tripId the id of the trip object
+     * @param userId the id of the user
+     * @return a 200 http response when the comments for a specific page of a trip is obtained, 401 for unauthorised
+     * and 404 for when the trip cannot be found
+     */
+    public CompletionStage<Result> fetchTripComments(Http.Request request, Long tripId, Long userId) {
+
+        Integer page;
+        Integer comments;
+        try {
+            page = Integer.parseInt(request.getQueryString("page"));
+            comments = Integer.parseInt(request.getQueryString("comments"));
+        } catch (Error e) {
+            page = 1;
+            comments = 10;
+        }
+        User user = request.attrs().get(Attrs.ACCESS_USER);
+        Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
+
+        if (!tripNode.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+        if (!tripNode.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+
+        List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
+
+        return CompletableFuture.completedFuture(ok(Json.toJson(commentList)));
     }
 
 }
