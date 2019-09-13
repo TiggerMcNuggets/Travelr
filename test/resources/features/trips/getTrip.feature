@@ -28,70 +28,71 @@ Scenario: Get a trip successfully
   And I will receive the response body
   """
   {
-    "navigation": [
+     "navigation":[
         {
-            "id": 1,
-            "name": "My First Trip"
+           "id":1,
+           "name":"My First Trip"
         }
-    ],
-    "trip": {
-        "id": 1,
-        "name": "My First Trip",
-         "usergroup": [
-        {
-            "userId": 3,
-            "firstName": "Joe",
-            "lastName": "Bloggs",
-            "status": "GOING",
-            "owner": false
-        },
-        {
-            "userId": 4,
-            "firstName": "John",
-            "lastName": "Smith",
-            "status": "MAYBE",
-            "owner": true
-        },
-        {
-            "userId": 5,
-            "firstName": "Mary",
-            "lastName": "Smith",
-            "status": "NOT GOING",
-            "owner": false
-        }
-    ],
-        "nodes": [
-            {
-                "id": 2,
-                "name": "Destination 3",
-                "arrivalDate": 1,
-                "departureDate": 2,
-                "ordinal": 0,
-                "destination": {
-                    "id": 1,
-                    "name": "Eiffel Tower",
-                    "latitude": 5.0,
-                    "longitude": 5.0,
-                    "type": "Landmark",
-                    "district": "Paris",
-                    "country": "France",
-                    "googleId": null
-                },
-                "type": "destination",
-                "usergroup": null
-            }
+     ],
+     "trip":{
+        "id":1,
+        "name":"My First Trip",
+        "usergroup":[
+           {
+              "userId":3,
+              "firstName":"Joe",
+              "lastName":"Bloggs",
+              "status":"GOING",
+              "owner":false
+           },
+           {
+              "userId":4,
+              "firstName":"John",
+              "lastName":"Smith",
+              "status":"MAYBE",
+              "owner":true
+           },
+           {
+              "userId":5,
+              "firstName":"Mary",
+              "lastName":"Smith",
+              "status":"NOT GOING",
+              "owner":false
+           }
+        ],
+        "nodes":[
+           {
+              "id":2,
+              "name":"Destination 3",
+              "arrivalDate":1,
+              "departureDate":2,
+              "ordinal":0,
+              "destination":{
+                 "id":1,
+                 "name":"Eiffel Tower",
+                 "latitude":5.0,
+                 "longitude":5.0,
+                 "type":"Landmark",
+                 "district":"Paris",
+                 "country":"France",
+                 "googleId":null
+              },
+              "type":"destination",
+              "usergroup":null
+           }
         ]
-    },
-    "root": {
-        "id": 1,
-        "name": "My First Trip",
-        "user": {
-            "firstName": "Test",
-            "lastName": "User",
-            "id": 2
-        }
-    }
-}
+     },
+     "root":{
+        "id":1,
+        "name":"My First Trip",
+        "user":{
+           "firstName":"Test",
+           "lastName":"User",
+           "id":2
+        },
+        "albumId":6
+     }
+  }
   """
 
 Scenario: Get another user's trip as an admin
@@ -118,84 +119,90 @@ Scenario: Get another user's trip as an admin
   Then I will receive the response code 200
   And I will receive the response body
   """
-    {
-    "navigation":[
-      {
-        "id":1,
-        "name":"My First Trip"
-      }],
-    "trip": {
-      "id":1,
-      "name":"My First Trip",
-      "usergroup": [],
-      "nodes":[
+  {
+     "navigation":[
         {
-        "id":2,
-        "name":"Eiffel Tower",
-        "arrivalDate":1,
-        "departureDate":2,
-        "ordinal":0,
-        "destination":{
-          "id":1,
-          "name":"Eiffel Tower",
-          "latitude":5.0,
-          "longitude":5.0,
-          "type":"Landmark",
-          "district":"Paris",
-          "country":"France",
-          "googleId":null
-        },
-        "type":"destination",
-        "usergroup": null
-       },
-       {
-        "id":3,
-        "name":"Big River",
-        "arrivalDate":4,
-        "departureDate":6,
-        "ordinal":1,
-        "destination": {
-          "id":2,
-          "name":"Big River",
-          "latitude":3.0,
-          "longitude":3.0,
-          "type":"River",
-          "district":"Canterbury",
-          "country":"New Zealand",
-          "googleId":null
-        },
-        "type":"destination",
-        "usergroup": null
-      },
-      {
-        "id":4,
-        "name":"Small River",
-        "arrivalDate":10,
-        "departureDate":22,
-        "ordinal":2,
-        "destination": {
-          "id":3,
-          "name":"Small River",
-          "latitude":3.0,
-          "longitude":3.0,
-          "type":"River",
-          "district":"Otago",
-          "country":"New Zealand",
-          "googleId":null
-         },
-         "type":"destination",
-         "usergroup": null
-        }]},
-      "root": {
+           "id":1,
+           "name":"My First Trip"
+        }
+     ],
+     "trip":{
         "id":1,
         "name":"My First Trip",
-        "user": {
-          "firstName":"John",
-          "lastName":"Smith",
-          "id":3
-        }
-      }
-    }
+        "usergroup":[
+
+        ],
+        "nodes":[
+           {
+              "id":2,
+              "name":"Eiffel Tower",
+              "arrivalDate":1,
+              "departureDate":2,
+              "ordinal":0,
+              "destination":{
+                 "id":1,
+                 "name":"Eiffel Tower",
+                 "latitude":5.0,
+                 "longitude":5.0,
+                 "type":"Landmark",
+                 "district":"Paris",
+                 "country":"France",
+                 "googleId":null
+              },
+              "type":"destination",
+              "usergroup":null
+           },
+           {
+              "id":3,
+              "name":"Big River",
+              "arrivalDate":4,
+              "departureDate":6,
+              "ordinal":1,
+              "destination":{
+                 "id":2,
+                 "name":"Big River",
+                 "latitude":3.0,
+                 "longitude":3.0,
+                 "type":"River",
+                 "district":"Canterbury",
+                 "country":"New Zealand",
+                 "googleId":null
+              },
+              "type":"destination",
+              "usergroup":null
+           },
+           {
+              "id":4,
+              "name":"Small River",
+              "arrivalDate":10,
+              "departureDate":22,
+              "ordinal":2,
+              "destination":{
+                 "id":3,
+                 "name":"Small River",
+                 "latitude":3.0,
+                 "longitude":3.0,
+                 "type":"River",
+                 "district":"Otago",
+                 "country":"New Zealand",
+                 "googleId":null
+              },
+              "type":"destination",
+              "usergroup":null
+           }
+        ]
+     },
+     "root":{
+        "id":1,
+        "name":"My First Trip",
+        "user":{
+           "firstName":"John",
+           "lastName":"Smith",
+           "id":3
+        },
+        "albumId":7
+     }
+  }
   """
 
 

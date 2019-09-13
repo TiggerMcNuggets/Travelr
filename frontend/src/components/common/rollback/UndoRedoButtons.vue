@@ -1,18 +1,21 @@
 <template>
   <div>
-    <v-btn
-      class="upload-toggle-button"
-      fab
-      small
-      flat
-      :disabled="!canUndo"
-      @click="undo"
-    >
-      <v-icon dark>undo</v-icon>
-    </v-btn>
-    <v-btn class="upload-toggle-button" fab small flat :disabled="!canRedo" @click="redo">
-      <v-icon dark>redo</v-icon>
-    </v-btn>
+    <v-tooltip bottom >
+      <template v-slot:activator="{ on }">
+        <v-btn class="header-button" v-on="on" fab flat :disabled="!canUndo" @click="undo">
+          <v-icon dark>undo</v-icon>
+        </v-btn>
+      </template>
+      <span>Undo</span>
+    </v-tooltip>
+    <v-tooltip bottom >
+      <template v-slot:activator="{ on }">
+        <v-btn class="header-button" v-on="on" fab flat :disabled="!canRedo" @click="redo">
+          <v-icon dark>redo</v-icon>
+        </v-btn>
+      </template>
+      <span>Redo</span>
+    </v-tooltip>
   </div>
 </template>
 
@@ -26,7 +29,6 @@ export default {
   },
 
   mounted() {
-
     // Detects the ctrl z event and executes the undo operation.
     window.addEventListener(
       "keyup",
