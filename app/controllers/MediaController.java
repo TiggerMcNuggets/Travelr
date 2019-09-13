@@ -298,13 +298,27 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id, Integer removeAll) {
-        return mediaRepository.remove(album_id, media_id, removeAll).thenApplyAsync(deleted_media_id -> {
-            //not found check, repository checks that both album and media exist
-            if(deleted_media_id == null) {
-                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
-            }
-            return ok(APIResponses.SUCCESSFUL_MEDIA_DELETION);
-        });
+
+        User user = request.attrs().get(Attrs.USER);
+
+        // Check if the album is for a trip and if the person is in the trip
+        TripNodeFinder tripNodeFinder = new TripNodeFinder();
+        Boolean isOwner = false;
+        TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
+        if (trip != null) {
+            isOwner = tripService.userOwnsTripGroup(user.getId(), trip.getId());
+        }
+        if (isOwner || trip == null) {
+            return mediaRepository.remove(album_id, media_id, removeAll).thenApplyAsync(deleted_media_id -> {
+                //not found check, repository checks that both album and media exist
+                if(deleted_media_id == null) {
+                    return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
+                }
+                return ok(APIResponses.SUCCESSFUL_MEDIA_DELETION);
+            });
+        } else {
+            return CompletableFuture.completedFuture(badRequest());
+        }
     }
 
     /**
