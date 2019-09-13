@@ -48,6 +48,12 @@ public class GroupTripsSteps {
         state.getTrip().update();
     }
 
+    @Given("the trip is associated with my user group")
+    public void the_trip_is_associated_with_the_user_group() {
+        state.getTrip().setUserGroup(state.getGroup());
+        state.getTrip().update();
+    }
+
     @Given("the trip is associated with the user group")
     public void the_trip_is_associated_with_the_user_group(List<Map<String, String>> dataTable) {
         Map<String, String> groupInfo = dataTable.get(0);

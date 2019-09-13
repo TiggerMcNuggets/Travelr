@@ -35,6 +35,14 @@ public class CommonMediaSteps {
         createTestAlbum(destInfo, state.getUser());
     }
 
+
+    @Given("The trip album contains the media")
+    public void the_trip_album_contains_the_media(List<Map<String, String>> dataTable) {
+        state.setAlbum(state.getTrip().getDefaultAlbum());
+        Map<String, String> mediaInfo = dataTable.get(0);
+        createMediaInAlbum(mediaInfo, state.getUser());
+    }
+
     @Given("the album contains the media")
     public void the_album_contains_the_media(List<Map<String, String>> dataTable) {
         Map<String, String> mediaInfo = dataTable.get(0);
