@@ -77,17 +77,22 @@ Feature: Delete Media
 
   Scenario: Delete media from a trip album as non group owner
     Given I am authenticated
+    And The user exists
+      | first | last  | email               | dob |
+      | Dave  | Smith | davesmith@email.com | 1   |
     And The destinations are
       | name         | latitude | longitude | type     | district   | country    |
       | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
       | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
       | Small River  | 3.0      | 3.0       | River    | Otago      | New Zealand|
-    And I own the trip
+    And They own the trip
       | name         | description |
       | My First Trip| A trip      |
     And The trip contains the trip destinations
       | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
-      | Destination 3 | destination | 1           | 2             | 0            | 1             |
+      | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+      | Big River     | destination | 4           | 6             | 1            | 2             |
+      | Small River   | destination | 10          | 22            | 2            | 3             |
     And the trip is associated with the user group
       | name         | description         |
       | Team 300     | The best team eva   |
