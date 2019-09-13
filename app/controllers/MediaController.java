@@ -99,9 +99,19 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> uploadMedia(Http.Request request, Long user_id, Long album_id) {
+
+        User user = request.attrs().get(Attrs.USER);
+        // Check if the album is for a trip and if the person is in the trip
+        TripNodeFinder tripNodeFinder = new TripNodeFinder();
+        Boolean isInGroup = true;
+        TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
+        if (trip != null) {
+            isInGroup = tripService.isPermittedToWrite(trip, user).join();
+        }
+
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-        if (picture != null) {
+        if (picture != null && isInGroup) {
             if (!fh.isValidFile(picture.getFilename())) {
                 return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
             }
@@ -115,8 +125,10 @@ public class MediaController extends Controller {
                 }
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
             });
-        } else {
+        } else if (picture == null) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
+        } else {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.USER_NOT_PERMITTED));
         }
     }
 
