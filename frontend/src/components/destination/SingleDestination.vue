@@ -121,7 +121,11 @@ export default {
         (this.isMyProfile || this.isAdminUser) &&
         this.destination.ownerId === parseInt(this.userId)
       ) {
-        options.push({ action: this.editDestination, icon: "edit" });
+        options.push({
+          action: this.editDestination,
+          icon: "edit",
+          title: "Edit Destination"
+        });
       }
 
       if (
@@ -130,7 +134,8 @@ export default {
       ) {
         options.push({
           action: this.toggleShowSuggestTravellerTypes,
-          icon: "card_travel"
+          icon: "card_travel",
+          title: "Suggest Traveller Types"
         });
       }
 
@@ -146,6 +151,7 @@ export default {
       if (this.isMyProfile || this.isAdminUser) {
         options.push({
           icon: "add_photo_alternate",
+          title: "Add Photos",
           actions: [
             { text: "Upload Existing", callback: this.uploadExisting },
             { text: "Upload New", callback: this.toggleShowUploadPhoto }

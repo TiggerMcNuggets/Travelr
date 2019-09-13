@@ -420,13 +420,18 @@ public class TripService {
         }, context);
     }
 
-    public CompletableFuture<Void> isPermittedToWriteHandler(TripNode trip, User user) {
-        return isPermittedToRead(trip, user).thenApplyAsync(isPermitted -> {
+    /**
+     * Instead of returning boolean, throws exception when not permitted to write
+     * @param trip The trip
+     * @param user The user
+     * @return null
+     */
+    public CompletableFuture<Void> checkWritePermissiHandler(TripNode trip, User user) {
+        return isPermittedToWrite(trip, user).thenApplyAsync(isPermitted -> {
             if (!isPermitted) {
                 throw new ForbiddenException(APIResponses.TRIP_WRITE_DENIED);
             }
             return null;
         });
     }
-
 }

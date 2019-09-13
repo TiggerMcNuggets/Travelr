@@ -1,8 +1,11 @@
 package repository;
 
+import controllers.constants.APIResponses;
 import controllers.dto.User.CreateUserReq;
 import controllers.dto.User.NationalityReq;
 import controllers.dto.User.UpdateUserReq;
+import exceptions.ForbiddenException;
+import exceptions.NotFoundException;
 import finders.UserFinder;
 import models.Nationality;
 import models.TravellerType;
@@ -91,6 +94,19 @@ public class UserRepository {
             }
             user.save();
             return user.id;
+        }, context);
+    }
+
+    /**
+     * Gets one user by id and throws not found exception if not found
+     * @param id the user id
+     * @return completable future of user
+     */
+    public CompletableFuture<User> getUserHandler(Long id) {
+        return supplyAsync(() -> {
+            User user = userFinder.findById(id);
+            if (user == null) throw new NotFoundException(APIResponses.NOT_FOUND);
+            return user;
         }, context);
     }
 

@@ -121,8 +121,8 @@ export default {
   computed: {
     options() {
       return [
-        { action: this.toggleShowCreateTrip, icon: "add" },
-        { action: this.toggleShowSearch, icon: "search" }
+        { action: this.toggleShowCreateTrip, icon: "add", title: "Create New Trip" },
+        { action: this.toggleShowSearch, icon: "search",  title: "Search Trips" }
       ];
     },
 
