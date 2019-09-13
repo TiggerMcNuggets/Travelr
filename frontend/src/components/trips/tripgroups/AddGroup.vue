@@ -8,10 +8,15 @@
       <v-layout row wrap>
         <v-flex xs12>
           <v-autocomplete
+            v-model="selectedUserGroup"
+            :hint="`Select the user group to add`"
             :items="filteredGroups"
-            :value="selectedTrip.root.groupName"
-            :v-model="selectedUserGroup"
-            v-on:change="selectGroup"
+            item-text="text"
+            item-value="id"
+            label="Select"
+            persistent-hint
+            return-object
+            single-line
           ></v-autocomplete>
         </v-flex>
       </v-layout>
@@ -48,7 +53,8 @@ export default {
       userGroups: [],
       errorMessage: "",
       isError: false,
-      userId: this.$route.params.id
+      userId: this.$route.params.id,
+      selectedUserGroup: {},
     };
   },
 
@@ -63,7 +69,6 @@ export default {
 
       return filteredGroups.map(group => ({
         text: group.name,
-        value: group.id,
         id: group.id
       }));
     }
@@ -88,11 +93,10 @@ export default {
         .toggleGroupTrip(
           this.$store.getters.getUser.id,
           this.tripId,
-          this.selectedUserGroup
+          this.selectedUserGroup.id
         )
-        .then(() => {
-          this._getTrip(this.$store.getters.getUser.id, this.tripId);
-          this.closeGroupDialog();
+        .then((response) => {
+          this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
         })
         .catch(error => {
           this.setErrorMessage("Error adding group to trip.");
@@ -105,13 +109,6 @@ export default {
     },
 
     /**
-     * Updates the selectedUserGroup variable to the given group id
-     */
-    selectGroup(groupId) {
-      this.selectedUserGroup = groupId;
-    },
-
-    /**
      * Retrieves user groups from api
      */
     getUserGroups() {
@@ -121,8 +118,19 @@ export default {
     }
   },
 
+    watch: {
+    selectedTrip: function(newTrip, oldTrip) {
+      if (newTrip !== oldTrip) {
+        this.selectedUserGroup = {
+        text: this.selectedTrip.root.groupName,
+        id: this.selectedTrip.root.groupId
+      };
+      }
+    }
+  },
+
+
   mounted() {
-    console.log(this.selectedTrip.root.groupName);
     this.getUserGroups();
   }
 };
