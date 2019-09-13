@@ -14,7 +14,9 @@
       </v-tab-item>
 
       <v-tab-item :key="3">
-        <TripAlbum/>
+        <TripAlbum
+          :trip="trip"
+        />
       </v-tab-item>
     </v-tabs>
   </v-layout>
@@ -35,6 +37,10 @@ export default {
     return {
       active: null
     };
+  },
+
+  props: {
+    trip: Object
   },
 
   components: {
