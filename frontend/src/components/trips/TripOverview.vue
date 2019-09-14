@@ -1,7 +1,7 @@
 
 
 <template>
-  <v-layout >
+  <v-layout>
     <v-flex xs12 ma-2>
       <UserStatusList :tripId="trip.trip.id"/>
     </v-flex>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import UserStatusList from './tripgroups/UserStatusList'
+import UserStatusList from "./tripgroups/UserStatusList";
 
 export default {
   name: "TripOverview",
@@ -25,7 +25,6 @@ export default {
   data() {
     return {};
   },
-
 
   methods: {}
 };

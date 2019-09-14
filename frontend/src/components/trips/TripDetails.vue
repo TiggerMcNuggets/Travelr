@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-container class="no-padding">
     <v-tabs v-model="active" slider-color="blue">
       <v-tab :key="1" ripple>Overview</v-tab>
       <v-tab :key="2" ripple>Comments</v-tab>
@@ -14,10 +14,10 @@
       </v-tab-item>
 
       <v-tab-item :key="3">
-        <TripAlbum  :trip="trip"/>
+        <TripAlbum :trip="trip"/>
       </v-tab-item>
     </v-tabs>
-  </v-layout>
+  </v-container>
 </template>
 
 <style>
