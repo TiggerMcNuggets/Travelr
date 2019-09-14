@@ -119,7 +119,15 @@ public class TripService {
      */
     public CompletableFuture<List<TripNode>> getTripsForUser(Long userId) {
         return supplyAsync(() -> {
-            return TripNode.find.query().where().and().eq("user.id", userId).eq("parent", null).findList();
+            return TripNode.find.query().where().and()
+                    .or()
+                    .eq("user.id", userId)
+                    .eq("userGroup.userGroups.user.id", userId)
+                    .endOr()
+                    .eq("parent", null)
+                    .endAnd()
+                    .findList();
+
         }, context);
     }
 
