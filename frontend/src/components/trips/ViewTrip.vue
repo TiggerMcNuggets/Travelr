@@ -6,7 +6,7 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
-      :options="headerOptions"
+      :options="headerOptions()"
       enableBackButton
     />
 
@@ -341,8 +341,13 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.trip.nodes
       );
-    },
+    }
+  },
+  methods: {
 
+    /**
+     * Gets the header optoins for the view trip page.
+     */
     headerOptions() {
       return this.selectedTrip.trip.id == this.selectedTrip.root.id
         ? [
@@ -355,9 +360,8 @@ export default {
             }
           ]
         : [];
-    }
-  },
-  methods: {
+    },
+
     /**
      * Returns a color based on the node type
      * @param the node ("destination or trip")

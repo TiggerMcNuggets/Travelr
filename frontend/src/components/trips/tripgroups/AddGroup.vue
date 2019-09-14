@@ -95,10 +95,10 @@ export default {
           this.tripId,
           this.selectedUserGroup.id
         )
-        .then((response) => {
+        .then(() => {
           this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
         })
-        .catch(error => {
+        .catch(() => {
           this.setErrorMessage("Error adding group to trip.");
         });
     },

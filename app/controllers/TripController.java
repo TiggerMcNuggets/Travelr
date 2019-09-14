@@ -54,32 +54,6 @@ public class TripController extends Controller {
     }
 
     /**
-     * Gets a list of all destinations in a trip including sub trips
-     * and returns them in a list of hashmaps Trip -> Destination
-     * @param tNode
-     * @return destinations a list of hashmaps Trip -> Destination
-     */
-    private List<HashMap<TripNode, DestinationNode>> getAllNodes(TripNode tNode) {
-
-        List<HashMap<TripNode, DestinationNode>> destinations = new ArrayList<>();
-
-        List<Node> tripNodes = tripService.getChildrenByTripId(tNode.getId()).join();
-
-        for (Node node: tripNodes) {
-            if(node.getClass() == TripNode.class) {
-                destinations.addAll(getAllNodes((TripNode) node));
-            } else {
-                HashMap <TripNode, DestinationNode> map = new HashMap<>();
-                map.put(tNode, (DestinationNode) node);
-                destinations.add(map);
-            }
-        }
-
-        return destinations;
-    }
-
-
-    /**
      * Creates a .ics file to return to the user with the trip
      * @param req the http request
      * @param userId the id of the user
@@ -315,11 +289,11 @@ public class TripController extends Controller {
 
 
     /**
-     * //     * Soft Deletes a trip
-     * //     * @param req the http request
-     * //     * @param userId the id of the user
-     * //     * @param tripId the id of the destination
-     * //
+     * Soft Deletes a trip
+     * @param request the http request
+     * @param userId the id of the user
+     * @param tripId the id of the destination
+     *
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
@@ -387,7 +361,11 @@ public class TripController extends Controller {
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
     }
 
-
+    /**
+     * Deletes all trip user statuses for trip and children of the trip
+     * @param group the group which need to have statuses deleted
+     * @param tNode the trip node to delete status for.
+     */
     public void deleteTripUserStatus(Grouping group, TripNode tNode) {
         List<Node> tripNodes = tripService.getChildrenByTripId(tNode.getId()).join();
 
@@ -411,7 +389,6 @@ public class TripController extends Controller {
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> deleteGroupFromTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
-        System.out.println("DELETING SOME STUFFS");
         Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
         Optional<User> user = Optional.ofNullable(User.find.byId(userId));
         Optional<Grouping> group = Optional.ofNullable(Grouping.find.byId(groupId));
