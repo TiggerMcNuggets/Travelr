@@ -112,6 +112,30 @@ public class TripService {
         }, context);
     }
 
+
+    /**
+     * Creates a list that can be used for breadcrumbs on the frontend
+     * @param tripId of the currently viewed trip
+     * @return a list of TripNodes in order from top of the tree to the bottom
+     */
+    public Grouping getRootTripGrouping(Long tripId) {
+            TripNode trip = TripNode.find.byId(tripId);
+
+            if(trip == null) {
+                return null;
+            }
+
+            TripNode parentNode = trip;
+
+            while(parentNode.getParent() != null) {
+                parentNode = parentNode.getParent();
+            }
+
+            Grouping grouping = parentNode.getUserGroup();
+
+        return grouping;
+    }
+
     /**
      * Get all trips for a user
      * @param userId
