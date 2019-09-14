@@ -51,7 +51,7 @@ Scenario: Get a trip successfully
     | first | last   | email               | dob | status     | owner |
     | Joe   | Bloggs | joebloggs@email.com | 1   | GOING      | false |
     | John  | Smith  | johnsmith@email.com | 1   | MAYBE      | true  |
-    | Mary  | Smith  | marysmith@email.com | 1   | NOT GOING  | false |
+    | Mary  | Smith  | marysmith@email.com | 1   | NOT_GOING  | false |
   When I want to get the trip
   And I send the request
   Then I will receive the response code 200
@@ -68,7 +68,7 @@ Scenario: Get a trip successfully
         "id":1,
         "name":"My First Trip",
         "usergroup":[
-           {"userId":2,"firstName":"Test","lastName":"User","status":"NOT GOING","owner":true},
+           {"userId":2,"firstName":"Test","lastName":"User","status":"NOT ANSWERED","owner":true},
            {
               "userId":3,
               "firstName":"Joe",
@@ -87,7 +87,7 @@ Scenario: Get a trip successfully
               "userId":5,
               "firstName":"Mary",
               "lastName":"Smith",
-              "status":"NOT GOING",
+              "status":"NOT_GOING",
               "owner":false
            }
         ],

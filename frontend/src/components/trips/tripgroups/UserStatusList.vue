@@ -39,7 +39,7 @@
   </v-flex>
 </template>
 
-<style <style lang="scss">
+<style lang="scss">
 .status-select {
   width: 120px;
 }
