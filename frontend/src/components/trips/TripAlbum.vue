@@ -1,13 +1,13 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 ma-2>
-      <h3>Album Stuff</h3>
-      <v-flex md10>
+      <v-flex >
         <MediaGrid
           :filteredMedia="files"
           :openElement="() => {}"
           :getAllAlbums="() => {}"
           :openEditAlbumDialog="() => {}"
+          smallGrid
         ></MediaGrid>
       </v-flex>
     </v-flex>
