@@ -8,9 +8,11 @@ import exceptions.CustomException;
 import models.*;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
+import repository.UserGroupRepository;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -24,10 +26,12 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 public class TripService {
 
     private DatabaseExecutionContext context;
+    private final UserGroupRepository userGroupRepository;
 
     @Inject
-    public TripService(DatabaseExecutionContext context) {
+    public TripService(DatabaseExecutionContext context, UserGroupRepository userGroupRepository) {
         this.context = context;
+        this.userGroupRepository = userGroupRepository;
     }
 
     /**
@@ -115,7 +119,15 @@ public class TripService {
      */
     public CompletableFuture<List<TripNode>> getTripsForUser(Long userId) {
         return supplyAsync(() -> {
-            return TripNode.find.query().where().and().eq("user.id", userId).eq("parent", null).findList();
+            return TripNode.find.query().where().and()
+                    .or()
+                    .eq("user.id", userId)
+                    .eq("userGroup.userGroups.user.id", userId)
+                    .endOr()
+                    .eq("parent", null)
+                    .endAnd()
+                    .findList();
+
         }, context);
     }
 
@@ -353,19 +365,71 @@ public class TripService {
      * @param group the Group object*@return the Trip id of the user that has been
      *              updated
      */
-
     public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
         return supplyAsync(() -> {
-            if (trip.getUserGroup() == null) {
-                trip.setUserGroup(group);
-            } else {
-                trip.setUserGroup(null);
-            }
-
+            trip.setUserGroup(group);
             trip.update();
             return trip.getId();
 
         }, context);
     }
 
+    /**
+     * Deletes a user group from a trip.
+     * @param trip  the Trip object*
+     */
+    public CompletableFuture<Long> deleteGroupFromTrip(Node trip) {
+        return supplyAsync(() -> {
+            trip.setUserGroup(null);
+            trip.update();
+            return trip.getId();
+        }, context);
+    }
+
+    /**
+     * Deletes all the user statuses of a group associated with a trip.
+     * @param trip  the Trip object*
+     * @param group the Group object*@return the Trip id of the user that has been
+     *              updated
+     */
+    public void deleteTripUserStatus(Grouping group, TripNode trip) {
+        for(UserGroup userGroup : group.getUserGroups()) {
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("trip", trip).eq("user", userGroup.getUser()).findOne();
+            if (userStatus != null) {
+                userStatus.delete();
+            }
+        }
+    }
+
+    /**
+     * Checks if the user can view the trip information
+     * @param trip The trip
+     * @param user The user
+     * @return true or false
+     */
+    public CompletableFuture<Boolean> isPermittedToRead(TripNode trip, User user) {
+        return supplyAsync(() -> {
+            // Check if admin or trip owner
+            if (user.isAdmin() || trip.getUser().equals(user)) return true;
+
+            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToRead(trip.getUserGroup().getId(), user);
+            return groupPermissionStage.join();
+        }, context);
+    }
+
+    /**
+     * Checks if the user is allowed to change trip information
+     * @param trip The trip
+     * @param user The user
+     * @return true or false
+     */
+    public CompletableFuture<Boolean> isPermittedToWrite(TripNode trip, User user) {
+        return supplyAsync(() -> {
+            // Check if admin or trip owner
+            if (user.isAdmin() || trip.getUser().equals(user)) return true;
+
+            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToWrite(trip.getUserGroup().getId(), user);
+            return groupPermissionStage.join();
+        }, context);
+    }
 }

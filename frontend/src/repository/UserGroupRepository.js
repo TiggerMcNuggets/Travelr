@@ -27,12 +27,6 @@ export default {
   },
 
   /**
-   * Updates a single user group given a user and group id
-   * @param {number} userId The user id
-   * @param {number} groupId The user group id
-   */
-
-  /**
    *
    * @param {number} userId The user id
    * @param {number} groupId The user group id
@@ -62,13 +56,6 @@ export default {
       `/users/${userId}/group/${groupId}/member/${memberId}`
     );
   },
-
-  /**
-   * Updates ownership status of a group member given a user and group id and the id of the user to update.
-   * @param {number} userId The user id
-   * @param {number} groupId The user group id
-   * @param {number} memberId The id of the user to update the group
-   */
 
   /**
    * Updates ownership status of a group member given a user and group id and the id of the user to update.

@@ -25,7 +25,7 @@ public class InitSteps extends WithApplication {
     /**
      * Creates an application builder and starts the fake app
      */
-    @Before
+    @Before(order=0)
     public void setUp() {
         Module testModule = new AbstractModule() {
             @Override
