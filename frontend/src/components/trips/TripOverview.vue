@@ -2,7 +2,7 @@
 
 <template>
   <v-layout>
-    <v-flex xs12 ma-2>
+    <v-flex xs12 ma-2 mt-4>
       <UserStatusList :tripId="trip.trip.id"/>
     </v-flex>
   </v-layout>

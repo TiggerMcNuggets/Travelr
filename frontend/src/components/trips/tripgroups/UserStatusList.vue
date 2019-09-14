@@ -1,56 +1,53 @@
 <template>
   <v-flex v-if="selectedTrip.trip.usergroup">
-    <v-flex
-      pa-3
-    >{{`${getStatusNumber("GOING")} going, ${getStatusNumber("NOT GOING")} not going and ${getStatusNumber("MAYBE")} maybe`}}</v-flex>
+    <v-flex>
+      <h2>Attendance</h2>
+      <p
+        class="sub-text"
+      >{{`${getStatusNumber("GOING")} going, ${getStatusNumber("NOT_GOING")} not going and ${getStatusNumber("MAYBE")} maybe`}}</p>
+    </v-flex>
+
+    <p v-if="selectedTrip.trip.usergroup.length === 0">No group added.</p>
+
     <v-list class="pa-0" v-for="user in selectedTrip.trip.usergroup" :key="user.userId" wrap>
-      <v-list-tile>
+      <v-list-tile class="status-list">
         <v-list-tile-content>
           <v-list-tile-title>{{`${user.firstName} ${user.lastName}`}}</v-list-tile-title>
         </v-list-tile-content>
 
         <v-list-tile-action v-if="canEdit(user.userId)">
-          <v-autocomplete
+          <v-select
+            class="status-select"
             :items="statuses"
-            :v-model="user.status"
+            :v-model="defaultStatus"
+            :value="user.status"
+            single-line
+            item-text="title"
+            item-value="value"
             v-on:change="changeStatus($event, user.userId)"
-          ></v-autocomplete>
+          ></v-select>
         </v-list-tile-action>
 
         <v-list-tile-action>
-          <v-icon color="success lighten-1" v-if="user.status == 'GOING'">check</v-icon>
-          <v-icon color="error lighten-1" v-if="user.status == 'NOT GOING'">close</v-icon>
-          <v-icon color="warning" v-if="user.status == 'MAYBE'">?</v-icon>
+          <v-icon color="success lighten-1" v-if="user.status == 'GOING'">check_circle</v-icon>
+          <v-icon color="error lighten-1" v-if="user.status == 'NOT_GOING'">cancel</v-icon>
+          <v-icon color="warning" v-if="user.status == 'MAYBE'">help</v-icon>
+          <v-icon color="secondary" v-if="user.status == 'NOT ANSWERED'">remove_circle</v-icon>
         </v-list-tile-action>
       </v-list-tile>
     </v-list>
-    <!-- <v-data-table :headers="getColumns" :items="selectedTrip.trip.usergroup">
-      <template v-slot:items="props">
-        <td class="text-xs-right">{{ props.item.firstName }}</td>
-        <td class="text-xs-right">{{ props.item.lastName }}</td>
-        <td class="text-xs-right status-col" v-if="canEdit(props.item.userId)">
-          <v-autocomplete
-            class="status-chooser"
-            :items="statuses"
-            :v-model="props.item.status"
-            v-on:change="changeStatus($event, props.item.userId)"
-          ></v-autocomplete>
-          <v-icon color="success lighten-1" v-if="props.item.status == 'GOING'">check</v-icon>
-          <v-icon color="error lighten-1" v-if="props.item.status == 'NOT GOING'">close</v-icon>
-          <v-icon color="warning" v-if="props.item.status == 'MAYBE'">?</v-icon>
-        </td>
-        <td class="text-xs-right" v-else>
-          {{ props.item.status }}
-          <v-icon color="success lighten-1" v-if="props.item.status == 'GOING'">check</v-icon>
-          <v-icon color="error lighten-1" v-if="props.item.status == 'NOT GOING'">close</v-icon>
-          <v-icon color="warning" v-if="props.item.status == 'MAYBE'">?</v-icon>
-        </td>
-      </template>
-    </v-data-table>-->
   </v-flex>
 </template>
 
 <style <style lang="scss">
+.status-select {
+  width: 120px;
+}
+
+.status-list .v-list__tile {
+  padding: 0px;
+}
+
 .status-col {
   display: flex;
   justify-content: flex-end;
@@ -72,7 +69,21 @@ export default {
 
   data() {
     return {
-      statuses: ["GOING", "NOT GOING", "MAYBE"]
+      defaultStatus: null,
+      statuses: [
+        {
+          title: "Going",
+          value: "GOING"
+        },
+        {
+          title: "Not Going",
+          value: "NOT_GOING"
+        },
+        {
+          title: "Interested",
+          value: "MAYBE"
+        }
+      ]
     };
   },
 
@@ -103,29 +114,38 @@ export default {
   },
 
   methods: {
+
+    /**
+     * Sends a request for changing status.
+     */
     changeStatus(status, userId) {
       let payload = { status: status };
       tripRepository
         .updateGroupTripStatus(userId, this.selectedTrip.trip.id, payload)
-        .then(() => this._getTrip(this.$store.getters.getUser.id, this.tripId));
+        .then(() => {
+          this._getTrip(this.$store.getters.getUser.id, this.tripId);
+        });
     },
 
+    /**
+     * Gets the number of responses for a given status
+     */
     getStatusNumber(statusType) {
       return this.selectedTrip.trip.usergroup.filter(
         user => user.status == statusType
       ).length;
     },
 
+
+    /**
+     * Checks if the user status can be edited.
+     */
     canEdit(userId) {
       return (
         userId === this.$store.getters.getUser.id ||
         this.$store.getters.getIsUserAdmin
       );
     }
-  },
-
-  updated() {
-    this._getTrip(this.$store.getters.getUser.id, this.tripId);
   },
 
   props: {
