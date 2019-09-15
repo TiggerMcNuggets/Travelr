@@ -5,7 +5,6 @@ import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
 import dto.trip.TripStatusDTO;
-import exceptions.BadRequestException;
 import exceptions.CustomException;
 import exceptions.ForbiddenException;
 import exceptions.NotFoundException;
@@ -384,16 +383,38 @@ public class TripService {
      */
     public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
         return supplyAsync(() -> {
-            if (trip.getUserGroup() == null) {
-                trip.setUserGroup(group);
-            } else {
-                trip.setUserGroup(null);
-            }
-
+            trip.setUserGroup(group);
             trip.update();
             return trip.getId();
 
         }, context);
+    }
+
+    /**
+     * Deletes a user group from a trip.
+     * @param trip  the Trip object*
+     */
+    public CompletableFuture<Long> deleteGroupFromTrip(Node trip) {
+        return supplyAsync(() -> {
+            trip.setUserGroup(null);
+            trip.update();
+            return trip.getId();
+        }, context);
+    }
+
+    /**
+     * Deletes all the user statuses of a group associated with a trip.
+     * @param trip  the Trip object*
+     * @param group the Group object*@return the Trip id of the user that has been
+     *              updated
+     */
+    public void deleteTripUserStatus(Grouping group, TripNode trip) {
+        for(UserGroup userGroup : group.getUserGroups()) {
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("trip", trip).eq("user", userGroup.getUser()).findOne();
+            if (userStatus != null) {
+                userStatus.delete();
+            }
+        }
     }
 
     /**

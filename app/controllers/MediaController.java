@@ -8,10 +8,13 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Media.*;
 import finders.DestinationFinder;
+import finders.TripNodeFinder;
+import finders.UserFinder;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.Album;
 import models.Destination;
+import models.TripNode;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -22,11 +25,13 @@ import play.mvc.Result;
 import repository.AlbumRepository;
 import repository.MediaRepository;
 import repository.PersonalPhotoRepository;
+import service.TripService;
 import utils.FileHelper;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -35,6 +40,8 @@ public class MediaController extends Controller {
     private final MediaRepository mediaRepository;
 
     private final AlbumRepository albumRepository;
+
+    private final TripService tripService;
 
     private final FileHelper fh = new FileHelper();
 
@@ -45,11 +52,12 @@ public class MediaController extends Controller {
 
     @Inject
     public MediaController(Config config,
-            MediaRepository mediaRepository, AlbumRepository albumRepository) {
+            MediaRepository mediaRepository, AlbumRepository albumRepository,TripService tripService) {
         String rootPath = System.getProperty("user.home");
         MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
         this.mediaRepository = mediaRepository;
         this.albumRepository = albumRepository;
+        this.tripService = tripService;
     }
 
     /**
@@ -66,7 +74,16 @@ public class MediaController extends Controller {
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        return albumRepository.list(album_id, ((user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
+        // Check if the album is for a trip and if the person is in the trip
+        TripNodeFinder tripNodeFinder = new TripNodeFinder();
+        Boolean isInGroup = true;
+        TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
+        if (trip != null) {
+            isInGroup = tripService.isPermittedToRead(trip, user).join();
+        }
+
+
+        return albumRepository.list(album_id, (isInGroup || (user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
             PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
             return ok(Ebean.json().toJson(media, pathProperties));
         });
