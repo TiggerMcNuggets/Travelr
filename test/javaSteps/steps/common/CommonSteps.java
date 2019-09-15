@@ -131,4 +131,11 @@ public class CommonSteps  {
         );
         return user;
     }
+
+    @When("I want to logout")
+    public void iWantToLogout() {
+        state.getRequest().method("POST");
+        state.getRequest().uri("https://localhost:9000/api/logout");
+    }
+
 }
