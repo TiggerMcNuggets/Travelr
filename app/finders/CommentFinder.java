@@ -40,8 +40,9 @@ public class CommentFinder extends Finder<Long, Comment> {
      * Finds all comments of a trip for a 'page' if each page has a number of 'comments'
      */
     public List<Comment> findByTripAndPageAndComments(TripNode tripNode, Integer page, Integer comments) {
-        return commentFetcher().where().eq("tripNode", tripNode).raw("id < ? AND id > ?", (page * comments), ((page - 1) * comments)).findList();
-
+        System.out.println((page - 1) * comments + 1);
+        System.out.println((page * comments));
+        return commentFetcher().where().eq("tripNode", tripNode).between("id", ((page - 1) * comments + 1), (page * comments)).findList();
     }
 
     /**

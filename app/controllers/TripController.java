@@ -365,38 +365,4 @@ public class TripController extends Controller {
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
     }
 
-    /**
-     * returns a
-     * @param request the request containing two option query parameters, page and comments
-     * @param tripId the id of the trip object
-     * @param userId the id of the user
-     * @return a 200 http response when the comments for a specific page of a trip is obtained, 401 for unauthorised
-     * and 404 for when the trip cannot be found
-     */
-    public CompletionStage<Result> fetchTripComments(Http.Request request, Long tripId, Long userId) {
-
-        Integer page;
-        Integer comments;
-        try {
-            page = Integer.parseInt(request.getQueryString("page"));
-            comments = Integer.parseInt(request.getQueryString("comments"));
-        } catch (Error e) {
-            page = 1;
-            comments = 10;
-        }
-        User user = request.attrs().get(Attrs.ACCESS_USER);
-        Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
-
-        if (!tripNode.isPresent()) {
-            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
-        }
-        if (!tripNode.isPresent()) {
-            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
-        }
-
-        List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
-
-        return CompletableFuture.completedFuture(ok(Json.toJson(commentList)));
-    }
-
 }
