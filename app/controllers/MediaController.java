@@ -177,8 +177,7 @@ public class MediaController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> getUsersAlbums(Http.Request request, Long user_id) {
 
-        return albumRepository.listUserAlbums(user_id).thenApplyAsync(albums -> {
-
+        return albumRepository.listUserAlbumsWithTripAlbums(user_id).thenApplyAsync(albums -> {
             GetAlbumsRes response = new GetAlbumsRes(request, albums);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response.getGetAlbumRes());

@@ -428,7 +428,15 @@ export default {
               title: "Add Photos"
             }
           ]
-        : [];
+        : [
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
+            }
+          ];
     },
 
     /**
