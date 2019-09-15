@@ -1,10 +1,13 @@
 package service;
 
+import controllers.constants.APIResponses;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
 import dto.trip.TripStatusDTO;
 import exceptions.CustomException;
+import exceptions.ForbiddenException;
+import exceptions.NotFoundException;
 import models.*;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
@@ -12,7 +15,6 @@ import repository.UserGroupRepository;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +39,7 @@ public class TripService {
     /**
      * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to
      * user
-     * 
+     *
      * @param tripDTO
      * @param user
      * @return
@@ -55,7 +57,7 @@ public class TripService {
 
     /**
      * Get a trip by Id
-     * 
+     *
      * @param tripId
      * @return
      */
@@ -70,9 +72,23 @@ public class TripService {
     }
 
     /**
+     * Gets a trip by Id and handles not found exception
+     * @param tripId The trip's id
+     * @return Completable future of trip node
+     */
+    public CompletableFuture<TripNode> getTripByIdHandler(Long tripId) {
+        return getTripById(tripId).thenApplyAsync((optionalTripNode) -> {
+            if (!optionalTripNode.isPresent()) {
+                throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
+            }
+            return optionalTripNode.get();
+        });
+    }
+
+    /**
      * Gets the children for a given trip Id Ordered by ordinal to remove as much
      * logic as possible from frontend
-     * 
+     *
      * @param tripId
      * @return
      */
@@ -89,7 +105,7 @@ public class TripService {
 
     /**
      * Creates a list that can be used for breadcrumbs on the frontend
-     * 
+     *
      * @param tripId of the currently viewed trip
      * @return a list of TripNodes in order from top of the tree to the bottom
      */
@@ -119,7 +135,7 @@ public class TripService {
 
     /**
      * Creates a list that can be used for breadcrumbs on the frontend
-     * 
+     *
      * @param tripId of the currently viewed trip
      * @return a list of TripNodes in order from top of the tree to the bottom
      */
@@ -140,7 +156,7 @@ public class TripService {
 
     /**
      * Get all trips for a user
-     * 
+     *
      * @param userId
      * @return
      */
@@ -157,7 +173,7 @@ public class TripService {
 
     /**
      * updates a trips based on information chamnged by the user
-     * 
+     *
      * @param tripId  trip to be updated
      * @param tripDTO
      * @param user    user who owns the trip
@@ -396,7 +412,7 @@ public class TripService {
 
     /**
      * Deletes a user group from a trip.
-     * 
+     *
      * @param trip the Trip object*
      */
     public CompletableFuture<Long> deleteGroupFromTrip(Node trip) {
@@ -409,7 +425,7 @@ public class TripService {
 
     /**
      * Deletes all the user statuses of a group associated with a trip.
-     * 
+     *
      * @param trip  the Trip object*
      * @param group the Group object*@return the Trip id of the user that has been
      *              updated
@@ -426,7 +442,7 @@ public class TripService {
 
     /**
      * Checks if the user can view the trip information
-     * 
+     *
      * @param trip The trip
      * @param user The user
      * @return true or false
@@ -445,7 +461,7 @@ public class TripService {
 
     /**
      * Checks if the user is allowed to change trip information
-     * 
+     *
      * @param trip The trip
      * @param user The user
      * @return true or false
@@ -460,5 +476,20 @@ public class TripService {
                     .isPermittedToWrite(trip.getUserGroup().getId(), user);
             return groupPermissionStage.join();
         }, context);
+    }
+
+    /**
+     * Instead of returning boolean, throws exception when not permitted to write
+     * @param trip The trip
+     * @param user The user
+     * @return null
+     */
+    public CompletableFuture<Void> checkWritePermissionHandler(TripNode trip, User user) {
+        return isPermittedToWrite(trip, user).thenApplyAsync(isPermitted -> {
+            if (!isPermitted) {
+                throw new ForbiddenException(APIResponses.TRIP_WRITE_DENIED);
+            }
+            return null;
+        });
     }
 }
