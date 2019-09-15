@@ -46,6 +46,8 @@
         </v-card>
       </li>
     </ul>
+    <emoji-picker v-model="text"/>
+    {{text}}
   </v-container>
 </template>
 
@@ -94,7 +96,7 @@ import CreateTrips from "./CreateTrips.vue";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
 import PageHeader from "../common/header/PageHeader";
-
+import EmojiPicker from "../comment/emoji/EmojiPicker";
 
 export default {
   store,
@@ -114,7 +116,8 @@ export default {
       isAdminUser: false,
       userId: this.$route.params.id,
       searchActive: false,
-      undoRedoError: false
+      undoRedoError: false,
+      text: ""
     };
   },
   // the place where you want to make the store values readable
@@ -144,7 +147,8 @@ export default {
   // child components
   components: {
     CreateTrip: CreateTrips,
-    PageHeader
+    PageHeader,
+    EmojiPicker
   },
 
   methods: {
