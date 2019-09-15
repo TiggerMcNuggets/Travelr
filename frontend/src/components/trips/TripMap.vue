@@ -8,6 +8,7 @@
         :options="gMapOptions"
       >
         <!-- Private destination markers -->
+
         <GmapMarker
           v-for="(destination, i) in listOfDestinations"
           :key="i"
@@ -19,7 +20,7 @@
           v-for="path in paths"
           :key="path.id"
           :options="{path: path, strokeColor: path[0].strokeColor}"
-          >
+        >
         </GmapPolyline>
       </GmapMap>
     </v-flex>
@@ -27,14 +28,14 @@
 </template>
 
 <style>
-.destination-main-map {
-  width: 100%;
-  height: 830px;
-}
+  .destination-main-map {
+    width: 100%;
+    height: 830px;
+  }
 </style>
 
 <script>
-  import { GoogleMapLightStyle } from "../../assets/google-map-light-style"
+  import {GoogleMapLightStyle} from "../../assets/google-map-light-style"
 
   // resources
   import blueMarker from "../../assets/blue-google-maps-marker.svg";
@@ -58,7 +59,7 @@
           },
         },
         infoWindow: {
-          position: { lat: 0, lng: 0 },
+          position: {lat: 0, lng: 0},
           open: false
         },
         blueMarker: blueMarker
@@ -66,29 +67,28 @@
     },
 
     props: {
-      destinations: Array,
-      initialDestination: Object
+      destinations: Array
     },
 
     computed: {
 
       /**
-      * Returns a list of paths to be rendered as polylines obtained from the pathList function.
-      */
+       * Returns a list of paths to be rendered as polylines obtained from the pathList function.
+       */
       paths() {
         return this.pathList();
       },
 
       /**
-      * Returns a concatenated list of destinations
-      */
+       * Returns a concatenated list of destinations
+       */
       listOfDestinations() {
         return this.pathList().reduce((accumulator, path) => {
           return accumulator.concat([...path])
         }, []);
       },
 
-      
+
     },
 
     methods: {
@@ -144,59 +144,63 @@
       //   return tempPaths;
       // },
 
-        /**
-         * Creates an array of arrays containing latitude and longitude to represent different polylines.
-         * This is used to differentiate between different levels of nested trips.
-         */
-        pathList() {
-            let tempPaths = [];
-            let tempPath = [];
-            let currentDepth;
-            for (let i = 0; i < this.destinations.length; i++) {
-                if (this.destinations[i].type === "destination") {
-                    let RGB = ["00", "00", "00"]
-                    currentDepth = this.destinations[i];
-                    if (i + 1 == this.destinations.length) {
-                        tempPath.push(this.destinations[i])
-                        RGB[((this.destinations[i - 1] + 2) % 3)] = "FF";
-                        tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
-                        tempPaths.push(tempPath);
-                        break
-                    } else if (i == 0) {
-                        tempPath.push(this.destinations[i]);
-                    } else if ((currentDepth < this.destinations[i + 1]) || (currentDepth < this.destinations[i - 1])) {
-                        tempPath.push(this.destinations[i]);
+      /**
+       * Creates an array of arrays containing latitude and longitude to represent different polylines.
+       * This is used to differentiate between different levels of nested trips.
+       */
+      pathList() {
+        let tempPaths = [];
+        let tempPath = [];
+        let currentDepth;
+        for (let i = 0; i < this.destinations.length; i++) {
+          if (this.destinations[i].type === "destination") {
+            let RGB = ["00", "00", "00"];
+            currentDepth = this.destinations[i];
+            if (i + 1 == this.destinations.length) {
+              tempPath.push(this.destinations[i]);
+              RGB[((this.destinations[i - 1] + 2) % 3)] = "FF";
+              tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
+              tempPaths.push(tempPath);
+              break
+            } else if (i == 0) {
+              tempPath.push(this.destinations[i]);
+            } else if ((currentDepth < this.destinations[i + 1]) || (currentDepth < this.destinations[i - 1])) {
+              tempPath.push(this.destinations[i]);
 
-                        if (currentDepth < this.destinations[i - 1]) {
-                            RGB[((this.destinations[i - 1] + 2) % 3)] = "FF";
-                        } else {
-                            RGB[((this.destinations[i] + 2) % 3)] = "FF";
-                        }
-                        tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
-                        tempPaths.push(tempPath);
-                        tempPath = [];
-                        tempPath.push(this.destinations[i]);
-                    } else {
-                        tempPath.push(this.destinations[i]);
-                    }
-                }
+              if (currentDepth < this.destinations[i - 1]) {
+                RGB[((this.destinations[i - 1] + 2) % 3)] = "FF";
+              } else {
+                RGB[((this.destinations[i] + 2) % 3)] = "FF";
+              }
+              tempPath.strokeColor = "#" + RGB[0] + RGB[1] + RGB[2];
+              tempPaths.push(tempPath);
+              tempPath = [];
+              tempPath.push(this.destinations[i]);
+            } else {
+              tempPath.push(this.destinations[i]);
+            }
+          }
 
+        }
+        for (let i = 0; i < tempPaths.length; i++) {
+          tempPaths[i] = tempPaths[i].map((path) => {
+            return {
+              ...tempPaths[i],
+              lat: path.destination.latitude,
+              lng: path.destination.longitude,
+              
             }
-            for (let i = 0; i < tempPaths.length; i++) {
-                tempPaths[i] = tempPaths[i].map((path) => {
-                    return {
-                        ...tempPaths[i],
-                        lat: path.destination.latitude,
-                        lng: path.destination.longitude,
-                    }
-                });
-            }
+          });
+        }
 
-            if (this.destinations[0] != undefined) {
-                this.gMapOptions.center = {lat: this.destinations[0].destination.latitude, lng: this.destinations[0].destination.longitude};
-            }
-            return tempPaths;
-        },
+        if (this.destinations[0] != undefined) {
+          this.gMapOptions.center = {
+            lat: this.destinations[0].destination.latitude,
+            lng: this.destinations[0].destination.longitude
+          };
+        }
+        return tempPaths;
+      },
     },
   };
 </script>

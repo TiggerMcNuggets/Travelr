@@ -192,7 +192,8 @@
       </v-flex>
 
       <v-flex md4 pa-2>
-        <div class="temp-map"></div>
+        <!--<div class="temp-map"></div>-->
+        <TripMap :destinations="trip.trip.nodes"/>
       </v-flex>
     </v-layout>
   </v-container>
@@ -250,6 +251,7 @@ import { store } from "../../store/index";
 import draggable from "vuedraggable";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
+import TripMap from "./TripMap";
 import AddGroup from "./tripgroups/AddGroup";
 
 import dateTime from "../common/dateTime/dateTime.js";
@@ -276,6 +278,7 @@ export default {
     draggable,
     PageHeader,
     TripDetails,
+    TripMap,
     AddGroup
   },
   mixins: [RollbackMixin, StoreTripsMixin],
