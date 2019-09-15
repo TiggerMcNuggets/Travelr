@@ -1,9 +1,9 @@
 <template>
-  <v-layout>
+  <v-container fluid>
     <v-tabs v-model="active" slider-color="blue">
       <v-tab :key="1" ripple>Overview</v-tab>
       <v-tab :key="2" ripple>Comments</v-tab>
-      <v-tab :key="3" ripple>Files</v-tab>
+      <v-tab :key="3" ripple>Albums</v-tab>
 
       <v-tab-item :key="1">
         <TripOverview/>
@@ -14,10 +14,12 @@
       </v-tab-item>
 
       <v-tab-item :key="3">
-        <TripAlbum/>
+        <TripAlbum
+          :trip="trip"
+        />
       </v-tab-item>
     </v-tabs>
-  </v-layout>
+  </v-container>
 </template>
 
 <style>
@@ -35,6 +37,10 @@ export default {
     return {
       active: null
     };
+  },
+
+  props: {
+    trip: Object
   },
 
   components: {

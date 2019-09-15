@@ -113,6 +113,27 @@ public class TripService {
     }
 
     /**
+     * Checks if user is the owner of a group connected to a trip
+     * @param userId
+     * @param tripId
+     * @return Boolean
+     */
+    public Boolean userOwnsTripGroup(Long userId, Long tripId) {
+        TripNode trip = TripNode.find.query().where().and()
+                .eq("userGroup.userGroups.user.id", userId)
+                .eq("userGroup.userGroups.isOwner", true)
+                .eq("id", tripId)
+                .eq("parent", null)
+                .endAnd()
+                .findOne();
+        if (trip == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * Get all trips for a user
      * @param userId
      * @return
