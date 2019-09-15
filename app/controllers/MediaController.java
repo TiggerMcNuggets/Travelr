@@ -107,10 +107,9 @@ public class MediaController extends Controller {
         Boolean ownsTrip = false;
         TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
         if (trip != null) {
-            isInGroup = tripService.isPermittedToWrite(trip, user).join();
+            isInGroup = tripService.isPermittedToRead(trip, user).join();
             ownsTrip = trip.getUser().getId() == user.getId();
         }
-
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null && (isInGroup || ownsTrip)) {

@@ -372,7 +372,7 @@ export default {
       mediaRepository
         .uploadMediaToAlbum(this.userId, albumId, formData)
         .then(() => {
-          return this._getTrip();
+          return this.init();
         });
     },
 
@@ -712,6 +712,17 @@ export default {
     redo: function() {
       const actions = [];
       this.rollbackRedo(actions);
+    },
+
+    init: function() {
+    this._getTrip(this.userId, this.tripId).then(() => {
+      this.trip = deepCopy(this.selectedTrip);
+      console.log(this.trip);
+      this.rollbackSetPreviousBody(tripAssembler(this.trip));
+      this.previousTripId = this.trip.trip.id;
+
+      this.trip.trip = this.tripWithDates(this.trip.trip);
+    });
     }
   },
 
@@ -722,14 +733,7 @@ export default {
     if (!this.isMyProfile && !this.isAdmin) {
       this.$router.go(-1);
     }
-    this._getTrip(this.userId, this.tripId).then(() => {
-      this.trip = deepCopy(this.selectedTrip);
-      console.log(this.trip);
-      this.rollbackSetPreviousBody(tripAssembler(this.trip));
-      this.previousTripId = this.trip.trip.id;
-
-      this.trip.trip = this.tripWithDates(this.trip.trip);
-    });
+    this.init();
   }
 };
 </script>
