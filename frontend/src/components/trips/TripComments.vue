@@ -94,11 +94,18 @@ export default {
   computed: {},
 
   methods: {
+
+    /**
+     * Calls API to post a users commment.
+     */
     postComment() {
       let commentBody = {"message": this.commentText}
       commentRepository.postComment(this.$store.getters.getUser.id, this.trip.trip.id, commentBody).then(response => console.log(response))
     },
 
+    /**
+     * Returns a users profile image file given the profile photo filename and user id.
+     */
     getProfileImageURL(userProfilePhoto, userId) {
       userId = userId ? userId : this.$store.getters.getUser.id;
       userProfilePhoto = userProfilePhoto
