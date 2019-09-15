@@ -33,7 +33,9 @@ Feature: Create Comment
 
 
   Scenario: Create a comment successfully as an admin
-    Given The user exists
+    Given I am authenticated
+    And I am an admin
+    And The user exists
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
@@ -43,8 +45,6 @@ Feature: Create Comment
       | name         | description |
       | My First Trip| A trip      |
     And The trip belongs to the user group
-    And I am authenticated
-    And I am an admin
     When I want to add a comment
     And The body is
     """
@@ -159,7 +159,28 @@ Feature: Create Comment
       | name         | description |
       | My First Trip| A trip      |
     And I do not own the trip
+    When I want to add a comment
+    And The body is
+    """
+    {
+      "message": "Comment"
+    }
+    """
+    And I send the request
+    Then I will receive the response code 404
+
+
+  Scenario: Create a comment when the user does not exist
+    Given I am authenticated
+    And I am an admin
+    And I own the user group
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    And I own the trip
+      | name         | description |
+      | My First Trip| A trip      |
     And The trip belongs to the user group
+    And The user does not exist
     When I want to add a comment
     And The body is
     """

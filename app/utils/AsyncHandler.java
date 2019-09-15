@@ -4,6 +4,10 @@ import exceptions.BadRequestException;
 import exceptions.CustomException;
 import play.mvc.Result;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static play.mvc.Results.status;
 
 public class AsyncHandler {

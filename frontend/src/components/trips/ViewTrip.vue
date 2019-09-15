@@ -6,8 +6,16 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
+      :options="headerOptions()"
       enableBackButton
     />
+
+    <v-dialog v-model="addUsergroupDialogActive" width="500">
+      <AddGroup
+        :closeGroupDialog="() => {addUsergroupDialogActive = false}"
+        :tripId="Number(trip.root.id)"
+      />
+    </v-dialog>
     <v-layout row wrap>
       <v-flex md3 pa-2>
         <v-breadcrumbs :items="trip.navigation" class="trip-breadcrumbs">
@@ -180,7 +188,7 @@
       </v-flex>
 
       <v-flex md5 pa-2>
-        <TripDetails/>
+        <TripDetails :trip="trip" />
       </v-flex>
 
       <v-flex md4 pa-2>
@@ -242,6 +250,8 @@ import { store } from "../../store/index";
 import draggable from "vuedraggable";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
+import AddGroup from "./tripgroups/AddGroup";
+
 import dateTime from "../common/dateTime/dateTime.js";
 import {
   noSameDestinationNameConsecutiveRule,
@@ -265,7 +275,8 @@ export default {
   components: {
     draggable,
     PageHeader,
-    TripDetails
+    TripDetails,
+    AddGroup
   },
   mixins: [RollbackMixin, StoreTripsMixin],
   // local variables
@@ -276,6 +287,8 @@ export default {
       draggedSublist: [],
 
       isFormValid: true,
+
+      addUsergroupDialogActive: false,
 
       isMyProfile: false,
       hasMissingDates: true,
@@ -328,9 +341,40 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.trip.nodes
       );
+    },
+
+    isTripOwner() {
+      return this.selectedTrip.root.user.id === this.$store.getters.getUser.id;
+    },
+
+    isGroupOwner() {
+      this.selectedTrip.trip.usergroup.forEach(user => {
+        if (user.id == this.$store.getters.getUser.id && this.user.owner) {
+          return true;
+        }
+      });
+      return false;
     }
   },
   methods: {
+    /**
+     * Gets the header optoins for the view trip page.
+     */
+    headerOptions() {
+      return this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+        (this.isTripOwner || this.isGroupOwner || this.isAdmin)
+        ? [
+            {
+              action: () => {
+                this.addUsergroupDialogActive = true;
+              },
+              icon: "people_alt",
+              title: "Manage Group"
+            }
+          ]
+        : [];
+    },
+
     /**
      * Returns a color based on the node type
      * @param the node ("destination or trip")

@@ -27,13 +27,19 @@ public class CommonCommentSteps {
 
     @Then("The comment is")
     public void theCommentIs(List<Map<String, String>> dataTable) {
-        Assert.assertEquals(state.getComment(), dataTable.get(0).get("message"));
+        Assert.assertEquals(state.getComment().getMessage(), dataTable.get(0).get("message"));
 
     }
 
     @Then("the comment has been removed")
     public void the_comment_has_been_removed() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new cucumber.api.PendingException();
+        Optional<Comment> comment = Comment.find.findById(state.getComment().getId());
+        Assert.assertFalse(comment.isPresent());
+    }
+
+    @Then("the comment exists")
+    public void the_comment_exists() {
+        Optional<Comment> comment = Comment.find.findById(state.getComment().getId());
+        Assert.assertTrue(comment.isPresent());
     }
 }

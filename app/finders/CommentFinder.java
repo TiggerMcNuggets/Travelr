@@ -23,6 +23,15 @@ public class CommentFinder extends Finder<Long, Comment> {
      * @param id The comments id
      * @return The optional comment
      */
+    public Optional<Comment> findByIdIncludingSoftDelete(Long id) {
+        return commentFetcher().where().eq("id", id).setIncludeSoftDeletes().findOneOrEmpty();
+    }
+
+    /**
+     * Finds an optional comment by its id
+     * @param id The comments id
+     * @return The optional comment
+     */
     public Optional<Comment> findById(Long id) {
         return commentFetcher().where().eq("id", id).findOneOrEmpty();
     }
