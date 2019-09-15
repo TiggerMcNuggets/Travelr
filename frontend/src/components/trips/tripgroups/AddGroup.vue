@@ -8,9 +8,15 @@
       <v-layout row wrap>
         <v-flex xs12>
           <v-autocomplete
+            v-model="selectedUserGroup"
+            :hint="`Select the user group to add`"
             :items="filteredGroups"
-            :v-model="selectedUserGroup"
-            v-on:change="selectGroup"
+            item-text="text"
+            item-value="id"
+            label="Select"
+            persistent-hint
+            return-object
+            single-line
           ></v-autocomplete>
         </v-flex>
       </v-layout>
@@ -28,6 +34,7 @@
 </template>
 
 <script>
+import StoreTripsMixin from "../../mixins/StoreTripsMixin";
 import { RepositoryFactory } from "../../../repository/RepositoryFactory";
 
 let userGroupRepository = RepositoryFactory.get("userGroup");
@@ -39,12 +46,15 @@ export default {
     tripId: Number
   },
 
+  mixins: [StoreTripsMixin],
+
   data() {
     return {
-      selectedUserGroup: {},
       userGroups: [],
       errorMessage: "",
-      isError: false
+      isError: false,
+      userId: this.$route.params.id,
+      selectedUserGroup: {},
     };
   },
 
@@ -59,7 +69,6 @@ export default {
 
       return filteredGroups.map(group => ({
         text: group.name,
-        value: group.id,
         id: group.id
       }));
     }
@@ -84,10 +93,14 @@ export default {
         .toggleGroupTrip(
           this.$store.getters.getUser.id,
           this.tripId,
-          this.selectedUserGroup
+          this.selectedUserGroup.id
         )
-        .then(this.closeGroupDialog)
-        .catch(this.setErrorMessage("Error adding group to trip."));
+        .then(() => {
+          this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
+        })
+        .catch(() => {
+          this.setErrorMessage("Error adding group to trip.");
+        });
     },
 
     setErrorMessage(error) {
@@ -96,34 +109,26 @@ export default {
     },
 
     /**
-     * Updates the selectedUserGroup variable to the given group id
-     */
-    selectGroup(groupId) {
-      this.selectedUserGroup = groupId;
-    },
-
-    /**
-     * function to get a list of users mapping first and last name to text and id to value for the v-select
-     */
-    users() {
-      return this.$store.state.users.users.map(user => ({
-        text: user.firstName + " " + user.lastName,
-        value: user.id,
-        id: user.id
-      }));
-    },
-
-    /**
      * Retrieves user groups from api
      */
     getUserGroups() {
-      userGroupRepository
-        .getGroupsForUser(this.$store.getters.getUser.id)
-        .then(result => {
-          this.userGroups = result.data;
-        });
+      userGroupRepository.getGroupsForUser(this.userId).then(result => {
+        this.userGroups = result.data;
+      });
     }
   },
+
+    watch: {
+    selectedTrip: function(newTrip, oldTrip) {
+      if (newTrip !== oldTrip) {
+        this.selectedUserGroup = {
+        text: this.selectedTrip.root.groupName,
+        id: this.selectedTrip.root.groupId
+      };
+      }
+    }
+  },
+
 
   mounted() {
     this.getUserGroups();

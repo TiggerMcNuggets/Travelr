@@ -6,7 +6,7 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
-      :options="getHeaderOptions()"
+      :options="headerOptions()"
       enableBackButton
     />
 
@@ -346,6 +346,24 @@ export default {
     }
   },
   methods: {
+
+    /**
+     * Gets the header optoins for the view trip page.
+     */
+    headerOptions() {
+      return this.selectedTrip.trip.id == this.selectedTrip.root.id
+        ? [
+            {
+              action: () => {
+                this.addUsergroupDialogActive = true;
+              },
+              icon: "people_alt",
+              title: "Manage Group"
+            }
+          ]
+        : [];
+    },
+
     /**
      * Returns a color based on the node type
      * @param the node ("destination or trip")
@@ -356,17 +374,6 @@ export default {
       } else {
         return "blue";
       }
-    },
-
-    getHeaderOptions() {
-      return [
-        {
-          action: () => {
-            this.addUsergroupDialogActive = true;
-          },
-          icon: "people_alt"
-        }
-      ];
     },
 
     /**

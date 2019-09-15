@@ -18,7 +18,7 @@ public class GroupTripsSteps {
 
     @When("I want to add the group to the trip")
     public void i_want_to_add_the_group_to_the_trip() {
-        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/trips/%s/groups/%s",
+       state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/trips/%s/groups/%s",
                 state.getUser().getId(), state.getTrip().getId(), state.getGroup().getId())));
         state.getRequest().method("PUT");
     }
@@ -27,7 +27,7 @@ public class GroupTripsSteps {
     public void i_want_to_remove_the_group_from_the_trip() {
         state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/trips/%s/groups/%s",
                 state.getUser().getId(), state.getTrip().getId(), state.getGroup().getId())));
-        state.getRequest().method("PUT");
+        state.getRequest().method("DELETE");
     }
 
     @Then("the group will not be associated with the trip")
@@ -61,20 +61,41 @@ public class GroupTripsSteps {
         group.insert();
         state.setGroup(group);
 
+        // Add yourself to the group
+        UserGroup userGroup = new UserGroup(state.getUser(), state.getGroup(), true);
+        userGroup.insert();
+
         state.getTrip().setUserGroup(group);
         state.getTrip().update();
     }
 
+    @Then("all trip status values associated with the trip are removed")
+    public void all_trip_status_values_associated_with_the_trip_are_removed() {
+        List<NodeUserStatus> tripUserStatuses = NodeUserStatus.find.query().where().eq("trip", state.getTrip()).findList();
+
+        for (NodeUserStatus tripStatus : tripUserStatuses) {
+            Assert.assertNull(tripStatus);
+        }
+
+        for (Node dest : state.getTrip().getNodes()) {
+            List<NodeUserStatus> destUserStatuses = NodeUserStatus.find.query().where().eq("trip", dest).findList();
+
+            for (NodeUserStatus destStatus : destUserStatuses) {
+                Assert.assertNull(destStatus);
+            }
+        }
+
+    }
+
     @Given("the group has the members, ownership and statuses")
     public void the_group_has_the_members_ownership_and_statuses(List<Map<String, String>> dataTable) {
+
         for (Map<String, String> memberInfo : dataTable) {
             User user = new User(memberInfo.get("first"), memberInfo.get("last"), memberInfo.get("email"),
                     Integer.valueOf(memberInfo.get("dob")));
 
             user.insert();
             UserGroup userGroup = new UserGroup(user, state.getGroup(), Boolean.valueOf(memberInfo.get("owner")));
-            System.out.println("owner");
-            System.out.println(userGroup.isOwner());
             userGroup.insert();
 
             if (!memberInfo.get("status").equals("NOT GOING")) {

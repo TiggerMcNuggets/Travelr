@@ -22,11 +22,6 @@
           <v-icon class="back-button-icon">keyboard_arrow_left</v-icon>
         </v-btn>
 
-        <v-breadcrumbs v-if="breadcrumbs" :items="breadcrumbs.items" class="header-breadcrumbs">
-          <template v-slot:item="props">
-            <v-breadcrumbs-item v-on:click="breadcrumbs.action(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
-          </template>
-        </v-breadcrumbs>
         <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
       </div>
 
