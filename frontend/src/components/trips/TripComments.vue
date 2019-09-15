@@ -7,25 +7,36 @@
         <h2>Comments (3)</h2>
       </v-flex>
 
-      <v-layout>
-        <v-list-tile-avatar>
-          <img :src="getProfileImageURL()">
-        </v-list-tile-avatar>
-        <v-textarea name="input-7-4" placeholder="Add your thoughts..."></v-textarea>
-      </v-layout>
+      <v-flex class="user-comment">
+        <v-layout class="post-comment-container">
+          <v-list-tile-avatar>
+            <img :src="getProfileImageURL()" />
+          </v-list-tile-avatar>
+
+          <v-layout>
+            <v-textarea name="input-6-2" placeholder="Add your thoughts..."></v-textarea>
+
+            <v-btn icon v-on:click="updateTrip" v-on="on">
+              <v-icon color="primary lighten-1">send</v-icon>
+            </v-btn>
+          </v-layout>
+        </v-layout>
+      </v-flex>
 
       <v-flex mt-2 mb-2 v-for="comment in userComments" :key="comment.id">
-        <v-layout align-text-center>
-          <v-list-tile-avatar>
-            <img :src="getProfileImageURL(comment.profilePic)">
-          </v-list-tile-avatar>
-          <p>{{`${comment.firstName} ${comment.lastName}`}}</p>
-        </v-layout>
-        <v-divider></v-divider>
+        <v-card class="user-comment">
+          <v-layout class="comment-header">
+            <v-list-tile-avatar>
+              <img :src="getProfileImageURL(comment.profilePic)" />
+            </v-list-tile-avatar>
+            <p>{{`${comment.firstName} ${comment.lastName}`}}</p>
+          </v-layout>
+          <v-divider></v-divider>
 
-        <v-flex>
-          <p class="subtext">{{comment.comment}}</p>
-        </v-flex>
+          <v-flex>
+            <p class="subtext">{{comment.comment}}</p>
+          </v-flex>
+        </v-card>
       </v-flex>
     </v-flex>
   </v-layout>

@@ -3,3 +3,41 @@
 .trip-breadcrumbs {
   padding: 0px 0px 20px 0px;
 }
+
+
+/* ------------- COMMENTS --------------- */
+
+.post-comment-container {
+
+  .v-input {
+    margin-top: 0px !important;
+    padding-top: 0px !important;
+  }
+  
+}
+
+.user-comment {
+  padding: 15px;
+  margin: 20px 0px;
+
+  hr {
+    margin-bottom: 15px;
+  }
+
+  p {
+    margin-bottom: 0px;
+  }
+
+  .comment-header {
+    display:flex;
+    align-items: center;
+    padding-bottom: 10px;
+  
+    p {
+      font-weight: bold;
+      margin-bottom: 0px;
+  
+    }
+  }
+
+}
