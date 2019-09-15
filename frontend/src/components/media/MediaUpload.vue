@@ -12,7 +12,7 @@
       </v-flex>
     </v-card-text>
 
-    <div class="album-select" v-if="!activeAlbumMetadata && !isDestination">
+    <div class="album-select" v-if="!activeAlbumMetadata && !hasNoAlbums">
       <v-divider></v-divider>
 
       <v-card-title primary-title>
@@ -33,10 +33,10 @@
           </v-flex>
 
           <v-flex xs12 md4 offset-md2>
-            <div v-if="isDestination">
+            <div v-if="hasNoAlbums">
             </div>
             <div v-else>
-              <v-btn v-model="isDestination" @click="openCreateAlbumDialog">Create new album</v-btn>
+              <v-btn v-model="hasNoAlbums" @click="openCreateAlbumDialog">Create new album</v-btn>
             </div>
           </v-flex>
         </v-layout>
@@ -133,7 +133,7 @@ export default {
     toggleCreateAlbumDialog: Function,
     createAlbumDialogActive: Boolean,
     activeAlbumMetadata: Object,
-    isDestination: {
+    hasNoAlbums: {
       default: false,
       type: Boolean,
     },
@@ -262,7 +262,7 @@ export default {
      */
     albumNames() {
       let albumNames = [];
-      if (!this.isDestination) {
+      if (!this.hasNoAlbums) {
       for (let i = 0; i < this.allAlbums.length; i++) {
         if (!this.allAlbums[i].isPermanent && (this.allAlbums[i].name.toLowerCase() !== ('all'))
         ) {
@@ -278,7 +278,7 @@ export default {
      */
     selectedAlbums() {
       let selectedAlbums = [];
-      if (!this.isDestination) {
+      if (!this.hasNoAlbums) {
         for (let i = 0; i < this.allAlbums.length; i++) {
           if (
             this.selectedAlbumNames.includes(this.allAlbums[i].name) &&

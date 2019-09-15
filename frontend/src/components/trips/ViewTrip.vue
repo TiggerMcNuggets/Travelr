@@ -192,7 +192,7 @@
           :uploadMedia="uploadMedia"
           :openUploadDialog="toggleShowUploadPhoto"
           :closeUploadDialog="toggleShowUploadPhoto"
-          :isDestination="false"
+          :hasNoAlbums="true"
         ></MediaUpload>
       </v-dialog>
 
@@ -372,7 +372,7 @@ export default {
       mediaRepository
         .uploadMediaToAlbum(this.userId, albumId, formData)
         .then(() => {
-          return this.getDestinationImages();
+          return this._getTrip();
         });
     },
 
