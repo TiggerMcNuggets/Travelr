@@ -14,9 +14,8 @@
           </v-list-tile-avatar>
 
           <v-layout>
-            <v-textarea name="input-6-2" placeholder="Add your thoughts..."></v-textarea>
-
-            <v-btn icon v-on:click="updateTrip" v-on="on">
+            <v-textarea name="input-6-2" v-model="commentText" placeholder="Add your thoughts..."></v-textarea>
+            <v-btn icon @click="postComment">
               <v-icon color="primary lighten-1">send</v-icon>
             </v-btn>
           </v-layout>
@@ -46,13 +45,19 @@
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
 
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+let commentRepository = RepositoryFactory.get("comment");
+
 export default {
   name: "TripComments",
 
-  props: {},
+  props: {
+    trip: Object
+  },
 
   data() {
     return {
+      commentText: "",
       userComments: [
         {
           id: 1,
@@ -89,6 +94,11 @@ export default {
   computed: {},
 
   methods: {
+    postComment() {
+      let commentBody = {"message": this.commentText}
+      commentRepository.postComment(this.$store.getters.getUser.id, this.trip.trip.id, commentBody).then(response => console.log(response))
+    },
+
     getProfileImageURL(userProfilePhoto, userId) {
       userId = userId ? userId : this.$store.getters.getUser.id;
       userProfilePhoto = userProfilePhoto
