@@ -1,5 +1,5 @@
 <template>
-  <v-flex v-if="selectedTrip.trip.usergroup">
+  <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup">
     <v-flex>
       <h2>Attendance</h2>
       <p
@@ -114,7 +114,6 @@ export default {
   },
 
   methods: {
-
     /**
      * Sends a request for changing status.
      */
@@ -135,7 +134,6 @@ export default {
         user => user.status == statusType
       ).length;
     },
-
 
     /**
      * Checks if the user status can be edited.
