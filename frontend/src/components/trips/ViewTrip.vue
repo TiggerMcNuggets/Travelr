@@ -186,6 +186,15 @@
           </v-timeline>
         </v-form>
       </v-flex>
+      
+      <v-dialog v-model="showUploadSection" width="800">
+        <MediaUpload
+          :uploadMedia="uploadMedia"
+          :openUploadDialog="toggleShowUploadPhoto"
+          :closeUploadDialog="toggleShowUploadPhoto"
+          :isDestination="false"
+        ></MediaUpload>
+      </v-dialog>
 
       <v-flex md5 pa-2>
         <TripDetails
@@ -253,6 +262,7 @@ import draggable from "vuedraggable";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
 import AddGroup from "./tripgroups/AddGroup";
+import MediaUpload from "../media/MediaUpload";
 
 import dateTime from "../common/dateTime/dateTime.js";
 import {
@@ -271,6 +281,7 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 
 let tripRepository = RepositoryFactory.get("trip");
 let destinationRepository = RepositoryFactory.get("destination");
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
@@ -278,7 +289,8 @@ export default {
     draggable,
     PageHeader,
     TripDetails,
-    AddGroup
+    AddGroup,
+    MediaUpload
   },
   mixins: [RollbackMixin, StoreTripsMixin],
   // local variables
@@ -303,7 +315,8 @@ export default {
         root: {
           user: {},
           id: this.$route.params.trip_id,
-          name: undefined
+          name: undefined,
+          albumId: undefined
         },
         trip: {
           id: undefined,
@@ -315,6 +328,7 @@ export default {
       userDestinations: [],
       shouldDisplayDialog: false,
       canDownloadTrip: true,
+      showUploadSection: false,
 
       // define functions to make them visible to the script
       getDepthData: getDepthData,
@@ -348,6 +362,39 @@ export default {
   methods: {
 
     /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          return this.getDestinationImages();
+        });
+    },
+
+    toggleShowUploadPhoto() {
+      this.showUploadSection = !this.showUploadSection;
+      console.log(this.showUploadSection);
+    },
+
+    /**
+     * Uploads the given media files to the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.trip.root.albumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
+    },
+
+    /**
      * Gets the header optoins for the view trip page.
      */
     headerOptions() {
@@ -359,6 +406,13 @@ export default {
               },
               icon: "people_alt",
               title: "Manage Group"
+            },
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
             }
           ]
         : [];
@@ -670,6 +724,7 @@ export default {
     }
     this._getTrip(this.userId, this.tripId).then(() => {
       this.trip = deepCopy(this.selectedTrip);
+      console.log(this.trip);
       this.rollbackSetPreviousBody(tripAssembler(this.trip));
       this.previousTripId = this.trip.trip.id;
 
