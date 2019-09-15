@@ -182,7 +182,8 @@ public class TripController extends Controller {
 
             // Format trip's usergroup
             List<NodeUserDTO> usergroupDTO = new ArrayList<>();
-            Grouping grouping = trip.getUserGroup();
+            Grouping grouping = tripService.getRootTripGrouping(tripId);
+
 
             if (grouping != null) {
                 for (UserGroup user : grouping.getUserGroups()) {
