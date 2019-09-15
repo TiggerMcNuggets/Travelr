@@ -74,6 +74,14 @@ public class CommentController {
         }).handle(AsyncHandler::handleResult);
     }
 
+    /**
+     * Deletes a comment on a trip for a user
+     * @param request The http request object
+     * @param userId The user's id
+     * @param tripId The trip's id
+     * @param commentId The comment's id
+     * @return 200 if all ok
+     */
     @Authorization.RequireAuth
     public CompletionStage<Result> toggleDeleteComment(Http.Request request, Long userId,Long tripId, Long commentId) {
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
