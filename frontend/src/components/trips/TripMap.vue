@@ -83,10 +83,9 @@
       * Returns a concatenated list of destinations
       */
       listOfDestinations() {
-        // return this.pathList().reduce((accumulator, path) => {
-        //   return accumulator.concat([...path])
-        // }, []);
-        return []
+        return this.pathList().reduce((accumulator, path) => {
+          return accumulator.concat([...path])
+        }, []);
       },
 
       
