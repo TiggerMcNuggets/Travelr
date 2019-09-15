@@ -1,18 +1,26 @@
 
 
 <template>
-  <v-layout row wrap>
-    <v-flex xs12 ma-2>
-      <h3>Status Stuff</h3>
+  <v-layout>
+    <v-flex xs12 ma-2 mt-4>
+      <UserStatusList :tripId="trip.trip.id"/>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import UserStatusList from "./tripgroups/UserStatusList";
+
 export default {
   name: "TripOverview",
 
-  props: {},
+  props: {
+    trip: Object
+  },
+
+  components: {
+    UserStatusList
+  },
 
   data() {
     return {};
