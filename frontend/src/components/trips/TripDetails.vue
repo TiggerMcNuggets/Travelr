@@ -43,10 +43,6 @@ export default {
     };
   },
 
-  props: {
-    trip: Object
-  },
-
   components: {
     TripOverview,
     TripComments,
