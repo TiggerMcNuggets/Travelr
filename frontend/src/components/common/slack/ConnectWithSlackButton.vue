@@ -1,22 +1,27 @@
 <template>
-  <div>
-    <a
+  <div >
+    <a v-if="!connectedWithSlack"
       :href="`https://slack.com/oauth/authorize?scope=${this.permissionScope}&client_id=${this.clientId}&redirect_uri=${redirectUrl}`">
       <img alt="Add to Slack" height="40" src="../../../assets/connect_slack.png"/>
     </a>
+    <img v-else alt="Connected to Slack" height="40" src="../../../assets/connected_to_slack.png"/>
+
   </div>
 </template>
 
 <script>
+  import { store } from "../../../store/index";
   import { RepositoryFactory } from "../../../repository/RepositoryFactory";
   let userRepository = RepositoryFactory.get("user");
 
   export default {
+    store,
 
     data() {
       return {
         permissionScope: "incoming-webhook,commands,admin,channels:write,team:read",
-        clientId: "737773912711.735910477760"
+        clientId: "737773912711.735910477760",
+        connectedWithSlack: store.getters.getUser.slack
       };
     },
 
@@ -42,7 +47,8 @@
       attemptAuthorisationGrant() {
         userRepository.slackOAuthStep3(this.$route.params.id, {code: this.authorisationCode})
           .then(response => {
-            console.log(response)
+            console.log(response);
+            store.dispatch("fetchMe");
           });
       }
     },

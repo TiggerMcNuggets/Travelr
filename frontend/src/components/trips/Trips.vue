@@ -34,7 +34,7 @@
               <h2>{{ item.name }}</h2>
             </div>
             <div class="crud-options" v-if="(isMyProfile || isAdminUser)">
-              <CreateSlackChannelButton :tripName="item.name"></CreateSlackChannelButton>
+              <CreateSlackChannelButton v-if="connectedWithSlack" :tripName="item.name"></CreateSlackChannelButton>
               <v-btn
                 v-if="!item.isPublic"
                 icon
@@ -111,6 +111,7 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       isAdmin: store.getters.getIsUserAdmin,
+      connectedWithSlack: store.getters.getUser.slack,
       isMyProfile: false,
       isAdminUser: false,
       userId: this.$route.params.id,
