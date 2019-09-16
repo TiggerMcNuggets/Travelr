@@ -1,10 +1,13 @@
 package service;
 
+import controllers.constants.APIResponses;
 import dto.trip.CreateTripDTO;
 import dto.trip.GetTripDTO;
 import dto.trip.NodeDTO;
 import dto.trip.TripStatusDTO;
 import exceptions.CustomException;
+import exceptions.ForbiddenException;
+import exceptions.NotFoundException;
 import models.*;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
@@ -34,7 +37,9 @@ public class TripService {
     }
 
     /**
-     * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to user
+     * Creates a TripNode from a CreateTripDTO and sets the owner of the trip to
+     * user
+     *
      * @param tripDTO
      * @param user
      * @return
@@ -52,6 +57,7 @@ public class TripService {
 
     /**
      * Get a trip by Id
+     *
      * @param tripId
      * @return
      */
@@ -66,8 +72,23 @@ public class TripService {
     }
 
     /**
-     * Gets the children for a given trip Id
-     * Ordered by ordinal to remove as much logic as possible from frontend
+     * Gets a trip by Id and handles not found exception
+     * @param tripId The trip's id
+     * @return Completable future of trip node
+     */
+    public CompletableFuture<TripNode> getTripByIdHandler(Long tripId) {
+        return getTripById(tripId).thenApplyAsync((optionalTripNode) -> {
+            if (!optionalTripNode.isPresent()) {
+                throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
+            }
+            return optionalTripNode.get();
+        });
+    }
+
+    /**
+     * Gets the children for a given trip Id Ordered by ordinal to remove as much
+     * logic as possible from frontend
+     *
      * @param tripId
      * @return
      */
@@ -84,6 +105,7 @@ public class TripService {
 
     /**
      * Creates a list that can be used for breadcrumbs on the frontend
+     *
      * @param tripId of the currently viewed trip
      * @return a list of TripNodes in order from top of the tree to the bottom
      */
@@ -92,7 +114,7 @@ public class TripService {
 
             TripNode trip = TripNode.find.byId(tripId);
 
-            if(trip == null) {
+            if (trip == null) {
                 return null;
             }
 
@@ -102,7 +124,7 @@ public class TripService {
 
             TripNode parentNode = trip.getParent();
 
-            while(parentNode != null) {
+            while (parentNode != null) {
                 navigation.add(0, parentNode);
                 parentNode = parentNode.getParent();
             }
@@ -112,36 +134,53 @@ public class TripService {
     }
 
     /**
+     * Creates a list that can be used for breadcrumbs on the frontend
+     *
+     * @param tripId of the currently viewed trip
+     * @return a list of TripNodes in order from top of the tree to the bottom
+     */
+    public Grouping getRootTripGrouping(Long tripId) {
+        TripNode trip = TripNode.find.byId(tripId);
+
+        if (trip == null)
+            return null;
+
+        TripNode parentNode = trip;
+        while (parentNode.getParent() != null) {
+            parentNode = parentNode.getParent();
+        }
+
+        Grouping grouping = parentNode.getUserGroup();
+        return grouping;
+    }
+
+    /**
      * Get all trips for a user
+     *
      * @param userId
      * @return
      */
     public CompletableFuture<List<TripNode>> getTripsForUser(Long userId) {
         return supplyAsync(() -> {
-            return TripNode.find.query().where().and()
-                    .or()
-                    .eq("user.id", userId)
-                    .eq("userGroup.userGroups.user.id", userId)
-                    .endOr()
-                    .eq("parent", null)
-                    .endAnd()
-                    .findList();
+            return TripNode.find.query().where().and().or().eq("user.id", userId)
+                    .eq("userGroup.userGroups.user.id", userId).endOr().eq("parent", null).endAnd().findList();
 
         }, context);
     }
 
-    // TODO Adam: uncouple function from DTO??? unsure if possible or best practise at this point
+    // TODO Adam: uncouple function from DTO??? unsure if possible or best practise
+    // at this point
 
     /**
      * updates a trips based on information chamnged by the user
-     * @param tripId trip to be updated
+     *
+     * @param tripId  trip to be updated
      * @param tripDTO
-     * @param user user who owns the trip
+     * @param user    user who owns the trip
      * @return the updated trip
      */
     public CompletableFuture<TripNode> updateTrip(Long tripId, GetTripDTO tripDTO, User user) {
         return supplyAsync(() -> {
-
 
             CompletionStage<Optional<TripNode>> tripStage = getTripById(tripId);
 
@@ -152,7 +191,7 @@ public class TripService {
                 /**
                  * Check Trip Exists
                  */
-                if(!tripNodeOptional.isPresent()) {
+                if (!tripNodeOptional.isPresent()) {
                     throw new CustomException(Http.Status.NOT_FOUND, "Trip not found");
                 }
 
@@ -161,36 +200,30 @@ public class TripService {
                 /**
                  * Check User can edit
                  */
-                if(trip.getUser().getId() != user.getId()) {
-                    throw new CustomException(Http.Status.UNAUTHORIZED, "You do not have permission to update this trip");
+                if (trip.getUser().getId() != user.getId()) {
+                    throw new CustomException(Http.Status.UNAUTHORIZED,
+                            "You do not have permission to update this trip");
                 }
 
                 trip.setName(tripDTO.name);
 
-
                 /**
                  * Get list of old deleted children
                  */
-                List<Long> oldDeletedIds = Node
-                        .find
-                        .query()
-                        .setIncludeSoftDeletes()
-                        .where()
-                        .eq("parent", trip)
-                        .eq("deleted", true)
-                        .findIds();
+                List<Long> oldDeletedIds = Node.find.query().setIncludeSoftDeletes().where().eq("parent", trip)
+                        .eq("deleted", true).findIds();
 
                 /**
                  * Get Updated Ids
                  */
                 List<Long> newNodeIds = new ArrayList<>();
 
-                if(tripDTO.getNodes() == null) {
+                if (tripDTO.getNodes() == null) {
                     tripDTO.setNodes(new ArrayList<>());
                 }
 
-                for(NodeDTO node : tripDTO.getNodes()) {
-                    if(node.getId() == null) {
+                for (NodeDTO node : tripDTO.getNodes()) {
+                    if (node.getId() == null) {
                         if (node.getType().equals("trip")) {
                             TripNode newNode = new TripNode(node.getName(), user);
                             newNode.setParent(trip);
@@ -199,7 +232,8 @@ public class TripService {
 
                         } else {
 
-                            Optional<Destination> destination = Optional.ofNullable(Destination.find.byId(node.destination.id));
+                            Optional<Destination> destination = Optional
+                                    .ofNullable(Destination.find.byId(node.destination.id));
                             if (!destination.isPresent()) {
                                 throw new CustomException(Http.Status.NOT_FOUND, "Destination not found");
                             }
@@ -228,13 +262,11 @@ public class TripService {
                     newNodeIds.add(node.getId());
                 }
 
-                for(Node oldNode : children) {
+                for (Node oldNode : children) {
                     if (!newNodeIds.contains(oldNode.getId())) {
                         oldNode.delete();
                     }
                 }
-
-
 
                 for (NodeDTO node : tripDTO.getNodes()) {
                     if (node.type.toLowerCase().equals("trip")) {
@@ -247,7 +279,8 @@ public class TripService {
                         tNode.setOrdinal(node.getOrdinal());
                         tNode.update();
                     } else {
-                        Optional<DestinationNode> dNodeOptional = Optional.ofNullable(DestinationNode.find.byId(node.getId()));
+                        Optional<DestinationNode> dNodeOptional = Optional
+                                .ofNullable(DestinationNode.find.byId(node.getId()));
                         if (!dNodeOptional.isPresent()) {
                             throw new CustomException(Http.Status.NOT_FOUND, "Destination node not found");
                         }
@@ -257,9 +290,11 @@ public class TripService {
                         dNode.setArrivalDate(node.getArrivalDate());
                         dNode.setDepartureDate(node.getDepartureDate());
 
-                        Optional<Destination> destinationOptional = Optional.ofNullable(Destination.find.byId(node.getDestination().getId()));
+                        Optional<Destination> destinationOptional = Optional
+                                .ofNullable(Destination.find.byId(node.getDestination().getId()));
                         if (!destinationOptional.isPresent()) {
-                            throw new CustomException(Http.Status.NOT_FOUND, "Destination for destination node not found");
+                            throw new CustomException(Http.Status.NOT_FOUND,
+                                    "Destination for destination node not found");
                         }
                         dNode.setDestination(destinationOptional.get());
 
@@ -285,7 +320,7 @@ public class TripService {
     public CompletableFuture<Boolean> deleteTrip(Long tripId) {
         return supplyAsync(() -> {
             TripNode trip = TripNode.find.byId(tripId);
-            if(trip != null) {
+            if (trip != null) {
                 trip.delete();
 
                 return true;
@@ -332,7 +367,8 @@ public class TripService {
             NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("user", user).eq("trip", trip).findOne();
             TripStatus tripStatus = tripStatusDTO.getStatus();
 
-            // Updates the user status if it exists otherwise creates a new user status entry.
+            // Updates the user status if it exists otherwise creates a new user status
+            // entry.
             if (userStatus == null) {
                 userStatus = new NodeUserStatus(user, trip, tripStatus);
                 userStatus.insert();
@@ -345,7 +381,8 @@ public class TripService {
             List<Node> childrenDestinations = Node.find.query().where().eq("parent", trip).eq("dtype", "destination")
                     .findList();
 
-            // Updates the status of each of the child destinations to the same status as the parent trip.
+            // Updates the status of each of the child destinations to the same status as
+            // the parent trip.
             for (Node destinationNode : childrenDestinations) {
                 NodeUserStatus userDestStatus = NodeUserStatus.find.query().where().eq("user", user)
                         .eq("node", destinationNode).findOne();
@@ -366,12 +403,7 @@ public class TripService {
      */
     public CompletableFuture<Long> toggleGroupInTrip(Node trip, Grouping group) {
         return supplyAsync(() -> {
-            if (trip.getUserGroup() == null) {
-                trip.setUserGroup(group);
-            } else {
-                trip.setUserGroup(null);
-            }
-
+            trip.setUserGroup(group);
             trip.update();
             return trip.getId();
 
@@ -379,7 +411,38 @@ public class TripService {
     }
 
     /**
+     * Deletes a user group from a trip.
+     *
+     * @param trip the Trip object*
+     */
+    public CompletableFuture<Long> deleteGroupFromTrip(Node trip) {
+        return supplyAsync(() -> {
+            trip.setUserGroup(null);
+            trip.update();
+            return trip.getId();
+        }, context);
+    }
+
+    /**
+     * Deletes all the user statuses of a group associated with a trip.
+     *
+     * @param trip  the Trip object*
+     * @param group the Group object*@return the Trip id of the user that has been
+     *              updated
+     */
+    public void deleteTripUserStatus(Grouping group, TripNode trip) {
+        for (UserGroup userGroup : group.getUserGroups()) {
+            NodeUserStatus userStatus = NodeUserStatus.find.query().where().eq("trip", trip)
+                    .eq("user", userGroup.getUser()).findOne();
+            if (userStatus != null) {
+                userStatus.delete();
+            }
+        }
+    }
+
+    /**
      * Checks if the user can view the trip information
+     *
      * @param trip The trip
      * @param user The user
      * @return true or false
@@ -387,15 +450,18 @@ public class TripService {
     public CompletableFuture<Boolean> isPermittedToRead(TripNode trip, User user) {
         return supplyAsync(() -> {
             // Check if admin or trip owner
-            if (user.isAdmin() || trip.getUser().equals(user)) return true;
+            if (user.isAdmin() || trip.getUser().equals(user))
+                return true;
 
-            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToRead(trip.getUserGroup().getId(), user);
+            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository
+                    .isPermittedToRead(trip.getUserGroup().getId(), user);
             return groupPermissionStage.join();
         }, context);
     }
 
     /**
      * Checks if the user is allowed to change trip information
+     *
      * @param trip The trip
      * @param user The user
      * @return true or false
@@ -403,11 +469,27 @@ public class TripService {
     public CompletableFuture<Boolean> isPermittedToWrite(TripNode trip, User user) {
         return supplyAsync(() -> {
             // Check if admin or trip owner
-            if (user.isAdmin() || trip.getUser().equals(user)) return true;
+            if (user.isAdmin() || trip.getUser().equals(user))
+                return true;
 
-            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository.isPermittedToWrite(trip.getUserGroup().getId(), user);
+            CompletableFuture<Boolean> groupPermissionStage = userGroupRepository
+                    .isPermittedToWrite(trip.getUserGroup().getId(), user);
             return groupPermissionStage.join();
         }, context);
     }
 
+    /**
+     * Instead of returning boolean, throws exception when not permitted to write
+     * @param trip The trip
+     * @param user The user
+     * @return null
+     */
+    public CompletableFuture<Void> checkWritePermissionHandler(TripNode trip, User user) {
+        return isPermittedToWrite(trip, user).thenApplyAsync(isPermitted -> {
+            if (!isPermitted) {
+                throw new ForbiddenException(APIResponses.TRIP_WRITE_DENIED);
+            }
+            return null;
+        });
+    }
 }
