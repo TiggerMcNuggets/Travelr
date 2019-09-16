@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
@@ -108,7 +109,8 @@ public class CommentController {
     }
 
     /**
-     * returns a
+     * returns a http response with a status of 200, 401 or 403 respectively for successfully retrieving comments,
+     * when the user making the request isn't authenticated and when a user does not have permissions to retrieve the comments
      * @param request the request containing two option query parameters, page and comments
      * @param tripId the id of the trip object
      * @param userId the id of the user
