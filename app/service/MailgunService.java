@@ -1,7 +1,7 @@
 package service;
 
-import akka.stream.scaladsl.FileIO;
-import akka.stream.scaladsl.Source;
+import akka.stream.javadsl.FileIO;
+import akka.stream.javadsl.Source;
 import akka.util.ByteString;
 import com.google.gson.JsonObject;
 import com.typesafe.config.ConfigFactory;
@@ -12,11 +12,9 @@ import models.UserGroup;
 import net.fortuna.ical4j.model.Calendar;
 import org.apache.commons.lang3.StringUtils;
 import play.api.Configuration;
-import play.libs.Files;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import play.libs.ws.WSResponse;
-import play.mvc.Http;
 import repository.DatabaseExecutionContext;
 
 import javax.inject.Inject;
@@ -26,15 +24,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import play.mvc.Http.MultipartFormData.*;
 
-import static play.mvc.Results.internalServerError;
-import static play.mvc.Results.ok;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
 
 /**
  * A service which holds the email notification logic using the MailGun API
@@ -103,14 +100,11 @@ public class MailgunService {
      * @return an integer response code from the Mailgun API
      */
     private CompletionStage<Integer> sendMailgunRequestWithAttachment(WSRequest request, File file) {
-//        return request.post(new Source(new FilePart("attachment", file.getName(), "File", FileIO.).thenApplyAsync(WSResponse::getStatus);
-    ws.url(mailgunApi)
-            .post(
-                    .Source(
-                            FilePart("Attachment", file.getName(), Option)
-                    )
-            )
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        Source<ByteString, ?> fileSource = FileIO.fromPath(Paths.get(file.getName()));
+        FilePart<Source<ByteString, ?>> fp = new FilePart<>(getBaseName(file.getName()), file.getName(), "text/plain", fileSource);
+        DataPart dp = new DataPart("key", "value");
+
+        return request.post(Source.from(Arrays.asList(fp, dp))).thenApplyAsync(WSResponse::getStatus);
     }
 
 
@@ -192,55 +186,35 @@ public class MailgunService {
     public CompletableFuture<Integer> sendTripUpdateEmail(ArrayList<User> recipients, String tripName, Long userId, Long tripId) {
         TripNode trip = TripNode.find.byId(tripId);
         Calendar calendar = iCalCreator.createCalendarFromTrip(trip);
-        File tempFile;
+        File tempFile = null;
+        WSRequest request;
         try {
             tempFile = File.createTempFile(trip.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
             bw.write(calendar.toString());
             bw.close();
-            JsonObject recipientVariables = new JsonObject();
-            JsonObject recipientVariableFields = new JsonObject();
-            String subject = "Travelr - Your trip " + tripName + " was recently updated.";
-
-            for (User recipient: recipients) {
-                recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
-                recipientVariableFields.addProperty("tripName", tripName);
-                recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
-                        + userId + "/trips/" + tripId);
-                recipientVariables.add(recipient.email, recipientVariableFields);
-                recipientVariableFields = new JsonObject();
-            }
-
-            Http.Request request;
-            request.
-//            WSRequest request = buildMailgunRequest(recipients,
-//                    subject,
-//                    "trip-updated",
-//                    recipientVariables);
-            Http.MultipartFormData<Files.TemporaryFile> body = request.setBody(tempFile).setContentType("multipart/form-data");
-            Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         JsonObject recipientVariables = new JsonObject();
         JsonObject recipientVariableFields = new JsonObject();
         String subject = "Travelr - Your trip " + tripName + " was recently updated.";
 
-            for (User recipient: recipients) {
-                recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
-                recipientVariableFields.addProperty("tripName", tripName);
-                recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
-                 + userId + "/trips/" + tripId);
-                recipientVariables.add(recipient.email, recipientVariableFields);
-                recipientVariableFields = new JsonObject();
-            }
+        for (User recipient: recipients) {
+            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+            recipientVariableFields.addProperty("tripName", tripName);
+            recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
+                    + userId + "/trips/" + tripId);
+            recipientVariables.add(recipient.email, recipientVariableFields);
+            recipientVariableFields = new JsonObject();
+        }
 
-        WSRequest request = buildMailgunRequest(recipients,
+        request = buildMailgunRequest(recipients,
                 subject,
                 "trip-updated",
                 recipientVariables);
-        Http.MultipartFormData<Files.TemporaryFile> body = request.setBody(tempFile).asMultipartFormData();
-        Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
+
         return sendMailgunRequestWithAttachment(request, tempFile).toCompletableFuture();
     }
 }
