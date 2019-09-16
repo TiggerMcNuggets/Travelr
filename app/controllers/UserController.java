@@ -289,21 +289,22 @@ public class UserController extends Controller {
      * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId, String groupName) {
-        // TODO: Add slack logic
-
+    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
         SlackUser groupOwner = SlackUser.find.findByUserId(userId);
         if (groupOwner == null) {
             return CompletableFuture.completedFuture(badRequest("slack user is null or not found, user may not have connected to slack"));
+        }
+
+        Optional<String> channelName = Optional.ofNullable(request.body().asJson().get("channelName").asText());
+        if (!channelName.isPresent()) {
+            return CompletableFuture.completedFuture(badRequest("channel name is null or not found"));
         }
 
         /* Private channel names can only contain lowercase letters, numbers,
         hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
         if this is given */
 
-        return slackService.requestPrivateChannel(groupOwner, groupName).thenApplyAsync(resHandler -> {
-
-
+        return slackService.requestPrivateChannel(groupOwner, channelName.get()).thenApplyAsync(resHandler -> {
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
             if (!user.isPresent()) {
                 return badRequest("user is null or not found");
@@ -319,11 +320,9 @@ public class UserController extends Controller {
             Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
             System.out.println("do i have the correct name???    " + slackGroupName);
 
-            
             // store group name with slack user and update
             groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
             groupOwner.update();
-
 
             return ok("Slack channel created");
         });

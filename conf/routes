@@ -24,7 +24,7 @@ GET         /api/travellers/:id                     controllers.UserController.g
 PUT         /api/travellers/:id                     controllers.UserController.updateUserGivenUser(request: Request, id:Long)
 PUT         /api/travellers/:id/toggle_deleted      controllers.UserController.toggleUserDeleted(request: Request, id: Long)
 POST        /api/travellers/:id/slackRequestAuth    controllers.UserController.slackRequestAuth(request: Request, id: Long)
-POST        /api/travellers/:id/slackPrivateChannel controllers.UserController.slackCreatePrivateChannel(request: Request, id: Long, channelName: String)
+POST        /api/travellers/:id/slackPrivateChannel controllers.UserController.slackCreatePrivateChannel(request: Request, id: Long)
 
 
 # Personal Photos and Profile Photos

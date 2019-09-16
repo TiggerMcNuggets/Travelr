@@ -67,7 +67,7 @@ public class SlackService {
      * @return the status of the sent request
      */
     public CompletableFuture<ResponseHandler> requestPrivateChannel(SlackUser groupOwner, String groupName) {
-        String slackURL = slackApiURL + "/groups.create";
+        String slackURL = slackApiURL + "/channels.create";
         WSRequest request = ws.url(slackURL).setContentType("application/x-www-form-urlencoded");
         request.addQueryParameter("token", groupOwner.getAccessToken());
         request.addQueryParameter("name", groupName);
