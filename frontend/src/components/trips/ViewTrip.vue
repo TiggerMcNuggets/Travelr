@@ -188,9 +188,7 @@
       </v-flex>
 
       <v-flex md5 pa-2>
-        <TripDetails
-          :trip="trip"
-        />
+        <TripDetails :trip="trip"/>
       </v-flex>
 
       <v-flex md4 pa-2>
@@ -343,15 +341,29 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.trip.nodes
       );
+    },
+
+    isTripOwner() {
+      return this.selectedTrip.root.user.id === this.$store.getters.getUser.id;
+    },
+
+    isGroupOwner() {
+      this.selectedTrip.trip.usergroup.forEach(user => {
+        if (user.id == this.$store.getters.getUser.id && this.user.owner) {
+          return true;
+        }
+      });
+      return false;
     }
   },
   methods: {
-
     /**
      * Gets the header optoins for the view trip page.
      */
     headerOptions() {
-      return this.selectedTrip.trip.id == this.selectedTrip.root.id
+      return this.selectedTrip &&
+        this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+        (this.isTripOwner || this.isGroupOwner || this.isAdmin)
         ? [
             {
               action: () => {

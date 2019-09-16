@@ -13,7 +13,7 @@
             :items="filteredGroups"
             item-text="text"
             item-value="id"
-            label="Select"
+            label="Select Group"
             persistent-hint
             return-object
             single-line

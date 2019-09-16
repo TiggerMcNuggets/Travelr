@@ -9,6 +9,7 @@ import TravellerTypesRepository from "./TravellerTypesRepository";
 import SelectDataRepository from "./SelectDataRepository";
 import MediaRepository from "./MediaRepository";
 import UserGroupRepository from "./UserGroupRepository";
+import CommentRepository from "./CommentsRepository";
 
 // Add all repositories here to access from anywhere
 const repositories = {
@@ -22,7 +23,8 @@ const repositories = {
   travellerType: TravellerTypesRepository,
   selectData: SelectDataRepository,
   media: MediaRepository,
-  userGroup: UserGroupRepository
+  userGroup: UserGroupRepository,
+  comment: CommentRepository
 };
 
 export const RepositoryFactory = {
