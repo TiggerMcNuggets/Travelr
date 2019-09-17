@@ -48,6 +48,8 @@
               >
                 <v-icon color="red lighten-1">delete</v-icon>
               </v-btn>
+    <emoji-picker v-model="text"/>
+    {{text}}
 
             </v-card-actions>
           </v-card>
@@ -103,6 +105,7 @@
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
   import PageHeader from "../common/header/PageHeader";
+import EmojiPicker from "../comment/emoji/EmojiPicker";
 
 
   export default {
