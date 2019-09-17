@@ -1,5 +1,6 @@
 package javaSteps.steps.comments;
 
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
@@ -15,6 +16,13 @@ import static play.test.Helpers.contentAsString;
 
 public class CommonCommentSteps {
     private StateSingleton state = StateSingleton.getInstance();
+
+    @Given("I add a comment {string} to the trip")
+    public void i_add_a_comment_to_the_trip(String message) {
+        Comment comment = new Comment(message, state.getTrip(), state.getUser());
+        comment.insert();
+        state.setComment(comment);
+    }
 
     @When("I check the comment")
     public void i_check_the_comment() {
