@@ -77,9 +77,9 @@ public class MediaController extends Controller {
         // Check if the album is for a trip and if the person is in the trip
         TripNodeFinder tripNodeFinder = new TripNodeFinder();
         Boolean isInGroup = true;
-        TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
-        if (trip != null) {
-            isInGroup = tripService.isPermittedToRead(trip, user).join();
+        Optional<TripNode> trip = Optional.ofNullable(tripNodeFinder.findByAlbumIdIncludeDeleted(album_id));
+        if (trip.isPresent()) {
+            isInGroup = tripService.isPermittedToRead(trip.get(), user).join();
         }
 
 
@@ -105,10 +105,10 @@ public class MediaController extends Controller {
         TripNodeFinder tripNodeFinder = new TripNodeFinder();
         Boolean isInGroup = true;
         Boolean ownsTrip = false;
-        TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
-        if (trip != null) {
-            isInGroup = tripService.isPermittedToRead(trip, user).join();
-            ownsTrip = trip.getUser().getId() == user.getId();
+        Optional<TripNode> trip = Optional.ofNullable(tripNodeFinder.findByAlbumIdIncludeDeleted(album_id));
+        if (trip.isPresent()) {
+            isInGroup = tripService.isPermittedToWrite(trip.get(), user).join();
+            ownsTrip = trip.get().getUser().getId().equals(user.getId());
         }
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
