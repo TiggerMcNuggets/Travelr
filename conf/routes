@@ -102,7 +102,6 @@ PUT         /api/users/:userId/trips/:tripId/comments/:commentId/toggle_deleted 
 PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji  controllers.CommentController.addUserEmoji(request: Request, userId: Long, tripId: Long, commentId: Long)
 
 
-
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)

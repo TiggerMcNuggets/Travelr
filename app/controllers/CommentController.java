@@ -120,7 +120,7 @@ public class CommentController {
         CompletionStage<Comment> commentStage = commentRepository.getCommentHandler(commentId);
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
-        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkReadPermissionHandler(tripNode, user).join());
 
         // Get tripNode without nesting
         CompletionStage<Comment> combineStage = permissionStage.thenCombineAsync(commentStage, (permission, comment) -> comment);

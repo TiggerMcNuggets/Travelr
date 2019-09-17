@@ -96,6 +96,7 @@ public class CommentRepository {
                 commentEmoji.addUser(user);
             }
 
+            commentEmoji.save();
             return commentEmoji.getId();
         }, executionContext);
     }
