@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import play.mvc.Http.MultipartFormData.*;
@@ -65,7 +66,7 @@ public class MailgunService {
      * @param recipientVariables The custom variables to be included in the mailgun request, Json formatted as a string.
      * @return a WSRequest http request to be sent to the mailgun API.
      */
-    private WSRequest buildMailgunRequest(ArrayList<User> recipients, String subject, String template, JsonObject recipientVariables){
+    private WSRequest buildMailgunRequest(List<User> recipients, String subject, String template, JsonObject recipientVariables){
         WSRequest request = ws.url(mailgunApi);
         request.addQueryParameter("from", mailgunFromAddress);
         for (User recipient : recipients) {
@@ -179,12 +180,11 @@ public class MailgunService {
      * a user following the trip. This function uses the "trip-update-email" template on the mailgun account
      * and provides the user's first name, email and the previous name of the trip updated.
      *
-     * @param recipients An arraylist of recipient user objects.
      * @param user The user that chose to send iCal
      * @param tripNode The tripNode
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripUpdateEmail(ArrayList<User> recipients, User user, TripNode tripNode) {
+    public CompletableFuture<Integer> sendTripUpdateEmail(User user, TripNode tripNode) {
         Calendar calendar = iCalCreator.createCalendarFromTrip(tripNode);
         File tempFile = null;
         WSRequest request;
@@ -201,7 +201,7 @@ public class MailgunService {
         JsonObject recipientVariableFields = new JsonObject();
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
 
-        for (User recipient: recipients) {
+        for (User recipient: tripNode.getUserGroup().getUsers()) {
             recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
             recipientVariableFields.addProperty("tripName", tripNode.getName());
             recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
@@ -210,7 +210,7 @@ public class MailgunService {
             recipientVariableFields = new JsonObject();
         }
 
-        request = buildMailgunRequest(recipients,
+        request = buildMailgunRequest(tripNode.getUserGroup().getUsers(),
                 subject,
                 "trip-updated",
                 recipientVariables);
