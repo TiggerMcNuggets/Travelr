@@ -109,13 +109,13 @@ public class CommentController {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> addUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
-        Form<AddEmojiReq> adddEmojiReqForm = formFactory.form(AddEmojiReq.class).bindFromRequest(request);
+        Form<AddEmojiReq> addEmojiReqForm = formFactory.form(AddEmojiReq.class).bindFromRequest(request);
 
-        if (adddEmojiReqForm.hasErrors()) {
+        if (addEmojiReqForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.COMMENT_BAD_REQUEST));
         }
 
-        AddEmojiReq addEmojiReq = adddEmojiReqForm.get();
+        AddEmojiReq addEmojiReq = addEmojiReqForm.get();
 
         CompletionStage<Comment> commentStage = commentRepository.getCommentHandler(commentId);
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
