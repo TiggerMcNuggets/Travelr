@@ -193,7 +193,7 @@
 
       <v-flex md4 pa-2>
         <!--<div class="temp-map"></div>-->
-        <TripMap :destinations="trip.trip.nodes"/>
+        <TripMap :nodes="trip.trip.nodes"/>
       </v-flex>
     </v-layout>
   </v-container>
