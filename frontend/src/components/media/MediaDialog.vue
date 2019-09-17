@@ -12,7 +12,7 @@
         <v-layout d-flex>
           <h5 class="headline mb-0 mr-2">Description</h5>
           <v-icon v-if="editCaption" @click="updateMediaAndSave(clickedImage)">save</v-icon>
-          <v-icon v-else-if="canCRUDMedia" @click="editCaption = true">edit</v-icon>
+          <v-icon v-else-if="canCRUDMedia(clickedImage)" @click="editCaption = true">edit</v-icon>
         </v-layout>
         <div v-if="editCaption">
           <v-text-field v-model="clickedImage.caption" :counter="250" label="Caption"></v-text-field>
@@ -21,9 +21,9 @@
       </div>
     </v-card-title>
 
-    <v-divider v-if="canCRUDMedia"></v-divider>
+    <v-divider v-if="canCRUDMedia(clickedImage)"></v-divider>
 
-    <v-card-actions v-if="canCRUDMedia">
+    <v-card-actions v-if="canCRUDMedia(clickedImage)">
       <v-select
         v-model="selectedAlbums"
         :items="albums"
@@ -61,7 +61,7 @@
         </v-flex>
       </v-layout>
     </v-card-actions>
-    <v-card-actions v-if="canCRUDMedia">
+    <v-card-actions v-if="canCRUDMedia(clickedImage)">
       <v-btn color="error" @click="setProfilePhoto">Set Profile Photo</v-btn>
       <v-btn color="error" @click="openConfirmDelete">Delete</v-btn>
       <v-spacer></v-spacer>
@@ -105,9 +105,9 @@ export default {
   },
 
   computed: {
-    canCRUDMedia() {
-      return this.isAdminUser || this.isMyProfile;
-    },
+    // canCRUDMedia() {
+    //   return this.isAdminUser || this.isMyProfile;
+    // },
 
     mediaURL() {
       return (
@@ -136,6 +136,12 @@ export default {
   },
 
   methods: {
+    /**
+     * Check to see if the user can crud the selected media
+     */
+    canCRUDMedia(clickedImage) {
+      return this.isAdminUser || this.isMyProfile || clickedImage.userID == store.getters.getUser.id;
+    },
     async updateAlbums() {
       for (let album of this.selectedAlbums) {
         try {

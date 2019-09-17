@@ -12,16 +12,14 @@ import finders.TripNodeFinder;
 import finders.UserFinder;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
-import models.Album;
-import models.Destination;
-import models.TripNode;
-import models.User;
+import models.*;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.twirl.api.Content;
 import repository.AlbumRepository;
 import repository.MediaRepository;
 import repository.PersonalPhotoRepository;
@@ -31,6 +29,7 @@ import utils.FileHelper;
 import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -84,8 +83,12 @@ public class MediaController extends Controller {
 
 
         return albumRepository.list(album_id, (isInGroup || (user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
-            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
-            return ok(Ebean.json().toJson(media, pathProperties));
+//            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
+//            return ok(Ebean.json().toJson(media, pathProperties));
+            ObjectMapper mapper = new ObjectMapper();
+            AlbumContentRes res = new AlbumContentRes(media);
+            JsonNode jsonResponse = mapper.valueToTree(res);
+            return ok(jsonResponse);
         });
     }
 

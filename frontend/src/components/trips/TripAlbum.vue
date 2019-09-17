@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import MediaGrid from "../media/MediaGrid";
 import MediaDialog from "../media/MediaDialog";
@@ -32,6 +33,7 @@ import base_url from "../../repository/BaseUrl";
 let mediaRepository = RepositoryFactory.get("media");
 
 export default {
+  store,
   name: "TripAlbums",
 
   components: {
@@ -48,8 +50,8 @@ export default {
       clickedImageWidth: 0,
       viewMediaDialogActive: false,
       clickedImage: null,
-      isMyProfile: true,
-      isAdminUser: true,
+      isMyProfile: false,
+      isAdminUser: false,
       files: [],
       };
   },
@@ -70,6 +72,8 @@ export default {
       this.viewMediaDialogActive = false;
     },
     openImage(image) {
+        console.log("IN THIS PART 1")
+        console.log(image);
         // Trying to open an photo/video/media
         const myImage = new Image();
         myImage.src =
@@ -89,10 +93,10 @@ export default {
           this.trip.root.albumId
         )
         .then(response => {
-          response.data.forEach(item => {
+          response.data.mediaItems.forEach(item => {
             item.filename = item.uriString;
           });
-          this.files = response.data;
+          this.files = response.data.mediaItems;
         });
     }
   },
@@ -101,6 +105,9 @@ export default {
     if (this.trip.root.albumId) {
       this.getTripImages();
     }
+    this.isAdminUser = store.getters.getIsUserAdmin;
+    console.log(this.isAdminUser);
+    console.log(store.getters.getIsUserAdmin);
   }
   
 };
