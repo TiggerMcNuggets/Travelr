@@ -99,6 +99,7 @@ PUT         /api/users/:userId/trips/:nodeId/status        controllers.TripContr
 # Comments
 POST        /api/users/:userId/trips/:tripId/comments       controllers.CommentController.createComment(request: Request, userId: Long, tripId: Long)
 PUT         /api/users/:userId/trips/:tripId/comments/:commentId/toggle_deleted  controllers.CommentController.toggleDeleteComment(request: Request, userId: Long, tripId: Long, commentId: Long)
+PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji  controllers.CommentController.addUserEmoji(request: Request, userId: Long, tripId: Long, commentId: Long)
 
 
 
