@@ -105,7 +105,7 @@ public class CommentController {
      * @param userId The user id
      * @param tripId The trip id
      * @param commentId The comment id
-     * @return The
+     * @return 201 response if created successfully
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> addUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
@@ -122,7 +122,7 @@ public class CommentController {
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
         CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkReadPermissionHandler(tripNode, user).join());
 
-        // Get tripNode without nesting
+        // Get comment without nesting
         CompletionStage<Comment> combineStage = permissionStage.thenCombineAsync(commentStage, (permission, comment) -> comment);
         CompletionStage<Long> insertStage = combineStage.thenCombineAsync(userStage, (comment, user) -> commentRepository.addEmoji(addEmojiReq, comment, user).join());
 
