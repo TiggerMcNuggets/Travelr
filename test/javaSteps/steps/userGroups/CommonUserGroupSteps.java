@@ -121,10 +121,21 @@ public class CommonUserGroupSteps {
     }
 
     /**
-     * Adds the user as a member of the group
+     * Adds the current user as a member of the group
      */
     @Given("I am a member of the group")
     public void iAmAMemberOfTheGroup() {
+        List<UserGroup> userGroups = state.getGroup().getUserGroups();
+        userGroups.add(new UserGroup(state.getUser(), state.getGroup(), false));
+        state.getGroup().setUserGroups(userGroups);
+        state.getGroup().update();
+    }
+
+    /**
+     * Adds the given user as a member of the group
+     */
+    @Given("The user is a normal member of the group")
+    public void theUserIsANormalMemberOfTheGroup() {
         List<UserGroup> userGroups = state.getGroup().getUserGroups();
         userGroups.add(new UserGroup(state.getUser(), state.getGroup(), false));
         state.getGroup().setUserGroups(userGroups);
