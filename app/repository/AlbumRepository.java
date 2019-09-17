@@ -124,12 +124,11 @@ public class AlbumRepository {
                     .eq("parent", null)
                     .endAnd()
                     .findList();
-            List<Album> userAlbums = new ArrayList<>();
-            for (Album album: user.getAlbums()) {
-                userAlbums.add(album);
-            }
+            List<Album> userAlbums = new ArrayList<>(user.getAlbums());
             for (TripNode trip: trips) {
-                userAlbums.add(trip.getDefaultAlbum());
+                if (!userAlbums.contains(trip.getDefaultAlbum())) {
+                    userAlbums.add(trip.getDefaultAlbum());
+                }
             }
             return userAlbums;
         }, executionContext);
