@@ -48,13 +48,11 @@
               >
                 <v-icon color="red lighten-1">delete</v-icon>
               </v-btn>
-    <emoji-picker v-model="text"/>
-    {{text}}
-
             </v-card-actions>
           </v-card>
         </v-hover>
       </v-flex>
+      <emoji-picker v-model="text"/>
     </v-layout>
   </v-container>
 </template>
@@ -105,11 +103,18 @@
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
   import PageHeader from "../common/header/PageHeader";
-import EmojiPicker from "../comment/emoji/EmojiPicker";
+  import EmojiPicker from "../comment/emoji/EmojiPicker";
 
 
   export default {
     store,
+
+    // child components
+    components: {
+        CreateTrip: CreateTrips,
+        PageHeader,
+        EmojiPicker: EmojiPicker
+    },
 
     mixins: [
       RollbackMixin, StoreTripsMixin
@@ -119,6 +124,7 @@ import EmojiPicker from "../comment/emoji/EmojiPicker";
     // local variables
     data() {
       return {
+          text: "",
         showCreateTrip: false,
         searchValue: "",
         isAdmin: store.getters.getIsUserAdmin,
@@ -153,12 +159,6 @@ import EmojiPicker from "../comment/emoji/EmojiPicker";
           return a.id - b.id;
         });
       }
-    },
-
-    // child components
-    components: {
-      CreateTrip: CreateTrips,
-      PageHeader
     },
 
     methods: {

@@ -1,6 +1,6 @@
 <template>
   <div class="textarea-emoji-picker">
-    <picker v-show="showEmojiPicker" title="Pick your emoji..." emoji="point_up" @select="addEmoji" />
+    <picker class="emoji-picker" v-show="showEmojiPicker" title="Pick your emoji..." emoji="point_up" @select="addEmoji" />
 
     <span class="emoji-trigger" :class="{ 'triggered': showEmojiPicker }" @mousedown.prevent="toggleEmojiPicker">
       <svg style="width:20px;height:20px" viewBox="0 0 24 24">
@@ -42,12 +42,18 @@ export default {
       this.$nextTick(() => {
         textarea.selectionEnd = cursorPosition + emoji.native.length;
       });
+      this.toggleEmojiPicker();
     },
   },
 };
 </script>
 
 <style scoped>
+
+.emoji-picker {
+  z-index: 1;
+}
+
 .textarea-emoji-picker {
   position: relative;
   width: 400px;
@@ -55,7 +61,7 @@ export default {
 }
 .textarea {
   width: 100%;
-  min-height: 300px;
+  min-height: 200px;
   outline: none;
   box-shadow: none;
   padding: 10px 28px 10px 10px;
