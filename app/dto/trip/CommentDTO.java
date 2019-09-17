@@ -1,4 +1,5 @@
 package dto.trip;
+import models.Comment;
 import models.User;
 
 
@@ -61,6 +62,15 @@ public class CommentDTO {
 
     public void setProfilePhoto(String profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public CommentDTO(Comment comment) {
+        this.setId(comment.getId());
+        this.setUserId(comment.getUser().getId());
+        this.setUserFirstName(comment.getUser().getFirstName());
+        this.setUserLastName(comment.getUser().getLastName());
+        this.setProfilePhoto(comment.getUser().getUserProfilePhoto());
+        this.setComment(comment.getMessage());
     }
 
 }

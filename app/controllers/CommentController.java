@@ -145,15 +145,8 @@ public class CommentController {
         List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
         List<CommentDTO> commentDTOList = new ArrayList<>();
         for (Comment comment: commentList) {
-            CommentDTO commentDTO = new CommentDTO();
-            commentDTO.setId(comment.getId());
-            commentDTO.setUserId(comment.getUser().getId());
-            commentDTO.setUserFirstName(comment.getUser().getFirstName());
-            commentDTO.setUserLastName(comment.getUser().getLastName());
-            commentDTO.setProfilePhoto(comment.getUser().getUserProfilePhoto());
-            commentDTO.setComment(comment.getMessage());
+            CommentDTO commentDTO = new CommentDTO(comment);
             commentDTOList.add(commentDTO);
-
         }
         return CompletableFuture.completedFuture(ok(Json.toJson(commentDTOList)));
     }
