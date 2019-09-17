@@ -161,18 +161,14 @@ public class TripService {
      * @return Boolean
      */
     public Boolean userOwnsTripGroup(Long userId, Long tripId) {
-        TripNode trip = TripNode.find.query().where().and()
+        Optional<TripNode> trip = Optional.ofNullable(TripNode.find.query().where().and()
                 .eq("userGroup.userGroups.user.id", userId)
                 .eq("userGroup.userGroups.isOwner", true)
                 .eq("id", tripId)
                 .eq("parent", null)
                 .endAnd()
-                .findOne();
-        if (trip == null) {
-            return false;
-        } else {
-            return true;
-        }
+                .findOne());
+        return trip.isPresent();
     }
 
     /**
