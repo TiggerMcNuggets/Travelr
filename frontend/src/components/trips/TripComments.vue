@@ -38,7 +38,7 @@
                   :sendEmojiForComment="postCommentEmoji"/>
         </v-card>
         <div class="d-flex">
-          <div v-for="emoji in comment.emojis" class="width-restriction">
+          <div v-for="(emoji, index) in comment.emojis" class="width-restriction" v-bind:key="index">
             
             <v-tooltip top>
               <template v-slot:activator="{ on }">
