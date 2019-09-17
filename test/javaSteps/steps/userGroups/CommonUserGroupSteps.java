@@ -130,15 +130,4 @@ public class CommonUserGroupSteps {
         state.getGroup().setUserGroups(userGroups);
         state.getGroup().update();
     }
-
-    /**
-     * Adds the given user as a member of the group
-     */
-    @Given("The user is a normal member of the group")
-    public void theUserIsANormalMemberOfTheGroup() {
-        List<UserGroup> userGroups = state.getGroup().getUserGroups();
-        userGroups.add(new UserGroup(state.getUser(), state.getGroup(), false));
-        state.getGroup().setUserGroups(userGroups);
-        state.getGroup().update();
-    }
 }

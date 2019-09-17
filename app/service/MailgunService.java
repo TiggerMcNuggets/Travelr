@@ -180,16 +180,16 @@ public class MailgunService {
      * and provides the user's first name, email and the previous name of the trip updated.
      *
      * @param recipients An arraylist of recipient user objects.
-     * @param tripName the previous name of the trip
+     * @param user The user that chose to send iCal
+     * @param tripNode The tripNode
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripUpdateEmail(ArrayList<User> recipients, String tripName, Long userId, Long tripId) {
-        TripNode trip = TripNode.find.byId(tripId);
-        Calendar calendar = iCalCreator.createCalendarFromTrip(trip);
+    public CompletableFuture<Integer> sendTripUpdateEmail(ArrayList<User> recipients, User user, TripNode tripNode) {
+        Calendar calendar = iCalCreator.createCalendarFromTrip(tripNode);
         File tempFile = null;
         WSRequest request;
         try {
-            tempFile = File.createTempFile(trip.getName(), ".ics");
+            tempFile = File.createTempFile(tripNode.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
             bw.write(calendar.toString());
             bw.close();
@@ -199,14 +199,14 @@ public class MailgunService {
 
         JsonObject recipientVariables = new JsonObject();
         JsonObject recipientVariableFields = new JsonObject();
-        String subject = "Travelr - Your trip " + tripName + " was recently updated.";
+        String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
 
         for (User recipient: recipients) {
-            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
-            recipientVariableFields.addProperty("tripName", tripName);
+            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
+            recipientVariableFields.addProperty("tripName", tripNode.getName());
             recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
-                    + userId + "/trips/" + tripId);
-            recipientVariables.add(recipient.email, recipientVariableFields);
+                    + user.getId() + "/trips/" + tripNode.getId());
+            recipientVariables.add(recipient.getEmail(), recipientVariableFields);
             recipientVariableFields = new JsonObject();
         }
 

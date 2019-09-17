@@ -22,8 +22,10 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import repository.UserRepository;
 import service.MailgunService;
 import service.TripService;
+import utils.AsyncHandler;
 import utils.iCalCreator;
 
 import java.io.BufferedWriter;
@@ -44,13 +46,15 @@ public class TripController extends Controller {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
+    private final UserRepository userRepository;
     private final MailgunService mailgunService;
 
     @Inject
 
-    public TripController(TripService tripService, MailgunService mailgunService) {
+    public TripController(TripService tripService, UserRepository userRepository, MailgunService mailgunService) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -83,6 +87,22 @@ public class TripController extends Controller {
             e.printStackTrace();
             return CompletableFuture.completedFuture(internalServerError());
         }
+    }
+
+    @Authorization.RequireAuth
+    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId) {
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
+        CompletionStage<User> userStage = userRepository.getUserHandler(userId);
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+
+        // Get tripNode without nesting
+        CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
+        CompletionStage<List<UserGroup>> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> tripNode.getUserGroup().getUserGroups());
+
+        return testStage.thenApplyAsync(userGroups -> created(APIResponses.ICAL_SUCCESS)).handle(AsyncHandler::handleResult);
     }
 
     /**
