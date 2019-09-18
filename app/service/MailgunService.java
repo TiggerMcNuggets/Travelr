@@ -54,6 +54,7 @@ public class MailgunService {
         this.context = context;
         this.ws = ws;
         this.websiteUrl = ConfigFactory.load().getString("baseRedirectUrl");
+        this.iCalCreator = new iCalCreator();
     }
 
     /**
@@ -101,7 +102,7 @@ public class MailgunService {
      * @return an integer response code from the Mailgun API
      */
     private CompletionStage<Integer> sendMailgunRequestWithAttachment(WSRequest request, File file) {
-        Source<ByteString, ?> fileSource = FileIO.fromPath(Paths.get(file.getName()));
+        Source<ByteString, ?> fileSource = FileIO.fromPath(Paths.get(file.getAbsolutePath()));
         FilePart<Source<ByteString, ?>> fp = new FilePart<>(getBaseName(file.getName()), file.getName(), "text/plain", fileSource);
         DataPart dp = new DataPart("key", "value");
 
@@ -184,7 +185,7 @@ public class MailgunService {
      * @param tripNode The tripNode
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripUpdateEmail(User user, TripNode tripNode) {
+    public CompletableFuture<Integer> sendTripiCalEmail(User user, TripNode tripNode) {
         Calendar calendar = iCalCreator.createCalendarFromTrip(tripNode);
         File tempFile = null;
         WSRequest request;
@@ -196,25 +197,20 @@ public class MailgunService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         JsonObject recipientVariables = new JsonObject();
         JsonObject recipientVariableFields = new JsonObject();
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
-
         for (User recipient: tripNode.getUserGroup().getUsers()) {
             recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
-            recipientVariableFields.addProperty("tripName", tripNode.getName());
-            recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
+            recipientVariableFields.addProperty("groupName", tripNode.getName());
+            recipientVariableFields.addProperty("groupURL", websiteUrl + "user/"
                     + user.getId() + "/trips/" + tripNode.getId());
             recipientVariables.add(recipient.getEmail(), recipientVariableFields);
-            recipientVariableFields = new JsonObject();
         }
-
         request = buildMailgunRequest(tripNode.getUserGroup().getUsers(),
                 subject,
                 "trip-updated",
                 recipientVariables);
-
         return sendMailgunRequestWithAttachment(request, tempFile).toCompletableFuture();
     }
 }

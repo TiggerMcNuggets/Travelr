@@ -9,11 +9,19 @@ Feature: Email iCal Trip
     And I own the trip
       | name         | description |
       | My First Trip| A trip      |
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And The trip contains the trip destinations
+      | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+      | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+      | Big River     | destination | 4           | 6             | 1            | 2             |
     And The trip belongs to the user group
     # Change email to yours to check received email. REMEMBER TO CHANGE IT BACK BEFORE PUSHING!
     And the user group has the group member
       | first | last  | email               | dob |
-      | John  | Smith | johnsmith@email.com | 1   |
+      | John  | Smith | marvingoesmann@gmail.com | 1   |
     When I want to send everyone an iCal email
     And I send the request
     Then I will receive the response code 201
@@ -31,6 +39,14 @@ Feature: Email iCal Trip
     And They own the trip
       | name         | description |
       | My First Trip| A trip      |
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And The trip contains the trip destinations
+      | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+      | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+      | Big River     | destination | 4           | 6             | 1            | 2             |
     And The trip belongs to the user group
     And the user group has the group member
       | first | last  | email               | dob |
@@ -48,6 +64,14 @@ Feature: Email iCal Trip
     And I own the trip
       | name         | description |
       | My First Trip| A trip      |
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And The trip contains the trip destinations
+      | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+      | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+      | Big River     | destination | 4           | 6             | 1            | 2             |
     And The trip belongs to the user group
     And the user group has the group member
       | first | last  | email               | dob |
@@ -67,6 +91,14 @@ Feature: Email iCal Trip
     And They own the trip
       | name         | description |
       | My First Trip| A trip      |
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And The trip contains the trip destinations
+      | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+      | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+      | Big River     | destination | 4           | 6             | 1            | 2             |
     And The trip belongs to the user group
     And I am authenticated
     And I am a member of the group
@@ -85,6 +117,14 @@ Feature: Email iCal Trip
     And They own the trip
       | name         | description |
       | My First Trip| A trip      |
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And The trip contains the trip destinations
+      | name          | type        | arrivalDate | departureDate | ordinal      | destinationId |
+      | Eiffel Tower  | destination | 1           | 2             | 0            | 1             |
+      | Big River     | destination | 4           | 6             | 1            | 2             |
     And The trip belongs to the user group
     And I am authenticated
     When I want to send everyone an iCal email

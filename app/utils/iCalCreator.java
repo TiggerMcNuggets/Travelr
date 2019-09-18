@@ -19,12 +19,10 @@ public class iCalCreator {
      * @return a Calendar object from the trip provided
      */
     public Calendar createCalendarFromTrip(TripNode trip) {
-
         Calendar calendar = new Calendar();
         calendar.getProperties().add(new ProdId(trip.getId().toString()));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
-
         int UID = 0;
 
         ArrayList<DestinationNode> destList = new ArrayList<>();
@@ -33,7 +31,6 @@ public class iCalCreator {
                 destList.add((DestinationNode) trip.getNodes().get(i));
             }
         }
-
         for (DestinationNode destination: destList) {
 
             if (destination.getArrivalDate() != 0 && destination.getDepartureDate() != 0) {
@@ -61,7 +58,6 @@ public class iCalCreator {
         }
 
         calendar.validate();
-
         return calendar;
     }
 
