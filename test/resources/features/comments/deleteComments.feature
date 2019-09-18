@@ -1,8 +1,6 @@
 Feature: Create Comment
   Description: The purpose of this feature is to test the api endpoint related to creating comments
 
-
-
   Scenario: Delete one of my comments
     Given I am authenticated
     And I own the user group
