@@ -82,8 +82,8 @@ export default {
     },
     updateMedia(clickedImage) {
       mediaRepository
-        .updateMedia(this.$route.params.id, clickedImage.id, clickedImage)
-        .then(() => {
+        .updateMedia(this.trip.root.user.id, clickedImage.id, clickedImage)
+        .then(resp => {
           this.getTripImages();
         });
     },
@@ -128,6 +128,7 @@ export default {
         )
         .then(response => {
           this.files = response.data.mediaItems;
+          console.log(response.data.mediaItems);
         });
     }
   },

@@ -123,12 +123,13 @@ public class MediaRepository {
     public CompletableFuture<Long> update(UpdateMediaReq request, Long mediaId) {
         return supplyAsync(() -> {
             Media media = Media.find.findMediaById(mediaId);
+            System.out.println(request.is_public);
             if (request.is_public != null)
                 media.setIs_public(request.is_public);
             if (request.caption != null)
                 media.setCaption(request.caption);
             media.save();
-
+            System.out.println(media.is_public);
             return media.id;
         });
     }
