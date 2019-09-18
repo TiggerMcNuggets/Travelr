@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
+import controllers.dto.Comment.AddEmojiReq;
 import models.Comment;
 import models.TripNode;
 import models.User;
@@ -96,6 +97,42 @@ public class CommentController {
 
         CompletionStage<Long> deleted = isUserComment.thenComposeAsync(commentRepository::delete);
         return deleted.thenApplyAsync(id -> ok(id.toString())).handle(AsyncHandler::handleResult);
+    }
+
+    /**
+     * Adds a user emoji react to a comment.
+     * @param request The HTTP request.
+     * @param userId The user id
+     * @param tripId The trip id
+     * @param commentId The comment id
+     * @return 201 response if created successfully
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> addUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
+        Form<AddEmojiReq> addEmojiReqForm = formFactory.form(AddEmojiReq.class).bindFromRequest(request);
+
+        if (addEmojiReqForm.hasErrors()) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.COMMENT_BAD_REQUEST));
+        }
+
+        AddEmojiReq addEmojiReq = addEmojiReqForm.get();
+
+        CompletionStage<Comment> commentStage = commentRepository.getCommentHandler(commentId);
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
+        CompletionStage<User> userStage = userRepository.getUserHandler(userId);
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkReadPermissionHandler(tripNode, user).join());
+
+        // Get comment without nesting
+        CompletionStage<Comment> combineStage = permissionStage.thenCombineAsync(commentStage, (permission, comment) -> comment);
+        CompletionStage<Long> insertStage = combineStage.thenCombineAsync(userStage, (comment, user) -> commentRepository.addEmoji(addEmojiReq, comment, user).join());
+
+        return insertStage.thenApplyAsync(id -> {
+            JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
+
+            ObjectNode res = jsonFactory.objectNode();
+            res.put("id", id);
+            return created(res);
+        }).handle(AsyncHandler::handleResult);
     }
 
 }
