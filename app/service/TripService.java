@@ -155,6 +155,23 @@ public class TripService {
     }
 
     /**
+     * Checks if user is the owner of a group connected to a trip
+     * @param userId
+     * @param tripId
+     * @return Boolean
+     */
+    public Boolean userOwnsTripGroup(Long userId, Long tripId) {
+        Optional<TripNode> trip = Optional.ofNullable(TripNode.find.query().where().and()
+                .eq("userGroup.userGroups.user.id", userId)
+                .eq("userGroup.userGroups.isOwner", true)
+                .eq("id", tripId)
+                .eq("parent", null)
+                .endAnd()
+                .findOne());
+        return trip.isPresent();
+    }
+
+    /**
      * Get all trips for a user
      *
      * @param userId
