@@ -1,8 +1,12 @@
 package repository;
 
 import com.google.inject.Inject;
+import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
+import controllers.dto.Comment.AddEmojiReq;
+import exceptions.NotFoundException;
 import models.Comment;
+import models.CommentEmoji;
 import models.TripNode;
 import models.User;
 
@@ -58,5 +62,42 @@ public class CommentRepository {
             comment.update();
             return id;
         });
+    }
+
+    /**
+     * Gets one comment by id and throws not found exception if not found
+     * @param id the comment id
+     * @return completable future of comment
+     */
+    public CompletableFuture<Comment> getCommentHandler(Long id) {
+        return supplyAsync(() -> {
+            Comment comment = Comment.find.byId(id);
+            if (comment == null) throw new NotFoundException(APIResponses.NOT_FOUND);
+            return comment;
+        }, executionContext);
+    }
+
+    /**
+     * Adds an emoji for a user on a comment.
+     * @param addEmojiReq The emote information
+     * @param comment The comment to add the emoji to
+     * @param user The user that is reacting
+     * @return The id of the commment emoji
+     */
+    public CompletableFuture<Long> addEmoji(AddEmojiReq addEmojiReq, Comment comment, User user) {
+
+        return supplyAsync(() -> {
+            String emoji = addEmojiReq.getEmoji();
+
+            CommentEmoji commentEmoji = CommentEmoji.find.query().where().eq("emoji", emoji).findOne();
+            if (commentEmoji == null) {
+                commentEmoji = new CommentEmoji(emoji, comment, user);
+            } else if (!commentEmoji.getUsers().contains(user)) {
+                commentEmoji.addUser(user);
+            }
+
+            commentEmoji.save();
+            return commentEmoji.getId();
+        }, executionContext);
     }
 }

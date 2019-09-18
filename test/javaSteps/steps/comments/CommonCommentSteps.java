@@ -19,6 +19,13 @@ import static play.test.Helpers.contentAsString;
 public class CommonCommentSteps {
     private StateSingleton state = StateSingleton.getInstance();
 
+    @Given("I add a comment {string} to the trip")
+    public void i_add_a_comment_to_the_trip(String message) {
+        Comment comment = new Comment(message, state.getTrip(), state.getUser());
+        comment.insert();
+        state.setComment(comment);
+    }
+
     @Given("the trip has the comment")
     public void the_trip_has_the_comment(List<Map<String, String>> dataTable) {
         User user = state.getUser();

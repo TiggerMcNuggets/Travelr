@@ -492,4 +492,19 @@ public class TripService {
             return null;
         });
     }
+
+    /**
+     * Instead of returning boolean, throws exception when not permitted to read
+     * @param trip The trip
+     * @param user The user
+     * @return null
+     */
+    public CompletableFuture<Void> checkReadPermissionHandler(TripNode trip, User user) {
+        return isPermittedToRead(trip, user).thenApplyAsync(isPermitted -> {
+            if (!isPermitted) {
+                throw new ForbiddenException(APIResponses.TRIP_READ_DENIED);
+            }
+            return null;
+        });
+    }
 }
