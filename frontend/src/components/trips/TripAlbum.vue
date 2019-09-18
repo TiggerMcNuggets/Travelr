@@ -16,15 +16,25 @@
         :clickedImage="clickedImage ? clickedImage : {}"
         :closeMediaDialog="() => viewMediaDialogActive = false"
         :deleteMedia="deleteMedia"
+        :updateMedia="updateMedia"
         :openConfirmDelete="() => {confirmDeletionDialogActive = true}"
         :isMyProfile="isMyProfile"
         :isAdminUser="isAdminUser"
+      />
+    </v-dialog>
+    <v-dialog v-model="confirmDeletionDialogActive" width="500">
+      <ConfirmDelete
+        title="Confirm Delete"
+        text="Would you like to delete this media from all albums?"
+        :confirm="() => {deleteAndCloseDialog(true)}"
+        :cancel="() => {deleteAndCloseDialog(false)}"
       />
     </v-dialog>
   </v-layout>
 </template>
 
 <script>
+import ConfirmDelete from "../common/ConfirmDialog";
 import { store } from "../../store/index";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 import MediaGrid from "../media/MediaGrid";
@@ -38,7 +48,8 @@ export default {
 
   components: {
     MediaGrid,
-    MediaDialog
+    MediaDialog,
+    ConfirmDelete
   },
 
   props: {
@@ -51,6 +62,7 @@ export default {
       viewMediaDialogActive: false,
       clickedImage: null,
       isMyProfile: false,
+      confirmDeletionDialogActive: false,
       isAdminUser: false,
       files: [],
       };
@@ -63,8 +75,30 @@ export default {
   },
 
   methods: {
-    deleteMedia() {
-      console.log("Not sure here");
+    deleteAndCloseDialog(deleteAll) {
+      this.confirmDeletionDialogActive = false;
+      this.deleteMedia(this.clickedImage, deleteAll);
+      this.viewMediaDialogActive = false;
+    },
+    updateMedia(clickedImage) {
+      mediaRepository
+        .updateMedia(this.$route.params.id, clickedImage.id, clickedImage)
+        .then(() => {
+          this.getTripImages();
+        });
+    },
+
+    deleteMedia(clickedImage, deleteAll) {
+      mediaRepository
+        .deleteMedia(
+          this.$route.params.id,
+          this.trip.root.albumId,
+          clickedImage.id,
+          deleteAll
+        )
+        .then(() => {
+          this.getTripImages();
+        });
     },
     deleteAndCloseDialog(deleteAll) {
       this.confirmDeletionDialogActive = false;
@@ -93,14 +127,6 @@ export default {
           this.trip.root.albumId
         )
         .then(response => {
-          // let mediaItems = [];
-          response.data.mediaItems.forEach(item => {
-            item.filename = item.uriString;
-            // if (item.is_public || item.userID == store.getters.getUser.id) {
-            //   mediaItems.push(item);
-            // }
-          });
-          // this.files = mediaItems;
           this.files = response.data.mediaItems;
         });
     }

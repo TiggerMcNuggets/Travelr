@@ -284,9 +284,6 @@ export default {
           this.destination.defaultAlbumId
         )
         .then(response => {
-          response.data.mediaItems.forEach(item => {
-            item.filename = item.uriString;
-          });
           this.files = response.data.mediaItems;
         });
     }
