@@ -93,9 +93,14 @@ export default {
           this.trip.root.albumId
         )
         .then(response => {
+          // let mediaItems = [];
           response.data.mediaItems.forEach(item => {
             item.filename = item.uriString;
+            // if (item.is_public || item.userID == store.getters.getUser.id) {
+            //   mediaItems.push(item);
+            // }
           });
+          // this.files = mediaItems;
           this.files = response.data.mediaItems;
         });
     }
