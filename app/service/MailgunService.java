@@ -202,8 +202,8 @@ public class MailgunService {
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
         for (User recipient: tripNode.getUserGroup().getUsers()) {
             recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
-            recipientVariableFields.addProperty("groupName", tripNode.getName());
-            recipientVariableFields.addProperty("groupURL", websiteUrl + "user/"
+            recipientVariableFields.addProperty("tripName", tripNode.getName());
+            recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
                     + user.getId() + "/trips/" + tripNode.getId());
             recipientVariables.add(recipient.getEmail(), recipientVariableFields);
         }
