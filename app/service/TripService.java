@@ -161,18 +161,14 @@ public class TripService {
      * @return Boolean
      */
     public Boolean userOwnsTripGroup(Long userId, Long tripId) {
-        TripNode trip = TripNode.find.query().where().and()
+        Optional<TripNode> trip = Optional.ofNullable(TripNode.find.query().where().and()
                 .eq("userGroup.userGroups.user.id", userId)
                 .eq("userGroup.userGroups.isOwner", true)
                 .eq("id", tripId)
                 .eq("parent", null)
                 .endAnd()
-                .findOne();
-        if (trip == null) {
-            return false;
-        } else {
-            return true;
-        }
+                .findOne());
+        return trip.isPresent();
     }
 
     /**
@@ -509,6 +505,21 @@ public class TripService {
         return isPermittedToWrite(trip, user).thenApplyAsync(isPermitted -> {
             if (!isPermitted) {
                 throw new ForbiddenException(APIResponses.TRIP_WRITE_DENIED);
+            }
+            return null;
+        });
+    }
+
+    /**
+     * Instead of returning boolean, throws exception when not permitted to read
+     * @param trip The trip
+     * @param user The user
+     * @return null
+     */
+    public CompletableFuture<Void> checkReadPermissionHandler(TripNode trip, User user) {
+        return isPermittedToRead(trip, user).thenApplyAsync(isPermitted -> {
+            if (!isPermitted) {
+                throw new ForbiddenException(APIResponses.TRIP_READ_DENIED);
             }
             return null;
         });
