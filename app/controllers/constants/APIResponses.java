@@ -40,6 +40,7 @@ public class APIResponses {
     public static final String TRIP_NOT_FOUND = "Trip not found";
     public static final String TRIP_GROUP_UPDATED = "Trip group updated successfully";
     public static final String TRIP_WRITE_DENIED = "Invalid permissions for writing to trip";
+    public static final String TRIP_READ_DENIED = "Invalid permissions for reading a trip";
 
     // Comments
     public static final String COMMENT_BAD_REQUEST = "Invalid comment body";
