@@ -217,8 +217,16 @@ public class TripService {
                 /**
                  * Check User can edit
                  */
-                if (trip.getUser().getId() != user.getId()) {
-                    throw new CustomException(Http.Status.UNAUTHORIZED,
+                if (trip.getUserGroup() != null) {
+                    Optional<UserGroup> usergroup = UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id);
+                    if (usergroup.isPresent() || user.isAdmin()) {
+                        if (!UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id).get().isOwner) {
+                            throw new CustomException(Http.Status.FORBIDDEN,
+                                    "You do not have permission to update this trip");
+                        }
+                    }
+                } else if(trip.getUser().getId() != user.getId()) {
+                    throw new CustomException(Http.Status.FORBIDDEN,
                             "You do not have permission to update this trip");
                 }
 
