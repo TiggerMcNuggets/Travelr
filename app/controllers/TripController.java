@@ -22,6 +22,7 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import repository.CommentRepository;
 import service.MailgunService;
 import service.TripService;
 import utils.iCalCreator;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import repository.CommentRepository;
 
 public class TripController extends Controller {
 
@@ -45,12 +47,14 @@ public class TripController extends Controller {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
     private final MailgunService mailgunService;
+    private final CommentRepository commentRepository;
 
     @Inject
 
-    public TripController(TripService tripService, MailgunService mailgunService) {
+    public TripController(TripService tripService, MailgunService mailgunService, CommentRepository commentRepository) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
+        this.commentRepository = commentRepository;
     }
 
     /**
