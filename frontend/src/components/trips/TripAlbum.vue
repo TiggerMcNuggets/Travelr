@@ -20,6 +20,7 @@
         :openConfirmDelete="() => {confirmDeletionDialogActive = true}"
         :isMyProfile="isMyProfile"
         :isAdminUser="isAdminUser"
+        :getAllAlbums="getTripImages"
       />
     </v-dialog>
     <v-dialog v-model="confirmDeletionDialogActive" width="500">

@@ -735,12 +735,13 @@ export default {
     },
 
     init: function() {
+    // console.log("BEFORE");
     this._getTrip(this.userId, this.tripId).then(() => {
+      // console.log("AFTER");
       this.trip = deepCopy(this.selectedTrip);
       console.log(this.trip);
       this.rollbackSetPreviousBody(tripAssembler(this.trip));
       this.previousTripId = this.trip.trip.id;
-
       this.trip.trip = this.tripWithDates(this.trip.trip);
     });
     }

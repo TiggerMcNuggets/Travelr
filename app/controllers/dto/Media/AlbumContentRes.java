@@ -16,7 +16,7 @@ public class AlbumContentRes {
         List<MediaRes> mediaItems = new ArrayList<>();
         for (Media mediaItem: media) {
             boolean canAccessPrivate = user.isAdmin() || mediaItem.getUser().getId().equals(user.getId());
-            if (!mediaItem.getIs_public() && canAccessPrivate) {
+            if (mediaItem.getIs_public() || canAccessPrivate) {
                 MediaRes res = new MediaRes(mediaItem);
                 mediaItems.add(res);
             }
