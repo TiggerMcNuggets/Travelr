@@ -35,14 +35,6 @@
           <v-layout flex>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn v-on:click="validateForm" icon v-on="on">
-                  <v-icon color="primary lighten-1">check_circle</v-icon>
-                </v-btn>
-              </template>
-              <span>Validate</span>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
                 <v-btn v-on:click="addTripNode(true)" icon v-on="on">
                   <v-icon color="primary lighten-1">add_location</v-icon>
                 </v-btn>
@@ -78,6 +70,9 @@
             </v-btn>
             <v-btn v-else @click="downloadTrip()" flat fab small dark color="primary lighten-1">
               <v-icon>calendar_today</v-icon>
+            </v-btn>
+            <v-btn v-if="isTripOwner || isGroupOwner || isAdmin" @click="emailTrip" flat fab small dark color="primary lighten-1" >
+              <v-icon>email</v-icon>
             </v-btn>
           </v-layout>
 
@@ -646,6 +641,10 @@ export default {
       }
 
       return trip;
+    },
+
+    emailTrip() {
+      console.log("test");
     },
 
     getSelectedTrip(tripId) {
