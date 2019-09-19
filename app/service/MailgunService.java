@@ -32,7 +32,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import play.mvc.Http.MultipartFormData.*;
 
-import static org.apache.commons.io.FilenameUtils.getBaseName;
 
 /**
  * A service which holds the email notification logic using the MailGun API
@@ -47,14 +46,12 @@ public class MailgunService {
     private String mailgunApi = "https://api.mailgun.net/v3/sandboxc7b3b2d7b248471d9e3c50aa8687d1c4.mailgun.org/messages";
     private String mailgunKey = "369f89d26186533f02492395d4086aef-73ae490d-9c3ed2ca";
     private String mailgunFromAddress = "fd15@uclive.ac.nz";
-    private iCalCreator iCalCreator;
 
     @Inject
     public MailgunService(DatabaseExecutionContext context, WSClient ws, Configuration configuration) {
         this.context = context;
         this.ws = ws;
         this.websiteUrl = ConfigFactory.load().getString("baseRedirectUrl");
-        this.iCalCreator = new iCalCreator();
     }
 
     /**
@@ -188,23 +185,26 @@ public class MailgunService {
      * @return a response code given by the mailgun API
      */
     public CompletableFuture<Integer> sendTripPdfiCalEmail(User user, TripNode tripNode, List<HashMap<TripNode, DestinationNode>> tripDestinations) {
-        Calendar calendar = iCalCreator.createCalendarFromTripDestinations(tripNode, tripDestinations);
         PDFCreator pdfCreator = new PDFCreator();
+        iCalCreator creator = new iCalCreator();
+        Calendar calendar = creator.createCalendarFromTripDestinations(tripNode, tripDestinations);
+
         File tripPdf = pdfCreator.generateTripEmailPDF(tripNode, tripDestinations);
         File iCalFile = null;
         WSRequest request;
+
         try {
             iCalFile = File.createTempFile(tripNode.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(iCalFile));
             bw.write(calendar.toString());
             bw.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         ArrayList<User> recipients = new ArrayList<>();
-        recipients.addAll(tripNode.getUserGroup().getUsers());
 
+        recipients.addAll(tripNode.getUserGroup().getUsers());
         JsonObject recipientVariables = new JsonObject();
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
         for (User recipient: recipients) {

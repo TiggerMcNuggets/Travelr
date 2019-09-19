@@ -106,5 +106,9 @@ export default {
    */
   updateGroupTripStatus(userId, tripId, payload) {
     return Repository.put(`/users/${userId}/trips/${tripId}/status`, payload);
+  },
+
+  emailPdfAndICal(userId, tripId) {
+    return Repository.post(`/users/${userId}/trips/${tripId}/iCal/email`);
   }
 }
