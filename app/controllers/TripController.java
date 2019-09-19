@@ -23,6 +23,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 import repository.UserRepository;
+import repository.CommentRepository;
 import service.MailgunService;
 import service.TripService;
 import utils.AsyncHandler;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import repository.CommentRepository;
 
 public class TripController extends Controller {
 
@@ -48,13 +50,15 @@ public class TripController extends Controller {
     private final TripService tripService;
     private final UserRepository userRepository;
     private final MailgunService mailgunService;
+    private final CommentRepository commentRepository;
 
     @Inject
 
-    public TripController(TripService tripService, UserRepository userRepository, MailgunService mailgunService) {
+    public TripController(TripService tripService, UserRepository userRepository, MailgunService mailgunService, CommentRepository commentRepository) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     /**
