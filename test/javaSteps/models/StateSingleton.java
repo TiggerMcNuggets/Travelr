@@ -30,6 +30,7 @@ public class StateSingleton {
     private Grouping group;
     private User groupMember;
     private TripNode trip;
+    private Comment comment;
 
 
     private ArrayList<Destination> destinationList;
@@ -134,5 +135,13 @@ public class StateSingleton {
 
     public void setTrip(TripNode trip) {
         this.trip = trip;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 }

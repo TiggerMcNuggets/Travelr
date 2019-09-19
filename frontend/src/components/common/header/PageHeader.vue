@@ -125,7 +125,6 @@ export default {
     disableUndoRedo: Boolean,
     enableBackButton: Boolean,
     backButtonOverride: Function,
-    breadcrumbs: Boolean
   }
 };
 </script>
