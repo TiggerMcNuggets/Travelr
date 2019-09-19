@@ -95,6 +95,7 @@ POST        /api/users/:userId/trips/:tripId/iCal/email     controllers.TripCont
 DELETE      /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripController.deleteGroupFromTrip(request: Request, tripId: Long, userId: Long, groupId: Long)
 PUT         /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripController.addGroupToTrip(request: Request, tripId: Long, userId: Long, groupId: Long)
 PUT         /api/users/:userId/trips/:nodeId/status        controllers.TripController.changeUserTripStatus(request: Request, nodeId: Long, userId: Long)
+GET         /api/users/:user_id/trips/:trip_id/PDF         controllers.TripController.getUserTripAsPDFFile(request: Request, user_id: Long, trip_id: Long)
 
 # Comments
 GET         /api/users/:userId/trips/:tripId/comments      controllers.CommentController.fetchTripComments(request: Request, tripId: Long, userId: Long)
