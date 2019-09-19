@@ -3,7 +3,7 @@
     <v-tabs v-model="active" slider-color="blue">
       <v-tab :key="1" ripple>Overview</v-tab>
       <v-tab :key="2" ripple>Comments</v-tab>
-      <v-tab :key="3" ripple>Files</v-tab>
+      <v-tab :key="3" ripple>Albums</v-tab>
 
       <v-tab-item :key="1">
         <TripOverview :trip="trip"/>
