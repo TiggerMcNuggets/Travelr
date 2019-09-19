@@ -44,14 +44,22 @@
                 <h2>{{ item.name }}</h2>
               </div>
               <div class="crud-options">
-                  <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                          <v-btn icon dark v-on="on">
-                              <v-icon v-on:click="downloadTripPdf(item.id, item.name)" color="primary">picture_as_pdf</v-icon>
-                          </v-btn>
-                      </template>
-                      <span>Download trip pdf</span>
-                  </v-tooltip>
+                <v-btn
+                  v-if="(isMyProfile || isAdminUser) && !item.isPublic"
+                  class="align-end justify-end"
+                  icon
+                  @click="() => console.log('email')"
+                >
+                  <v-icon dark color="red lighten-1">email</v-icon>
+                </v-btn>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon dark v-on="on">
+                            <v-icon v-on:click="downloadTripPdf(item.id, item.name)" color="primary">picture_as_pdf</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Download trip pdf</span>
+                </v-tooltip>
                 <v-btn
                   v-if="(isMyProfile || isAdminUser) && !item.isPublic"
                   class="align-end justify-end"
@@ -298,6 +306,7 @@
       this.checkIfProfileOwner();
       this.isAdminUser = store.getters.getIsUserAdmin;
       this._getTrips(this.userId);
+      console.log("trips", this.trips);
     }
   };
 </script>

@@ -15,6 +15,8 @@ import play.libs.ws.WSResponse;
 import repository.DatabaseExecutionContext;
 
 import javax.inject.Inject;
+
+import utils.PDFCreator;
 import utils.iCalCreator;
 
 import java.io.BufferedWriter;
@@ -99,11 +101,14 @@ public class MailgunService {
      * @param request to be sent to the Mailgun API
      * @return an integer response code from the Mailgun API
      */
-    private CompletionStage<Integer> sendMailgunRequestWithAttachment(WSRequest request, File file) {
-        Source<ByteString, ?> fileSource = FileIO.fromPath(Paths.get(file.getAbsolutePath()));
-        FilePart<Source<ByteString, ?>> fp = new FilePart<>("attachment", file.getName(), "text/plain", fileSource);
+    private CompletionStage<Integer> sendMailgunRequestWithAttachment(WSRequest request, File tripPdf, File iCalFile) {
+        Source<ByteString, ?> fileSource = FileIO.fromPath(Paths.get(iCalFile.getAbsolutePath()));
+        FilePart<Source<ByteString, ?>> fp = new FilePart<>("attachment", iCalFile.getName(), "text/plain", fileSource);
 
-        return request.post(Source.from(Arrays.asList(fp))).thenApplyAsync(WSResponse::getStatus);
+        Source<ByteString, ?> pdfSource = FileIO.fromPath(Paths.get(tripPdf.getAbsolutePath()));
+        FilePart<Source<ByteString, ?>> fp2 = new FilePart<>("attachment", tripPdf.getName(), "text/plain", pdfSource);
+
+        return request.post(Source.from(Arrays.asList(fp, fp2))).thenApplyAsync(WSResponse::getStatus);
     }
 
 
@@ -182,13 +187,15 @@ public class MailgunService {
      * @param tripNode The tripNode
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripiCalEmail(User user, TripNode tripNode, List<HashMap<TripNode, DestinationNode>> tripDestinations) {
+    public CompletableFuture<Integer> sendTripPdfiCalEmail(User user, TripNode tripNode, List<HashMap<TripNode, DestinationNode>> tripDestinations) {
         Calendar calendar = iCalCreator.createCalendarFromTripDestinations(tripNode, tripDestinations);
-        File tempFile = null;
+        PDFCreator pdfCreator = new PDFCreator();
+        File tripPdf = pdfCreator.generateTripEmailPDF(tripNode, tripDestinations);
+        File iCalFile = null;
         WSRequest request;
         try {
-            tempFile = File.createTempFile(tripNode.getName(), ".ics");
-            BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
+            iCalFile = File.createTempFile(tripNode.getName(), ".ics");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(iCalFile));
             bw.write(calendar.toString());
             bw.close();
         } catch (IOException e) {
@@ -214,6 +221,6 @@ public class MailgunService {
                 subject,
                 "trip-updated",
                 recipientVariables);
-        return sendMailgunRequestWithAttachment(request, tempFile).toCompletableFuture();
+        return sendMailgunRequestWithAttachment(request, tripPdf, iCalFile).toCompletableFuture();
     }
 }
