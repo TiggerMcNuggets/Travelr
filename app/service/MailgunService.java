@@ -5,10 +5,7 @@ import akka.stream.javadsl.Source;
 import akka.util.ByteString;
 import com.google.gson.JsonObject;
 import com.typesafe.config.ConfigFactory;
-import models.Grouping;
-import models.TripNode;
-import models.User;
-import models.UserGroup;
+import models.*;
 import net.fortuna.ical4j.model.Calendar;
 import org.apache.commons.lang3.StringUtils;
 import play.api.Configuration;
@@ -27,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -71,7 +69,7 @@ public class MailgunService {
         WSRequest request = ws.url(mailgunApi);
         request.addQueryParameter("from", mailgunFromAddress);
         for (User recipient : recipients) {
-            request.addQueryParameter("to", recipient.email);
+            request.addQueryParameter("to", recipient.getEmail());
         }
         request.addQueryParameter("subject", subject);
         request.addQueryParameter("template", template);
@@ -130,7 +128,7 @@ public class MailgunService {
 
 
         JsonObject recipientVariable = new JsonObject();
-        recipientVariable.add(recipient.email, recipientVariableFields);
+        recipientVariable.add(recipient.getEmail(), recipientVariableFields);
 
         WSRequest request = buildMailgunRequest(recipientList,
                 welcomeEmailSubject,
@@ -161,12 +159,12 @@ public class MailgunService {
         recipientList.add(recipient);
 
         JsonObject recipientVariableFields = new JsonObject();
-        recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+        recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
         recipientVariableFields.addProperty("groupName", grouping.getName());
         recipientVariableFields.addProperty("groupURL", websiteUrl + "usergroups");
 
         JsonObject recipientVariable = new JsonObject();
-        recipientVariable.add(recipient.email, recipientVariableFields);
+        recipientVariable.add(recipient.getEmail(), recipientVariableFields);
 
         WSRequest request = buildMailgunRequest(recipientList,
                 groupingEmailSubject,
@@ -185,8 +183,8 @@ public class MailgunService {
      * @param tripNode The tripNode
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripiCalEmail(User user, TripNode tripNode) {
-        Calendar calendar = iCalCreator.createCalendarFromTrip(tripNode);
+    public CompletableFuture<Integer> sendTripiCalEmail(User user, TripNode tripNode, List<HashMap<TripNode, DestinationNode>> tripDestinations) {
+        Calendar calendar = iCalCreator.createCalendarFromTripDestinations(tripNode, tripDestinations);
         File tempFile = null;
         WSRequest request;
         try {
@@ -197,17 +195,23 @@ public class MailgunService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ArrayList<User> recipients = new ArrayList<>();
+        recipients.addAll(tripNode.getUserGroup().getUsers());
+
         JsonObject recipientVariables = new JsonObject();
-        JsonObject recipientVariableFields = new JsonObject();
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
-        for (User recipient: tripNode.getUserGroup().getUsers()) {
+        for (User recipient: recipients) {
+            JsonObject recipientVariableFields = new JsonObject();
+
+            recipientVariableFields.addProperty("unique_id", user.getId());
             recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
             recipientVariableFields.addProperty("tripName", tripNode.getName());
             recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
                     + user.getId() + "/trips/" + tripNode.getId());
             recipientVariables.add(recipient.getEmail(), recipientVariableFields);
         }
-        request = buildMailgunRequest(tripNode.getUserGroup().getUsers(),
+        request = buildMailgunRequest(recipients,
                 subject,
                 "trip-updated",
                 recipientVariables);

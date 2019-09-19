@@ -11,7 +11,6 @@ import dto.shared.CreatedDTO;
 import dto.trip.*;
 
 import exceptions.CustomException;
-import finders.TripNodeFinder;
 import models.*;
 import net.fortuna.ical4j.model.Calendar;
 import org.slf4j.Logger;
@@ -39,10 +38,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import repository.CommentRepository;
 
 public class TripController extends Controller {
 
@@ -157,7 +154,7 @@ public class TripController extends Controller {
 
         // Get tripNode without nesting
         CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
-        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripiCalEmail(user, tripNode).join());
+        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripiCalEmail(user, tripNode, getAllNodes(tripNode)).join());
 
         return testStage.thenApplyAsync(userGroups -> created(APIResponses.ICAL_SUCCESS)).handle(AsyncHandler::handleResult);
     }
