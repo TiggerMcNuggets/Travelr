@@ -101,10 +101,9 @@ public class MailgunService {
      */
     private CompletionStage<Integer> sendMailgunRequestWithAttachment(WSRequest request, File file) {
         Source<ByteString, ?> fileSource = FileIO.fromPath(Paths.get(file.getAbsolutePath()));
-        FilePart<Source<ByteString, ?>> fp = new FilePart<>(getBaseName(file.getName()), file.getName(), "text/plain", fileSource);
-        DataPart dp = new DataPart("key", "value");
+        FilePart<Source<ByteString, ?>> fp = new FilePart<>("attachment", file.getName(), "text/plain", fileSource);
 
-        return request.post(Source.from(Arrays.asList(fp, dp))).thenApplyAsync(WSResponse::getStatus);
+        return request.post(Source.from(Arrays.asList(fp))).thenApplyAsync(WSResponse::getStatus);
     }
 
 
