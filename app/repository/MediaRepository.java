@@ -105,10 +105,15 @@ public class MediaRepository {
             Media media = Media.find.findMediaById(media_id);
             if (media == null)
                 return null; // media does not exist
-            album.addMedia(media);
-            album.save();
-            media.addAlbum(album);
-            media.save();
+
+            if (!album.getMedia().contains(media)) {
+                album.addMedia(media);
+                album.save();
+                System.out.println("HERE 2");
+                media.addAlbum(album);
+                media.save();
+                System.out.println("HERE 3");
+            }
             return album.id;
         }, executionContext);
     }

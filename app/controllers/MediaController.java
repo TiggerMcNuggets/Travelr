@@ -264,6 +264,11 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> addMediaToAlbum(Http.Request request, Long user_id, Long album_id, Long media_id) {
+        System.out.println("HERE 1");
+        System.out.println("ALBUM: " + album_id.toString());
+        System.out.println(media_id);
+        Media media = Media.find.findMediaById(media_id);
+//        media.setAlbums([]);
         return mediaRepository.addMediaToAlbum(album_id, media_id).thenApplyAsync(updated_album_id -> {
             // not found check, repository checks that both album and media exist
             if (updated_album_id == null) {
