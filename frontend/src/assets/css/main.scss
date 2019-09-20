@@ -5,6 +5,7 @@
 @import "profile.scss";
 @import "login.scss";
 @import "usergroups.scss";
+@import "trip.scss";
 
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
@@ -27,4 +28,8 @@ main {
 
 .no-underline {
   text-decoration: none;
+}
+
+.sub-text {
+  color: $sub-text;
 }

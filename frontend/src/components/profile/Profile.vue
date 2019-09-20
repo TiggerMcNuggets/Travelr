@@ -49,7 +49,7 @@ export default {
      * Options used in the header component.
      */
     options() {
-      return [{ action: this.goToEdit, icon: "edit" }];
+      return [{ action: this.goToEdit, icon: "edit", title: "Edit Profile" }];
     }
   },
 

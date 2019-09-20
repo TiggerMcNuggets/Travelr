@@ -8,10 +8,13 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Media.*;
 import finders.DestinationFinder;
+import finders.TripNodeFinder;
+import finders.UserFinder;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
 import models.Album;
 import models.Destination;
+import models.TripNode;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -22,11 +25,13 @@ import play.mvc.Result;
 import repository.AlbumRepository;
 import repository.MediaRepository;
 import repository.PersonalPhotoRepository;
+import service.TripService;
 import utils.FileHelper;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -35,6 +40,8 @@ public class MediaController extends Controller {
     private final MediaRepository mediaRepository;
 
     private final AlbumRepository albumRepository;
+
+    private final TripService tripService;
 
     private final FileHelper fh = new FileHelper();
 
@@ -45,11 +52,12 @@ public class MediaController extends Controller {
 
     @Inject
     public MediaController(Config config,
-            MediaRepository mediaRepository, AlbumRepository albumRepository) {
+            MediaRepository mediaRepository, AlbumRepository albumRepository,TripService tripService) {
         String rootPath = System.getProperty("user.home");
         MEDIA_FILEPATH = rootPath + config.getString("mediaFilePath");
         this.mediaRepository = mediaRepository;
         this.albumRepository = albumRepository;
+        this.tripService = tripService;
     }
 
     /**
@@ -66,7 +74,16 @@ public class MediaController extends Controller {
         User user = request.attrs().get(Attrs.USER);
         Boolean isAdmin = request.attrs().get(Attrs.IS_USER_ADMIN);
 
-        return albumRepository.list(album_id, ((user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
+        // Check if the album is for a trip and if the person is in the trip
+        TripNodeFinder tripNodeFinder = new TripNodeFinder();
+        Boolean isInGroup = true;
+        Optional<TripNode> trip = Optional.ofNullable(tripNodeFinder.findByAlbumIdIncludeDeleted(album_id));
+        if (trip.isPresent()) {
+            isInGroup = tripService.isPermittedToRead(trip.get(), user).join();
+        }
+
+
+        return albumRepository.list(album_id, (isInGroup || (user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
             PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
             return ok(Ebean.json().toJson(media, pathProperties));
         });
@@ -82,9 +99,21 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> uploadMedia(Http.Request request, Long user_id, Long album_id) {
+
+        User user = request.attrs().get(Attrs.USER);
+        // Check if the album is for a trip and if the person is in the trip
+        TripNodeFinder tripNodeFinder = new TripNodeFinder();
+        Boolean isInGroup = true;
+        Boolean ownsTrip = false;
+        Optional<TripNode> trip = Optional.ofNullable(tripNodeFinder.findByAlbumIdIncludeDeleted(album_id));
+        if (trip.isPresent()) {
+            isInGroup = tripService.isPermittedToWrite(trip.get(), user).join();
+            ownsTrip = trip.get().getUser().getId().equals(user.getId());
+        }
+
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
-        if (picture != null) {
+        if (picture != null && (isInGroup || ownsTrip)) {
             if (!fh.isValidFile(picture.getFilename())) {
                 return CompletableFuture.completedFuture(badRequest("Incorrect File Type"));
             }
@@ -98,8 +127,10 @@ public class MediaController extends Controller {
                 }
                 return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
             });
-        } else {
+        } else if (picture == null) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.MISSING_FILE));
+        } else {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.USER_NOT_PERMITTED));
         }
     }
 
@@ -281,13 +312,30 @@ public class MediaController extends Controller {
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> deleteSingleMedia(Http.Request request, Long user_id, Long album_id, Long media_id, Integer removeAll) {
-        return mediaRepository.remove(album_id, media_id, removeAll).thenApplyAsync(deleted_media_id -> {
-            //not found check, repository checks that both album and media exist
-            if(deleted_media_id == null) {
-                return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
-            }
-            return ok(APIResponses.SUCCESSFUL_MEDIA_DELETION);
-        });
+
+        User user = request.attrs().get(Attrs.USER);
+
+        // Check if the album is for a trip and if the person is in the trip
+        TripNodeFinder tripNodeFinder = new TripNodeFinder();
+        Boolean isOwner = false;
+        Boolean ownsTrip = false;
+        TripNode trip = tripNodeFinder.findByAlbumIdIncludeDeleted(album_id);
+        if (trip != null) {
+            isOwner = tripService.userOwnsTripGroup(user.getId(), trip.getId());
+            ownsTrip = trip.getUser().getId() == user.getId();
+        }
+
+        if (isOwner || trip == null || ownsTrip) {
+            return mediaRepository.remove(album_id, media_id, removeAll).thenApplyAsync(deleted_media_id -> {
+                //not found check, repository checks that both album and media exist
+                if(deleted_media_id == null) {
+                    return notFound(APIResponses.ALBUM_OR_MEDIA_NOT_FOUND);
+                }
+                return ok(APIResponses.SUCCESSFUL_MEDIA_DELETION);
+            });
+        } else {
+            return CompletableFuture.completedFuture(badRequest());
+        }
     }
 
     /**

@@ -11,7 +11,6 @@ import dto.shared.CreatedDTO;
 import dto.trip.*;
 
 import exceptions.CustomException;
-import finders.TripNodeFinder;
 import models.*;
 import net.fortuna.ical4j.model.Calendar;
 import org.slf4j.Logger;
@@ -23,8 +22,11 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import repository.UserRepository;
+import repository.CommentRepository;
 import service.MailgunService;
 import service.TripService;
+import utils.AsyncHandler;
 import utils.PDFCreator;
 import utils.iCalCreator;
 
@@ -32,7 +34,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -43,12 +48,17 @@ public class TripController extends Controller {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
+    private final UserRepository userRepository;
     private final MailgunService mailgunService;
+    private final CommentRepository commentRepository;
 
     @Inject
-    public TripController(TripService tripService, MailgunService mailgunService) {
+
+    public TripController(TripService tripService, UserRepository userRepository, MailgunService mailgunService, CommentRepository commentRepository) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
+        this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     /**
@@ -131,6 +141,22 @@ public class TripController extends Controller {
             e.printStackTrace();
             return CompletableFuture.completedFuture(internalServerError());
         }
+    }
+
+    @Authorization.RequireAuth
+    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId) {
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
+        CompletionStage<User> userStage = userRepository.getUserHandler(userId);
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+
+        // Get tripNode without nesting
+        CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
+        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripPdfiCalEmail(user, tripNode, getAllNodes(tripNode)).join());
+
+        return testStage.thenApplyAsync(userGroups -> created(APIResponses.ICAL_SUCCESS)).handle(AsyncHandler::handleResult);
     }
 
     /**
@@ -230,7 +256,8 @@ public class TripController extends Controller {
 
             // Format trip's usergroup
             List<NodeUserDTO> usergroupDTO = new ArrayList<>();
-            Grouping grouping = trip.getUserGroup();
+            Grouping grouping = tripService.getRootTripGrouping(tripId);
+
 
             if (grouping != null) {
                 for (UserGroup user : grouping.getUserGroups()) {
@@ -337,11 +364,11 @@ public class TripController extends Controller {
 
 
     /**
-     * //     * Soft Deletes a trip
-     * //     * @param req the http request
-     * //     * @param userId the id of the user
-     * //     * @param tripId the id of the destination
-     * //
+     * Soft Deletes a trip
+     * @param request the http request
+     * @param userId the id of the user
+     * @param tripId the id of the destination
+     *
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
@@ -390,7 +417,7 @@ public class TripController extends Controller {
      *         for unauthenticated, 403 for unauthorised
      */
     @Authorization.RequireAuthOrAdmin
-    public CompletionStage<Result> toggleGroupToTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
+    public CompletionStage<Result> addGroupToTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
         Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
         Optional<User> user = Optional.ofNullable(User.find.byId(userId));
         Optional<Grouping> group = Optional.ofNullable(Grouping.find.byId(groupId));
@@ -409,4 +436,68 @@ public class TripController extends Controller {
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
     }
 
+    /**
+     * Deletes all trip user statuses for trip and children of the trip
+     * @param group the group which need to have statuses deleted
+     * @param tNode the trip node to delete status for.
+     */
+    public void deleteTripUserStatus(Grouping group, TripNode tNode) {
+        List<Node> tripNodes = tripService.getChildrenByTripId(tNode.getId()).join();
+
+        for (Node node: tripNodes) {
+            tripService.deleteTripUserStatus(group, tNode);
+            if(node.getClass() == TripNode.class) {
+                deleteTripUserStatus(group, (TripNode) node);
+            }
+        }
+    }
+
+    /**
+     * Toggles a relation between a trip and a group
+     *
+     * @param request the http request
+     * @param tripId  the id of the trip object
+     * @param userId  the id of the user
+     * @param groupId the id of the group
+     * @return 200 for updating successfully, 404 for not found user/group/trip, 401
+     *         for unauthenticated, 403 for unauthorised
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> deleteGroupFromTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
+        Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
+        Optional<Grouping> group = Optional.ofNullable(Grouping.find.byId(groupId));
+
+        if (!node.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+
+        if (!group.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.GROUP_NOT_FOUND));
+        }
+
+        // Getting a list of owners for the group.
+        List<Long> owners = new ArrayList<>();
+        for (UserGroup userGroup : group.get().getUserGroups()) {
+            if (userGroup.isOwner()) {
+                owners.add(userGroup.getUser().getId());
+            }
+        }
+
+        // First check if the user exists
+        if (!user.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRAVELLER_NOT_FOUND));
+
+        // Check if the user is indeed a grouping owner.
+        } else if (!owners.contains(user.get().getId())) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.FORBIDDEN));
+        }
+
+        // Deletes the relating user status relating to the group to delete.
+        this.deleteTripUserStatus(group.get(), (TripNode) node.get());
+
+        // Now delete the group from the trip.
+        return tripService.deleteGroupFromTrip(node.get())
+                .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
+    }
 }

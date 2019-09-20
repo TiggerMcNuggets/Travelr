@@ -6,14 +6,9 @@
       :redo="redo"
       :canRedo="rollbackCanRedo"
       :canUndo="rollbackCanUndo"
-      :options="getHeaderOptions()"
+      :options="headerOptions()"
       enableBackButton
     />
-    <!-- <v-breadcrumbs :items="trip.navigation">
-      <template v-slot:item="props">
-        <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>-->
 
     <v-dialog v-model="addUsergroupDialogActive" width="500">
       <AddGroup
@@ -23,6 +18,12 @@
     </v-dialog>
     <v-layout row wrap>
       <v-flex md3 pa-2>
+        <v-breadcrumbs :items="trip.navigation" class="trip-breadcrumbs">
+          <template v-slot:item="props">
+            <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
+
         <v-form lazy-validation ref="form" v-model="isFormValid">
           <v-text-field
             v-model="trip.trip.name"
@@ -32,14 +33,6 @@
             required
           ></v-text-field>
           <v-layout flex>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn v-on:click="validateForm" icon v-on="on">
-                  <v-icon color="primary lighten-1">check_circle</v-icon>
-                </v-btn>
-              </template>
-              <span>Validate</span>
-            </v-tooltip>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn v-on:click="addTripNode(true)" icon v-on="on">
@@ -78,13 +71,17 @@
             <v-btn v-else @click="downloadTrip()" flat fab small dark color="primary lighten-1">
               <v-icon>calendar_today</v-icon>
             </v-btn>
+            <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip" flat fab small dark color="primary lighten-1" >
+              <v-icon>email</v-icon>
+            </v-btn>
           </v-layout>
 
-          <!-- <v-container>
-        <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">Cannot have same destination
-          consecutive.
-        </v-alert>
-          </v-container>-->
+          <v-container>
+            <v-alert class="same-dist-alert" :value="hasAdjacentIdentical" color="error">
+              Cannot have same destination
+              consecutive.
+            </v-alert>
+          </v-container>
 
           <v-timeline align-top dense>
             <draggable class="list-group" tag="ul" v-model="trip.trip.nodes">
@@ -186,7 +183,7 @@
       </v-flex>
 
       <v-flex md5 pa-2>
-        <TripDetails/>
+        <TripDetails :trip="trip"/>
       </v-flex>
 
       <v-flex md4 pa-2>
@@ -217,12 +214,6 @@
   display: flex;
   justify-content: flex-end;
 }
-
-/* .trip-timeline-item-width {
-  min-width: 300px;
-  width: 25%;
-  padding: 0;
-} */
 
 .trip-map {
   width: 55%;
@@ -345,9 +336,42 @@ export default {
       return arrivalBeforeDepartureAndDestinationsOneAfterTheOther(
         this.trip.trip.nodes
       );
+    },
+
+    isTripOwner() {
+      return this.selectedTrip.root.user.id === this.$store.getters.getUser.id;
+    },
+
+    isGroupOwner() {
+      let isOwn = false;
+      this.selectedTrip.trip.usergroup.forEach(user => {
+        if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
+          isOwn = true;
+        }
+      });
+      return isOwn;
     }
   },
   methods: {
+    /**
+     * Gets the header optoins for the view trip page.
+     */
+    headerOptions() {
+      return this.selectedTrip &&
+        this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+        (this.isTripOwner || this.isGroupOwner || this.isAdmin)
+        ? [
+            {
+              action: () => {
+                this.addUsergroupDialogActive = true;
+              },
+              icon: "people_alt",
+              title: "Manage Group"
+            }
+          ]
+        : [];
+    },
+
     /**
      * Returns a color based on the node type
      * @param the node ("destination or trip")
@@ -358,17 +382,6 @@ export default {
       } else {
         return "blue";
       }
-    },
-
-    getHeaderOptions() {
-      return [
-        {
-          action: () => {
-            this.addUsergroupDialogActive = true;
-          },
-          icon: "people_alt"
-        }
-      ];
     },
 
     /**
@@ -629,6 +642,10 @@ export default {
       }
 
       return trip;
+    },
+
+    emailTrip() {
+      tripRepo.emailPdfAndICal(this.userId, this.tripId);
     },
 
     getSelectedTrip(tripId) {

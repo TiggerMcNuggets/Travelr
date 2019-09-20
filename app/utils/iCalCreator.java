@@ -21,17 +21,13 @@ public class iCalCreator {
      * @return a Calendar object from the trip provided
      */
     public Calendar createCalendarFromTripDestinations(TripNode trip, List<HashMap<TripNode, DestinationNode>> destinations) {
-
         Calendar calendar = new Calendar();
         calendar.getProperties().add(new ProdId(trip.getId().toString()));
         calendar.getProperties().add(Version.VERSION_2_0);
         calendar.getProperties().add(CalScale.GREGORIAN);
-
         int UID = 0;
-
         for (HashMap destination: destinations) {
             DestinationNode node = (DestinationNode) destination.get(destination.keySet().toArray()[0]);
-
             if (node.getArrivalDate() != 0 && node.getDepartureDate() != 0) {
                 //Addition of 24*60*60 will add one day to the date which in turn will make it export to .ics file with correct dates.
                 Date start = new Date(new Date((node.getArrivalDate() + 24*60*60) * 1000L));
@@ -55,10 +51,7 @@ public class iCalCreator {
             //Manually generating UID - unsure what these are but an error occurs if one is not provided.
             UID++;
         }
-
         calendar.validate();
-
         return calendar;
-
     }
 }

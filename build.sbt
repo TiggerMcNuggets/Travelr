@@ -57,11 +57,6 @@ libraryDependencies ++= Seq (
   javaWs
 )
 
-// Rest-Assured testing
-val appDependencies = Seq(
-  "com.jayway.restassured" % "rest-assured" % "1.7" % "test"
-)
-
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365
 scalacOptions in (Compile, doc) += "-no-java-comments"
 
