@@ -76,16 +76,19 @@ export default {
   },
 
   methods: {
+    /**
+     * Calls the delete method then closes the deletion dialog
+     */
     deleteAndCloseDialog(deleteAll) {
       this.confirmDeletionDialogActive = false;
       this.deleteMedia(this.clickedImage, deleteAll);
       this.viewMediaDialogActive = false;
     },
+
+    /**
+     * Updates the media caption and privacy settings
+     */
     updateMedia(clickedImage) {
-      let payload = {
-        "is_public": clickedImage.is_public,
-        "caption": clickedImage.caption
-      }
       mediaRepository
         .updateMedia(this.trip.root.user.id, clickedImage.id, clickedImage)
         .then(() => {
@@ -93,6 +96,9 @@ export default {
         });
     },
 
+    /**
+     * Deletes the passed in from either the album or all albums
+     */
     deleteMedia(clickedImage, deleteAll) {
       mediaRepository
         .deleteMedia(
@@ -105,11 +111,10 @@ export default {
           this.getTripImages();
         });
     },
-    deleteAndCloseDialog(deleteAll) {
-      this.confirmDeletionDialogActive = false;
-      this.deleteMedia(this.clickedImage, deleteAll);
-      this.viewMediaDialogActive = false;
-    },
+
+    /**
+     * Gets the actual image data of the image object provided
+     */
     openImage(image) {
         // Trying to open an photo/video/media
         const myImage = new Image();
