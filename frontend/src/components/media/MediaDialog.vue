@@ -143,11 +143,7 @@ export default {
       return this.isAdminUser || this.isMyProfile || clickedImage.userID == store.getters.getUser.id;
     },
     async updateAlbums() {
-      console.log("AHHHHH");
-      console.log(this.$route.params.id);
-      console.log(this.clickedImage.id);
       for (let album of this.selectedAlbums) {
-      console.log(album.id);
         try {
           await mediaRepository.moveMediaToAlbum(
             this.$route.params.id,

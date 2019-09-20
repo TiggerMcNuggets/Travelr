@@ -82,9 +82,13 @@ export default {
       this.viewMediaDialogActive = false;
     },
     updateMedia(clickedImage) {
+      let payload = {
+        "is_public": clickedImage.is_public,
+        "caption": clickedImage.caption
+      }
       mediaRepository
         .updateMedia(this.trip.root.user.id, clickedImage.id, clickedImage)
-        .then(resp => {
+        .then(() => {
           this.getTripImages();
         });
     },
@@ -107,8 +111,6 @@ export default {
       this.viewMediaDialogActive = false;
     },
     openImage(image) {
-        console.log("IN THIS PART 1")
-        console.log(image);
         // Trying to open an photo/video/media
         const myImage = new Image();
         myImage.src =
@@ -129,7 +131,6 @@ export default {
         )
         .then(response => {
           this.files = response.data.mediaItems;
-          console.log(response.data.mediaItems);
         });
     }
   },
@@ -139,8 +140,6 @@ export default {
       this.getTripImages();
     }
     this.isAdminUser = store.getters.getIsUserAdmin;
-    console.log(this.isAdminUser);
-    console.log(store.getters.getIsUserAdmin);
   }
   
 };
