@@ -103,7 +103,7 @@ public class MailgunService {
         FilePart<Source<ByteString, ?>> fp = new FilePart<>("attachment", iCalFile.getName(), "text/plain", fileSource);
 
         Source<ByteString, ?> pdfSource = FileIO.fromPath(Paths.get(tripPdf.getAbsolutePath()));
-        FilePart<Source<ByteString, ?>> fp2 = new FilePart<>("attachment", tripPdf.getName(), "text/plain", pdfSource);
+        FilePart<Source<ByteString, ?>> fp2 = new FilePart<>("attachment", tripPdf.getName(), "application/pdf", pdfSource);
 
         return request.post(Source.from(Arrays.asList(fp, fp2))).thenApplyAsync(WSResponse::getStatus);
     }
@@ -126,7 +126,6 @@ public class MailgunService {
         JsonObject recipientVariableFields = new JsonObject();
         recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
         recipientVariableFields.addProperty("welcomeURL", websiteUrl);
-
 
         JsonObject recipientVariable = new JsonObject();
         recipientVariable.add(recipient.getEmail(), recipientVariableFields);
