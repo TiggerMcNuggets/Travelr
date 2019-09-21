@@ -6,29 +6,33 @@
 export default {
   data() {
     return {
-      screenWidth: undefined,
-      screenHeight: undefined
+      windowsizes: {width: 0, height: 0}
     };
   },
 
-  /**
-   * Initializes the viewing browsers width and height as variables
-   */
   created() {
-    this.screenWidth = screen.width;
-    this.screenHeight = screen.height;
+    this.initialize();
+    window.addEventListener('resize', this.initialize);
   },
+
   methods: {
+    /**
+     * Initializes required variables within the page
+     */
+    initialize() {
+      this.windowsizes.width = window.innerWidth;
+      this.windowsizes.height = window.innerHeight;
+    }
+  },
+
+  computed: {
+
     /**
      * Checks to see whether the screen size is small
      * @return {boolean} true if screen is less than 1080px, false if not
      */
     isSmall() {
-      if (this.screenWidth < 1080) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.windowsizes.width < 1080;
     },
 
     /**
@@ -37,11 +41,7 @@ export default {
      * and less than 1536px, false if not
      */
     isMedium() {
-      if (this.screenWidth >= 1080 && this.screenWidth < 1536) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.windowsizes.width >= 1080 && this.windowsizes.width < 1536;
     },
 
     /**
@@ -50,11 +50,7 @@ export default {
      * 1536px , false if not
      */
     isLarge() {
-      if (this.screenWidth >= 1536) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.windowsizes.width >= 1536;
     }
   }
 };
