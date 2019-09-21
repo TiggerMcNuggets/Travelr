@@ -221,7 +221,7 @@ export default {
   },
 
   created() {
-    this.initialize();
+    this.initialize;
     if (
       !this.traveller.userProfilePhoto ||
       this.traveller.userProfilePhoto == "defaultPic.png"
