@@ -16,12 +16,12 @@
           :draggable="false"
           :icon="destination.icon"
         />
-        <!--<GmapPolyline-->
-          <!--v-for="path in paths"-->
-          <!--:key="path.id"-->
-          <!--:options="{path: path, strokeColor: path[0].strokeColor}"-->
-        <!--&gt;-->
-        <!--</GmapPolyline>-->
+        <GmapPolyline
+          v-for="path in allPaths"
+          :key="path.id"
+          :options="{path: path.path, strokeColor: path.color}"
+        >
+        </GmapPolyline>
       </GmapMap>
     </v-flex>
   </v-layout>
@@ -38,7 +38,8 @@
   import {GoogleMapLightStyle} from "../../assets/google-map-light-style"
 
   // resources
-  import blueMarker from "../../assets/blue-google-maps-marker.svg";
+  import redMarker from "../../assets/red_map_icon.svg";
+  import blueMarker from "../../assets/blue_map_icon.svg";
 
   export default {
     data() {
@@ -62,7 +63,19 @@
           position: {lat: 0, lng: 0},
           open: false
         },
-        blueMarker: blueMarker
+        blueMarker: blueMarker,
+        redMarker: redMarker,
+        blueLineColor: '#1976d2',
+        redLineColor: '#ff5555ff',
+        testPath: [{
+          lat: 77,
+          lng: 77
+                  },
+          {
+            lat: 66,
+            lng: 66
+          },
+                  ]
       };
     },
 
@@ -101,9 +114,13 @@
               };
               singleMarker.destination = this.nodes[i];
               singleMarker.position = markerPosition;
-              //add line here to give it a red marker if adjacent to a trip
-              //if (this.isAdjacentToTrip(i, this.nodes)) {
-              singleMarker.icon = this.blueMarker;
+              if (this.isAdjacentToTrip(i)) {
+                singleMarker.icon = this.redMarker;
+                singleMarker.type = "trip"
+              } else {
+                singleMarker.icon = this.blueMarker;
+                singleMarker.type = "destination"
+              }
               mapMarkers.push(singleMarker)
           }
         }
@@ -114,26 +131,25 @@
        */
       allPaths() {
         let paths = [];
-        //paths are created from current destination location and the one previous, why list starts from second element
-        //here
-        for (let i = 1; i < this.nodes.length; i++) {
-          let singlepath = new Object();
-          if (this.nodes[i].type === "destination") {
-            let markerPosition = {
-              lat: this.nodes[i].destination.latitude,
-              lng: this.nodes[i].destination.longitude
-            };
-            singleMarker.destination = this.nodes[i];
-            singleMarker.position = markerPosition;
-            //add line here to give it a red marker if adjacent to a trip
-            //if (this.isAdjacentToTrip(i, this.nodes)) {
-            singleMarker.icon = this.blueMarker;
-            mapMarkers.push(singleMarker)
-          }
-        }
-        return mapMarkers;
-      }
+        //paths are created between current marker and next marker, why for loop stops at second to last marker
+        for (let i = 0; i < (this.allMarkers.length - 1); i++) {
+            let singlePath = new Object();
+            let path = [];
+            let point1 = this.allMarkers[i].position;
+            let point2 = this.allMarkers[i+1].position;
+            path.push(point1, point2);
+            singlePath.path = path;
 
+            if(this.allMarkers[i].type === "trip" && this.allMarkers[i+1].type === "trip"){
+              singlePath.color = this.redLineColor;
+            } else {
+              singlePath.color = this.blueLineColor;
+            }
+            paths.push(singlePath);
+          }
+          return paths;
+
+        }
 
     },
 
@@ -307,16 +323,17 @@
 
 
     // },
-      isAdjacentToTrip(positionOfDestination, allNodes){
+      isAdjacentToTrip(positionOfDestination){
         let previousIndex = positionOfDestination - 1;
         let nextIndex = positionOfDestination + 1;
         if(previousIndex > 0) {
-          let previousNode = allNodes[previousIndex];
+          let previousNode = this.nodes[previousIndex];
           if(previousNode.type === "trip"){
+            console.log("HERE!");
             return true;
           }
-        } else if(nextIndex < allNodes.length){
-          let nextNode = allNodes[nextIndex];
+        } else if(nextIndex < this.nodes.length){
+          let nextNode = this.nodes[nextIndex];
           if(nextNode.type === "trip"){
             return true;
           }
