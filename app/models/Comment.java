@@ -44,7 +44,7 @@ public class Comment extends BaseModel {
         this.tripNode = tripNode;
         this.user = user;
         commentEmojis = new ArrayList<>();
-        timestamp = new Date().getTime();
+        timestamp = System.currentTimeMillis() / 1000L;
     }
 
     /**
