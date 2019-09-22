@@ -98,7 +98,7 @@
         },
         async mounted() {
             // NOTE: needs userId as a parameter in the data component that is using it!!
-            await this._getTrips(this.userId);
+            await this._getTrips(this.$route.params.id);
         },
     };
 </script>

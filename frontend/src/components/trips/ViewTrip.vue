@@ -425,7 +425,15 @@ export default {
               title: "Add Photos"
             }
           ]
-        : [];
+        : [
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
+            }
+          ];
     },
 
     /**
@@ -733,7 +741,6 @@ export default {
       this.trip = deepCopy(this.selectedTrip);
       this.rollbackSetPreviousBody(tripAssembler(this.trip));
       this.previousTripId = this.trip.trip.id;
-
       this.trip.trip = this.tripWithDates(this.trip.trip);
     });
     }
