@@ -12,16 +12,14 @@ import finders.TripNodeFinder;
 import finders.UserFinder;
 import io.ebean.Ebean;
 import io.ebean.text.PathProperties;
-import models.Album;
-import models.Destination;
-import models.TripNode;
-import models.User;
+import models.*;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Files;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.twirl.api.Content;
 import repository.AlbumRepository;
 import repository.MediaRepository;
 import repository.PersonalPhotoRepository;
@@ -31,6 +29,7 @@ import utils.FileHelper;
 import javax.inject.Inject;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -84,8 +83,10 @@ public class MediaController extends Controller {
 
 
         return albumRepository.list(album_id, (isInGroup || (user.id).equals(user_id)) || isAdmin).thenApplyAsync(media -> {
-            PathProperties pathProperties = PathProperties.parse("id, uriString, is_public, mediaType, caption");
-            return ok(Ebean.json().toJson(media, pathProperties));
+            ObjectMapper mapper = new ObjectMapper();
+            AlbumContentRes res = new AlbumContentRes(media, user);
+            JsonNode jsonResponse = mapper.valueToTree(res);
+            return ok(jsonResponse);
         });
     }
 
@@ -110,7 +111,6 @@ public class MediaController extends Controller {
             isInGroup = tripService.isPermittedToWrite(trip.get(), user).join();
             ownsTrip = trip.get().getUser().getId().equals(user.getId());
         }
-
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null && (isInGroup || ownsTrip)) {
@@ -178,8 +178,7 @@ public class MediaController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> getUsersAlbums(Http.Request request, Long user_id) {
 
-        return albumRepository.listUserAlbums(user_id).thenApplyAsync(albums -> {
-
+        return albumRepository.listUserAlbumsWithTripAlbums(user_id).thenApplyAsync(albums -> {
             GetAlbumsRes response = new GetAlbumsRes(request, albums);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonResponse = mapper.valueToTree(response.getGetAlbumRes());
@@ -236,6 +235,7 @@ public class MediaController extends Controller {
     @Authorization.RequireAuth
     public CompletionStage<Result> updateUserMedia(Http.Request request, Long user_id, Long media_id) {
         Form<UpdateMediaReq> updateMediaForm = formFactory.form(UpdateMediaReq.class).bindFromRequest(request);
+
 
         if (updateMediaForm.hasErrors()) {
             return CompletableFuture.completedFuture(badRequest("Error updating media"));

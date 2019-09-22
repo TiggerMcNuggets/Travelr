@@ -141,7 +141,7 @@ export default {
         ];
         
         //Checking the media size to remove from Mobile
-        if (!this.isSmall) {
+        if (!this.isExtraSmall && !this.isSmall) {
           menuOptions.push(
             {
               name: "Destination Map",

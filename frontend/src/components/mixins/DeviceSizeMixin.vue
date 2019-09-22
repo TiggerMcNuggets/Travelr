@@ -26,13 +26,21 @@ export default {
   },
 
   computed: {
+    /**
+     * Checks to see whether the screen size is extra small
+     * @return {boolean} true if screen is less than 600px, false if not
+     */
+    isExtraSmall() {
+      return this.windowSizes.width < 600;
+    },
 
     /**
      * Checks to see whether the screen size is small
-     * @return {boolean} true if screen is less than 1080px, false if not
+     * @return {boolean} true if screen is greater than or equal to 600px 
+     * and less than 1080px, false if nott
      */
     isSmall() {
-      return this.windowSizes.width < 1080;
+      return this.windowSizes.width >= 600 && this.windowSizes.width < 1080;
     },
 
     /**
