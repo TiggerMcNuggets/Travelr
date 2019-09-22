@@ -90,7 +90,6 @@
 </template>
 
 <script>
-import MediaFilter from "../components/media/MediaFilter";
 import MediaGrid from "../components/media/MediaGrid";
 import PageHeader from "../components/common/header/PageHeader";
 import MediaUpload from "../components/media/MediaUpload";
@@ -98,7 +97,6 @@ import AlbumCreate from "../components/media/AlbumCreate";
 import AlbumEdit from "../components/media/AlbumEdit";
 import MediaDialog from "../components/media/MediaDialog";
 import ConfirmDelete from "../components/common/ConfirmDialog";
-import DeviceSizeMixin from "../components/mixins/DeviceSizeMixin";
 
 import base_url from "../repository/BaseUrl";
 import { deepCopy } from "../tools/deepCopy";
@@ -133,7 +131,6 @@ export default {
   },
 
   components: {
-    MediaFilter,
     MediaGrid,
     PageHeader,
     MediaUpload,
