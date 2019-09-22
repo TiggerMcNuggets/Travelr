@@ -42,7 +42,8 @@ Feature: GetTraveller
         "email": "j@j.s",
         "accountType": 0,
         "userProfilePhoto": "defaultPic.png",
-        "defaultAlbumId": 2
+        "defaultAlbumId": 2,
+        "slack":false
       }
       """
 
