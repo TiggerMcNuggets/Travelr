@@ -128,11 +128,11 @@ public class CommentController {
             page = Integer.parseInt(request.getQueryString("page"));
             comments = Integer.parseInt(request.getQueryString("comments"));
         } catch (Error e) {
-            page = 1;
-            comments = 10;
+            page = 0;
+            comments = 5;
         } catch (Exception e) {
-            page = 1;
-            comments = 10;
+            page = 0;
+            comments = 5;
         }
         User user = request.attrs().get(Attrs.ACCESS_USER);
         Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
