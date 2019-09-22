@@ -1,87 +1,31 @@
 <template>
-  <div>
-    <div class="section">
-      <!-- Right side of page header with optional back button and page title -->
-      <div class="page__title_container">
-        <v-btn
-          color="error"
-          flat
-          fab
-          @click="$router.go(-1)"
-          v-if="enableBackButton && !backButtonOverride"
-        >
-          <v-icon class="back-button-icon">keyboard_arrow_left</v-icon>
-        </v-btn>
-        <v-btn
-          color="error"
-          flat
-          fab
-          @click="backButtonOverride"
-          v-if="enableBackButton && backButtonOverride"
-        >
-          <v-icon class="back-button-icon">keyboard_arrow_left</v-icon>
-        </v-btn>
-
-        <h1 class="page-title" :class="enableBackButton ? 'h1_space' : ''">{{title}}</h1>
-      </div>
-
-      <v-spacer/>
-
-      <!-- Optional undo redo buttons -->
-      <UndoRedoButtons
-        v-if="!disableUndoRedo"
-        :canRedo="canRedo()"
-        :canUndo="canUndo()"
-        :undo="undo"
-        :redo="redo"
-      ></UndoRedoButtons>
-
-      <!-- Page options such as add or search to be displayed on the right side of the header -->
-      <div v-if="options">
-        <v-tooltip bottom v-for="(option, i) in options" :key="i">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-on="on"
-              color="error"
-              flat
-              fab
-              class="header-button flat"
-              @click="option.action"
-            >
-              <v-icon dark>{{option.icon}}</v-icon>
-            </v-btn>
-          </template>
-          <span>{{option.title}}</span>
-        </v-tooltip>
-      </div>
-
-      <div v-if="multiOptions">
-        <v-tooltip bottom v-for="(option, i) in multiOptions" :key="i">
-          <template v-slot:activator="{ onHover }">
-            <v-menu>
-              <template v-slot:activator="{ on }">
-                <v-btn class="header-button" icon v-on="on" color="error" flat fab>
-                  <v-icon dark>{{option.icon}}</v-icon>
-                </v-btn>
-              </template>
-
-              <v-list>
-                <v-list-tile
-                  v-for="(action, i) in option.actions"
-                  :key="i"
-                  @click="action.callback"
-                >
-                  <v-list-tile-title>{{ action.text }}</v-list-tile-title>
-                </v-list-tile>
-              </v-list>
-            </v-menu>
-          </template>
-          <span>{{option.title}}</span>
-        </v-tooltip>
-      </div>
-    </div>
-
-    <v-divider class="photo-header-divider"></v-divider>
+  <div v-if="isExtraSmall">
+    <PageHeaderMobile
+      :title="title"
+      :options="options"
+      :multiOptions="multiOptions"
+      :undo="undo"
+      :redo="redo"
+      :canUndo="canUndo"
+      :canRedo="canRedo"
+      :disableUndoRedo="disableUndoRedo"
+      :enableBackButton="enableBackButton"
+      :backButtonOverride="backButtonOverride"
+    />
+  </div>
+  <div v-else>
+    <PageHeaderDesktop
+      :title="title"
+      :options="options"
+      :multiOptions="multiOptions"
+      :undo="undo"
+      :redo="redo"
+      :canUndo="canUndo"
+      :canRedo="canRedo"
+      :disableUndoRedo="disableUndoRedo"
+      :enableBackButton="enableBackButton"
+      :backButtonOverride="backButtonOverride"
+    />
   </div>
 </template>
 
@@ -104,12 +48,17 @@
 
 <script>
 import UndoRedoButtons from "../../common/rollback/UndoRedoButtons.vue";
+import DeviceSizeMixin from "../../mixins/DeviceSizeMixin.vue";
+import PageHeaderDesktop from "./PageHeaderDesktop.vue";
+import PageHeaderMobile from "./PageHeaderMobile.vue";
 
 export default {
   // Generic page header to be reused on pages and make consistent.
   name: "PageHeader",
-
+  mixins: [DeviceSizeMixin],
   components: {
+    PageHeaderDesktop,
+    PageHeaderMobile,
     UndoRedoButtons
   },
 
