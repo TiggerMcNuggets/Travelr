@@ -6,13 +6,13 @@
 export default {
   data() {
     return {
-      windowsizes: {width: 0, height: 0}
+      windowSizes: {width: 0, height: 0}
     };
   },
 
   created() {
     this.initialize();
-    window.addEventListener('resize', this.initialize);
+    window.addEventListener("resize", this.initialize);
   },
 
   methods: {
@@ -20,8 +20,8 @@ export default {
      * Initializes required variables within the page
      */
     initialize() {
-      this.windowsizes.width = window.innerWidth;
-      this.windowsizes.height = window.innerHeight;
+      this.windowSizes.width = window.innerWidth;
+      this.windowSizes.height = window.innerHeight;
     }
   },
 
@@ -32,7 +32,7 @@ export default {
      * @return {boolean} true if screen is less than 1080px, false if not
      */
     isSmall() {
-      return this.windowsizes.width < 1080;
+      return this.windowSizes.width < 1080;
     },
 
     /**
@@ -41,7 +41,7 @@ export default {
      * and less than 1536px, false if not
      */
     isMedium() {
-      return this.windowsizes.width >= 1080 && this.windowsizes.width < 1536;
+      return this.windowSizes.width >= 1080 && this.windowSizes.width < 1536;
     },
 
     /**
@@ -50,7 +50,7 @@ export default {
      * 1536px , false if not
      */
     isLarge() {
-      return this.windowsizes.width >= 1536;
+      return this.windowSizes.width >= 1536;
     }
   }
 };

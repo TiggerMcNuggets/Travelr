@@ -143,10 +143,12 @@ export default {
         //Checking the media size to remove from Mobile
         if (!this.isSmall) {
           menuOptions.push(
-            { name: "Destination Map",
-            icon: "map",
-            link: "/destinations"
-          });
+            {
+              name: "Destination Map",
+              icon: "map",
+              link: "/destinations"
+            }
+          );
         }
         menuOptions.push(
           {

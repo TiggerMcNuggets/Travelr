@@ -42,10 +42,7 @@ export default {
         ];
         //Checking the media size to remove from Mobile
         if (!this.isSmall()) {
-          console.log("DOING STUFF");
           menuOptions += [{ name: "Destination Map", icon: "map", link: "/destinations" }]
-        } else {
-          console.log("NOT DOING STUFF");
         }
         menuOptions += [
           {
