@@ -89,4 +89,13 @@ public class Comment extends BaseModel {
     public void removeCommentEmoji(CommentEmoji commentEmoji) {
         this.commentEmojis.remove(commentEmoji);
     }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }
