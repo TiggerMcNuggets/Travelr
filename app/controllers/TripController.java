@@ -464,7 +464,6 @@ public class TripController extends Controller {
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> deleteGroupFromTrip(Http.Request request, Long tripId, Long userId, Long groupId) {
-        System.out.println("ran");
         Optional<Node> node = Optional.ofNullable(Node.find.byId(tripId));
         Optional<User> user = Optional.ofNullable(User.find.byId(userId));
         Optional<Grouping> group = Optional.ofNullable(Grouping.find.byId(groupId));
