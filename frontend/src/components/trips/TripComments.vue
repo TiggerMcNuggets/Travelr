@@ -14,7 +14,7 @@
           <v-layout>
             <emoji-picker v-model="commentText" />
             <v-btn icon @click="postComment">
-              <v-icon color="primary lighten-1">send</v-icon>
+              <v-icon color="primary lighten-1" :disabled="commentText.length < 1">send</v-icon>
             </v-btn>
           </v-layout>
         </v-layout>
@@ -160,13 +160,6 @@ export default {
         return listOfNames;
     },
 
-    postCommentEmoji(commentId, emoji) {
-        console.log(emoji.toString());
-
-        // TODO: uncomment when the GET request comes in
-        // commentRepository.postCommentEmoji(commentId, emoji).then(res => console.log(res) )
-    },
-
     /**
      * Returns the timestamp as a formatted string
      */
@@ -232,7 +225,24 @@ export default {
         });
     },
 
-    /**
+    postCommentEmoji(commentId, emoji) {
+        const e = {
+            "emoji": emoji
+        };
+        console.log(e);
+        commentRepository.addEmojiToComment(
+            this.$store.getters.getUser.id,
+            this.trip.trip.id,
+            commentId,
+            e
+        ).then(res => {
+            console.log(res);
+            this.getComments();
+        } )
+    },
+
+
+      /**
      * Returns a users profile image file given the profile photo filename and user id.
      */
     getProfileImageURL(userProfilePhoto, userId) {

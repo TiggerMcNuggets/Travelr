@@ -24,6 +24,21 @@ export default {
     );
   },
 
+    /**
+     *
+     * Calls the PUT API to add a reaction (emoji) to a comment
+     * @param userId {number}
+     * @param tripId {number}
+     * @param commentId {number}
+     * @param emoji {Object}
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+  addEmojiToComment(userId, tripId, commentId, emoji) {
+    return Repository.put(
+        `/users/${userId}/trips/${tripId}/comments/${commentId}/emoji`, emoji
+    )
+  },
+
   /**
    * Updates a comment on a trip for a particular user.
    * @param {Number} userId The user id which is posting the comment
@@ -61,4 +76,7 @@ export default {
       payload
     );
   }
+
+
+
 };
