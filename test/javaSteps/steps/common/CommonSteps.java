@@ -105,7 +105,7 @@ public class CommonSteps  {
     }
 
     private User createTestUser() {
-        User user = new User("Test", "User", "test.user@testuser.com", 1);
+        User user = new User("Test", "User", "sdf@sdf.sdf", 1);
         user.insert();
 
         List<TravellerType> userTravellerTypes = new ArrayList<>();

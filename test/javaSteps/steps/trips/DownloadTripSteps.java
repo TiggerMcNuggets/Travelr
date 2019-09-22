@@ -13,4 +13,10 @@ public class DownloadTripSteps {
         state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/trips/%s/iCal", state.getUser().getId(), state.getTrip().getId())));
         state.getRequest().method("GET");
     }
+
+    @When("I want to download the trip pdf")
+    public void i_want_to_download_the_trip_pdf() {
+        state.getRequest().uri((String.format("http://localhost:9000/api/users/%s/trips/%s/PDF", state.getUser().getId(), state.getTrip().getId())));
+        state.getRequest().method("GET");
+    }
 }
