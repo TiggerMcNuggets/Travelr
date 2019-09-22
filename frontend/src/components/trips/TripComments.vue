@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 ma-2>
-      <v-flex v-if="trip.trip.usergroup" mt-3 mb-3>
+      <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0" mt-3 mb-3>
         <h2>Comments ({{commentsLength}})</h2>
       </v-flex>
       <v-flex v-else>
@@ -9,7 +9,7 @@
         <p>Please add a group first.</p>
       </v-flex>
 
-      <v-flex v-if="trip.trip.usergroup">
+      <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0">
         <v-flex class="user-comment">
           <v-layout class="post-comment-container">
             <v-list-tile-avatar>
@@ -35,7 +35,11 @@
                 <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
                 <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
               </v-flex>
-              <v-icon color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+              <v-icon
+                v-if="isAdminOrOwner"
+                color="red lighten-1"
+                @click="deleteComment(comment.id)"
+              >delete</v-icon>
             </v-layout>
             <v-divider></v-divider>
 
@@ -66,6 +70,7 @@
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
 import dateTime from "../common/dateTime/dateTime";
+import StoreTripsMixin from "../mixins/StoreTripsMixin";
 
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let commentRepository = RepositoryFactory.get("comment");
@@ -73,9 +78,7 @@ let commentRepository = RepositoryFactory.get("comment");
 export default {
   name: "TripComments",
 
-  props: {
-    trip: Object
-  },
+  mixins: [StoreTripsMixin],
 
   data() {
     return {
@@ -87,7 +90,19 @@ export default {
     };
   },
 
-  computed: {},
+  computed: {
+    isAdminOrOwner() {
+      let isOwner = false;
+      if (this.selectedTrip) {
+        this.selectedTrip.trip.usergroup.forEach(user => {
+          if (this.$store.getters.getUser.id === user.userId) {
+            isOwner = user.owner;
+          }
+        });
+      }
+      return isOwner || this.$store.getters.getIsUserAdmin;
+    }
+  },
 
   methods: {
     /**
@@ -120,7 +135,7 @@ export default {
       commentRepository
         .deleteComment(
           this.$store.getters.getUser.id,
-          this.trip.trip.id,
+          this.selectedTrip.trip.id,
           commentId
         )
         .then(() => {
@@ -138,10 +153,14 @@ export default {
      */
     getComments() {
       commentRepository
-        .getComments(this.$store.getters.getUser.id, this.trip.trip.id, {
-          page: this.page,
-          comments: 5
-        })
+        .getComments(
+          this.$store.getters.getUser.id,
+          this.selectedTrip.trip.id,
+          {
+            page: this.page,
+            comments: 5
+          }
+        )
         .then(response => {
           this.commentsLength = response.data.commentsLength;
           this.userComments = this.userComments.concat(response.data.comments);
@@ -158,7 +177,7 @@ export default {
       commentRepository
         .postComment(
           this.$store.getters.getUser.id,
-          this.trip.trip.id,
+          this.selectedTrip.trip.id,
           commentBody
         )
         .then(() => {
@@ -188,7 +207,7 @@ export default {
   },
 
   watch: {
-    trip: function() {
+    selectedTrip: function() {
       this.page = 0;
       this.userComments = [];
       this.getComments();
@@ -201,7 +220,6 @@ export default {
   },
 
   mounted() {
-    this.getComments();
     window.addEventListener("scroll", () => {
       this.loading = this.bottomVisible();
     });
