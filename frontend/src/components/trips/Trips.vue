@@ -134,7 +134,6 @@
     components: {
         CreateTrip: CreateTrips,
         PageHeader,
-        EmojiPicker: EmojiPicker
     },
 
     mixins: [
@@ -186,13 +185,6 @@
       hasSlack() {
         return store.getters.getUser.slack;
       }
-    },
-
-    // child components
-    components: {
-      CreateTrip: CreateTrips,
-      PageHeader,
-      CreateSlackChannelButton
     },
 
     methods: {

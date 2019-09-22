@@ -2,13 +2,13 @@
   <v-layout row wrap>
     <v-flex xs12 ma-2>
       <v-flex mt-3 mb-3>
-        <h2>Comments (3)</h2>
+        <h2>Comments ({{commentsLength}})</h2>
       </v-flex>
 
       <v-flex>
         <v-layout class="post-comment-container">
           <v-list-tile-avatar>
-            <img :src="getProfileImageURL()" />
+            <img :src="getProfileImageURL()">
           </v-list-tile-avatar>
 
           <v-layout>
@@ -24,9 +24,13 @@
         <v-card class="user-comment">
           <v-layout class="comment-header">
             <v-list-tile-avatar>
-              <img :src="getProfileImageURL(comment.profilePic)" />
+              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
             </v-list-tile-avatar>
-            <p>{{`${comment.firstName} ${comment.lastName}`}}</p>
+            <v-flex>
+              <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
+              <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
+            </v-flex>
+            <v-icon color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
           </v-layout>
           <v-divider></v-divider>
 
@@ -56,6 +60,19 @@
         </div>
       </v-flex>
     </v-flex>
+
+    <v-flex v-if="userComments.length < commentsLength">
+      <v-progress-circular
+        :indeterminate="loading"
+        :rotate="0"
+        :size="32"
+        :value="0"
+        :width="4"
+        color="light-blue"
+      ></v-progress-circular>
+    </v-flex>
+
+    <div ref="commentEnd"></div>
   </v-layout>
 </template>
 
@@ -77,6 +94,7 @@
 <script>
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
+import dateTime from "../common/dateTime/dateTime";
 
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 let commentRepository = RepositoryFactory.get("comment");
@@ -98,45 +116,31 @@ export default {
   data() {
     return {
       commentText: "",
-      userComments: [
-        {
-          id: 1,
-          userId: 2,
-          firstName: "Bob",
-          lastName: "Ross",
-          comment: "The joy of painting.",
-          profilePic: "defaultPic.png",
-          date: "3 days ago",
-          emojis: []
-        },
-        {
-          id: 2,
-          userId: 1,
-          firstName: "Joe",
-          lastName: "Bloggs",
-          comment: "Some really awesome reply to the above comment.",
-          profilePic: "defaultPic.png",
-          date: "4 days ago",
-          emojis: [{emoji: "🤤", users: ["Lorenzo Fasano", "Dana Lambert"]},{emoji: "🤤", users: ["Lorenzo Fasano", "Dana Lambert"]},{emoji: "🤤", users: ["Lorenzo Fasano", "Dana Lambert"]},{emoji: "🤤", users: ["Lorenzo Fasano", "Dana Lambert"]}, {emoji: "😡", users: ["Lorenzo Fasano"]}]
-        },
-        {
-          id: 3,
-          userId: 3,
-          firstName: "Joe",
-          lastName: "Bloggs",
-          comment:
-            "This comment is a placeholder to show some text in this area. Ran out of creativity.",
-          profilePic: "defaultPic.png",
-          date: "a week ago",
-          emojis: [{emoji: "😡", users: ["Lorenzo Fasano"]}]
-        }
-      ]
+      loading: false,
+      commentsLength: 0,
+      page: 0,
+      userComments: []
     };
   },
 
   computed: {},
 
   methods: {
+    /**
+     * Checks if the user has scrolled to the bottom of the comments.
+     */
+    bottomVisible() {
+      if (this.$refs.commentEnd) {
+        var rect = this.$refs.commentEnd.getBoundingClientRect();
+        var elemTop = rect.top;
+        var elemBottom = rect.bottom;
+
+        // Element is in view on the screen:
+        var isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
+        return isVisible;
+      }
+      return false;
+    },
 
     getListOfReactionAuthors(users) {
         let listOfNames = "";
@@ -154,11 +158,68 @@ export default {
     },
 
     /**
+     * Returns the timestamp as a formatted string
+     */
+    formatTimeStamp(timestamp) {
+      return dateTime.convertTimestampToWordString(timestamp);
+    },
+
+    /**
+     * Deletes a comment from the comment list.
+     */
+    deleteComment(commentId) {
+      commentRepository
+        .deleteComment(
+          this.$store.getters.getUser.id,
+          this.trip.trip.id,
+          commentId
+        )
+        .then(() => {
+          this.userComments = this.userComments.filter(comment => {
+            if (comment.id != commentId) {
+              return comment;
+            }
+          });
+          this.commentsLength -= 1;
+        });
+    },
+
+    /**
+     * Get all user comments
+     */
+    getComments() {
+      commentRepository
+        .getComments(this.$store.getters.getUser.id, this.trip.trip.id, {
+          page: this.page,
+          comments: 5
+        })
+        .then(response => {
+          this.commentsLength = response.data.commentsLength;
+          this.userComments = this.userComments.concat(response.data.comments);
+          this.loading = false;
+          this.page += 1;
+        });
+    },
+
+    /**
      * Calls API to post a users commment.
      */
     postComment() {
-      let commentBody = {"message": this.commentText};
-      commentRepository.postComment(this.$store.getters.getUser.id, this.trip.trip.id, commentBody).then(response => console.log(response))
+      let commentBody = { message: this.commentText };
+      commentRepository
+        .postComment(
+          this.$store.getters.getUser.id,
+          this.trip.trip.id,
+          commentBody
+        )
+        .then(() => {
+          this.commentText = "";
+          this.page = 0;
+          this.userComments = [];
+        })
+        .then(() => {
+          this.getComments();
+        });
     },
 
     /**
@@ -175,6 +236,26 @@ export default {
         return base_url + "/api/travellers/profile-photo/" + userId;
       }
     }
+  },
+
+  watch: {
+    trip: function() {
+      this.page = 0;
+      this.userComments = [];
+      this.getComments();
+    },
+    loading: function(loading) {
+      if (loading && this.userComments.length < this.commentsLength) {
+        this.getComments();
+      }
+    }
+  },
+
+  mounted() {
+    this.getComments();
+    window.addEventListener("scroll", () => {
+      this.loading = this.bottomVisible();
+    });
   }
 };
 </script>

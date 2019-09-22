@@ -9,6 +9,7 @@ import controllers.dto.Comment.CreateCommentReq;
 import controllers.dto.Comment.AddEmojiReq;
 import controllers.dto.Media.UpdateMediaReq;
 import dto.trip.CommentDTO;
+import dto.trip.CommentListDTO;
 import exceptions.ForbiddenException;
 import exceptions.NotFoundException;
 import models.Comment;
@@ -71,7 +72,7 @@ public class CommentController {
 
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
-        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkReadPermissionHandler(tripNode, user).join());
 
         // Get tripNode without nesting
         CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
@@ -144,12 +145,9 @@ public class CommentController {
         }
 
         List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
-        List<CommentDTO> commentDTOList = new ArrayList<>();
-        for (Comment comment: commentList) {
-            CommentDTO commentDTO = new CommentDTO(comment);
-            commentDTOList.add(commentDTO);
-        }
-        return CompletableFuture.completedFuture(ok(Json.toJson(commentDTOList)));
+        int commentCount = Comment.find.getTripCommentsCount(TripNode.find.byId(tripId));
+        CommentListDTO commentListDTO = new CommentListDTO(commentList, commentCount);
+        return CompletableFuture.completedFuture(ok(Json.toJson(commentListDTO)));
     }
 
     /**
