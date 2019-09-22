@@ -28,7 +28,7 @@
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
-      <v-btn ma-3 color="primary" flat @click="addUserGroup">Add Group</v-btn>
+      <v-btn ma-3 color="primary" flat @click="setUserGroup">Set Group</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -54,7 +54,8 @@ export default {
       errorMessage: "",
       isError: false,
       userId: this.$route.params.id,
-      selectedUserGroup: {},
+      selectedUserGroup: {text: "None"},
+      initialUserGroup: this.selectedUserGroup,
     };
   },
 
@@ -67,11 +68,15 @@ export default {
         return this.isUserOwner(this.$store.getters.getUser.id, group);
       });
 
-      return filteredGroups.map(group => ({
+      filteredGroups = filteredGroups.map(group => ({
         text: group.name,
         id: group.id
       }));
-    }
+
+      filteredGroups.unshift({text: "None"});
+
+      return filteredGroups;
+    },
   },
 
   methods: {
@@ -87,9 +92,12 @@ export default {
     /**
      * Calls API to add a user group to the trip.
      */
-    addUserGroup() {
+    setUserGroup() {
       this.isError = false;
-      tripRepository
+      if (this.selectedUserGroup.text == "None") {
+        tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id);
+      } else {
+        tripRepository
         .toggleGroupTrip(
           this.$store.getters.getUser.id,
           this.tripId,
@@ -101,6 +109,7 @@ export default {
         .catch(() => {
           this.setErrorMessage("Error adding group to trip.");
         });
+      }
     },
 
     setErrorMessage(error) {
@@ -125,6 +134,15 @@ export default {
         text: this.selectedTrip.root.groupName,
         id: this.selectedTrip.root.groupId
       };
+      this.initialUserGroup = this.selectedUserGroup;
+      }
+    },
+    selectedUserGroup: function(newUserGroup, oldUserGroup) {
+      if ((newUserGroup != this.initialUserGroup) && (this.initialUserGroup.text != "None") && (this.initialUserGroup != null)) {
+        this.errorMessage = "Changing the group will reset the attendance status of all members."
+        this.isError = true;
+      } else {
+        this.isError = false;
       }
     }
   },
