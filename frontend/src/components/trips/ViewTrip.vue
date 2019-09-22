@@ -382,6 +382,9 @@ export default {
         });
     },
 
+    /**
+     * Toggles whether or not to display the photo upload section
+     */
     toggleShowUploadPhoto() {
       this.showUploadSection = !this.showUploadSection;
     },

@@ -4,12 +4,12 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonElement;
 import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
-import io.ebean.Ebean;
-import io.ebean.text.PathProperties;
+import models.SlackUser;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -18,13 +18,12 @@ import play.mvc.Http;
 import play.mvc.Result;
 import repository.UserRepository;
 import service.MailgunService;
-
+import service.SlackService;
 
 import javax.inject.Inject;
 
-import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -36,12 +35,15 @@ public class UserController extends Controller {
 
     private UserRepository userRepository;
     private final MailgunService mailgunService;
+    private final SlackService slackService;
 
 
     @Inject
-    public UserController(UserRepository userRepository, MailgunService mailgunService) {
+    public UserController(UserRepository userRepository, MailgunService mailgunService, SlackService slackService) {
         this.userRepository = userRepository;
         this.mailgunService = mailgunService;
+        this.slackService = slackService;
+
     }
 
     /**
@@ -77,7 +79,6 @@ public class UserController extends Controller {
             return ok(jsonResponse);
         });
     }
-
 
     /**
      * Creates a new user and sends a welcome email when successfully created.
@@ -192,7 +193,6 @@ public class UserController extends Controller {
         });
     }
 
-
     /**
      * Toggles a user's deletion status
      * @param request the http request
@@ -236,11 +236,90 @@ public class UserController extends Controller {
         });
     }
 
+    /**
+     * Takes a request and checks it for errors. If the access token request is fine, execute it with the Slack service.
+     * Once a valid authorisation grant is returned, create a new slackUser object and store this in the database.
+     * @param request the http request
+     * @param userId the user's id
+     * @return 200 if the request is executed
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> slackRequestAuth(Http.Request request, Long userId) {
+        // TODO: Add slack logic
+        Optional<String> code = Optional.ofNullable(request.body().asJson().get("code").asText());
+        if (!code.isPresent()) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_MISSING_CODE));
+        }
 
-    public Result index() {
-        return ok("Travel EA - Home");
+        return slackService.requestAccessToken(code.get(), userId).thenApplyAsync(resHandler -> {
+            Optional<User> user = Optional.ofNullable(User.find.findById(userId));
+            Optional<JsonElement> accessTokenJson = Optional.ofNullable(resHandler.getBody().get("access_token"));
+            if (!user.isPresent()) {
+                return badRequest(APIResponses.USER_NOT_FOUND);
+            }
+
+            if (!accessTokenJson.isPresent()) {
+                return badRequest(APIResponses.SLACK_MISSING_ACCESS_TOKEN);
+            }
+
+            Optional<SlackUser> slackUser = Optional.ofNullable(SlackUser.find.findByUserId(user.get().getId()));
+
+            if (!slackUser.isPresent()) {
+                // create a new slack user in the table
+                SlackUser newSlackUser = new SlackUser(user.get(), accessTokenJson.get().getAsString());
+                newSlackUser.insert();
+            } else {
+                // update access token in the table
+                SlackUser existingSlackUser = slackUser.get();
+                existingSlackUser.setAccessToken(accessTokenJson.get().getAsString());
+                existingSlackUser.update();
+            }
+
+            return ok(APIResponses.SLACK_TOKEN_SAVED);
+        });
     }
 
+    /**
+     *
+     * @param request the http request
+     * @param userId the user's id
+     * @param groupName
+     * @return 200 if the request is executed
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
+        SlackUser groupOwner = SlackUser.find.findByUserId(userId);
+        if (groupOwner == null) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_USER_NOT_FOUND));
+        }
 
+        Optional<String> channelName = Optional.ofNullable(request.body().asJson().get("channelName").asText());
+        if (!channelName.isPresent()) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_CHANNEL_MALFORMED_REQUEST));
+        }
 
+        /* Private channel names can only contain lowercase letters, numbers,
+        hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
+        if this is given */
+
+        return slackService.requestPrivateChannel(groupOwner, channelName.get()).thenApplyAsync(resHandler -> {
+            Optional<User> user = Optional.ofNullable(User.find.findById(userId));
+            if (!user.isPresent()) {
+                return badRequest(APIResponses.USER_NOT_FOUND);
+            }
+
+            Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
+            if (!(success.get().getAsBoolean())) {
+                return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
+            }
+
+            Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
+
+            // store group name with slack user and update
+            groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
+            groupOwner.update();
+
+            return ok(APIResponses.SLACK_CHANNEL_CREATED);
+        });
+    }
 }
