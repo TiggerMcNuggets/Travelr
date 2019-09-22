@@ -26,9 +26,10 @@
             <v-list-tile-avatar>
               <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
             </v-list-tile-avatar>
-            <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
-            <br>
-            <p>{{formatTimeStamp(comment.timestamp)}}</p>
+            <v-flex>
+              <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
+              <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
+            </v-flex>
           </v-layout>
           <v-divider></v-divider>
 
@@ -95,7 +96,7 @@ export default {
     },
 
     formatTimeStamp(timestamp) {
-      return dateTime.convertTimestampToString(timestamp);
+      return dateTime.convertTimestampToWordString(timestamp);
     },
 
     /**
@@ -108,7 +109,6 @@ export default {
           comments: 5
         })
         .then(response => {
-          console.log(response.data);
           this.commentsLength = response.data.commentsLength;
           this.userComments = this.userComments.concat(response.data.comments);
           this.loading = false;
