@@ -71,6 +71,7 @@
 <script>
 import { store } from "../../store/index";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
+import DeviceSizeMixin from "../mixins/DeviceSizeMixin.vue";
 import UndoRedoButtons from "../common/rollback/UndoRedoButtons.vue";
 import DestinationNav from "./DestinationNav";
 import DestinationMap from "./DestinationMap";
@@ -80,7 +81,7 @@ import StoreDestinationsMixinVue from '../mixins/StoreDestinationsMixin.vue';
 
 export default {
   store,
-  mixins: [RollbackMixin, StoreDestinationsMixinVue],
+  mixins: [RollbackMixin, StoreDestinationsMixinVue, DeviceSizeMixin],
   components: {
     UndoRedoButtons,
     DestinationNav,
@@ -101,6 +102,11 @@ export default {
   },
 
   watch: {
+    isSmall: function() {
+      if (this.isSmall) {
+        this.$router.push(`/user/${store.getters.getUser.id}/destinations`);
+      }
+    },
     /**
      * Reset back to viewing mode on destination change
      */
@@ -279,6 +285,7 @@ export default {
   },
 
   async mounted() {
+    this.initialize;
     this.isAdminUser = store.getters.getIsUserAdmin;
     this.userId = store.getters.getUser.id;
   },

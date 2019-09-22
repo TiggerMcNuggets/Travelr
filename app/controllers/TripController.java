@@ -22,9 +22,12 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import repository.UserRepository;
 import repository.CommentRepository;
 import service.MailgunService;
 import service.TripService;
+import utils.AsyncHandler;
+import utils.PDFCreator;
 import utils.iCalCreator;
 
 import java.io.BufferedWriter;
@@ -37,7 +40,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import repository.CommentRepository;
 
 public class TripController extends Controller {
 
@@ -46,15 +48,65 @@ public class TripController extends Controller {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TripService tripService;
+    private final UserRepository userRepository;
     private final MailgunService mailgunService;
     private final CommentRepository commentRepository;
 
     @Inject
 
-    public TripController(TripService tripService, MailgunService mailgunService, CommentRepository commentRepository) {
+    public TripController(TripService tripService, UserRepository userRepository, MailgunService mailgunService, CommentRepository commentRepository) {
         this.mailgunService = mailgunService;
         this.tripService = tripService;
+        this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+    }
+
+    /**
+     * Gets a list of all destinations in a trip including sub trips
+     * and returns them in a list of hashmaps Trip -> Destination
+     * @param tNode
+     * @return destinations a list of hashmaps Trip -> Destination
+     */
+    private List<HashMap<TripNode, DestinationNode>> getAllNodes(TripNode tNode) {
+
+        List<HashMap<TripNode, DestinationNode>> destinations = new ArrayList<>();
+
+        List<Node> tripNodes = tripService.getChildrenByTripId(tNode.getId()).join();
+
+        for (Node node: tripNodes) {
+            if(node.getClass() == TripNode.class) {
+                destinations.addAll(getAllNodes((TripNode) node));
+            } else {
+                HashMap <TripNode, DestinationNode> map = new HashMap<>();
+                map.put(tNode, (DestinationNode) node);
+                destinations.add(map);
+            }
+        }
+
+        return destinations;
+    }
+
+
+    /**
+     * Creates a .ics file to return to the user with the trip
+     * @param req the http request
+     * @param userId the id of the user
+     * @param tripId the id of the trip
+     * @return The .ics file generated for the trip
+     */
+    @Authorization.RequireAuth
+    public CompletionStage<Result> getUserTripAsPDFFile(Http.Request req, Long userId, Long tripId){
+        PDFCreator pdfCreator = new PDFCreator();
+        TripNode trip = TripNode.find.byId(tripId);
+        if (trip == null) {
+            return CompletableFuture.completedFuture(notFound("Trip not found"));
+        }
+        List<HashMap<TripNode, DestinationNode>> destinations = this.getAllNodes(trip);
+        File tripPdf = pdfCreator.generateTripEmailPDF(trip, destinations);
+        if (tripPdf == null) {
+            return CompletableFuture.completedFuture(internalServerError());
+        }
+        return CompletableFuture.completedFuture(ok(tripPdf));
     }
 
     /**
@@ -75,8 +127,10 @@ public class TripController extends Controller {
 
         if (trip == null) return  CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
 
+        List<HashMap<TripNode, DestinationNode>> dests = this.getAllNodes(trip);
+
         iCalCreator creator = new iCalCreator();
-        Calendar iCalString = creator.createCalendarFromTrip(trip);
+        Calendar iCalString = creator.createCalendarFromTripDestinations(trip, dests);
         try {
             File tempFile = File.createTempFile(trip.getName(), ".ics");
             BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile));
@@ -87,6 +141,22 @@ public class TripController extends Controller {
             e.printStackTrace();
             return CompletableFuture.completedFuture(internalServerError());
         }
+    }
+
+    @Authorization.RequireAuth
+    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId) {
+        CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
+        if (middlewareRes != null) return middlewareRes;
+
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
+        CompletionStage<User> userStage = userRepository.getUserHandler(userId);
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+
+        // Get tripNode without nesting
+        CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
+        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripPdfiCalEmail(user, tripNode, getAllNodes(tripNode)).join());
+
+        return testStage.thenApplyAsync(userGroups -> created(APIResponses.ICAL_SUCCESS)).handle(AsyncHandler::handleResult);
     }
 
     /**
@@ -430,5 +500,4 @@ public class TripController extends Controller {
         return tripService.deleteGroupFromTrip(node.get())
                 .thenApplyAsync(id -> ok(APIResponses.TRIP_GROUP_UPDATED));
     }
-
 }
