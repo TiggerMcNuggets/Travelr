@@ -100,6 +100,10 @@ public class User extends BaseModel {
     @OneToMany(cascade=CascadeType.ALL,orphanRemoval=true)
     public List<Destination> destinations;
 
+    @OneToOne
+    @JsonIgnore
+    public SlackUser slackUser;
+
     // Returns true if the user is an admin
     public boolean isAdmin() {
         return this.accountType > 0;
@@ -287,6 +291,14 @@ public class User extends BaseModel {
         return this.tripStatus;
     }
 
+
+    public SlackUser getSlackUser() {
+        return slackUser;
+    }
+
+    public void setSlackUser(SlackUser slackUser) {
+        this.slackUser = slackUser;
+    }
 
     public User(CreateUserReq request) {
         this.firstName = request.firstName;

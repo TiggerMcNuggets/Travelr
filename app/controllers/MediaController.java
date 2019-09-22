@@ -110,7 +110,6 @@ public class MediaController extends Controller {
             isInGroup = tripService.isPermittedToWrite(trip.get(), user).join();
             ownsTrip = trip.get().getUser().getId().equals(user.getId());
         }
-
         Http.MultipartFormData<Files.TemporaryFile> body = request.body().asMultipartFormData();
         Http.MultipartFormData.FilePart<Files.TemporaryFile> picture = body.getFile("picture");
         if (picture != null && (isInGroup || ownsTrip)) {

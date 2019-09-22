@@ -14,6 +14,7 @@
             <p class="usergroup-element-details-description">{{userGroup.description}}</p>
           </div>
         </div>
+
         <div v-if="isUserAdminOrOwner">
           <v-btn icon flat small color="primary" v-on:click="() => editDialogActive = true">
             <v-icon>edit</v-icon>
@@ -24,7 +25,9 @@
         </div>
       </v-flex>
     </v-layout>
+
     <v-divider class="no-margin"></v-divider>
+
     <v-dialog v-model="editDialogActive" width="500">
       <UpdateGroupForm
         :name="userGroup.name"
