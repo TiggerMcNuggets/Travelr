@@ -121,7 +121,7 @@ public class CommonUserGroupSteps {
     }
 
     /**
-     * Adds the user as a member of the group
+     * Adds the current user as a member of the group
      */
     @Given("I am a member of the group")
     public void iAmAMemberOfTheGroup() {

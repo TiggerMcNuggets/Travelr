@@ -35,14 +35,6 @@
           <v-layout flex>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn v-on:click="validateForm" icon v-on="on">
-                  <v-icon color="primary lighten-1">check_circle</v-icon>
-                </v-btn>
-              </template>
-              <span>Validate</span>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
                 <v-btn v-on:click="addTripNode(true)" icon v-on="on">
                   <v-icon color="primary lighten-1">add_location</v-icon>
                 </v-btn>
@@ -78,6 +70,9 @@
             </v-btn>
             <v-btn v-else @click="downloadTrip()" flat fab small dark color="primary lighten-1">
               <v-icon>calendar_today</v-icon>
+            </v-btn>
+            <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip" flat fab small dark color="primary lighten-1" >
+              <v-icon>email</v-icon>
             </v-btn>
           </v-layout>
 
@@ -186,6 +181,15 @@
           </v-timeline>
         </v-form>
       </v-flex>
+      
+      <v-dialog v-model="showUploadSection" width="800">
+        <MediaUpload
+          :uploadMedia="uploadMedia"
+          :openUploadDialog="toggleShowUploadPhoto"
+          :closeUploadDialog="toggleShowUploadPhoto"
+          :hasNoAlbums="true"
+        ></MediaUpload>
+      </v-dialog>
 
       <v-flex md5 pa-2>
         <TripDetails :trip="trip"/>
@@ -251,6 +255,7 @@ import draggable from "vuedraggable";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
 import AddGroup from "./tripgroups/AddGroup";
+import MediaUpload from "../media/MediaUpload";
 
 import dateTime from "../common/dateTime/dateTime.js";
 import {
@@ -269,6 +274,7 @@ import { RepositoryFactory } from "../../repository/RepositoryFactory";
 
 let tripRepository = RepositoryFactory.get("trip");
 let destinationRepository = RepositoryFactory.get("destination");
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
@@ -276,7 +282,8 @@ export default {
     draggable,
     PageHeader,
     TripDetails,
-    AddGroup
+    AddGroup,
+    MediaUpload
   },
   mixins: [RollbackMixin, StoreTripsMixin],
   // local variables
@@ -301,7 +308,8 @@ export default {
         root: {
           user: {},
           id: this.$route.params.trip_id,
-          name: undefined
+          name: undefined,
+          albumId: undefined
         },
         trip: {
           id: undefined,
@@ -313,6 +321,7 @@ export default {
       userDestinations: [],
       shouldDisplayDialog: false,
       canDownloadTrip: true,
+      showUploadSection: false,
 
       // define functions to make them visible to the script
       getDepthData: getDepthData,
@@ -348,15 +357,51 @@ export default {
     },
 
     isGroupOwner() {
+      let isOwn = false;
       this.selectedTrip.trip.usergroup.forEach(user => {
-        if (user.id == this.$store.getters.getUser.id && this.user.owner) {
-          return true;
+        if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
+          isOwn = true;
         }
       });
-      return false;
+      return isOwn;
     }
   },
   methods: {
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          return this.init();
+        });
+    },
+
+    /**
+     * Toggles whether or not to display the photo upload section
+     */
+    toggleShowUploadPhoto() {
+      this.showUploadSection = !this.showUploadSection;
+    },
+
+    /**
+     * Uploads the given media files to the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.trip.root.albumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
+    },
+
     /**
      * Gets the header optoins for the view trip page.
      */
@@ -371,9 +416,24 @@ export default {
               },
               icon: "people_alt",
               title: "Manage Group"
+            },
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
             }
           ]
-        : [];
+        : [
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
+            }
+          ];
     },
 
     /**
@@ -648,6 +708,10 @@ export default {
       return trip;
     },
 
+    emailTrip() {
+      tripRepo.emailPdfAndICal(this.userId, this.tripId);
+    },
+
     getSelectedTrip(tripId) {
       this._getTrip(this.userId, tripId).then(() => {
         this.trip = deepCopy(this.selectedTrip);
@@ -670,6 +734,15 @@ export default {
     redo: function() {
       const actions = [];
       this.rollbackRedo(actions);
+    },
+
+    init: function() {
+    this._getTrip(this.userId, this.tripId).then(() => {
+      this.trip = deepCopy(this.selectedTrip);
+      this.rollbackSetPreviousBody(tripAssembler(this.trip));
+      this.previousTripId = this.trip.trip.id;
+      this.trip.trip = this.tripWithDates(this.trip.trip);
+    });
     }
   },
 
@@ -680,13 +753,7 @@ export default {
     if (!this.isMyProfile && !this.isAdmin) {
       this.$router.go(-1);
     }
-    this._getTrip(this.userId, this.tripId).then(() => {
-      this.trip = deepCopy(this.selectedTrip);
-      this.rollbackSetPreviousBody(tripAssembler(this.trip));
-      this.previousTripId = this.trip.trip.id;
-
-      this.trip.trip = this.tripWithDates(this.trip.trip);
-    });
+    this.init();
   }
 };
 </script>

@@ -61,7 +61,7 @@
           :uploadMedia="uploadMedia"
           :openUploadDialog="toggleShowUploadPhoto"
           :closeUploadDialog="toggleShowUploadPhoto"
-          :isDestination="true"
+          :hasNoAlbums="true"
         ></MediaUpload>
       </v-dialog>
     </v-layout>
@@ -284,10 +284,7 @@ export default {
           this.destination.defaultAlbumId
         )
         .then(response => {
-          response.data.forEach(item => {
-            item.filename = item.uriString;
-          });
-          this.files = response.data;
+          this.files = response.data.mediaItems;
         });
     }
   },

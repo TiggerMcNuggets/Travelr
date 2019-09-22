@@ -151,7 +151,7 @@ export default {
           this.$store.getters.getUser.defaultAlbumId
         )
         .then(response => {
-          this.files = response.data;
+          this.files = response.data.mediaItems;
         });
     }
   },

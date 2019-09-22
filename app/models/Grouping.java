@@ -4,6 +4,7 @@ import finders.GroupingFinder;
 import io.ebean.Finder;
 import play.data.validation.Constraints;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -120,5 +121,17 @@ public class Grouping extends BaseModel {
      */
     public List<Node> getTrips() {
         return associatedTrips;
+    }
+
+    /**
+     * Get all users in the group
+     * @return The users
+     */
+    public List<User> getUsers() {
+        List<User> users = new ArrayList<>();
+        for (UserGroup userGroup : userGroups) {
+            users.add(userGroup.getUser());
+        }
+        return users;
     }
 }

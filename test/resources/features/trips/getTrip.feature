@@ -27,7 +27,7 @@ Scenario: Get a trips album
   Then I will receive the response code 200
   And I will receive the response body
   """
-  []
+  {"mediaItems":[]}
   """
 
 

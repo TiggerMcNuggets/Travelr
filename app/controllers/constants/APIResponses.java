@@ -23,6 +23,8 @@ public class APIResponses {
     public static final String SUCCESSFUL_ALBUM_UPDATE = "Album updated";
     public static final String DUPLICATE_ALBUM_NAME = "Duplicate album name";
     public static final String USER_NOT_PERMITTED = "User is no permitted to do this action";
+    public static final String USER_NOT_FOUND = "User was not found";
+
 
     // Groups
     public static final String SUCCESSFUL_GROUP_MEMBER_DELETION = "Group member removed";
@@ -44,5 +46,17 @@ public class APIResponses {
 
     // Comments
     public static final String COMMENT_BAD_REQUEST = "Invalid comment body";
+
+    // ICal
+    public static final String ICAL_SUCCESS = "iCal has been emailed";
+
+    // Slack
+    public static final String SLACK_TOKEN_SAVED = "Slack authentication token has been saved";
+    public static final String SLACK_CHANNEL_CREATED = "Slack channel has been created";
+    public static final String SLACK_CHANNEL_MALFORMED_REQUEST = "Malformed Slack channel creation request";
+    public static final String SLACK_USER_NOT_FOUND = "User is not integrated with Slack";
+    public static final String SLACK_CHANNEL_CREATION_FAILURE = "Request to Slack to create the channel failed";
+    public static final String SLACK_MISSING_ACCESS_TOKEN = "Missing Slack access token";
+    public static final String SLACK_MISSING_CODE = "Missing temporary Slack code";
 
 }
