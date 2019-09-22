@@ -24,7 +24,7 @@
         <v-card class="user-comment">
           <v-layout class="comment-header">
             <v-list-tile-avatar>
-              <img :src="getProfileImageURL(comment.profilePhoto)">
+              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
             </v-list-tile-avatar>
             <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
             <br>
@@ -108,6 +108,7 @@ export default {
           comments: 5
         })
         .then(response => {
+          console.log(response.data);
           this.commentsLength = response.data.commentsLength;
           this.userComments = this.userComments.concat(response.data.comments);
           this.loading = false;
