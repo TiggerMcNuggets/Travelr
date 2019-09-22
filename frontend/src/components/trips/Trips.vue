@@ -43,15 +43,19 @@
               <div class="top-destination-content" v-on:click="openTrip(item.id)">
                 <h2>{{ item.name }}</h2>
               </div>
-            <CreateSlackChannelButton v-if="(isMyProfile && hasSlack)" :tripName="item.name"></CreateSlackChannelButton>
+
               <div class="crud-options">
+                <CreateSlackChannelButton
+                  v-if="(isMyProfile && hasSlack)"
+                  :tripName="item.name"
+                ></CreateSlackChannelButton>
                 <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                        <v-btn icon dark v-on="on">
-                            <v-icon v-on:click="downloadTripPdf(item.id, item.name)" color="primary">picture_as_pdf</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Download trip pdf</span>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon dark v-on="on">
+                      <v-icon v-on:click="downloadTripPdf(item.id, item.name)" color="primary">picture_as_pdf</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Download trip pdf</span>
                 </v-tooltip>
                 <v-btn
                   v-if="(isMyProfile || isAdminUser) && !item.isPublic"
@@ -86,6 +90,7 @@
 
   .top-destination-content {
     display: flex;
+    padding-right: 20px;
     justify-content: space-between;
   }
 
@@ -111,14 +116,15 @@
 
 
 <script>
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import {RepositoryFactory} from "../../repository/RepositoryFactory";
+
   let tripRepository = RepositoryFactory.get("trip");
   import {store} from "../../store/index";
   import CreateTrips from "./CreateTrips.vue";
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
   import PageHeader from "../common/header/PageHeader";
-import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
+  import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
 
   export default {
     store,
@@ -163,30 +169,23 @@ import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
         return filteredList.sort(function (a, b) {
           return a.id - b.id;
         });
+      },
+
+      /**
+       * Determines if the user has integrated with slack or not
+       */
+      hasSlack() {
+        return store.getters.getUser.slack;
       }
     },
 
-    /**
-     * Filters the list of trips according to the search value
-     */
-    tripsFiltered() {
-      const filteredList = this.trips.filter(
-        trip =>
-          trip.name.toLowerCase().search(this.searchValue.toLowerCase()) !== -1
-      );
-      //Currently sorting trips by id, in future we will sort trips by creation time
-      return filteredList.sort(function(a, b) {
-        return a.id - b.id;
-      });
-    }
-  },
+    // child components
+    components: {
+      CreateTrip: CreateTrips,
+      PageHeader,
+      CreateSlackChannelButton
+    },
 
-  // child components
-  components: {
-    CreateTrip: CreateTrips,
-    PageHeader,
-    CreateSlackChannelButton
-  },
     methods: {
       /**
        * Sets all alert error visible fields to invisible
@@ -243,11 +242,11 @@ import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
       },
 
       /**
-        * Fetches the PDF file for the selected trip and downloads it on the user machine
-        * @param tripId the id of the selected trip
-        * @param tripName the name of the selected trip
-        */
-      downloadTripPdf: function(tripId, tripName) {
+       * Fetches the PDF file for the selected trip and downloads it on the user machine
+       * @param tripId the id of the selected trip
+       * @param tripName the name of the selected trip
+       */
+      downloadTripPdf: function (tripId, tripName) {
         tripRepository.downloadTripPdf(this.userId, tripId).then((res) => {
           const url = window.URL.createObjectURL(new Blob([res.data], {type: "application/pdf"}));
           const link = document.createElement('a');

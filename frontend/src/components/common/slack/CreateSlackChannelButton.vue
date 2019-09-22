@@ -1,11 +1,11 @@
 <template>
   <v-tooltip top>
     <template v-slot:activator="{ on }">
-      <v-btn
+      <v-btn class="slack-button"
         v-on:click="createSlackChannel"
         icon
         v-on="on">
-        <v-avatar>
+        <v-avatar size="30">
           <img src="../../../assets/slack_logo_circle.png">
         </v-avatar>
       </v-btn>
