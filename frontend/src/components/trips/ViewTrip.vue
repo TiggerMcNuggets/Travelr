@@ -195,7 +195,7 @@
         <TripDetails :trip="trip"/>
       </v-flex>
 
-      <v-flex md4 pa-2>
+      <v-flex v-if="!isSmall" md4 pa-2>
         <div class="temp-map"></div>
       </v-flex>
     </v-layout>
@@ -247,6 +247,7 @@
 </style>
 
 <script>
+import DeviceSizeMixin from "../mixins/DeviceSizeMixin.vue";
 import RollbackMixin from "../mixins/RollbackMixin";
 import StoreTripsMixin from "../mixins/StoreTripsMixin";
 import tripRepo from "../../repository/TripRepository";
@@ -285,7 +286,7 @@ export default {
     AddGroup,
     MediaUpload
   },
-  mixins: [RollbackMixin, StoreTripsMixin],
+  mixins: [RollbackMixin, StoreTripsMixin, DeviceSizeMixin],
   // local variables
   data() {
     return {
