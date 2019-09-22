@@ -1,55 +1,61 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 ma-2>
-      <v-flex mt-3 mb-3>
+      <v-flex v-if="trip.trip.usergroup" mt-3 mb-3>
         <h2>Comments ({{commentsLength}})</h2>
       </v-flex>
-
-      <v-flex class="user-comment">
-        <v-layout class="post-comment-container">
-          <v-list-tile-avatar>
-            <img :src="getProfileImageURL()">
-          </v-list-tile-avatar>
-
-          <v-layout>
-            <v-textarea name="input-6-2" v-model="commentText" placeholder="Add your thoughts..."></v-textarea>
-            <v-btn icon @click="postComment">
-              <v-icon color="primary lighten-1">send</v-icon>
-            </v-btn>
-          </v-layout>
-        </v-layout>
+      <v-flex v-else>
+        <h2>Comments</h2>
+        <p>Please add a group first.</p>
       </v-flex>
 
-      <v-flex mt-2 mb-2 v-for="comment in userComments" :key="comment.id">
-        <v-card class="user-comment">
-          <v-layout class="comment-header">
+      <v-flex v-if="trip.trip.usergroup">
+        <v-flex class="user-comment">
+          <v-layout class="post-comment-container">
             <v-list-tile-avatar>
-              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
+              <img :src="getProfileImageURL()" />
             </v-list-tile-avatar>
-            <v-flex>
-              <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
-              <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
-            </v-flex>
-            <v-icon color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+
+            <v-layout>
+              <v-textarea name="input-6-2" v-model="commentText" placeholder="Add your thoughts..."></v-textarea>
+              <v-btn icon @click="postComment">
+                <v-icon color="primary lighten-1">send</v-icon>
+              </v-btn>
+            </v-layout>
           </v-layout>
-          <v-divider></v-divider>
+        </v-flex>
 
-          <v-flex>
-            <p class="subtext">{{comment.comment}}</p>
-          </v-flex>
-        </v-card>
+        <v-flex mt-2 mb-2 v-for="comment in userComments" :key="comment.id">
+          <v-card class="user-comment">
+            <v-layout class="comment-header">
+              <v-list-tile-avatar>
+                <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)" />
+              </v-list-tile-avatar>
+              <v-flex>
+                <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
+                <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
+              </v-flex>
+              <v-icon color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+            </v-layout>
+            <v-divider></v-divider>
+
+            <v-flex>
+              <p class="subtext">{{comment.comment}}</p>
+            </v-flex>
+          </v-card>
+        </v-flex>
       </v-flex>
-    </v-flex>
 
-    <v-flex v-if="userComments.length < commentsLength">
-      <v-progress-circular
-        :indeterminate="loading"
-        :rotate="0"
-        :size="32"
-        :value="0"
-        :width="4"
-        color="light-blue"
-      ></v-progress-circular>
+      <v-flex v-if="userComments.length < commentsLength">
+        <v-progress-circular
+          :indeterminate="loading"
+          :rotate="0"
+          :size="32"
+          :value="0"
+          :width="4"
+          color="light-blue"
+        ></v-progress-circular>
+      </v-flex>
     </v-flex>
 
     <div ref="commentEnd"></div>
