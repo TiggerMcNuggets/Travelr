@@ -127,7 +127,7 @@ export default {
           this.trip.trip.id,
           commentBody
         )
-        .then(response => {
+        .then(() => {
           this.page = 0;
           this.userComments = [];
         })
