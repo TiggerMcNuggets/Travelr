@@ -84,22 +84,32 @@ export default {
   computed: {},
 
   methods: {
+    /**
+     * Checks if the user has scrolled to the bottom of the comments.
+     */
     bottomVisible() {
-      var rect = this.$refs.commentEnd.getBoundingClientRect();
-      var elemTop = rect.top;
-      var elemBottom = rect.bottom;
+      if (this.$refs.commentEnd) {
+        var rect = this.$refs.commentEnd.getBoundingClientRect();
+        var elemTop = rect.top;
+        var elemBottom = rect.bottom;
 
-      // Only completely visible elements return true:
-      var isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
-      // Partially visible elements return true:
-      //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
-      return isVisible;
+        // Element is in view on the screen:
+        var isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
+        return isVisible;
+      }
+      return false;
     },
 
+    /**
+     * Returns the timestamp as a formatted string
+     */
     formatTimeStamp(timestamp) {
       return dateTime.convertTimestampToWordString(timestamp);
     },
 
+    /**
+     * Deletes a comment from the comment list.
+     */
     deleteComment(commentId) {
       commentRepository
         .deleteComment(
