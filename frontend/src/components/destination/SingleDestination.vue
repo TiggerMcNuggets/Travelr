@@ -61,7 +61,7 @@
           :uploadMedia="uploadMedia"
           :openUploadDialog="toggleShowUploadPhoto"
           :closeUploadDialog="toggleShowUploadPhoto"
-          :isDestination="true"
+          :hasNoAlbums="true"
         ></MediaUpload>
       </v-dialog>
     </v-layout>
