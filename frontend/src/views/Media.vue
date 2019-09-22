@@ -11,16 +11,21 @@
     <PageHeader v-else title="Media" disableUndoRedo :options="normalOptions"/>
 
     <v-layout row wrap>
-      <v-flex xs2 v-if="viewingAlbum">
-        <MediaFilter :changeFilter="changeFilter" :mediaCounts="mediaCounts"></MediaFilter>
-      </v-flex>
-      <v-flex xs10 v-if="viewingAlbum">
-        <MediaGrid
-          :filteredMedia="filteredMedia"
-          :openElement="openElement"
-          :getAllAlbums="getAllAlbums"
-          :openEditAlbumDialog="openEditAlbumDialog"
-        ></MediaGrid>
+      <v-flex v-if="viewingAlbum">
+        <v-tabs v-model="active" slider-color="blue" >
+          <v-tab :key="1" ripple v-on:click="changeFilter('All')">All</v-tab>
+          <v-tab :key="2" ripple v-on:click="changeFilter('Photos')">Photos</v-tab>
+          <v-tab :key="3" ripple v-on:click="changeFilter('Videos')">Videos</v-tab>
+
+          <v-tab-item v-for="number in [1, 2, 3]" :key="number">
+            <MediaGrid
+              :filteredMedia="filteredMedia"
+              :openElement="openElement"
+              :getAllAlbums="getAllAlbums"
+              :openEditAlbumDialog="openEditAlbumDialog"
+            ></MediaGrid>
+          </v-tab-item>
+        </v-tabs>
       </v-flex>
       <v-flex xs12 v-else>
         <MediaGrid
@@ -93,6 +98,7 @@ import AlbumCreate from "../components/media/AlbumCreate";
 import AlbumEdit from "../components/media/AlbumEdit";
 import MediaDialog from "../components/media/MediaDialog";
 import ConfirmDelete from "../components/common/ConfirmDialog";
+import DeviceSizeMixin from "../components/mixins/DeviceSizeMixin";
 
 import base_url from "../repository/BaseUrl";
 import { deepCopy } from "../tools/deepCopy";
@@ -116,6 +122,7 @@ export default {
       viewMediaDialogActive: false,
       viewingAlbum: false,
       activeAlbumMetadata: null,
+      active: null,
       userId: null,
       isMyProfile: false,
       isAdminUser: false,
