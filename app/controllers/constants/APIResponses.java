@@ -45,4 +45,6 @@ public class APIResponses {
     // Comments
     public static final String COMMENT_BAD_REQUEST = "Invalid comment body";
 
+    // ICal
+    public static final String ICAL_SUCCESS = "iCal has been emailed";
 }
