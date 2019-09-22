@@ -41,8 +41,13 @@ public class FileService {
      * @param fileId
      * @return
      */
-    public CompletableFuture deleteFileById(Long fileId) {
-        return runAsync(() -> {
+    public CompletableFuture<Long> deleteFileById(Long fileId) {
+
+        if(true) {
+            throw new NotFoundException("asdsada");
+        }
+
+        return supplyAsync(() -> {
             File file = File.find.byId(fileId);
 
             if(file == null) {
@@ -51,6 +56,7 @@ public class FileService {
 
             file.delete();
 
+            return null;
         }, context);
     }
 

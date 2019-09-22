@@ -1,6 +1,7 @@
 package models;
 
 import finders.FileFinder;
+import io.ebean.annotation.JsonIgnore;
 import play.data.validation.Constraints;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -16,9 +17,11 @@ public class File extends BaseModel {
     public String filepath;
 
     @ManyToOne
+    @JsonIgnore
     public Node trip;
 
     @ManyToOne
+    @JsonIgnore
     public User user;
 
     public static final FileFinder find = new FileFinder();
