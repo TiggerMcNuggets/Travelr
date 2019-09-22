@@ -344,11 +344,13 @@ export default {
 
     isGroupOwner() {
       let isOwn = false;
+      if (this.selectedTrip) {
       this.selectedTrip.trip.usergroup.forEach(user => {
         if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
           isOwn = true;
         }
       });
+      }
       return isOwn;
     }
   },
