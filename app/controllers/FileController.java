@@ -34,5 +34,10 @@ public class FileController extends Controller {
         });
     }
 
+    public CompletionStage<Result> getFilesForTrip(Http.Request request, Long nodeId, Long userId) {
+
+
+    }
+
 
 }
