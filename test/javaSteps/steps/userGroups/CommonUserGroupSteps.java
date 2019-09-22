@@ -111,4 +111,23 @@ public class CommonUserGroupSteps {
         userGroup.insert();
     }
 
+    /**
+     * Sets the state trip's group to the state group
+     */
+    @Given("The trip belongs to the user group")
+    public void theTripBelongsToTheUserGroup() {
+        state.getTrip().setUserGroup(state.getGroup());
+        state.getTrip().update();
+    }
+
+    /**
+     * Adds the current user as a member of the group
+     */
+    @Given("I am a member of the group")
+    public void iAmAMemberOfTheGroup() {
+        List<UserGroup> userGroups = state.getGroup().getUserGroups();
+        userGroups.add(new UserGroup(state.getUser(), state.getGroup(), false));
+        state.getGroup().setUserGroups(userGroups);
+        state.getGroup().update();
+    }
 }

@@ -20,6 +20,30 @@ create table album_media (
   constraint pk_album_media primary key (album_id,media_id)
 );
 
+create table comment (
+  id                            bigint auto_increment not null,
+  message                       varchar(255),
+  timestamp                     bigint,
+  trip_node_id                  bigint,
+  user_id                       bigint,
+  deleted                       boolean default false not null,
+  constraint pk_comment primary key (id)
+);
+
+create table comment_emoji (
+  id                            bigint auto_increment not null,
+  emoji                         varchar(255),
+  comment_id                    bigint,
+  deleted                       boolean default false not null,
+  constraint pk_comment_emoji primary key (id)
+);
+
+create table comment_emoji_user (
+  comment_emoji_id              bigint not null,
+  user_id                       bigint not null,
+  constraint pk_comment_emoji_user primary key (comment_emoji_id,user_id)
+);
+
 create table destination (
   id                            bigint auto_increment not null,
   name                          varchar(255),
@@ -108,9 +132,22 @@ create table node (
   ordinal                       integer not null,
   parent_id                     bigint,
   user_id                       bigint,
+  user_group_id                 bigint,
   deleted                       boolean default false not null,
   destination_id                bigint,
+  default_album_id              bigint,
+  constraint uq_node_default_album_id unique (default_album_id),
   constraint pk_node primary key (id)
+);
+
+create table node_user_status (
+  id                            bigint auto_increment not null,
+  user_id                       bigint,
+  trip_id                       bigint,
+  trip_status                   integer,
+  deleted                       boolean default false not null,
+  constraint ck_node_user_status_trip_status check ( trip_status in (0,1,2)),
+  constraint pk_node_user_status primary key (id)
 );
 
 create table personal_photo (
@@ -193,6 +230,21 @@ alter table album_media add constraint fk_album_media_album foreign key (album_i
 create index ix_album_media_media on album_media (media_id);
 alter table album_media add constraint fk_album_media_media foreign key (media_id) references media (id) on delete restrict on update restrict;
 
+create index ix_comment_trip_node_id on comment (trip_node_id);
+alter table comment add constraint fk_comment_trip_node_id foreign key (trip_node_id) references node (id) on delete restrict on update restrict;
+
+create index ix_comment_user_id on comment (user_id);
+alter table comment add constraint fk_comment_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_comment_emoji_comment_id on comment_emoji (comment_id);
+alter table comment_emoji add constraint fk_comment_emoji_comment_id foreign key (comment_id) references comment (id) on delete restrict on update restrict;
+
+create index ix_comment_emoji_user_comment_emoji on comment_emoji_user (comment_emoji_id);
+alter table comment_emoji_user add constraint fk_comment_emoji_user_comment_emoji foreign key (comment_emoji_id) references comment_emoji (id) on delete restrict on update restrict;
+
+create index ix_comment_emoji_user_user on comment_emoji_user (user_id);
+alter table comment_emoji_user add constraint fk_comment_emoji_user_user foreign key (user_id) references user (id) on delete restrict on update restrict;
+
 alter table destination add constraint fk_destination_default_album_id foreign key (default_album_id) references album (id) on delete restrict on update restrict;
 
 create index ix_destination_user_id on destination (user_id);
@@ -237,8 +289,19 @@ alter table node add constraint fk_node_parent_id foreign key (parent_id) refere
 create index ix_node_user_id on node (user_id);
 alter table node add constraint fk_node_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
+create index ix_node_user_group_id on node (user_group_id);
+alter table node add constraint fk_node_user_group_id foreign key (user_group_id) references grouping (id) on delete restrict on update restrict;
+
 create index ix_node_destination_id on node (destination_id);
 alter table node add constraint fk_node_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
+
+alter table node add constraint fk_node_default_album_id foreign key (default_album_id) references album (id) on delete restrict on update restrict;
+
+create index ix_node_user_status_user_id on node_user_status (user_id);
+alter table node_user_status add constraint fk_node_user_status_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
+create index ix_node_user_status_trip_id on node_user_status (trip_id);
+alter table node_user_status add constraint fk_node_user_status_trip_id foreign key (trip_id) references node (id) on delete restrict on update restrict;
 
 create index ix_personal_photo_user_id on personal_photo (user_id);
 alter table personal_photo add constraint fk_personal_photo_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
@@ -278,6 +341,21 @@ drop index if exists ix_album_media_album;
 
 alter table album_media drop constraint if exists fk_album_media_media;
 drop index if exists ix_album_media_media;
+
+alter table comment drop constraint if exists fk_comment_trip_node_id;
+drop index if exists ix_comment_trip_node_id;
+
+alter table comment drop constraint if exists fk_comment_user_id;
+drop index if exists ix_comment_user_id;
+
+alter table comment_emoji drop constraint if exists fk_comment_emoji_comment_id;
+drop index if exists ix_comment_emoji_comment_id;
+
+alter table comment_emoji_user drop constraint if exists fk_comment_emoji_user_comment_emoji;
+drop index if exists ix_comment_emoji_user_comment_emoji;
+
+alter table comment_emoji_user drop constraint if exists fk_comment_emoji_user_user;
+drop index if exists ix_comment_emoji_user_user;
 
 alter table destination drop constraint if exists fk_destination_default_album_id;
 
@@ -323,8 +401,19 @@ drop index if exists ix_node_parent_id;
 alter table node drop constraint if exists fk_node_user_id;
 drop index if exists ix_node_user_id;
 
+alter table node drop constraint if exists fk_node_user_group_id;
+drop index if exists ix_node_user_group_id;
+
 alter table node drop constraint if exists fk_node_destination_id;
 drop index if exists ix_node_destination_id;
+
+alter table node drop constraint if exists fk_node_default_album_id;
+
+alter table node_user_status drop constraint if exists fk_node_user_status_user_id;
+drop index if exists ix_node_user_status_user_id;
+
+alter table node_user_status drop constraint if exists fk_node_user_status_trip_id;
+drop index if exists ix_node_user_status_trip_id;
 
 alter table personal_photo drop constraint if exists fk_personal_photo_user_id;
 drop index if exists ix_personal_photo_user_id;
@@ -355,6 +444,12 @@ drop table if exists album;
 
 drop table if exists album_media;
 
+drop table if exists comment;
+
+drop table if exists comment_emoji;
+
+drop table if exists comment_emoji_user;
+
 drop table if exists destination;
 
 drop table if exists destination_traveller_type;
@@ -374,6 +469,8 @@ drop table if exists media_album;
 drop table if exists nationality;
 
 drop table if exists node;
+
+drop table if exists node_user_status;
 
 drop table if exists personal_photo;
 

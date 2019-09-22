@@ -3,9 +3,8 @@ package models;
 import finders.NodeFinder;
 import io.ebean.Finder;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Inheritance
@@ -25,13 +24,18 @@ public abstract class Node extends BaseModel {
     @ManyToOne
     private User user;
 
+    /**
+     * The user group associated with the trip. Intentionally defaults to null.
+     */
+    @ManyToOne
+    public Grouping userGroup;
+
     public static final NodeFinder find = new NodeFinder();
 
     public Node(String name, User user) {
         this.name = name;
         this.user = user;
     }
-
 
     // Getters and Setters
 
@@ -73,6 +77,14 @@ public abstract class Node extends BaseModel {
 
     public int getOrdinal() {
         return ordinal;
+    }
+
+    public Grouping getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(Grouping userGroup) {
+        this.userGroup = userGroup;
     }
 
     public void setOrdinal(int ordinal) {

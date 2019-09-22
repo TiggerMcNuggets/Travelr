@@ -1,21 +1,19 @@
 import Repository from "./Repository";
 
-
 export default {
-
   /**
    * Gets users based on filter parameters
    * @param {*} params Filter parameters to search up users
    */
   getUsers(params) {
-    return Repository.get('/travellers_filter', {
+    return Repository.get("/travellers_filter", {
       params: params
     });
   },
 
   /**
    * Gets a user given their id
-   * @param {*} id The user id
+   * @param {Number} id The user id
    */
   getUser(id) {
     return Repository.get(`/travellers/${id}`);
@@ -23,16 +21,16 @@ export default {
 
   /**
    * Creates a user given valid user data.
-   * @param {*} payload New user data
+   * @param {Object} payload New user data
    */
   createUser(payload) {
-    return Repository.post('/travellers', payload);
+    return Repository.post("/travellers", payload);
   },
 
   /**
    * Updates a users profile information with a given id and valid data.
-   * @param {*} id The users id
-   * @param {*} payload The updated user data.
+   * @param {Number} id The users id
+   * @param {Object} payload The updated user data.
    */
   updateUser(id, payload) {
     return Repository.put(`/travellers/${id}`, payload);
@@ -49,7 +47,7 @@ export default {
    * Gets details of the authenticated user.
    */
   getMe() {
-    return Repository.get('/travellers/me');
+    return Repository.get("/travellers/me");
   },
 
   /**
@@ -61,7 +59,7 @@ export default {
 
   /**
    * Undo operation for user deletion
-   * @param {*} userId The users id
+   * @param {Number} userId The users id
    */
   toggleUserDeleted(userId) {
     return Repository.put(`/travellers/${userId}/toggle_deleted`);
@@ -80,4 +78,4 @@ export default {
   createSlackChannel(id, payload) {
     return Repository.post(`/travellers/${id}/slackPrivateChannel`, payload);
   }
-}
+};
