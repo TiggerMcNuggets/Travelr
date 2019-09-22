@@ -33,8 +33,10 @@
             <div class="top-destination-content" v-on:click="openTrip(item.id)">
               <h2>{{ item.name }}</h2>
             </div>
+
+            <CreateSlackChannelButton v-if="(isMyProfile && hasSlack)" :tripName="item.name"></CreateSlackChannelButton>
+
             <div class="crud-options" v-if="(isMyProfile || isAdminUser)">
-              <CreateSlackChannelButton v-if="connectedWithSlack" :tripName="item.name"></CreateSlackChannelButton>
               <v-btn
                 v-if="!item.isPublic"
                 icon
@@ -111,7 +113,6 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       isAdmin: store.getters.getIsUserAdmin,
-      connectedWithSlack: store.getters.getUser.slack,
       isMyProfile: false,
       isAdminUser: false,
       userId: this.$route.params.id,
@@ -140,7 +141,14 @@ export default {
       return filteredList.sort(function(a, b) {
         return a.id - b.id;
       });
-    }
+    },
+
+    /**
+     * Determines if the user has integrated with slack or not
+     */
+    hasSlack() {
+      return store.getters.getUser.slack;
+    },
   },
 
   // child components

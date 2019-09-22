@@ -1,6 +1,7 @@
 <template>
   <div >
-    <a v-if="!connectedWithSlack"
+
+    <a v-if="!connectedWithSlack && !slackCompleted"
       :href="`https://slack.com/oauth/authorize?scope=${this.permissionScope}&client_id=${this.clientId}&redirect_uri=${redirectUrl}`">
       <img alt="Add to Slack" height="40" src="../../../assets/connect_slack.png"/>
     </a>
@@ -21,7 +22,8 @@
       return {
         permissionScope: "incoming-webhook,commands,admin,channels:write,team:read",
         clientId: "737773912711.735910477760",
-        connectedWithSlack: store.getters.getUser.slack
+        connectedWithSlack: store.getters.getUser.slack,
+        slackCompleted: false
       };
     },
 
@@ -46,9 +48,10 @@
     methods: {
       attemptAuthorisationGrant() {
         userRepository.slackOAuthStep3(this.$route.params.id, {code: this.authorisationCode})
-          .then(response => {
-            console.log(response);
+          .then(() => {
             store.dispatch("fetchMe");
+            this.$router.replace({'query': null});
+            this.slackCompleted = true;
           });
       }
     },
