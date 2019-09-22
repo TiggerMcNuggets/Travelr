@@ -35,14 +35,6 @@
           <v-layout flex>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn v-on:click="validateForm" icon v-on="on">
-                  <v-icon color="primary lighten-1">check_circle</v-icon>
-                </v-btn>
-              </template>
-              <span>Validate</span>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
                 <v-btn v-on:click="addTripNode(true)" icon v-on="on">
                   <v-icon color="primary lighten-1">add_location</v-icon>
                 </v-btn>
@@ -78,6 +70,9 @@
             </v-btn>
             <v-btn v-else @click="downloadTrip()" flat fab small dark color="primary lighten-1">
               <v-icon>calendar_today</v-icon>
+            </v-btn>
+            <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip" flat fab small dark color="primary lighten-1" >
+              <v-icon>email</v-icon>
             </v-btn>
           </v-layout>
 
@@ -188,7 +183,7 @@
       </v-flex>
 
       <v-flex md5 pa-2>
-        <TripDetails :trip="trip" />
+        <TripDetails :trip="trip"/>
       </v-flex>
 
       <v-flex md4 pa-2>
@@ -351,12 +346,13 @@ export default {
     },
 
     isGroupOwner() {
+      let isOwn = false;
       this.selectedTrip.trip.usergroup.forEach(user => {
-        if (user.id == this.$store.getters.getUser.id && this.user.owner) {
-          return true;
+        if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
+          isOwn = true;
         }
       });
-      return false;
+      return isOwn;
     }
   },
   methods: {
@@ -364,7 +360,8 @@ export default {
      * Gets the header optoins for the view trip page.
      */
     headerOptions() {
-      return this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+      return this.selectedTrip &&
+        this.selectedTrip.trip.id == this.selectedTrip.root.id &&
         (this.isTripOwner || this.isGroupOwner || this.isAdmin)
         ? [
             {
@@ -648,6 +645,10 @@ export default {
       }
 
       return trip;
+    },
+
+    emailTrip() {
+      tripRepo.emailPdfAndICal(this.userId, this.tripId);
     },
 
     getSelectedTrip(tripId) {

@@ -46,6 +46,13 @@ public class CommentFinder extends Finder<Long, Comment> {
     }
 
     /**
+     * Finds all comments of a trip for a 'page' if each page has a number of 'comments'
+     */
+    public List<Comment> findByTripAndPageAndComments(TripNode tripNode, Integer page, Integer comments) {
+        return commentFetcher().where().eq("tripNode", tripNode).between("id", ((page - 1) * comments + 1), (page * comments)).findList();
+    }
+
+    /**
      * Fetches the emojis and emoji users related to a comment
      * @return The query
      */

@@ -23,6 +23,7 @@ create table album_media (
 create table comment (
   id                            bigint auto_increment not null,
   message                       varchar(255),
+  timestamp                     bigint,
   trip_node_id                  bigint,
   user_id                       bigint,
   deleted                       boolean default false not null,
