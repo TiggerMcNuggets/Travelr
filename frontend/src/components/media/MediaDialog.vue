@@ -105,10 +105,6 @@ export default {
   },
 
   computed: {
-    // canCRUDMedia() {
-    //   return this.isAdminUser || this.isMyProfile;
-    // },
-
     mediaURL() {
       return (
         base_url +

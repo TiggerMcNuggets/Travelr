@@ -38,7 +38,7 @@ public class MediaRes {
     /**
      *
      * @param media media object to store information about a media item.
-     *///id, uriString, is_public, mediaType, caption
+     */
     public MediaRes(Media media) {
         this.id = media.id;
         this.filename = media.uriString;
