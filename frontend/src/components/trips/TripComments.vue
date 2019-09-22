@@ -20,7 +20,7 @@
         </v-layout>
       </v-flex>
 
-      <v-flex mt-4 mb-2 v-for="comment in userComments" :key="comment.id">
+      <v-flex mt-4 mb-2 v-for="(comment, index) in userComments" :key="comment.id" @mouseover="hoverIndex = index" @mouseout="hoverIndex = undefined">
         <v-card class="user-comment">
           <v-layout class="comment-header">
             <v-list-tile-avatar>
@@ -30,14 +30,19 @@
               <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
               <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
             </v-flex>
-            <v-icon color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
           </v-layout>
           <v-divider></v-divider>
 
-          <v-flex>
+
+
+          <div class=" d-flex justify-space-between">
             <p class="subtext">{{comment.comment}}</p>
-          </v-flex>
+            <v-icon class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+          </div>
+
+
           <icon-emoji-picker
+                  v-show="hoverIndex === index"
                   :commentId="comment.id"
                   :sendEmojiForComment="postCommentEmoji"/>
         </v-card>
@@ -88,6 +93,10 @@
   .width-restriction {
     max-width: 35px !important;
   }
+
+  .justified-end {
+    justify-content: flex-end;
+  }
 </style>
 
 
@@ -115,6 +124,7 @@ export default {
 
   data() {
     return {
+      hoverIndex: undefined,
       commentText: "",
       loading: false,
       commentsLength: 0,

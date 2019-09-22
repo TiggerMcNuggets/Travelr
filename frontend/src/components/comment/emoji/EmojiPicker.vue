@@ -1,6 +1,15 @@
 <template>
   <div class="textarea-emoji-picker">
-    <picker class="emoji-picker" v-show="showEmojiPicker" title="Pick your emoji..." emoji="point_up" @select="addEmoji" />
+    <picker
+            class="emoji-picker"
+            v-show="showEmojiPicker"
+            title="Pick your emoji..."
+            emoji="point_up"
+            @select="addEmoji"
+            :include="['people']"
+            :sheetSize="32"
+            set="messenger"
+    />
 
     <span class="emoji-trigger" :class="{ 'triggered': showEmojiPicker }" @mousedown.prevent="toggleEmojiPicker">
       <svg style="width:20px;height:20px" viewBox="0 0 24 24">

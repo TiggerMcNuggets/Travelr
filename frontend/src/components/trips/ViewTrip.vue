@@ -357,7 +357,10 @@ export default {
     },
 
     isGroupOwner() {
+
       let isOwn = false;
+      if (!this.selectedTrip) return isOwn;
+
       this.selectedTrip.trip.usergroup.forEach(user => {
         if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
           isOwn = true;
