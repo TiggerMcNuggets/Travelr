@@ -3,7 +3,7 @@ import BaseUrl from "./BaseUrl"
 
 // Base URL used by all requests
 // Ask adam/flynn if confused
-const baseUrl = BaseUrl + "/api"
+const baseUrl = BaseUrl + "/api";
 
 // Create the axios object
 const repo = axios.create({

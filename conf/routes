@@ -16,13 +16,16 @@ GET         /api/ok                             controllers.NationalityControlle
 GET         /api/traveller-types                controllers.TravellerTypeController.getTravellerTypes()
 
 # Travellers
-GET         /api/travellers_filter              controllers.UserController.getFilteredUsers(request: Request, firstName: String ?= null, lastName: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,travellerType: java.util.List[String] ?= null, orderBy: String ?= null)
-GET         /api/travellers                     controllers.UserController.getUsers(request: Request)
-POST        /api/travellers                     controllers.UserController.createUser(request: Request)
-GET         /api/travellers/me                  controllers.UserController.getMe(request: Request)
-GET         /api/travellers/:id                 controllers.UserController.getUser(request: Request, id: Long)
-PUT         /api/travellers/:id                 controllers.UserController.updateUserGivenUser(request: Request, id:Long)
-PUT         /api/travellers/:id/toggle_deleted  controllers.UserController.toggleUserDeleted(request: Request, id: Long)
+GET         /api/travellers_filter                  controllers.UserController.getFilteredUsers(request: Request, firstName: String ?= null, lastName: String ?= null, gender: String ?= null, minAge: Integer ?= 0, maxAge: Integer ?= 150, nationality: java.util.List[String] ?= null,travellerType: java.util.List[String] ?= null, orderBy: String ?= null)
+GET         /api/travellers                         controllers.UserController.getUsers(request: Request)
+POST        /api/travellers                         controllers.UserController.createUser(request: Request)
+GET         /api/travellers/me                      controllers.UserController.getMe(request: Request)
+GET         /api/travellers/:id                     controllers.UserController.getUser(request: Request, id: Long)
+PUT         /api/travellers/:id                     controllers.UserController.updateUserGivenUser(request: Request, id:Long)
+PUT         /api/travellers/:id/toggle_deleted      controllers.UserController.toggleUserDeleted(request: Request, id: Long)
+POST        /api/travellers/:id/slackRequestAuth    controllers.UserController.slackRequestAuth(request: Request, id: Long)
+POST        /api/travellers/:id/slackPrivateChannel controllers.UserController.slackCreatePrivateChannel(request: Request, id: Long)
+
 
 # Personal Photos and Profile Photos
 GET         /api/travellers/:id/photo           controllers.PhotoController.list(request: Request, id: Long)
@@ -91,15 +94,17 @@ GET         /api/users/:userId/trips/:tripId                controllers.TripCont
 PUT         /api/users/:userId/trips/:tripId                controllers.TripController.updateTrip(request: Request, tripId: Long, userId: Long)
 PUT         /api/users/:userId/trips/:tripId/toggle_deleted controllers.TripController.softDeleteTrip(request: Request, tripId: Long, userId: Long)
 GET         /api/users/:user_id/trips/:trip_id/iCal         controllers.TripController.getUserTripAsICalFile(request: Request, user_id: Long, trip_id: Long)
+POST        /api/users/:userId/trips/:tripId/iCal/email     controllers.TripController.emailICalFile(request: Request, userId: Long, tripId: Long)
 DELETE      /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripController.deleteGroupFromTrip(request: Request, tripId: Long, userId: Long, groupId: Long)
 PUT         /api/users/:userId/trips/:tripId/groups/:groupId controllers.TripController.addGroupToTrip(request: Request, tripId: Long, userId: Long, groupId: Long)
 PUT         /api/users/:userId/trips/:nodeId/status        controllers.TripController.changeUserTripStatus(request: Request, nodeId: Long, userId: Long)
-
+GET         /api/users/:user_id/trips/:trip_id/PDF         controllers.TripController.getUserTripAsPDFFile(request: Request, user_id: Long, trip_id: Long)
 
 # Comments
+GET         /api/users/:userId/trips/:tripId/comments      controllers.CommentController.fetchTripComments(request: Request, tripId: Long, userId: Long)
 POST        /api/users/:userId/trips/:tripId/comments       controllers.CommentController.createComment(request: Request, userId: Long, tripId: Long)
 PUT         /api/users/:userId/trips/:tripId/comments/:commentId/toggle_deleted  controllers.CommentController.toggleDeleteComment(request: Request, userId: Long, tripId: Long, commentId: Long)
-
+PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji  controllers.CommentController.addUserEmoji(request: Request, userId: Long, tripId: Long, commentId: Long)
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE

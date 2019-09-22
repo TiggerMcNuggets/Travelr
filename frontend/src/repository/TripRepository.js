@@ -71,19 +71,20 @@ export default {
   },
 
   /**
-   * Downloads a users trip
-   * @param {Number} userId The user id
-   * @param {Number} tripId The trip id to download.
+   * Downloads a users trip PDF file.
+   * NOTE: 'arraybuffer' as response type is needed to format the response in a javascript-friendly pdf file
+   * @param {number} userId The user id
+   * @param {number} tripId The trip id to download.
    */
-  downloadTrip(userId, tripId) {
-    return Repository.get(`/users/${userId}/trips/${tripId}/iCal`);
+  downloadTripPdf(userId, tripId) {
+    return Repository.get(`/users/${userId}/trips/${tripId}/PDF`, {responseType: 'arraybuffer'});
   },
 
   /**
    * Toggles addition/deletion of a group trip
-   * @param {Number} userId The user id
-   * @param {Number} tripId The trip id.
-   * @param {Number} groupId The group id.
+   * @param {number} userId The user id
+   * @param {number} tripId The trip id.
+   * @param {number} groupId The group id.
    */
   toggleGroupTrip(userId, tripId, groupId) {
     return Repository.put(`/users/${userId}/trips/${tripId}/groups/${groupId}`);
@@ -96,5 +97,9 @@ export default {
    */
   updateGroupTripStatus(userId, tripId, payload) {
     return Repository.put(`/users/${userId}/trips/${tripId}/status`, payload);
+  },
+
+  emailPdfAndICal(userId, tripId) {
+    return Repository.post(`/users/${userId}/trips/${tripId}/iCal/email`);
   }
-};
+}

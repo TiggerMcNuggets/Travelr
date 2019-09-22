@@ -1,10 +1,11 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-import user from './user'
-import users from './users/users'
+import user from './user';
+import users from './users/users';
 import destinations from './destinations/destinations';
-import trips from './trips/trips.js'
+import trips from './trips/trips.js';
+import snackbar from './snackbar';
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -12,7 +13,8 @@ export const store = new Vuex.Store({
         user: user,
         users: users,
         destinations: destinations,
-        trips: trips
+        trips: trips,
+        snackbar: snackbar
     }
 });
 
