@@ -23,10 +23,10 @@
 
         <v-hover v-slot:default="{ hover }">
           <v-card
-            v-on:click="openTrip(item.id)"
             :elevation="hover ? 12 : 2"
           >
             <v-img
+              v-on:click="openTrip(item.id)"
               class="white--text"
               height="200px"
               :src="fillerImageURL"
@@ -43,14 +43,19 @@
               <div class="top-destination-content" v-on:click="openTrip(item.id)">
                 <h2>{{ item.name }}</h2>
               </div>
+
               <div class="crud-options">
+                <CreateSlackChannelButton
+                  v-if="(isMyProfile && hasSlack)"
+                  :tripName="item.name"
+                ></CreateSlackChannelButton>
                 <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                        <v-btn icon dark v-on="on">
-                            <v-icon v-on:click="downloadTripPdf(item.id, item.name)" color="primary">picture_as_pdf</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Download trip pdf</span>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon dark v-on="on">
+                      <v-icon v-on:click="downloadTripPdf(item.id, item.name)" color="primary">picture_as_pdf</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Download trip pdf</span>
                 </v-tooltip>
                 <v-btn
                   v-if="(isMyProfile || isAdminUser) && !item.isPublic"
@@ -85,6 +90,7 @@
 
   .top-destination-content {
     display: flex;
+    padding-right: 20px;
     justify-content: space-between;
   }
 
@@ -110,13 +116,15 @@
 
 
 <script>
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import {RepositoryFactory} from "../../repository/RepositoryFactory";
+
   let tripRepository = RepositoryFactory.get("trip");
   import {store} from "../../store/index";
   import CreateTrips from "./CreateTrips.vue";
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
   import PageHeader from "../common/header/PageHeader";
+  import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
 
   export default {
     store,
@@ -161,13 +169,21 @@
         return filteredList.sort(function (a, b) {
           return a.id - b.id;
         });
+      },
+
+      /**
+       * Determines if the user has integrated with slack or not
+       */
+      hasSlack() {
+        return store.getters.getUser.slack;
       }
     },
 
     // child components
     components: {
       CreateTrip: CreateTrips,
-      PageHeader
+      PageHeader,
+      CreateSlackChannelButton
     },
 
     methods: {
@@ -226,11 +242,11 @@
       },
 
       /**
-        * Fetches the PDF file for the selected trip and downloads it on the user machine
-        * @param tripId the id of the selected trip
-        * @param tripName the name of the selected trip
-        */
-      downloadTripPdf: function(tripId, tripName) {
+       * Fetches the PDF file for the selected trip and downloads it on the user machine
+       * @param tripId the id of the selected trip
+       * @param tripName the name of the selected trip
+       */
+      downloadTripPdf: function (tripId, tripName) {
         tripRepository.downloadTripPdf(this.userId, tripId).then((res) => {
           const url = window.URL.createObjectURL(new Blob([res.data], {type: "application/pdf"}));
           const link = document.createElement('a');
