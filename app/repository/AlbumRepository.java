@@ -8,6 +8,7 @@ import io.ebean.text.PathProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.Album;
 import models.Media;
+import models.TripNode;
 import models.User;
 
 import javax.inject.Inject;
@@ -102,6 +103,34 @@ public class AlbumRepository {
             if (user == null)
                 return null;
             return user.getAlbums();
+        }, executionContext);
+    }
+
+    /**
+     * Returns all albums associated with a user including albums for trip the user is an owner of.
+     *
+     * @param userId user id The user id
+     * @return CompletionStage<List<Album>> The list of albums associated with the
+     *         user.
+     */
+    public CompletionStage<List<Album>> listUserAlbumsWithTripAlbums(Long userId) {
+        return supplyAsync(() -> {
+            User user = User.find.findById(userId);
+            if (user == null)
+                return null;
+            List<TripNode> trips = TripNode.find.query().where().and()
+                    .eq("userGroup.userGroups.user.id", userId)
+                    .eq("userGroup.userGroups.isOwner", true)
+                    .eq("parent", null)
+                    .endAnd()
+                    .findList();
+            List<Album> userAlbums = new ArrayList<>(user.getAlbums());
+            for (TripNode trip: trips) {
+                if (!userAlbums.contains(trip.getDefaultAlbum())) {
+                    userAlbums.add(trip.getDefaultAlbum());
+                }
+            }
+            return userAlbums;
         }, executionContext);
     }
 

@@ -91,7 +91,6 @@ public class UserController extends Controller {
 
         // Bad Request Check
         if (userRequestForm.hasErrors()) {
-            System.out.println(userRequestForm.errors());
             return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
