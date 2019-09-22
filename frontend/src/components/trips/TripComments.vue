@@ -30,6 +30,7 @@
               <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
               <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
             </v-flex>
+            <v-icon color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
           </v-layout>
           <v-divider></v-divider>
 
@@ -99,6 +100,23 @@ export default {
       return dateTime.convertTimestampToWordString(timestamp);
     },
 
+    deleteComment(commentId) {
+      commentRepository
+        .deleteComment(
+          this.$store.getters.getUser.id,
+          this.trip.trip.id,
+          commentId
+        )
+        .then(() => {
+          this.userComments = this.userComments.filter(comment => {
+            if (comment.id != commentId) {
+              return comment;
+            }
+          });
+          this.commentsLength -= 1;
+        });
+    },
+
     /**
      * Get all user comments
      */
@@ -128,6 +146,7 @@ export default {
           commentBody
         )
         .then(() => {
+          this.commentText = "";
           this.page = 0;
           this.userComments = [];
         })
