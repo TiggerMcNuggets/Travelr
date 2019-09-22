@@ -23,10 +23,10 @@
 
         <v-hover v-slot:default="{ hover }">
           <v-card
-            v-on:click="openTrip(item.id)"
             :elevation="hover ? 12 : 2"
           >
             <v-img
+              v-on:click="openTrip(item.id)"
               class="white--text"
               height="200px"
               :src="fillerImageURL"
