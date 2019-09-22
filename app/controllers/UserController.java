@@ -284,7 +284,6 @@ public class UserController extends Controller {
      *
      * @param request the http request
      * @param userId the user's id
-     * @param groupName
      * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
@@ -303,24 +302,36 @@ public class UserController extends Controller {
         hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
         if this is given */
 
-        return slackService.requestPrivateChannel(groupOwner, channelName.get()).thenApplyAsync(resHandler -> {
+        // Convert all spaces to '-'.
+        String dashedChannelName = channelName.get().replaceAll(" ", "-").toLowerCase();
+
+        // Remove special characters
+        String sanitizedChannelName = dashedChannelName.replaceAll("[^a-zA-Z0-9\\-\\_]+","");
+
+        return slackService.requestPrivateChannel(groupOwner, sanitizedChannelName).thenApplyAsync(resHandler -> {
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
             if (!user.isPresent()) {
                 return badRequest(APIResponses.USER_NOT_FOUND);
             }
 
             Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
-            if (!(success.get().getAsBoolean())) {
+            Optional<JsonElement> slackChannelName = Optional.ofNullable(resHandler.getBody().get("channel").getAsJsonObject().get("name"));
+
+            if (!success.isPresent() || !success.get().getAsBoolean() || !slackChannelName.isPresent()) {
                 return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
             }
+// abstract this away
+//            slackService.requestServerInfo(groupOwner).thenApplyAsync(response -> {
+//                Optional<JsonElement> domain = Optional.ofNullable(resHandler.getBody().get("team").getAsJsonObject().get("domain"));
+//                if (!domain.isPresent()) {
+//                    return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
+//                }
+//                mailgunService.sendSlackChannelEmail(user.get(), slackChannelName.get().getAsString(), domain.get().getAsString());
+//                return ok(APIResponses.SLACK_CHANNEL_CREATED);
+//            });
 
-            Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
+            return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
 
-            // store group name with slack user and update
-            groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
-            groupOwner.update();
-
-            return ok(APIResponses.SLACK_CHANNEL_CREATED);
         });
     }
 }
