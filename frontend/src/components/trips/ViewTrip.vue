@@ -382,9 +382,11 @@ export default {
         });
     },
 
+    /**
+     * Toggles whether or not to display the photo upload section
+     */
     toggleShowUploadPhoto() {
       this.showUploadSection = !this.showUploadSection;
-      console.log(this.showUploadSection);
     },
 
     /**
@@ -729,7 +731,6 @@ export default {
     init: function() {
     this._getTrip(this.userId, this.tripId).then(() => {
       this.trip = deepCopy(this.selectedTrip);
-      console.log(this.trip);
       this.rollbackSetPreviousBody(tripAssembler(this.trip));
       this.previousTripId = this.trip.trip.id;
 
