@@ -249,18 +249,18 @@ public class UserController extends Controller {
         // TODO: Add slack logic
         Optional<String> code = Optional.ofNullable(request.body().asJson().get("code").asText());
         if (!code.isPresent()) {
-            return CompletableFuture.completedFuture(badRequest("code is null or not found"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_MISSING_CODE));
         }
 
         return slackService.requestAccessToken(code.get(), userId).thenApplyAsync(resHandler -> {
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
             Optional<JsonElement> accessTokenJson = Optional.ofNullable(resHandler.getBody().get("access_token"));
             if (!user.isPresent()) {
-                return badRequest("user is null or not found");
+                return badRequest(APIResponses.USER_NOT_FOUND);
             }
 
             if (!accessTokenJson.isPresent()) {
-                return badRequest("Invalid access token");
+                return badRequest(APIResponses.SLACK_MISSING_ACCESS_TOKEN);
             }
 
             Optional<SlackUser> slackUser = Optional.ofNullable(SlackUser.find.findByUserId(user.get().getId()));
@@ -276,10 +276,9 @@ public class UserController extends Controller {
                 existingSlackUser.update();
             }
 
-            return ok("Slack token saved");
+            return ok(APIResponses.SLACK_TOKEN_SAVED);
         });
     }
-
 
     /**
      *
@@ -292,12 +291,12 @@ public class UserController extends Controller {
     public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
         SlackUser groupOwner = SlackUser.find.findByUserId(userId);
         if (groupOwner == null) {
-            return CompletableFuture.completedFuture(badRequest("slack user is null or not found, user may not have connected to slack"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_USER_NOT_FOUND));
         }
 
         Optional<String> channelName = Optional.ofNullable(request.body().asJson().get("channelName").asText());
         if (!channelName.isPresent()) {
-            return CompletableFuture.completedFuture(badRequest("channel name is null or not found"));
+            return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_CHANNEL_MALFORMED_REQUEST));
         }
 
         /* Private channel names can only contain lowercase letters, numbers,
@@ -307,28 +306,21 @@ public class UserController extends Controller {
         return slackService.requestPrivateChannel(groupOwner, channelName.get()).thenApplyAsync(resHandler -> {
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
             if (!user.isPresent()) {
-                return badRequest("user is null or not found");
+                return badRequest(APIResponses.USER_NOT_FOUND);
             }
 
             Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
             if (!(success.get().getAsBoolean())) {
-                // how do i get the problem directly from slack returned?
-
-                return badRequest("request not successful");
+                return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
             }
 
             Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
-            System.out.println("do i have the correct name???    " + slackGroupName);
 
             // store group name with slack user and update
             groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
             groupOwner.update();
 
-            return ok("Slack channel created");
+            return ok(APIResponses.SLACK_CHANNEL_CREATED);
         });
-    }
-
-    public Result index() {
-        return ok("Travel EA - Home");
     }
 }
