@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <PageHeader title="Admin Dashboard" disableUndoRedo="true"/>
+    <PageHeader title="Admin Dashboard" :disableUndoRedo="true"/>
     <v-tabs v-model="active" slider-color="blue">
       <v-tab :key="1" ripple>Add New User</v-tab>
       <v-tab :key="2" ripple>Edit Requests</v-tab>

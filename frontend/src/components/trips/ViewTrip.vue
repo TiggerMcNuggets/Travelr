@@ -385,7 +385,6 @@ export default {
 
     toggleShowUploadPhoto() {
       this.showUploadSection = !this.showUploadSection;
-      console.log(this.showUploadSection);
     },
 
     /**
@@ -424,7 +423,15 @@ export default {
               title: "Add Photos"
             }
           ]
-        : [];
+        : [
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
+            }
+          ];
     },
 
     /**
@@ -730,10 +737,8 @@ export default {
     init: function() {
     this._getTrip(this.userId, this.tripId).then(() => {
       this.trip = deepCopy(this.selectedTrip);
-      console.log(this.trip);
       this.rollbackSetPreviousBody(tripAssembler(this.trip));
       this.previousTripId = this.trip.trip.id;
-
       this.trip.trip = this.tripWithDates(this.trip.trip);
     });
     }
