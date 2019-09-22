@@ -19,7 +19,6 @@ public class SlackService {
     private DatabaseExecutionContext context;
     private String slackClientID = "737773912711.735910477760";
     private String slackClientSecret = "08b8f234097b1ccd346c87dfd3277c0c";
-//    private String slackApi = "https://slack.com/api/oauth.access";
     private String slackApiURL = "https://slack.com/api";
 
     private String frontendUrl;
@@ -71,6 +70,18 @@ public class SlackService {
         WSRequest request = ws.url(slackURL).setContentType("application/x-www-form-urlencoded");
         request.addQueryParameter("token", groupOwner.getAccessToken());
         request.addQueryParameter("name", groupName);
+        return sendSlackRequest(request).toCompletableFuture();
+    }
+
+    /**
+     * Construct and send an request for fetching server data from the Slack API
+     * @param slackUser the slack information for the user who owns the group
+     * @return the status of the sent request
+     */
+    public CompletableFuture<ResponseHandler> requestServerInfo(SlackUser slackUser) {
+        String slackURL = slackApiURL + "/team.info";
+        WSRequest request = ws.url(slackURL).setContentType("application/x-www-form-urlencoded");
+        request.addQueryParameter("token", slackUser.getAccessToken());
         return sendSlackRequest(request).toCompletableFuture();
     }
 
