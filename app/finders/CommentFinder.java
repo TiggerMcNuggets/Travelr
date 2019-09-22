@@ -23,6 +23,15 @@ public class CommentFinder extends Finder<Long, Comment> {
      * @param id The comments id
      * @return The optional comment
      */
+    public Optional<Comment> findByIdIncludingSoftDelete(Long id) {
+        return commentFetcher().where().eq("id", id).setIncludeSoftDeletes().findOneOrEmpty();
+    }
+
+    /**
+     * Finds an optional comment by its id
+     * @param id The comments id
+     * @return The optional comment
+     */
     public Optional<Comment> findById(Long id) {
         return commentFetcher().where().eq("id", id).findOneOrEmpty();
     }
@@ -34,6 +43,13 @@ public class CommentFinder extends Finder<Long, Comment> {
      */
     public List<Comment> findByTrip(TripNode tripNode) {
         return commentFetcher().where().eq("tripNode", tripNode).findList();
+    }
+
+    /**
+     * Finds all comments of a trip for a 'page' if each page has a number of 'comments'
+     */
+    public List<Comment> findByTripAndPageAndComments(TripNode tripNode, Integer page, Integer comments) {
+        return commentFetcher().where().eq("tripNode", tripNode).between("id", ((page - 1) * comments + 1), (page * comments)).findList();
     }
 
     /**

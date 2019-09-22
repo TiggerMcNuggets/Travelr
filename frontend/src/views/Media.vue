@@ -258,8 +258,8 @@ export default {
     normalOptions() {
       if (this.canCRUDMedia) {
         return [
-          { action: this.openUploadDialog, icon: "add_photo_alternate" },
-          { action: this.openCreateAlbumDialog, icon: "add_to_photos" }
+          { action: this.openUploadDialog, icon: "add_photo_alternate", title: "Upload Photos to Album" },
+          { action: this.openCreateAlbumDialog, icon: "add_to_photos", title: "Create Album" }
         ];
       } else {
         return [];
@@ -271,7 +271,7 @@ export default {
      */
     albumOptions() {
       if (this.canCRUDMedia) {
-        return [{ action: this.openUploadDialog, icon: "add_photo_alternate" }];
+        return [{ action: this.openUploadDialog, icon: "add_photo_alternate", title: "Upload Photos" }];
       } else {
         return [];
       }

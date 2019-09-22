@@ -32,6 +32,16 @@ javacOptions ++= Seq("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
 
 libraryDependencies += javaJdbc % Test
 
+// https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-core
+libraryDependencies += "com.openhtmltopdf" % "openhtmltopdf-core" % "1.0.0"
+// https://mvnrepository.com/artifact/com.openhtmltopdf/openhtmltopdf-pdfbox
+libraryDependencies += "com.openhtmltopdf" % "openhtmltopdf-pdfbox" % "1.0.0"
+// https://mvnrepository.com/artifact/org.jsoup/jsoup
+libraryDependencies += "org.jsoup" % "jsoup" % "1.12.1"
+
+
+
+
 // Dependecy for iCal4j
 // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
 libraryDependencies += "org.mnode.ical4j" % "ical4j" % "3.0.0"
@@ -45,11 +55,6 @@ libraryDependencies ++= Seq (
   "io.cucumber" % "cucumber-java" % "4.2.0",
   "org.xerial" % "sqlite-jdbc" % "3.25.2",
   javaWs
-)
-
-// Rest-Assured testing
-val appDependencies = Seq(
-  "com.jayway.restassured" % "rest-assured" % "1.7" % "test"
 )
 
 // FIXED BUG WHEN GENERATING ScalaDoc  https://github.com/scala/bug/issues/11365

@@ -10,6 +10,8 @@
         <h3 class="headline font-weight-light traveller-name">{{fname}} {{mname}} {{lname}}</h3>
         <p class="caption font-weight-light">{{traveller.email}}</p>
       </div>
+
+      <ConnectWithSlackButton></ConnectWithSlackButton>
     </v-flex>
 
     <v-container fluid>
@@ -72,6 +74,7 @@
 import { store } from "../../store/index";
 import DefaultPic from "../../assets/defaultPic.png";
 import base_url from "../../repository/BaseUrl";
+import ConnectWithSlackButton from "../common/slack/ConnectWithSlackButton";
 
 export default {
   store,
@@ -96,6 +99,10 @@ export default {
       isMyProfile: false,
       id: this.$route.params.id
     };
+  },
+
+  components: {
+    ConnectWithSlackButton
   },
 
   /**
