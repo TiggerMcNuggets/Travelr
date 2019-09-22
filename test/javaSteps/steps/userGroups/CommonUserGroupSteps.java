@@ -130,4 +130,15 @@ public class CommonUserGroupSteps {
         state.getGroup().setUserGroups(userGroups);
         state.getGroup().update();
     }
+
+    /**
+     * Adds the user as an owner of the group
+     */
+    @Given("I am an owner of the group")
+    public void IAmAnOwnerOfTheGroup() {
+        List<UserGroup> userGroups = state.getGroup().getUserGroups();
+        userGroups.add(new UserGroup(state.getUser(), state.getGroup(), true));
+        state.getGroup().setUserGroups(userGroups);
+        state.getGroup().update();
+    }
 }
