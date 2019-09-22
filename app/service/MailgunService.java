@@ -32,15 +32,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import play.mvc.Http.MultipartFormData.*;
 
-
 /**
  * A service which holds the email notification logic using the MailGun API
  */
 public class MailgunService {
 
     private DatabaseExecutionContext context;
-
-
     private String websiteUrl;
     private WSClient ws;
     private String mailgunApi = "https://api.mailgun.net/v3/sandboxc7b3b2d7b248471d9e3c50aa8687d1c4.mailgun.org/messages";
@@ -77,7 +74,6 @@ public class MailgunService {
         return request;
     }
 
-
     /**
      * This methods handles the sending of emails to the Mailgun API. It requires
      * a built request to be sent, and returns the status code to the caller
@@ -108,7 +104,6 @@ public class MailgunService {
         return request.post(Source.from(Arrays.asList(fp, fp2))).thenApplyAsync(WSResponse::getStatus);
     }
 
-
     /**
      * Composes and sends a welcome email to the given email address. This function
      * uses the 'welcome-email' template on our Mailgun account and provides the
@@ -133,6 +128,37 @@ public class MailgunService {
         WSRequest request = buildMailgunRequest(recipientList,
                 welcomeEmailSubject,
                 "welcome-email",
+                recipientVariable);
+        return sendMailgunRequest(request).toCompletableFuture();
+    }
+
+    /**
+     * Composes and sends a notification email to the given email address. This function
+     * uses the 'slack-channel-creation' template on our Mailgun account and provides the
+     * user's first name, trip name and Slack channel URL to the template's placeholder fields.
+     *
+     * @param recipient a user object that contains the recipient's data
+     * @param tripName the name of the trip
+     * @param slackChannelURL the URL of the Slack channel
+     * @return a response code from the Mailgun API which is useful for testing.
+     */
+    public CompletableFuture<Integer> sendSlackChannelEmail(User recipient, String tripName, String slackChannelURL) {
+        String mailSubject = "Travelr - " + tripName + " has a Slack Channel!";
+
+        ArrayList<User> recipientList = new ArrayList<>();
+        recipientList.add(recipient);
+
+        JsonObject recipientVariableFields = new JsonObject();
+        recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+        recipientVariableFields.addProperty("tripName", tripName);
+        recipientVariableFields.addProperty("slackURL", slackChannelURL);
+
+        JsonObject recipientVariable = new JsonObject();
+        recipientVariable.add(recipient.getEmail(), recipientVariableFields);
+
+        WSRequest request = buildMailgunRequest(recipientList,
+                mailSubject,
+                "slack-channel-creation",
                 recipientVariable);
         return sendMailgunRequest(request).toCompletableFuture();
     }
@@ -172,7 +198,6 @@ public class MailgunService {
                 recipientVariable);
         return sendMailgunRequest(request).toCompletableFuture();
     }
-
 
     /**
      * Creates a http request for the mailgun api endpoint to compose an email regarding the update of a trip to
