@@ -137,7 +137,7 @@ export default {
       this.initialUserGroup = this.selectedUserGroup;
       }
     },
-    selectedUserGroup: function(newUserGroup, oldUserGroup) {
+    selectedUserGroup: function(newUserGroup) {
       if ((newUserGroup != this.initialUserGroup) && (this.initialUserGroup.text != "None") && (this.initialUserGroup != null)) {
         this.errorMessage = "Changing the group will reset the attendance status of all members."
         this.isError = true;
