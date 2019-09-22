@@ -96,6 +96,7 @@ const standardAccessGuard = (to, from, next) => {
       return next(DEFAULT_ROUTE_AUTH());
     }
   }
+  
   return next();
 };
 
