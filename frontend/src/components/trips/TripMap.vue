@@ -1,5 +1,5 @@
 <template>
-  <v-flex lg4 pa-2>
+  <v-flex lg5 pa-2>
     <v-layout>
       <v-flex class="map-flex">
         <GmapMap

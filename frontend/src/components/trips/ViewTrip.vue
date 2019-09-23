@@ -16,6 +16,7 @@
     />
 
     <v-layout row wrap class="content">
+
       <TripEditor 
         :updateTrip="updateTrip"
         :hasAdjacentIdentical="hasAdjacentIdentical"
