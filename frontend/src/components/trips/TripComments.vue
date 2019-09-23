@@ -21,16 +21,18 @@
               <v-icon color="primary lighten-1" :disabled="commentText.length < 1">send</v-icon>
             </v-btn>
           </v-layout>
+        </v-layout>
         </v-flex>
 
-      <v-flex mt-4 mb-2 v-for="(comment, index) in userComments" :key="comment.id" @mouseover="hoverIndex = index" @mouseout="hoverIndex = undefined">
+      <v-flex mt-4 mb-2 v-for="(comment, commentIndex) in userComments" :key="comment.id" @mouseover="hoverIndex = commentIndex" @mouseout="hoverIndex = undefined">
         <v-card class="user-comment">
           <v-layout class="comment-header">
             <v-list-tile-avatar>
-              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
+              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)" />
             </v-list-tile-avatar>
             <v-flex>
-              <p class="subtext">{{comment.comment}}</p>
+              <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
+              <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
             </v-flex>
           </v-layout>
           <v-divider></v-divider>
@@ -44,10 +46,10 @@
 
 
           <icon-emoji-picker
-                  v-show="hoverIndex === index"
+                  v-show="hoverIndex === commentIndex"
                   :commentId="comment.id"
-                  :commentIndex="index"
-                  :sendEmojiForComment="postCommentEmoji"/>
+                  :commentIndex="commentIndex"
+                  :sendEmojiForComment="reactWithCommentEmoji"/>
         </v-card>
         <div class="d-flex">
           <div v-for="(emoji, index) in comment.emojis" class="width-restriction" v-bind:key="index">
@@ -55,7 +57,7 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <div v-on="on" class="comment-emoji-box hoverable">
-                  <div class="d-flex align-center">
+                  <div v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)" class="d-flex align-center">
                     <h3>{{emoji.emoji}}</h3>
                     <h4>{{emoji.users.length}}</h4>
                   </div>
@@ -241,7 +243,7 @@ export default {
         })
     },
 
-    postCommentEmoji(commentId, emoji, postIndex) {
+    reactWithCommentEmoji(commentId, emoji, postIndex) {
         const e = {emoji: emoji};
         commentRepository.addEmojiToComment(
             this.$store.getters.getUser.id,

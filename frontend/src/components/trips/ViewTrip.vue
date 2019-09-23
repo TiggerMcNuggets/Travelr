@@ -146,7 +146,7 @@ export default {
     },
   },
   methods: {
-    
+
     /**
      * Opens the group dialog
      */

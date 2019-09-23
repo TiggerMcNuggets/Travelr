@@ -7,6 +7,7 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
 import controllers.dto.Comment.AddEmojiReq;
+import dto.trip.CommentDTO;
 import dto.trip.CommentListDTO;
 import models.Comment;
 import models.TripNode;

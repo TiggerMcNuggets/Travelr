@@ -125,7 +125,6 @@
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
   import PageHeader from "../common/header/PageHeader";
-  import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
 
   export default {
     store,

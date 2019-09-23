@@ -96,6 +96,9 @@ public class CommentRepository {
                 commentEmoji.addUser(user);
             } else if (commentEmoji.getUsers().contains(user)) {
                 commentEmoji.removeUser(user);
+                if (commentEmoji.getUsers().isEmpty()) {
+                    commentEmoji.delete();
+                }
             }
 
             commentEmoji.save();
