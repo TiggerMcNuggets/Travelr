@@ -1,7 +1,6 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-container fluid>
+  <v-container fluid v-if="selectedTrip">
     <PageHeader
-      v-if="selectedTrip"
       :title="selectedTrip.trip.name"
       :undo="undo"
       :redo="redo"
@@ -23,14 +22,13 @@
       />
 
       <TripDetails
-        v-if="selectedTrip"
         :trip="selectedTrip"
         :isGroupOwner="isGroupOwner"
         :updateTrip="updateTrip"
       />
 
       <TripMap 
-        :nodes="trip.trip.nodes"
+        :nodes="selectedTrip.trip.nodes"
       />
     </v-layout>
   </v-container>
