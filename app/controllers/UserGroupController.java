@@ -214,7 +214,6 @@ public class UserGroupController extends Controller {
 
         // Bad Request Check
         if (userGroupRequestForm.hasErrors()) {
-            System.out.println(userGroupRequestForm.errors());
             return CompletableFuture.completedFuture(badRequest(APIResponses.BAD_REQUEST));
         }
 
