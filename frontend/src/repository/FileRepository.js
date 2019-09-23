@@ -1,5 +1,4 @@
 import Repository from "./Repository";
-import BaseURL from "./BaseUrl";
 
 export default {
   /**
