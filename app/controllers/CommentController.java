@@ -7,11 +7,7 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
 import controllers.dto.Comment.AddEmojiReq;
-import controllers.dto.Media.UpdateMediaReq;
-import dto.trip.CommentDTO;
 import dto.trip.CommentListDTO;
-import exceptions.ForbiddenException;
-import exceptions.NotFoundException;
 import models.Comment;
 import models.TripNode;
 import models.User;
@@ -21,13 +17,11 @@ import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.CommentRepository;
-import scala.concurrent.Await;
 import service.CommentService;
 import repository.UserRepository;
 import service.TripService;
 import utils.AsyncHandler;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -175,7 +169,7 @@ public class CommentController {
 
         // Get comment without nesting
         CompletionStage<Comment> combineStage = permissionStage.thenCombineAsync(commentStage, (permission, comment) -> comment);
-        CompletionStage<Long> insertStage = combineStage.thenCombineAsync(userStage, (comment, user) -> commentRepository.addEmoji(addEmojiReq, comment, user).join());
+        CompletionStage<Long> insertStage = combineStage.thenCombineAsync(userStage, (comment, user) -> commentRepository.toggleEmoji(addEmojiReq, comment, user).join());
 
         return insertStage.thenApplyAsync(id -> {
             JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
