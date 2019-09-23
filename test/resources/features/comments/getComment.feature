@@ -6,11 +6,11 @@ Feature: Get Comment
   Scenario: Retrieve a comment successfully as the owner of the trip
     Given I am authenticated
     And I own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And I own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |
@@ -30,11 +30,11 @@ Feature: Get Comment
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And They own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |
@@ -53,11 +53,11 @@ Feature: Get Comment
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And They own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |
@@ -72,11 +72,11 @@ Feature: Get Comment
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And They own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |
@@ -90,11 +90,11 @@ Feature: Get Comment
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And They own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |

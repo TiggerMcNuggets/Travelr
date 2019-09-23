@@ -29,9 +29,9 @@
         :updateTrip="updateTrip"
       />
 
-      <v-flex md4 pa-2>
-        <div class="temp-map"></div>
-      </v-flex>
+      <TripMap 
+        :nodes="trip.trip.nodes"
+      />
     </v-layout>
   </v-container>
 </template>
@@ -49,10 +49,12 @@
 </style>
 
 <script>
+import DeviceSizeMixin from "../mixins/DeviceSizeMixin.vue";
 import RollbackMixin from "../mixins/RollbackMixin";
 import StoreTripsMixin from "../mixins/StoreTripsMixin";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
+import TripMap from "./TripMap";
 import AddGroup from "./tripgroups/AddGroup";
 import TripEditor from "./viewtrip/TripEditor";
 import { store } from "../../store/index";
@@ -64,12 +66,14 @@ export default {
     PageHeader,
     TripDetails,
     AddGroup,
-    TripEditor
+    TripEditor,
+    TripMap
   },
 
   mixins: [
     RollbackMixin, 
-    StoreTripsMixin
+    StoreTripsMixin,
+    DeviceSizeMixin
   ],
 
   // local variables
