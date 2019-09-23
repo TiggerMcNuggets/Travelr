@@ -127,7 +127,7 @@ Feature: Create Comment
     }
     """
     And I send the request
-    Then I will receive the response code 403
+    Then I will receive the response code 201
 
 
   Scenario: Create a comment when not part of the group

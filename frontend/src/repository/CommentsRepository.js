@@ -2,6 +2,17 @@ import Repository from "./Repository";
 
 export default {
   /**
+   * Gets all comments for part of a trip
+   * @param {Number} userId The user id which is posting the comment
+   * @param {Number} tripId The trip id which the comment is for
+   */
+  getComments(userId, tripId, params) {
+    return Repository.get(`/users/${userId}/trips/${tripId}/comments`, {
+      params: params
+    });
+  },
+
+  /**
    * Makes a comment on a trip for a particular user.
    * @param {Number} userId The user id which is posting the comment
    * @param {Number} tripId The trip id which the comment is for
