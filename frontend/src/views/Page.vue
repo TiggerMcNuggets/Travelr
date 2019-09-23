@@ -101,8 +101,7 @@ export default {
     return {
       mini: true,
       right: null,
-      url: "",
-      // traveller: undefined
+      url: ""
     };
   },
   computed: {
