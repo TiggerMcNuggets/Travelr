@@ -2,6 +2,7 @@ package dto.trip;
 
 import models.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NodeDTO {
@@ -31,6 +32,7 @@ public class NodeDTO {
         this.arrivalDate = node.getArrivalDate();
         this.departureDate = node.getDepartureDate();
         this.ordinal = node.getOrdinal();
+        this.usergroup = new ArrayList<>();
 
         if (node.getClass() == TripNode.class) {
             this.type = "trip";

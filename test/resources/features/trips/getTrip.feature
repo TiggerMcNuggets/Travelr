@@ -109,7 +109,7 @@ Scenario: Get a trip successfully
                  "googleId":null
               },
               "type":"destination",
-              "usergroup":null
+              "usergroup": []
            }
         ]
      },
@@ -183,7 +183,7 @@ Scenario: Get another user's trip as an admin
                  "googleId":null
               },
               "type":"destination",
-              "usergroup":null
+              "usergroup": []
            },
            {
               "id":3,
@@ -202,7 +202,7 @@ Scenario: Get another user's trip as an admin
                  "googleId":null
               },
               "type":"destination",
-              "usergroup":null
+              "usergroup":[]
            },
            {
               "id":4,
@@ -221,7 +221,7 @@ Scenario: Get another user's trip as an admin
                  "googleId":null
               },
               "type":"destination",
-              "usergroup":null
+              "usergroup":[]
            }
         ]
      },
