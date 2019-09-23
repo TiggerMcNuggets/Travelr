@@ -109,6 +109,11 @@ public class FileService {
         }, context);
     }
 
+    /**
+     * Fetchs a file object by its Id
+     * @param fileId
+     * @return
+     */
     public CompletableFuture<File> getFileById(Long fileId) {
         return supplyAsync(() -> {
             File file = File.find.byId(fileId);
@@ -143,6 +148,11 @@ public class FileService {
         return newFileObject;
     }
 
+    /**
+     * Get the extension from a file name
+     * @param name
+     * @return
+     */
     private String getFileExtension(String name) {
         int lastIndexOf = name.lastIndexOf(".");
         if (lastIndexOf == -1) {

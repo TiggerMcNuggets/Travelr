@@ -31,6 +31,13 @@ public class FileController extends Controller {
         filesPath = rootPath + config.getString("filesPath");
     }
 
+    /**
+     * Endpoint for uploading of files to a trip. Allows multiple files to be uploaded at once
+     * @param request
+     * @param nodeId
+     * @param userId
+     * @return
+     */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> uploadFiles(Http.Request request, Long nodeId, Long userId) {
 
@@ -42,9 +49,16 @@ public class FileController extends Controller {
 
         return fileService.createNewFiles(fileList, nodeId, userId).thenApplyAsync(files -> {
             return ok();
-        });
+        }).handle(AsyncHandler::handleResult);
     }
 
+    /**
+     * Endpoint which returns a list of FileDTO objects which displays data about the files
+     * @param request
+     * @param nodeId
+     * @param userId
+     * @return
+     */
     public CompletionStage<Result> getFilesForTrip(Http.Request request, Long nodeId, Long userId) {
         return fileService
                 .getFilesForTripNode(nodeId).thenApplyAsync(files -> {
@@ -58,6 +72,14 @@ public class FileController extends Controller {
                 }).handle(AsyncHandler::handleResult);
     }
 
+    /**
+     * Deletes a file by its Id
+     * @param request
+     * @param nodeId
+     * @param fileId
+     * @param userId
+     * @return
+     */
     public CompletionStage<Result> deleteFileById(Http.Request request, Long nodeId, Long fileId, Long userId) {
         return fileService.deleteFileById(fileId)
                 .thenApplyAsync(output -> {
@@ -65,7 +87,13 @@ public class FileController extends Controller {
                 }).handle(AsyncHandler::handleResult);
     }
 
-
+    /**
+     * Returns the file object and renames it to the old name from the hash
+     * @param request
+     * @param fileId
+     * @param userId
+     * @return
+     */
     public CompletionStage<Result> getFile(Http.Request request, Long fileId, Long userId) {
         return fileService.getFileById(fileId).thenApplyAsync(file -> {
             try {
