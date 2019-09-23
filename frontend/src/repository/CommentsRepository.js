@@ -12,6 +12,17 @@ export default {
     });
   },
 
+
+   /**
+   * Gets a comment given its id
+   * @param {Number} userId The user id which is posting the comment
+   * @param {Number} tripId The trip id which the comment is for
+   * @param {Number} commentId The comment id
+   */
+  getComment(userId, tripId, commentId) {
+        return Repository.get(`/users/${userId}/trips/${tripId}/comments/${commentId}`);
+   },
+
   /**
    * Makes a comment on a trip for a particular user.
    * @param {Number} userId The user id which is posting the comment
@@ -22,6 +33,21 @@ export default {
       `/users/${userId}/trips/${tripId}/comments`,
       payload
     );
+  },
+
+    /**
+     *
+     * Calls the PUT API to add a reaction (emoji) to a comment
+     * @param userId {number}
+     * @param tripId {number}
+     * @param commentId {number}
+     * @param emoji {Object}
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+  addEmojiToComment(userId, tripId, commentId, emoji) {
+    return Repository.put(
+        `/users/${userId}/trips/${tripId}/comments/${commentId}/emoji`, emoji
+    )
   },
 
   /**
@@ -61,4 +87,7 @@ export default {
       payload
     );
   }
+
+
+
 };
