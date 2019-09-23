@@ -1,13 +1,16 @@
 <template>
   <v-app id="inspire">
     <v-toolbar fixed app clipped-right class="main-header">
+        <v-btn text icon v-on:click="expand = !expand" v-if="this.small">
+          <v-icon v-model="this.small">menu</v-icon>
+        </v-btn>
       <router-link to="/" class="primary-logo">
         <v-toolbar-title class="fill-height toolbar toolbar-title">
           <img class="fill-height" src="../assets/logo2_white.png">
         </v-toolbar-title>
       </router-link>
     </v-toolbar>
-    <v-navigation-drawer fixed app :mini-variant="mini" hide-overlay>
+    <v-navigation-drawer disable-resize-watcher fixed app :mini-variant="mini" v-if="this.displayNav" hide-overlay>
       <v-toolbar flat class="transparent">
         <v-list class="pa-0">
           <v-list-tile avatar>
@@ -39,7 +42,7 @@
       </v-list>
 
       <v-list class="pt-0 pb-0 collapse">
-        <v-list-tile @click.stop="mini = !mini">
+        <v-list-tile @click.stop="mini = !mini" v-if="!this.small">
           <v-list-tile-action>
             <v-icon v-if="mini">chevron_right</v-icon>
             <v-icon v-else>chevron_left</v-icon>
@@ -99,6 +102,9 @@ export default {
   mixins: [DeviceSizeMixin],
   data() {
     return {
+      displayNav: true,
+      expand: false,
+      small: false,
       mini: true,
       right: null,
       url: ""
@@ -184,6 +190,42 @@ export default {
      */
     loggedIn() {
       return store.getters.isLoggedIn;
+    },
+
+    isSmall() {
+      console.log("width")
+      console.log(this.windowSizes.width)
+      console.log("small")
+      console.log(this.small)
+      console.log("expand")
+      console.log(this.expand)
+      console.log("mini")
+      console.log(this.mini)
+      if (this.windowSizes.width >= 960) {
+        console.log("hgchgc")
+        this.small = false;
+        this.displayNav = true;
+      }
+      if (this.windowSizes.width < 960) {
+        console.log("done");
+        this.mini = false;
+        this.small = true;
+      }
+      if (this.expand && this.small) {
+        this.displayNav = true;
+      }
+      console.log("display")
+      console.log(this.displayNav)
+      return true;
+    },
+
+    isLarge() {
+      console.log("adcsca")
+      if (this.windowSizes.width >= 960) {
+        this.small = false;
+        this.displayNav = true;
+        return true;
+      }
     }
   },
 
