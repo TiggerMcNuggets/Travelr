@@ -16,6 +16,9 @@ public class File extends BaseModel {
     @Constraints.Required
     public String filepath;
 
+    @Constraints.Required
+    public String extension;
+
     @ManyToOne
     @JsonIgnore
     public Node trip;
@@ -60,5 +63,13 @@ public class File extends BaseModel {
 
     public static FileFinder getFind() {
         return find;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 }

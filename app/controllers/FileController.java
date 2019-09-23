@@ -1,5 +1,8 @@
 package controllers;
 
+import controllers.actions.Authorization;
+import dto.file.FileDTO;
+import models.File;
 import play.libs.Files;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -22,23 +25,31 @@ public class FileController extends Controller {
         this.fileService = fileService;
     }
 
-
+    @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> uploadFiles(Http.Request request, Long nodeId, Long userId) {
 
-        Http.MultipartFormData mfd = request.body().asMultipartFormData();
+        Http.MultipartFormData<Files.TemporaryFile> mfd = request.body().asMultipartFormData();
 
-        List<Http.MultipartFormData.FilePart<Files.TemporaryFile>> fileList = new ArrayList<>();
+        List<Http.MultipartFormData.FilePart<Files.TemporaryFile>> fileList;
 
         fileList = mfd.getFiles();
 
-        return fileService.createNewFiles(fileList).thenApplyAsync(files -> {
+        return fileService.createNewFiles(fileList, nodeId, userId).thenApplyAsync(files -> {
             return ok();
         });
     }
 
     public CompletionStage<Result> getFilesForTrip(Http.Request request, Long nodeId, Long userId) {
         return fileService
-                .getFilesForTripNode(nodeId).thenApplyAsync(files -> ok(Json.toJson(files))).handle(AsyncHandler::handleResult);
+                .getFilesForTripNode(nodeId).thenApplyAsync(files -> {
+                    List<FileDTO> fileDTOS = new ArrayList<>();
+
+                    for(File file : files) {
+                        fileDTOS.add(new FileDTO(file));
+                    }
+
+                    return ok(Json.toJson(fileDTOS));
+                }).handle(AsyncHandler::handleResult);
     }
 
     public CompletionStage<Result> deleteFileById(Http.Request request, Long nodeId, Long fileId, Long userId) {
