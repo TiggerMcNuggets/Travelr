@@ -28,7 +28,7 @@
       />
 
       <TripMap 
-        v-if="isMedium || isLarge"
+        v-if="isLarge || isExtraLarge"
         :nodes="selectedTrip.trip.nodes"
       />
     </v-layout>

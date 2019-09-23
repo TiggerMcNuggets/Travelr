@@ -6,7 +6,7 @@
         <v-tab :key="2" ripple>Comments</v-tab>
         <v-tab :key="3" ripple>Media</v-tab>
         <v-tab :key="4" ripple>Files</v-tab>
-        <v-tab :key="5" ripple v-if="!isLarge && !isMedium">Map</v-tab>
+        <v-tab :key="5" ripple v-if="isExtraSmall || isSmall || isMedium">Map</v-tab>
 
         <v-tab-item :key="1">
           <TripOverview 
