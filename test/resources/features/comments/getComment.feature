@@ -12,20 +12,15 @@ Feature: Get Comment
       | name         | description |
       | My First Trip| A trip      |
     And The trip belongs to the user group
-    When I want to add a comment
-    And The body is
-    """
-    {
-      "message": "Comment"
-    }
-    """
-    And I send the request
-    And I want to retrieve comments
+    And the trip has the comment
+      | message |
+      | Comment |
+    When I want to retrieve comments
     And I send the request
     Then I will receive the response code 200
     And I will receive the response body
     """
-    [{"id":1,"userId":2,"userFirstName":"Test","userLastName":"User","comment":"Comment","profilePhoto":"defaultPic.png"}]
+    {"commentsLength":1,"comments":[{"id":1,"userId":2,"userFirstName":"Test","userLastName":"User","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117}]}
     """
 
   Scenario: Retrieve comments of an unassociated trip successfully as an admin
@@ -49,7 +44,7 @@ Feature: Get Comment
     Then I will receive the response code 200
     And I will receive the response body
     """
-    [{"id":1,"userId":3,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png"}]
+    {"commentsLength":1,"comments":[{"id":1,"userId":3,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117}]}
     """
 
   Scenario: Retrieve comments of an unassociated trip unsuccessfully as a normal user
@@ -111,5 +106,5 @@ Feature: Get Comment
     Then I will receive the response code 200
     And I will receive the response body
     """
-    [{"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png"}]
+    {"commentsLength":1,"comments": [{"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117}]}
     """
