@@ -29,7 +29,7 @@
         :updateTrip="updateTrip"
       />
 
-      <v-flex md4 pa-2>
+      <v-flex v-if="!isSmall" md4 pa-2>
         <div class="temp-map"></div>
       </v-flex>
     </v-layout>
@@ -49,6 +49,7 @@
 </style>
 
 <script>
+import DeviceSizeMixin from "../mixins/DeviceSizeMixin.vue";
 import RollbackMixin from "../mixins/RollbackMixin";
 import StoreTripsMixin from "../mixins/StoreTripsMixin";
 import PageHeader from "../common/header/PageHeader";
@@ -69,7 +70,8 @@ export default {
 
   mixins: [
     RollbackMixin, 
-    StoreTripsMixin
+    StoreTripsMixin,
+    DeviceSizeMixin
   ],
 
   // local variables
