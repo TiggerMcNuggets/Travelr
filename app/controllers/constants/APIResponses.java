@@ -60,5 +60,4 @@ public class APIResponses {
     public static final String SLACK_MISSING_CODE = "Missing temporary Slack code";
     public static final String SLACK_CHANNEL_NAME_TAKEN = "Slack channel name already taken";
     public static final String SLACK_CHANNEL_DOMAIN_MALFORMED = "Slack server domain address is malformed";
-
 }

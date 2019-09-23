@@ -137,29 +137,30 @@ public class MailgunService {
      * uses the 'slack-channel-creation' template on our Mailgun account and provides the
      * user's first name, trip name and Slack channel URL to the template's placeholder fields.
      *
-     * @param recipient a user object that contains the recipient's data
-     * @param tripName the name of the trip
-     * @param slackChannelURL the URL of the Slack channel
+     * @param tripNode a trip object
+     * @param slackServerDomain the domain of the Slack server
      * @return a response code from the Mailgun API which is useful for testing.
      */
-    public CompletableFuture<Integer> sendSlackChannelEmail(User recipient, String tripName, String slackChannelURL) {
-        String mailSubject = "Travelr - " + tripName + " has a Slack Channel!";
+    public CompletableFuture<Integer> sendSlackChannelEmail(TripNode tripNode, String slackServerDomain) {
+        String mailSubject = "Travelr - " + StringUtils.capitalize(tripNode.getName()) + " has a Slack Channel!";
 
-        ArrayList<User> recipientList = new ArrayList<>();
-        recipientList.add(recipient);
+        ArrayList<User> recipients = new ArrayList<>();
+        recipients.addAll(tripNode.getUserGroup().getUsers());
 
-        JsonObject recipientVariableFields = new JsonObject();
-        recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
-        recipientVariableFields.addProperty("tripName", tripName);
-        recipientVariableFields.addProperty("slackURL", slackChannelURL);
+        JsonObject recipientVariables = new JsonObject();
 
-        JsonObject recipientVariable = new JsonObject();
-        recipientVariable.add(recipient.getEmail(), recipientVariableFields);
+        for (User recipient: recipients) {
+            JsonObject recipientVariableFields = new JsonObject();
+            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+            recipientVariableFields.addProperty("tripName", StringUtils.capitalize(tripNode.getName()));
+            recipientVariableFields.addProperty("slackURL", "https://" + slackServerDomain + ".slack.com");
+            recipientVariables.add(recipient.getEmail(), recipientVariableFields);
+        }
 
-        WSRequest request = buildMailgunRequest(recipientList,
+        WSRequest request = buildMailgunRequest(recipients,
                 mailSubject,
                 "slack-channel-creation",
-                recipientVariable);
+                recipientVariables);
         return sendMailgunRequest(request).toCompletableFuture();
     }
 
@@ -230,7 +231,7 @@ public class MailgunService {
 
         recipients.addAll(tripNode.getUserGroup().getUsers());
         JsonObject recipientVariables = new JsonObject();
-        String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
+        String subject = "Travelr - Your trip " + StringUtils.capitalize(tripNode.getName()) + " was recently updated.";
         for (User recipient: recipients) {
             JsonObject recipientVariableFields = new JsonObject();
 
