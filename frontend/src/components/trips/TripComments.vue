@@ -85,14 +85,19 @@
 
 <style>
   .comment-emoji-box {
-    background-color: #c5cae9;
+    border: 1px solid #c5cae9;
     border-radius: 4px;
     padding: 3px;
     margin-right: 5px;
-    max-width: 30px
+    max-width: 50px
   }
+
+  .comment-emoji-box:hover {
+    background-color: #ced3f0;
+  }
+
   .width-restriction {
-    max-width: 35px !important;
+    max-width: 50px !important;
   }
 
   .justified-end {
