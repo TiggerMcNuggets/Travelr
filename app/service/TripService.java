@@ -217,8 +217,16 @@ public class TripService {
                 /**
                  * Check User can edit
                  */
-                if (trip.getUser().getId() != user.getId()) {
-                    throw new CustomException(Http.Status.UNAUTHORIZED,
+                if (trip.getUserGroup() != null) {
+                    Optional<UserGroup> usergroup = UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id);
+                    if (usergroup.isPresent() || user.isAdmin()) {
+                        if (!UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id).get().isOwner) {
+                            throw new CustomException(Http.Status.FORBIDDEN,
+                                    "You do not have permission to update this trip");
+                        }
+                    }
+                } else if(trip.getUser().getId() != user.getId()) {
+                    throw new CustomException(Http.Status.FORBIDDEN,
                             "You do not have permission to update this trip");
                 }
 
@@ -354,15 +362,39 @@ public class TripService {
      * @param id
      * @return true if the trip is deleted
      */
-    public CompletableFuture<Boolean> toggleTripDeleted(Long id) {
+    public CompletableFuture<Boolean> toggleTripDeleted(Long id, User user) {
         return supplyAsync(() -> {
             Optional<TripNode> tripNodeOptional = TripNode.find.findByIdIncludeDeleted(id);
 
+            /**
+             * Check Trip Exists
+             */
+            if (!tripNodeOptional.isPresent()) {
+                throw new CustomException(Http.Status.NOT_FOUND, "Trip not found");
+            }
+
+            TripNode trip = tripNodeOptional.get();
+
+            /**
+             * Check User can edit
+             */
+            if (trip.getUserGroup() != null) {
+                Optional<UserGroup> usergroup = UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id);
+                if (usergroup.isPresent() || user.isAdmin()) {
+                    if (!UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id).get().isOwner) {
+                        throw new CustomException(Http.Status.FORBIDDEN,
+                                "You do not have permission to update this trip");
+                    }
+                }
+            } else if(trip.getUser().getId() != user.getId()) {
+                throw new CustomException(Http.Status.FORBIDDEN,
+                        "You do not have permission to update this trip");
+            }
+
             if (tripNodeOptional.isPresent()) {
-                TripNode tripNode = tripNodeOptional.get();
-                tripNode.setDeleted(!tripNode.isDeleted());
-                tripNode.update();
-                return tripNode.isDeleted();
+                trip.setDeleted(!trip.isDeleted());
+                trip.update();
+                return trip.isDeleted();
             }
 
             return false;
