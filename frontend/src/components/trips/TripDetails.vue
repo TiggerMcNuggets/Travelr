@@ -1,5 +1,5 @@
 <template>
-  <v-flex md5 pa-2>
+  <v-flex lg5 pa-2>
     <v-container class="no-padding">
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Overview</v-tab>
