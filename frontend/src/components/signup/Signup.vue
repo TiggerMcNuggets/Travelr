@@ -26,8 +26,8 @@
         @click="handleSignup"
         color="error"
       >Sign Up</v-btn>
-      <router-link to="/login">
-        <v-btn class="login-button" large outline v-on:click="login" color="error">Back</v-btn>
+      <router-link class="no-underline" to="/login">
+        <v-btn class="login-button" large outline color="error">Back</v-btn>
       </router-link>
     </v-flex>
   </v-form>

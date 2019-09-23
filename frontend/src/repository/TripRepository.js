@@ -38,8 +38,8 @@ export default {
    * Gets all of a users trips from the database
    * @param {Number} user_id The id of the user to get trips for.
    */
-  getUserTrips(user_id) {
-    return Repository.get("/users/" + user_id + "/trips");
+  getUserTrips(userId) {
+    return Repository.get("/users/" + userId + "/trips");
   },
 
   /**
@@ -73,8 +73,8 @@ export default {
   /**
    * Downloads a users trip PDF file.
    * NOTE: 'arraybuffer' as response type is needed to format the response in a javascript-friendly pdf file
-   * @param {number} userId The user id
-   * @param {number} tripId The trip id to download.
+   * @param {Number} userId The user id
+   * @param {Number} tripId The trip id to download.
    */
   downloadTripPdf(userId, tripId) {
     return Repository.get(`/users/${userId}/trips/${tripId}/PDF`, {responseType: 'arraybuffer'});
@@ -82,9 +82,9 @@ export default {
 
   /**
    * Toggles addition/deletion of a group trip
-   * @param {number} userId The user id
-   * @param {number} tripId The trip id.
-   * @param {number} groupId The group id.
+   * @param {Number} userId The user id
+   * @param {Number} tripId The trip id.
+   * @param {Number} groupId The group id.
    */
   toggleGroupTrip(userId, tripId, groupId) {
     return Repository.put(`/users/${userId}/trips/${tripId}/groups/${groupId}`);
@@ -103,7 +103,21 @@ export default {
     return Repository.put(`/users/${userId}/trips/${tripId}/status`, payload);
   },
 
+  /**
+   * Emails the trip pdf and iCal file to a user
+   * @param {Number} userId The user id
+   * @param {Number} tripId The trip id
+   */
   emailPdfAndICal(userId, tripId) {
     return Repository.post(`/users/${userId}/trips/${tripId}/iCal/email`);
+  },
+
+  /**
+   * Downloads the trip iCal file for a user
+   * @param {Number} userId The user id
+   * @param {Number} tripId The trip id
+   */
+  downloadICal(userId, tripId) {
+    return Repository.get(`/users/${userId}/trips/${tripId}/iCal`);
   }
 }

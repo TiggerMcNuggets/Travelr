@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router'
 import * as VueGoogleMaps from 'vue2-google-maps';
 
+import SnackbarMixin from "./components/mixins/SnackbarMixin";
+
 Vue.use(VueGoogleMaps, {
     load: {
         key: '',
@@ -28,6 +30,9 @@ Vue.use(VueGoogleMaps, {
     //// then disable the following:
     // installComponents: true,
 });
+
+
+Vue.mixin(SnackbarMixin);
 
 
 Vue.config.productionTip = false;

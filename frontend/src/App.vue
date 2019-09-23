@@ -1,17 +1,20 @@
 <template>
-  <div id="app">
+  <v-app>
     <router-view></router-view>
-  </div>
+    <Snackbar></Snackbar>
+  </v-app>
 </template>
 
 <script>
 import { store } from "./store/index";
 import DeviceSizeMixin from "./components/mixins/DeviceSizeMixin.vue";
+import Snackbar from "./components/common/Snackbar.vue";
 
 export default {
   name: "App",
   store,
   mixins: [DeviceSizeMixin],
+  components: {Snackbar},
   data() {
     return {
       drawer: true,
