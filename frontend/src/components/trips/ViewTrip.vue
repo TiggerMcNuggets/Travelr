@@ -108,24 +108,6 @@ export default {
         }
       });
       return isOwn;
-    }
-  },
-  methods: {
-    /**
-     * Sends a request to the backend containing formdata with the image to be added to a specified album
-     * given an user id and an album id.
-     */
-    uploadToAlbum(albumId, file) {
-      let formData = new FormData();
-      formData.append("picture", file);
-
-      mediaRepository
-        .uploadMediaToAlbum(this.userId, albumId, formData)
-        .then(() => {
-          return this.init();
-        });
-      }
-      return isOwn;
     },
 
     /**
@@ -134,37 +116,37 @@ export default {
      */
     headerOptions() {
       return this.selectedTrip &&
-        this.selectedTrip.trip.id == this.selectedTrip.root.id &&
-        (this.isTripOwner || this.isGroupOwner || this.isAdmin)
-        ? [
-            {
-              action: () => {
-                this.openGroupDialog();
-              },
-              icon: "people_alt",
-              title: "Manage Group"
-            },
-            {
-              action: () => {
-                this.toggleShowUploadPhoto();
-              },
-              icon: "add_photo_alternate",
-              title: "Add Photos"
-            }
-          ]
-        : [
-            {
-              action: () => {
-                this.toggleShowUploadPhoto();
-              },
-              icon: "add_photo_alternate",
-              title: "Add Photos"
-            }
-          ];
+      this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+      (this.isTripOwner || this.isGroupOwner || this.isAdmin)
+              ? [
+                {
+                  action: () => {
+                    this.openGroupDialog();
+                  },
+                  icon: "people_alt",
+                  title: "Manage Group"
+                },
+                {
+                  action: () => {
+                    this.toggleShowUploadPhoto();
+                  },
+                  icon: "add_photo_alternate",
+                  title: "Add Photos"
+                }
+              ]
+              : [
+                {
+                  action: () => {
+                    this.toggleShowUploadPhoto();
+                  },
+                  icon: "add_photo_alternate",
+                  title: "Add Photos"
+                }
+              ];
     },
   },
-
   methods: {
+    
     /**
      * Opens the group dialog
      */
