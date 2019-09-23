@@ -1,36 +1,39 @@
 <template>
-  <v-card>
-    <v-card-title primary-title>
-      <h2 class="headline">Add Group to Trip</h2>
-    </v-card-title>
-    <v-divider></v-divider>
-    <v-card-text>
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-autocomplete
-            v-model="selectedUserGroup"
-            :hint="`Select the user group to add`"
-            :items="filteredGroups"
-            item-text="text"
-            item-value="id"
-            label="Select Group"
-            persistent-hint
-            return-object
-            single-line
-          ></v-autocomplete>
-        </v-flex>
-      </v-layout>
-      <v-alert :value="isError" :dismissible="true" type="error" class="mb-4">{{errorMessage}}</v-alert>
-    </v-card-text>
+  <v-dialog :value="dialogActive" @input="closeGroupDialog" width="500">
+    
+    <v-card>
+      <v-card-title primary-title>
+        <h2 class="headline">Add Group to Trip</h2>
+      </v-card-title>
+      <v-divider />
+      <v-card-text>
+        <v-layout row wrap>
+          <v-flex xs12>
+            <v-autocomplete
+              v-model="selectedUserGroup"
+              :hint="`Select the user group to add`"
+              :items="filteredGroups"
+              item-text="text"
+              item-value="id"
+              label="Select Group"
+              persistent-hint
+              return-object
+              single-line
+            ></v-autocomplete>
+          </v-flex>
+        </v-layout>
+        <v-alert :value="isError" :dismissible="true" type="error" class="mb-4">{{errorMessage}}</v-alert>
+      </v-card-text>
 
-    <v-divider></v-divider>
+      <v-divider />
 
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
-      <v-btn ma-3 color="primary" flat @click="addUserGroup">Add Group</v-btn>
-    </v-card-actions>
-  </v-card>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
+        <v-btn ma-3 color="primary" flat @click="addUserGroup">Add Group</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -43,7 +46,7 @@ let tripRepository = RepositoryFactory.get("trip");
 export default {
   props: {
     closeGroupDialog: Function,
-    tripId: Number
+    dialogActive: Boolean
   },
 
   mixins: [StoreTripsMixin],
@@ -103,6 +106,10 @@ export default {
         });
     },
 
+    /**
+     * Sets an error message if error
+     * @param error The error message
+     */
     setErrorMessage(error) {
       this.isError = true;
       this.errorMessage = error;

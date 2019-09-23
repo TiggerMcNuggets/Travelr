@@ -83,7 +83,8 @@ export default {
           title: "Interested",
           value: "MAYBE"
         }
-      ]
+      ],
+      userId: this.$route.params.id
     };
   },
 
@@ -145,10 +146,6 @@ export default {
       );
     }
   },
-
-  props: {
-    tripId: Number
-  }
 };
 </script>
 
