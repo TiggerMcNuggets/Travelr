@@ -372,8 +372,10 @@ public class TripController extends Controller {
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
+        Optional<Node> trip = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
 
-        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+        return tripService.toggleTripDeleted(tripId, user.get()).thenApplyAsync(deleted -> {
             return ok(Json.toJson(deleted));
         });
     }
