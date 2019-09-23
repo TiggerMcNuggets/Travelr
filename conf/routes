@@ -104,7 +104,7 @@ GET         /api/users/:user_id/trips/:trip_id/PDF         controllers.TripContr
 GET         /api/users/:userId/trips/:tripId/comments      controllers.CommentController.fetchTripComments(request: Request, tripId: Long, userId: Long)
 POST        /api/users/:userId/trips/:tripId/comments       controllers.CommentController.createComment(request: Request, userId: Long, tripId: Long)
 PUT         /api/users/:userId/trips/:tripId/comments/:commentId/toggle_deleted  controllers.CommentController.toggleDeleteComment(request: Request, userId: Long, tripId: Long, commentId: Long)
-PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji  controllers.CommentController.addUserEmoji(request: Request, userId: Long, tripId: Long, commentId: Long)
+PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji  controllers.CommentController.toggleUserEmoji(request: Request, userId: Long, tripId: Long, commentId: Long)
 
 
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE

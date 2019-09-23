@@ -153,7 +153,7 @@ public class CommentController {
      * @return 201 response if created successfully
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> addUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
+    public CompletionStage<Result> toggleUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
         Form<AddEmojiReq> addEmojiReqForm = formFactory.form(AddEmojiReq.class).bindFromRequest(request);
 
         if (addEmojiReqForm.hasErrors()) {

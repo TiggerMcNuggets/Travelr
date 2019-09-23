@@ -15,9 +15,7 @@ public class CommentListDTO {
         this.commentsLength = count;
 
         List<CommentDTO> commentDTOList = new ArrayList<>();
-        System.out.println(commentList);
         for (Comment comment: commentList) {
-            System.out.println(comment);
             CommentDTO commentDTO = new CommentDTO(comment);
             commentDTOList.add(commentDTO);
         }
