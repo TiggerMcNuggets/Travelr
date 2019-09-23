@@ -108,8 +108,9 @@ PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji  controll
 
 
 # Trip Files
-POST         /api/users/:userId/trips/:nodeId/files                 controllers.FileController.uploadFiles(request: Request, nodeId: Long, userId: Long)
-GET        /api/users/:userId/trips/:nodeId/files                 controllers.FileController.getFilesForTrip(request: Request, nodeId: Long, userId: Long)
+POST        /api/users/:userId/trips/:nodeId/files                 controllers.FileController.uploadFiles(request: Request, nodeId: Long, userId: Long)
+GET         /api/users/:userId/trips/:nodeId/files                 controllers.FileController.getFilesForTrip(request: Request, nodeId: Long, userId: Long)
+GET         /api/users/:userId/file/:fileId                        controllers.FileController.getFile(request: Request, fileId: Long, userId: Long)
 DELETE      /api/users/:userId/trips/:nodeId/files/:fileId         controllers.FileController.deleteFileById(request: Request, nodeId: Long, fileId: Long, userId: Long)
 
 

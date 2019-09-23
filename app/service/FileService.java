@@ -1,6 +1,7 @@
 package service;
 
 import com.typesafe.config.Config;
+import exceptions.BadRequestException;
 import exceptions.NotFoundException;
 import models.File;
 import models.TripNode;
@@ -105,8 +106,20 @@ public class FileService {
             }
 
             return newFileList;
-        });
+        }, context);
+    }
 
+    public CompletableFuture<File> getFileById(Long fileId) {
+        return supplyAsync(() -> {
+            File file = File.find.byId(fileId);
+
+            if(file == null) {
+                throw new NotFoundException("File not found");
+            }
+
+           return file;
+
+        }, context);
     }
 
     /**
