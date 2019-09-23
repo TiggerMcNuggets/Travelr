@@ -4,7 +4,11 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import javaSteps.models.StateSingleton;
 import models.Comment;
+import models.CommentEmoji;
 import org.junit.Assert;
+
+import java.util.List;
+import java.util.Map;
 
 public class AddCommentEmoteSteps {
 
@@ -42,6 +46,13 @@ public class AddCommentEmoteSteps {
     public void the_emoji_is_related_to_the_user_who_posted() {
         Comment comment = Comment.find.byId(state.getComment().getId());
         Assert.assertTrue(comment.getCommentEmojis().get(0).getUsers().contains(state.getUser()));
+    }
+
+    @Then("the comment has the emoji reaction {string}")
+    public void the_emoji_is_related_to_the_user_who_posted(String reaction) {
+        Comment comment = this.state.getComment();
+        CommentEmoji emoji = new CommentEmoji(reaction, comment, this.state.getUser());
+        emoji.save();
     }
 
     @Then("the emote is {string}")
