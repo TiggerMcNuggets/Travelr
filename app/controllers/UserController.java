@@ -9,6 +9,7 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
+import dto.HttpHandlerModels.ResponseHandler;
 import models.SlackUser;
 import models.User;
 import play.data.Form;
@@ -280,13 +281,14 @@ public class UserController extends Controller {
     }
 
     /**
-     *
+     * Creates a slack channel and informs all group members of it's creation.
      * @param request the http request
      * @param userId the user's id
      * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
+
         SlackUser groupOwner = SlackUser.find.findByUserId(userId);
         if (groupOwner == null) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_USER_NOT_FOUND));
@@ -307,30 +309,45 @@ public class UserController extends Controller {
         // Remove special characters
         String sanitizedChannelName = dashedChannelName.replaceAll("[^a-zA-Z0-9\\-\\_]+","");
 
-        return slackService.requestPrivateChannel(groupOwner, sanitizedChannelName).thenApplyAsync(resHandler -> {
+        CompletionStage<ResponseHandler> slackChannelStage = slackService.requestPrivateChannel(groupOwner, sanitizedChannelName);
+        CompletionStage<ResponseHandler> slackServerInfoStage = slackService.requestServerInfo(groupOwner);
+
+        /**
+         * Wait for Slack channel to be created and for the server information to be fetched.
+         * Then send the mailout
+         */
+        return slackChannelStage.thenCombineAsync(slackServerInfoStage, (channelStageRes, serverInfoRes) -> {
+
             Optional<User> user = Optional.ofNullable(User.find.findById(userId));
             if (!user.isPresent()) {
                 return badRequest(APIResponses.USER_NOT_FOUND);
             }
 
-            Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
-            Optional<JsonElement> slackChannelName = Optional.ofNullable(resHandler.getBody().get("channel").getAsJsonObject().get("name"));
+            Optional<JsonElement> channelStageSuccess = Optional.ofNullable(channelStageRes.getBody().get("ok"));
+            Optional<JsonElement> serverInfoStageSuccess = Optional.ofNullable(channelStageRes.getBody().get("ok"));
 
-            if (!success.isPresent() || !success.get().getAsBoolean() || !slackChannelName.isPresent()) {
+            if (!serverInfoStageSuccess.isPresent() || !serverInfoStageSuccess.get().getAsBoolean()) {
+                return badRequest(APIResponses.SLACK_CHANNEL_NAME_TAKEN);
+            }
+
+            if (!channelStageSuccess.isPresent() || !channelStageSuccess.get().getAsBoolean()) {
                 return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
             }
-// abstract this away
-//            slackService.requestServerInfo(groupOwner).thenApplyAsync(response -> {
-//                Optional<JsonElement> domain = Optional.ofNullable(resHandler.getBody().get("team").getAsJsonObject().get("domain"));
-//                if (!domain.isPresent()) {
-//                    return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
-//                }
-//                mailgunService.sendSlackChannelEmail(user.get(), slackChannelName.get().getAsString(), domain.get().getAsString());
-//                return ok(APIResponses.SLACK_CHANNEL_CREATED);
-//            });
 
-            return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
+            Optional<JsonElement> slackChannelName = Optional.ofNullable(channelStageRes.getBody().get("channel").getAsJsonObject().get("name"));
+            Optional<JsonElement> slackServerDomain = Optional.ofNullable(serverInfoRes.getBody().get("team").getAsJsonObject().get("domain"));
 
+            if (!slackServerDomain.isPresent()) {
+                return badRequest(APIResponses.SLACK_CHANNEL_DOMAIN_MALFORMED);
+            }
+
+            mailgunService.sendSlackChannelEmail(user.get(), slackChannelName.get().getAsString(), slackServerDomain.get().getAsString());
+            return ok(APIResponses.SLACK_CHANNEL_CREATED);
         });
     }
+
+
+
+
+
 }
