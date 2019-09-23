@@ -102,7 +102,6 @@ export default {
       mini: true,
       right: null,
       url: ""
-      // traveller: {}
     };
   },
   computed: {
@@ -176,7 +175,11 @@ export default {
     },
 
     traveller() {
-      return store.getters.getUser;
+      if (store.getters.getUser) {
+        return store.getters.getUser;
+      } else {
+        return {"firstName":"", "lastName": ""};
+      }
     },
 
     /**
@@ -189,7 +192,7 @@ export default {
 
   watch: {
     traveller: function(newImage, oldImage) {
-      if (newImage !== oldImage)
+      if (this.loggedIn && newImage !== oldImage)
         if (
           !this.traveller.userProfilePhoto ||
           this.traveller.userProfilePhoto == "defaultPic.png"
