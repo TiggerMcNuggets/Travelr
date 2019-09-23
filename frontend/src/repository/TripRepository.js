@@ -90,6 +90,10 @@ export default {
     return Repository.put(`/users/${userId}/trips/${tripId}/groups/${groupId}`);
   },
 
+  removeGroupTrip(userId, tripId, groupId) {
+    return Repository.delete(`/users/${userId}/trips/${tripId}/groups/${groupId}`);
+  },
+
   /**
    * Updates a user particiption status within a trip.
    * @param {Number} userId The user id
