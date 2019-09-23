@@ -114,14 +114,15 @@ export default {
    * @return true or false: whether the user is the group owner
    */
     isGroupOwner() {
+
       let isOwn = false;
-      if (this.selectedTrip) {
-        this.selectedTrip.trip.usergroup.forEach(user => {
-          if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
-            isOwn = true;
-          }
-        });
-      }
+      if (!this.selectedTrip) return isOwn;
+
+      this.selectedTrip.trip.usergroup.forEach(user => {
+        if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
+          isOwn = true;
+        }
+      });
       return isOwn;
     },
 
@@ -131,37 +132,37 @@ export default {
      */
     headerOptions() {
       return this.selectedTrip &&
-        this.selectedTrip.trip.id == this.selectedTrip.root.id &&
-        (this.isTripOwner || this.isGroupOwner || this.isAdmin)
-        ? [
-            {
-              action: () => {
-                this.openGroupDialog();
-              },
-              icon: "people_alt",
-              title: "Manage Group"
-            },
-            {
-              action: () => {
-                this.toggleShowUploadPhoto();
-              },
-              icon: "add_photo_alternate",
-              title: "Add Photos"
-            }
-          ]
-        : [
-            {
-              action: () => {
-                this.toggleShowUploadPhoto();
-              },
-              icon: "add_photo_alternate",
-              title: "Add Photos"
-            }
-          ];
+      this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+      (this.isTripOwner || this.isGroupOwner || this.isAdmin)
+              ? [
+                {
+                  action: () => {
+                    this.openGroupDialog();
+                  },
+                  icon: "people_alt",
+                  title: "Manage Group"
+                },
+                {
+                  action: () => {
+                    this.toggleShowUploadPhoto();
+                  },
+                  icon: "add_photo_alternate",
+                  title: "Add Photos"
+                }
+              ]
+              : [
+                {
+                  action: () => {
+                    this.toggleShowUploadPhoto();
+                  },
+                  icon: "add_photo_alternate",
+                  title: "Add Photos"
+                }
+              ];
     },
   },
-
   methods: {
+
     /**
      * Sends a request to the backend containing formdata with the image to be added to a specified album
      * given an user id and an album id.
@@ -272,7 +273,7 @@ export default {
       let trip = this.selectedTrip;
 
       // Sorts the destinations ensure they are in the order of their ordinal
-      let orderedDests = trip.trip.nodes.sort(function(a, b) {
+      let orderedDests = this.selectedTrip.trip.nodes.sort(function(a, b) {
         return a.ordinal - b.ordinal;
       });
 
@@ -306,7 +307,6 @@ export default {
     if (!this.isMyProfile && !this.isAdmin) {
       this.$router.go(-1);
     }
-
     this._getTrip(this.userId, this.tripId).then(() => {
       this.rollbackSetPreviousBody(tripAssembler(this.selectedTrip));
     });

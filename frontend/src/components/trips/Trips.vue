@@ -124,10 +124,15 @@
   import RollbackMixin from "../mixins/RollbackMixin.vue";
   import StoreTripsMixin from "../mixins/StoreTripsMixin.vue";
   import PageHeader from "../common/header/PageHeader";
-  import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
 
   export default {
     store,
+
+    // child components
+    components: {
+        CreateTrip: CreateTrips,
+        PageHeader,
+    },
 
     mixins: [
       RollbackMixin, StoreTripsMixin
@@ -136,6 +141,7 @@
     // local variables
     data() {
       return {
+          text: "",
         showCreateTrip: false,
         searchValue: "",
         isAdmin: store.getters.getIsUserAdmin,
@@ -177,13 +183,6 @@
       hasSlack() {
         return store.getters.getUser.slack;
       }
-    },
-
-    // child components
-    components: {
-      CreateTrip: CreateTrips,
-      PageHeader,
-      CreateSlackChannelButton
     },
 
     methods: {
