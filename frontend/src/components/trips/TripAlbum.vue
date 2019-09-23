@@ -116,14 +116,14 @@ export default {
      * Gets the actual image data of the image object provided
      */
     openImage(image) {
-        // Trying to open an photo/video/media
-        const myImage = new Image();
-        myImage.src =
-          base_url +
-          `/api/users/${this.$route.params.id}/media/${image.filename}`;
-        this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
-        this.clickedImage = image;
-        this.viewMediaDialogActive = true;
+      // Trying to open an photo/video/media
+      const myImage = new Image();
+      myImage.src =
+        base_url +
+        `/api/users/${this.$route.params.id}/media/${image.filename}`;
+      this.clickedImageWidth = myImage.width < 400 ? 400 : myImage.width;
+      this.clickedImage = image;
+      this.viewMediaDialogActive = true;
     },
     /**
      * Gets all the trip photos within the trip album
@@ -137,7 +137,42 @@ export default {
         .then(response => {
           this.files = response.data.mediaItems;
         });
-    }
+    },
+
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          return this.init();
+        });
+    },
+
+    /**
+     * Toggles whether or not to display the photo upload section
+     */
+    toggleShowUploadPhoto() {
+      this.showUploadSection = !this.showUploadSection;
+    },
+
+    /**
+     * Uploads the given media files to the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.trip.root.albumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
+    },
   },
 
   created: function() {
