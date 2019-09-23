@@ -70,4 +70,8 @@ public class CommentEmoji extends BaseModel {
     public void addUser(User user) {
         users.add(user);
     }
+
+    public void removeUser(User user) {
+        users.remove(user);
+    }
 }

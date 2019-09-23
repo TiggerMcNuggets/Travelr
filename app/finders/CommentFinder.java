@@ -1,6 +1,7 @@
 package finders;
 
 import io.ebean.Finder;
+import io.ebean.PagedList;
 import io.ebean.Query;
 import models.Comment;
 import models.TripNode;
@@ -46,10 +47,20 @@ public class CommentFinder extends Finder<Long, Comment> {
     }
 
     /**
+     * Find total comments length
+     * @param tripNode The trip
+     * @return The count of the comments for a trip
+     */
+    public int getTripCommentsCount(TripNode tripNode) {
+        return Comment.find.query().where().eq("tripNode", tripNode).findCount();
+    }
+
+
+    /**
      * Finds all comments of a trip for a 'page' if each page has a number of 'comments'
      */
     public List<Comment> findByTripAndPageAndComments(TripNode tripNode, Integer page, Integer comments) {
-        return commentFetcher().where().eq("tripNode", tripNode).between("id", ((page - 1) * comments + 1), (page * comments)).findList();
+        return commentFetcher().where().eq("tripNode", tripNode).orderBy().desc("id").setFirstRow(page*comments).setMaxRows(comments).findList();
     }
 
     /**

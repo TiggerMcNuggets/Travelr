@@ -44,7 +44,7 @@ public class Comment extends BaseModel {
         this.tripNode = tripNode;
         this.user = user;
         commentEmojis = new ArrayList<>();
-        timestamp = new Date().getTime();
+        timestamp = System.currentTimeMillis() / 1000L;
     }
 
     /**
@@ -89,4 +89,13 @@ public class Comment extends BaseModel {
     public void removeCommentEmoji(CommentEmoji commentEmoji) {
         this.commentEmojis.remove(commentEmoji);
     }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

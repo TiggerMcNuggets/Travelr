@@ -17,7 +17,19 @@ dateTime.convertStringToTimestamp = date => {
  * @param timestamp The timestamp (seconds since beginning of 1970)
  */
 dateTime.convertTimestampToString = timestamp => {
-  return (timestamp !== null) ? moment.unix(timestamp).format("YYYY-MM-DD") : 'N/A';
+  return timestamp !== null
+    ? moment.unix(timestamp).format("YYYY-MM-DD")
+    : "N/A";
+};
+
+/**
+ * Converts a unix timestamp into a string date
+ * @param timestamp The timestamp (seconds since beginning of 1970)
+ */
+dateTime.convertTimestampToWordString = timestamp => {
+  return timestamp !== null
+    ? moment.unix(timestamp).format("MMMM Do YYYY, h:mm:ss a") // September 22nd 2019, 2:55:03 pm
+    : "N/A";
 };
 
 export default dateTime;

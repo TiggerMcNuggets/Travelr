@@ -1,7 +1,7 @@
 package dto.trip;
+
 import models.Comment;
 import models.User;
-
 
 public class CommentDTO {
     public Long id;
@@ -15,6 +15,8 @@ public class CommentDTO {
     public String comment;
 
     public String profilePhoto;
+
+    public Long timestamp;
 
     public Long getId() {
         return id;
@@ -64,6 +66,14 @@ public class CommentDTO {
         this.profilePhoto = profilePhoto;
     }
 
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public CommentDTO(Comment comment) {
         this.setId(comment.getId());
         this.setUserId(comment.getUser().getId());
@@ -71,6 +81,7 @@ public class CommentDTO {
         this.setUserLastName(comment.getUser().getLastName());
         this.setProfilePhoto(comment.getUser().getUserProfilePhoto());
         this.setComment(comment.getMessage());
+        this.setTimestamp(comment.getTimestamp());
     }
 
 }
