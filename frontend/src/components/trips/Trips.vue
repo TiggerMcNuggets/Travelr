@@ -70,7 +70,6 @@
           </v-card>
         </v-hover>
       </v-flex>
-      <emoji-picker v-model="text"/>
     </v-layout>
   </v-container>
 </template>

@@ -294,6 +294,7 @@ export default {
   },
 
   mounted() {
+    this.getComments();
     window.addEventListener("scroll", () => {
       this.loading = this.bottomVisible();
     });

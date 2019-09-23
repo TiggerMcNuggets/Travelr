@@ -222,7 +222,7 @@ export default {
       let trip = this.selectedTrip;
 
       // Sorts the destinations ensure they are in the order of their ordinal
-      let orderedDests = trip.trip.nodes.sort(function(a, b) {
+      let orderedDests = selectedTrip.trip.nodes.sort(function(a, b) {
         return a.ordinal - b.ordinal;
       });
 
