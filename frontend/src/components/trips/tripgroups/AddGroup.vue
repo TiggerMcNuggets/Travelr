@@ -1,36 +1,39 @@
 <template>
-  <v-card>
-    <v-card-title primary-title>
-      <h2 class="headline">Add Group to Trip</h2>
-    </v-card-title>
-    <v-divider></v-divider>
-    <v-card-text>
-      <v-layout row wrap>
-        <v-flex xs12>
-          <v-autocomplete
-            v-model="selectedUserGroup"
-            :hint="`Select the user group to add`"
-            :items="filteredGroups"
-            item-text="text"
-            item-value="id"
-            label="Select Group"
-            persistent-hint
-            return-object
-            single-line
-          ></v-autocomplete>
-        </v-flex>
-      </v-layout>
-      <v-alert :value="isError" :dismissible="true" type="error" class="mb-4">{{errorMessage}}</v-alert>
-    </v-card-text>
+  <v-dialog :value="dialogActive" @input="closeGroupDialog" width="500">
+    
+    <v-card>
+      <v-card-title primary-title>
+        <h2 class="headline">Add Group to Trip</h2>
+      </v-card-title>
+      <v-divider />
+      <v-card-text>
+        <v-layout row wrap>
+          <v-flex xs12>
+            <v-autocomplete
+              v-model="selectedUserGroup"
+              :hint="`Select the user group to add`"
+              :items="filteredGroups"
+              item-text="text"
+              item-value="id"
+              label="Select Group"
+              persistent-hint
+              return-object
+              single-line
+            ></v-autocomplete>
+          </v-flex>
+        </v-layout>
+        <v-alert :value="isError" :dismissible="true" type="error" class="mb-4">{{errorMessage}}</v-alert>
+      </v-card-text>
 
-    <v-divider></v-divider>
+      <v-divider />
 
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
-      <v-btn ma-3 color="primary" flat @click="addUserGroup">Add Group</v-btn>
-    </v-card-actions>
-  </v-card>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
+        <v-btn ma-3 color="primary" flat @click="setUserGroup">Add Group</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -43,7 +46,7 @@ let tripRepository = RepositoryFactory.get("trip");
 export default {
   props: {
     closeGroupDialog: Function,
-    tripId: Number
+    dialogActive: Boolean
   },
 
   mixins: [StoreTripsMixin],
@@ -54,7 +57,8 @@ export default {
       errorMessage: "",
       isError: false,
       userId: this.$route.params.id,
-      selectedUserGroup: {},
+      selectedUserGroup: {text: "None"},
+      initialUserGroup: this.selectedUserGroup,
     };
   },
 
@@ -67,11 +71,15 @@ export default {
         return this.isUserOwner(this.$store.getters.getUser.id, group);
       });
 
-      return filteredGroups.map(group => ({
+      filteredGroups = filteredGroups.map(group => ({
         text: group.name,
         id: group.id
       }));
-    }
+
+      filteredGroups.unshift({text: "None"});
+
+      return filteredGroups;
+    },
   },
 
   methods: {
@@ -87,9 +95,12 @@ export default {
     /**
      * Calls API to add a user group to the trip.
      */
-    addUserGroup() {
+    setUserGroup() {
       this.isError = false;
-      tripRepository
+      if (this.selectedUserGroup.text == "None") {
+        tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id);
+      } else {
+        tripRepository
         .toggleGroupTrip(
           this.$store.getters.getUser.id,
           this.tripId,
@@ -101,8 +112,13 @@ export default {
         .catch(() => {
           this.setErrorMessage("Error adding group to trip.");
         });
+      }
     },
 
+    /**
+     * Sets an error message if error
+     * @param error The error message
+     */
     setErrorMessage(error) {
       this.isError = true;
       this.errorMessage = error;
@@ -125,6 +141,15 @@ export default {
         text: this.selectedTrip.root.groupName,
         id: this.selectedTrip.root.groupId
       };
+      this.initialUserGroup = this.selectedUserGroup;
+      }
+    },
+    selectedUserGroup: function(newUserGroup) {
+      if ((newUserGroup != this.initialUserGroup) && (this.initialUserGroup.text != "None") && (this.initialUserGroup != null)) {
+        this.errorMessage = "Changing the group will reset the attendance status of all members."
+        this.isError = true;
+      } else {
+        this.isError = false;
       }
     }
   },

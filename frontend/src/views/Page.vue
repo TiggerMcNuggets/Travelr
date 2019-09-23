@@ -91,10 +91,12 @@
 import { store } from "../store/index";
 import DefaultPic from "../assets/defaultPic.png";
 import base_url from "../repository/BaseUrl";
+import DeviceSizeMixin from "../components/mixins/DeviceSizeMixin.vue";
 
 export default {
   name: "App",
   store,
+  mixins: [DeviceSizeMixin],
   data() {
     return {
       mini: true,
@@ -135,11 +137,20 @@ export default {
           { name: "User Groups",
             icon: "group",
             link: "/usergroups"
-          },
-          { name: "Destination Map",
-            icon: "map",
-            link: "/destinations"
-          },
+          }
+        ];
+        
+        //Checking the media size to remove from Mobile
+        if (!this.isExtraSmall && !this.isSmall) {
+          menuOptions.push(
+            {
+              name: "Destination Map",
+              icon: "map",
+              link: "/destinations"
+            }
+          );
+        }
+        menuOptions.push(
           {
             name: "Destination List",
             icon: "list",
@@ -150,7 +161,7 @@ export default {
             icon: "flight",
             link: "/user/" + store.getters.getUser.id + "/trips"
           }
-        ];
+        );
       }
 
       if (store.getters.getIsUserAdmin && store.getters.isLoggedIn) {
@@ -212,6 +223,7 @@ export default {
   },
 
   created() {
+    this.initialize;
     if (
       !this.traveller.userProfilePhoto ||
       this.traveller.userProfilePhoto == "defaultPic.png"

@@ -1,28 +1,30 @@
 <template>
-  <v-layout>
-    <v-flex class="map-flex">
-      <GmapMap
-        class="destination-main-map"
-        :center="gMapOptions.center"
-        ref="map"
-        :options="gMapOptions"
-      >
-        <GmapMarker
-          v-for="(destination, i) in allMarkers"
-          :key="i"
-          :position="destination.position"
-          :draggable="false"
-          :icon="destination.icon"
-        />
-        <GmapPolyline
-          v-for="path in allPaths"
-          :key="path.id"
-          :options="{path: path.path, strokeColor: path.color}"
+  <v-flex md4 pa-2>
+    <v-layout>
+      <v-flex class="map-flex">
+        <GmapMap
+          class="destination-main-map"
+          :center="gMapOptions.center"
+          ref="map"
+          :options="gMapOptions"
         >
-        </GmapPolyline>
-      </GmapMap>
-    </v-flex>
-  </v-layout>
+          <GmapMarker
+            v-for="(destination, i) in allMarkers"
+            :key="i"
+            :position="destination.position"
+            :draggable="false"
+            :icon="destination.icon"
+          />
+          <GmapPolyline
+            v-for="path in allPaths"
+            :key="path.id"
+            :options="{path: path.path, strokeColor: path.color}"
+          >
+          </GmapPolyline>
+        </GmapMap>
+      </v-flex>
+    </v-layout>
+  </v-flex>
 </template>
 
 <style>

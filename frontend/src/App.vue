@@ -1,15 +1,20 @@
 <template>
-  <div id="app">
+  <v-app>
     <router-view></router-view>
-  </div>
+    <Snackbar></Snackbar>
+  </v-app>
 </template>
 
 <script>
 import { store } from "./store/index";
+import DeviceSizeMixin from "./components/mixins/DeviceSizeMixin.vue";
+import Snackbar from "./components/common/Snackbar.vue";
 
 export default {
   name: "App",
   store,
+  mixins: [DeviceSizeMixin],
+  components: {Snackbar},
   data() {
     return {
       drawer: true,
@@ -18,6 +23,11 @@ export default {
     };
   },
   computed: {
+    loggedIn() {
+      return store.getters.isLoggedIn;
+    }
+  },
+  methods: {
     menuOptions() {
       let menuOptions = [
         { name: "Sign Up", icon: "assignment_ind", link: "/signup" },
@@ -31,8 +41,13 @@ export default {
             icon: "account_circle",
             link: "/user/" + store.getters.getUser.id
           },
-          { name: "Users", icon: "supervised_user_circle", link: "/users" },
-          { name: "Destination Map", icon: "map", link: "/destinations" },
+          { name: "Users", icon: "supervised_user_circle", link: "/users" }
+        ];
+        //Checking the media size to remove from Mobile
+        if (!this.isSmall()) {
+          menuOptions += [{ name: "Destination Map", icon: "map", link: "/destinations" }]
+        }
+        menuOptions += [
           {
             name: "Destination List",
             icon: "list",
@@ -60,12 +75,6 @@ export default {
 
       return menuOptions;
     },
-
-    loggedIn() {
-      return store.getters.isLoggedIn;
-    }
-  },
-  methods: {
     logout() {
       store
         .dispatch("logout")

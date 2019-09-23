@@ -591,3 +591,110 @@ Feature: UpdateTrip
     """
     And I send the request
     Then I will receive the response code 404
+
+  Scenario: Add two destinations to a trip as an owner of the group
+    Given I am authenticated
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And They own the trip
+      | name         |
+      | My First Trip|
+    And the trip is associated with the user group
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    And the group has the members, ownership and statuses
+      | first | last   | email               | dob | status     | owner |
+      | Joe   | Bloggs | joebloggs@email.com | 1   | GOING      | false |
+      | Mary  | Smith  | marysmith@email.com | 1   | NOT GOING  | true  |
+    And I am an owner of the group
+    When I want to edit the trip
+    And The body is
+    """
+    {
+      "name": "My Trip",
+      "nodes": [
+          {
+              "type": "destination",
+              "name": "Place One",
+              "ordinal": 1,
+              "arrivalDate": 1,
+              "departureDate": 1,
+              "destination": {
+                  "id": 1
+              }
+          },
+          {
+              "type": "destination",
+              "name": "Place Two",
+              "ordinal": 2,
+              "arrivalDate": 2,
+              "departureDate": 2,
+              "destination": {
+                  "id": 2
+              }
+          }
+      ]
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And The trip is now
+      | name    |
+      | My Trip |
+    And The trip's destinations are
+      | ordinal | customName | arrivalDate | departureDate | destinationId|
+      |   1     | Place One  | 1           | 1             | 1            |
+      |   2     | Place Two  | 2           | 2             | 2            |
+
+
+  Scenario: Add two sub trips to a trip as a group owner
+    Given I am authenticated
+    And The destinations are
+      | name         | latitude | longitude | type     | district   | country    |
+      | Eiffel Tower | 5.0      | 5.0       | Landmark | Paris      | France     |
+      | Big River    | 3.0      | 3.0       | River    | Canterbury | New Zealand|
+    And They own the trip
+      | name         |
+      | My First Trip|
+    And the trip is associated with the user group
+      | name         | description         |
+      | Team 300     | The best team eva   |
+    And the group has the members, ownership and statuses
+      | first | last   | email               | dob | status     | owner |
+      | Joe   | Bloggs | joebloggs@email.com | 1   | GOING      | false |
+      | Mary  | Smith  | marysmith@email.com | 1   | NOT GOING  | true  |
+    And I am an owner of the group
+    When I want to edit the trip
+    And The body is
+    """
+    {
+      "name": "My Trip of Trips",
+      "nodes": [
+          {
+              "type": "trip",
+              "name": "Place One",
+              "ordinal": 1,
+              "arrivalDate": 1,
+              "departureDate": 1
+          },
+          {
+              "type": "trip",
+              "name": "Place Two",
+              "ordinal": 2,
+              "arrivalDate": 2,
+              "departureDate": 2
+          }
+      ]
+    }
+    """
+    And I send the request
+    Then I will receive the response code 200
+    And The trip is now
+      | name             |
+      | My Trip of Trips |
+    And The trip's sub trips are
+      | name           |
+      | Place One      |
+      | Place Two      |
