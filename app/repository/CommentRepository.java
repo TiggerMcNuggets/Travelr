@@ -82,7 +82,7 @@ public class CommentRepository {
      * @param addEmojiReq The emote information
      * @param comment The comment to add the emoji to
      * @param user The user that is reacting
-     * @return The id of the commment emoji
+     * @return The id of the comment emoji
      */
     public CompletableFuture<Long> addEmoji(AddEmojiReq addEmojiReq, Comment comment, User user) {
 

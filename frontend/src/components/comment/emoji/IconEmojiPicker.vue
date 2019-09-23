@@ -25,6 +25,7 @@
         components: { Picker },
         props: {
             commentId: Number,
+            commentIndex: Number,
             sendEmojiForComment: Function
         },
         data() {
@@ -37,7 +38,7 @@
                 this.showEmojiPicker = !this.showEmojiPicker;
             },
             addEmoji(emoji) {
-                this.sendEmojiForComment(this.commentId, emoji.native);
+                this.sendEmojiForComment(this.commentId, emoji.native, this.commentIndex);
                 this.toggleEmojiPicker();
             },
         },

@@ -12,6 +12,17 @@ export default {
     });
   },
 
+
+   /**
+   * Gets a comment given its id
+   * @param {Number} userId The user id which is posting the comment
+   * @param {Number} tripId The trip id which the comment is for
+   * @param {Number} commentId The comment id
+   */
+  getComment(userId, tripId, commentId) {
+        return Repository.get(`/users/${userId}/trips/${tripId}/comments/${commentId}`);
+   },
+
   /**
    * Makes a comment on a trip for a particular user.
    * @param {Number} userId The user id which is posting the comment

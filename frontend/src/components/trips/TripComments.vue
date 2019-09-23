@@ -44,6 +44,7 @@
           <icon-emoji-picker
                   v-show="hoverIndex === index"
                   :commentId="comment.id"
+                  :commentIndex="index"
                   :sendEmojiForComment="postCommentEmoji"/>
         </v-card>
         <div class="d-flex">
@@ -110,6 +111,9 @@ let commentRepository = RepositoryFactory.get("comment");
 import EmojiPicker from "../comment/emoji/EmojiPicker";
 import IconEmojiPicker from "../comment/emoji/IconEmojiPicker";
 
+import {deepCopy} from "../../tools/deepCopy"
+
+
 export default {
   name: "TripComments",
 
@@ -141,12 +145,12 @@ export default {
      */
     bottomVisible() {
       if (this.$refs.commentEnd) {
-        var rect = this.$refs.commentEnd.getBoundingClientRect();
-        var elemTop = rect.top;
-        var elemBottom = rect.bottom;
+        const rect = this.$refs.commentEnd.getBoundingClientRect();
+        const elemTop = rect.top;
+        const elemBottom = rect.bottom;
 
         // Element is in view on the screen:
-        var isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
+        const isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
         return isVisible;
       }
       return false;
@@ -155,7 +159,7 @@ export default {
     getListOfReactionAuthors(users) {
         let listOfNames = "";
         users.forEach((u, index) => {
-            listOfNames += `${u}${index === (users.length - 1)  ? '' : ', '}`;
+            listOfNames += `${u.firstName} ${u.lastName}${index === (users.length - 1)  ? '' : ', '}`;
         });
         return listOfNames;
     },
@@ -219,26 +223,28 @@ export default {
           this.commentText = "";
           this.page = 0;
           this.userComments = [];
-        })
-        .then(() => {
           this.getComments();
-        });
+        })
     },
 
-    postCommentEmoji(commentId, emoji) {
-        const e = {
-            "emoji": emoji
-        };
-        console.log(e);
+    postCommentEmoji(commentId, emoji, postIndex) {
+        const e = {emoji: emoji};
         commentRepository.addEmojiToComment(
             this.$store.getters.getUser.id,
             this.trip.trip.id,
             commentId,
             e
-        ).then(res => {
-            console.log(res);
-            this.getComments();
-        } )
+        ).then(() => {
+            return commentRepository.getComment(
+                this.$store.getters.getUser.id,
+                this.trip.trip.id,
+                commentId
+            );
+        } ).then((res) => {
+            let commentsCopy = deepCopy(this.userComments);
+            commentsCopy[postIndex] = res.data;
+            this.userComments = commentsCopy;
+        })
     },
 
 
