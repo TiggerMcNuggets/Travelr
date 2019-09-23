@@ -31,6 +31,14 @@
         :nodes="selectedTrip.trip.nodes"
       />
     </v-layout>
+    <v-dialog v-model="showUploadSection" width="800">
+        <MediaUpload
+          :uploadMedia="uploadMedia"
+          :openUploadDialog="toggleShowUploadPhoto"
+          :closeUploadDialog="toggleShowUploadPhoto"
+          :hasNoAlbums="true"
+        ></MediaUpload>
+      </v-dialog>
   </v-container>
 </template>
 
@@ -55,8 +63,12 @@ import TripDetails from "./TripDetails";
 import TripMap from "./TripMap";
 import AddGroup from "./tripgroups/AddGroup";
 import TripEditor from "./viewtrip/TripEditor";
+import MediaUpload from "../media/MediaUpload";
 import { store } from "../../store/index";
 import { tripAssembler, noAdjacentIdenticalDestinations } from "./trips_destinations_util";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
@@ -65,7 +77,8 @@ export default {
     TripDetails,
     AddGroup,
     TripEditor,
-    TripMap
+    TripMap,
+    MediaUpload
   },
 
   mixins: [
@@ -82,7 +95,8 @@ export default {
       isAdmin: store.getters.getIsUserAdmin,
       userId: this.$route.params.id,
       hasAdjacentIdentical: false,
-      previousTripId: Number(this.$route.params.trip_id)
+      previousTripId: Number(this.$route.params.trip_id),
+      showUploadSection: false
     };
   },
 
@@ -148,6 +162,43 @@ export default {
     },
   },
   methods: {
+
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          this._getTrip(this.userId, this.tripId).then(() => {
+            this.rollbackSetPreviousBody(tripAssembler(this.selectedTrip));
+          });
+        });
+    },
+
+    /**
+     * Toggles whether or not to display the photo upload section
+     */
+    toggleShowUploadPhoto() {
+      this.showUploadSection = !this.showUploadSection;
+    },
+
+    /**
+     * Uploads the given media files to the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.selectedTrip.root.albumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
+    },
 
     /**
      * Opens the group dialog
@@ -256,7 +307,6 @@ export default {
     if (!this.isMyProfile && !this.isAdmin) {
       this.$router.go(-1);
     }
-
     this._getTrip(this.userId, this.tripId).then(() => {
       this.rollbackSetPreviousBody(tripAssembler(this.selectedTrip));
     });
