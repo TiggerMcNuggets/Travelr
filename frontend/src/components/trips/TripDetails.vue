@@ -6,6 +6,7 @@
         <v-tab :key="2" ripple>Comments</v-tab>
         <v-tab :key="3" ripple>Media</v-tab>
         <v-tab :key="4" ripple>Files</v-tab>
+        <v-tab :key="5" ripple v-if="!isLarge && !isMedium">Map</v-tab>
 
         <v-tab-item :key="1">
           <TripOverview 
@@ -29,6 +30,12 @@
           />
         </v-tab-item>
 
+        <v-tab-item :key="5">
+          <TripMap 
+            :nodes="trip.trip.nodes"
+          />
+        </v-tab-item>
+
       </v-tabs>
     </v-container>
   </v-flex>
@@ -42,6 +49,8 @@ import TripOverview from "./TripOverview";
 import TripComments from "./TripComments";
 import TripAlbum from "./TripAlbum";
 import TripFiles from "./TripFiles";
+import TripMap from "./TripMap.vue";
+import DeviceSizeMixin from "../mixins/DeviceSizeMixin";
 
 export default {
   name: "TripDetails",
@@ -62,8 +71,13 @@ export default {
     TripOverview,
     TripComments,
     TripAlbum,
-    TripFiles
+    TripFiles,
+    TripMap
   },
+
+  mixins: [
+    DeviceSizeMixin
+  ],
 
   methods: {}
 };
