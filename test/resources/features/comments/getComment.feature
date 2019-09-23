@@ -20,7 +20,7 @@ Feature: Get Comment
     Then I will receive the response code 200
     And I will receive the response body
     """
-    {"commentsLength":1,"comments":[{"id":1,"userId":2,"userFirstName":"Test","userLastName":"User","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117}]}
+    {"commentsLength":1,"comments":[{"id":1,"userId":2,"userFirstName":"Test","userLastName":"User","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
     """
 
   Scenario: Retrieve comments of an unassociated trip successfully as an admin
@@ -44,7 +44,7 @@ Feature: Get Comment
     Then I will receive the response code 200
     And I will receive the response body
     """
-    {"commentsLength":1,"comments":[{"id":1,"userId":3,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117}]}
+    {"commentsLength":1,"comments":[{"id":1,"userId":3,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
     """
 
   Scenario: Retrieve comments of an unassociated trip unsuccessfully as a normal user
@@ -106,5 +106,5 @@ Feature: Get Comment
     Then I will receive the response code 200
     And I will receive the response body
     """
-    {"commentsLength":1,"comments": [{"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117}]}
+    {"commentsLength":1,"comments": [{"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
     """
