@@ -119,5 +119,14 @@ export default {
    */
   downloadICal(userId, tripId) {
     return Repository.get(`/users/${userId}/trips/${tripId}/iCal`);
+  },
+
+  /**
+   * Downloads a list of objects that specify file information
+   * @param {Number} userId The user id 
+   * @param {Number} tripId The trip id
+   */
+  getTripFiles(userId, tripId) {
+    return Repository.get(`users/${userId}/trips/${tripId}/files`);
   }
 }
