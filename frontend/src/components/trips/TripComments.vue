@@ -57,8 +57,9 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <div v-on="on" class="comment-emoji-box hoverable">
-                  <div v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)" class="d-flex align-center">
-                    <h3>{{emoji.emoji}}</h3>
+                  <div v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)" class="d-flex align-center">   
+                    <h3 v-if="emoji.emoji.length < 10">{{emoji.emoji}}</h3>
+                    <img v-else :src="emoji.emoji" width="24" height="24"/>
                     <h4>{{emoji.users.length}}</h4>
                   </div>
                 </div>
