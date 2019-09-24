@@ -31,7 +31,7 @@
             sm6
             xl3
           >
-            <v-img src="https://gogss.com/wp-content/uploads/buildings.jpg" aspect-ratio="1.75"></v-img>
+            <v-img src="https://www.praguepost.com/wp-content/uploads/2018/03/business-buildings.jpg" aspect-ratio="1.75"></v-img>
 
             <v-card-title class="align-end">
               <div>
