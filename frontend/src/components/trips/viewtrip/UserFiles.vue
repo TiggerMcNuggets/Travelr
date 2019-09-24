@@ -1,5 +1,8 @@
 <template>
-  <h2>User Files</h2>
+  <div>
+    <h2>User Files</h2>
+    <UserFile />
+  </div>
 </template>
 
 <style>
@@ -7,6 +10,7 @@
 
 <script>
   import { RepositoryFactory } from "../../../repository/RepositoryFactory";
+  import UserFile from "./UserFile";
   
   let tripRepository = RepositoryFactory.get("trip");
 
@@ -15,7 +19,9 @@
 
     props: {},
 
-    components: {},
+    components: {
+      UserFile
+    },
 
     data() {
       return {

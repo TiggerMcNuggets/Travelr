@@ -49,7 +49,7 @@ import TripOverview from "./TripOverview";
 import TripComments from "./TripComments";
 import TripAlbum from "./TripAlbum";
 import TripFiles from "./TripFiles";
-import TripMap from "./TripMap.vue";
+import TripMap from "./TripMap";
 import DeviceSizeMixin from "../mixins/DeviceSizeMixin";
 
 export default {
