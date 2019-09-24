@@ -26,7 +26,6 @@
             :value="item.value"
             :key="item.value"
             xs12
-            v-bind:class="{ md6: filters_active,  xl4: filters_active }"
             md4
             sm6
             xl3
