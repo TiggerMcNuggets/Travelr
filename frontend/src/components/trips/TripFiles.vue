@@ -21,10 +21,10 @@
     </v-btn>
 
     <v-dialog v-model="showUploadSection" width="800">
-      <FileUploader
+      <FileUpload
         :openUploadDialog="toggleShowFileUpload"
         :closeUploadDialog="toggleShowFileUpload"
-      ></FileUploader>
+      ></FileUpload>
     </v-dialog>
 
   </div>
@@ -39,7 +39,7 @@
 <script>
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  import FileUploader from "FileUploader";
+  import FileUpload from "./FileUpload";
 
   let tripRepository = RepositoryFactory.get("trip");
 
@@ -47,7 +47,7 @@
     name: "TripFiles",
 
     components: {
-      FileUploader
+      FileUpload,
     },
 
     props: {
