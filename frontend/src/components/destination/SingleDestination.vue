@@ -9,7 +9,7 @@
     />
 
     <v-layout row wrap>
-      <v-flex md2 pr-3>
+      <v-flex xs12 md2 pr-3>
         <div class>
           <div class="field-section">
             <p class="caption font-weight-light field-title">DESTINATION TYPE</p>
