@@ -1,12 +1,20 @@
 <template>
   <div>
     <h2>User Files</h2>
-    <UserFile 
-      v-for="file in files"
-      :key="file.id"
-      :file="file"
-      @click.native="getFile(file)"
-    />
+    <v-container grid-list-md class="no-padding">
+      <v-layout row wrap>
+        <v-flex
+          v-for="file in files" 
+          :key="file.id" 
+          xs6 sm4 md3 lg4
+        >
+          <UserFile 
+            :file="file"
+            @click.native="getFile(file)"
+          />
+        </v-flex>
+      </v-layout>
+    </v-container>
   </div>
 </template>
 
