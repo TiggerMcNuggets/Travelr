@@ -1,18 +1,18 @@
 <template>
   <v-app id="inspire">
-    <v-toolbar fixed app clipped-right class="main-header">
-        <v-btn text icon v-on:click="expand = !expand" v-if="this.small">
-          <v-icon v-model="this.small">menu</v-icon>
-        </v-btn>
-      <router-link to="/" class="primary-logo">
-        <v-toolbar-title class="fill-height toolbar toolbar-title">
-          <img class="fill-height" src="../assets/logo2_white.png">
-        </v-toolbar-title>
-      </router-link>
+    <v-toolbar fixed app class='main-header' >
+          <v-btn text icon v-on:click="expand = !expand" v-if="small">
+            <v-icon color="white" v-model="small">menu</v-icon>
+          </v-btn>
+            <router-link to="/" class="primary-logo">
+              <v-toolbar-title class="fill-height toolbar toolbar-title">
+                <img class="fill-height" src="../assets/logo2_white.png">
+              </v-toolbar-title>
+            </router-link>
     </v-toolbar>
-    <v-navigation-drawer disable-resize-watcher fixed app :mini-variant="mini" v-if="this.displayNav" hide-overlay>
-      <v-toolbar flat class="transparent">
-        <v-list class="pa-0">
+    <v-navigation-drawer disable-resize-watcher fixed app :mini-variant="mini" v-model="displayNav" hide-overlay>
+      <v-toolbar flat class='transparent profile-icon' >
+      <v-list class="pa-0">
           <v-list-tile avatar>
             <v-list-tile-avatar>
               <img :src="url">
@@ -23,8 +23,7 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-      </v-toolbar>
-
+            </v-toolbar>
       <v-list class="pt-0">
         <v-divider></v-divider>
         <v-list-tile v-for="item in menuOptions" :key="item.name" :to="item.link">
@@ -75,13 +74,25 @@
   width: 100%;
 }
 
+.profile-icon .v-toolbar__content {
+  justify-content: normal !important 
+}
+
 .primary-logo {
   height: 50%;
 }
 
-.main-header {
+@media screen and (max-width: 1264px) {
+.v-toolbar__content {
   display: flex;
+  justify-content: space-between;
+}
+}
+
+@media screen and (min-width: 1264px) {
+.v-toolbar__content {
   justify-content: flex-end;
+}
 }
 
 .fill-height {
@@ -104,13 +115,14 @@ export default {
     return {
       displayNav: true,
       expand: false,
-      small: false,
-      mini: true,
+      small: true,
+      mini: false,
       right: null,
       url: ""
     };
   },
   computed: {
+
     /**
      * Defines the menu options to appear in the side navigation.
      */
@@ -196,40 +208,14 @@ export default {
     },
 
     isSmall() {
-      console.log("width")
-      console.log(this.windowSizes.width)
-      console.log("small")
-      console.log(this.small)
-      console.log("expand")
-      console.log(this.expand)
-      console.log("mini")
-      console.log(this.mini)
-      if (this.windowSizes.width >= 960) {
-        console.log("hgchgc")
-        this.small = false;
-        this.displayNav = true;
+      if (this.windowSizes.width >= 1264) {
+        this.largeWindow();
       }
-      if (this.windowSizes.width < 960) {
-        console.log("done");
-        this.mini = false;
-        this.small = true;
+      if (this.windowSizes.width < 1264) {
+        this.smallWindow();
       }
-      if (this.expand && this.small) {
-        this.displayNav = true;
-      }
-      console.log("display")
-      console.log(this.displayNav)
       return true;
     },
-
-    isLarge() {
-      console.log("adcsca")
-      if (this.windowSizes.width >= 960) {
-        this.small = false;
-        this.displayNav = true;
-        return true;
-      }
-    }
   },
 
   watch: {
@@ -248,7 +234,25 @@ export default {
             "?" +
             new Date().getTime();
         }
+    },
+
+    expand: function(newExpand) {
+      if (newExpand && this.small) {
+        this.mini = false;
+        this.displayNav = true;
+      } else if (!newExpand && this.small) {
+        this.mini = false;
+        this.displayNav = false;
+      }
+    },
+
+    displayNav: function(newDisplayNav) {
+      if (!newDisplayNav) {
+        this.expand = false;
+        this.mini = true;
+      }
     }
+
   },
 
   methods: {
@@ -264,6 +268,22 @@ export default {
         .catch(() => {
           this.$router.push("/login");
         });
+    },
+
+    /**
+     * sets mini(sidebar) and small(window) to false and true respectively when window is resized to a smaller size.
+     */
+    smallWindow() {
+      this.mini = false;
+      this.small = true;
+    },
+
+    /**
+     * sets small(window) and displayNav(sidebar) to false and true respectively when window is resized to a larger size.
+     */
+    largeWindow() {
+      this.small = false;
+      this.displayNav = true;
     }
   },
 
