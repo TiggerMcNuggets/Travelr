@@ -10,25 +10,46 @@ import javax.persistence.ManyToOne;
 @Entity
 public class File extends BaseModel {
 
+    /**
+     * The original name of the file
+     */
     @Constraints.Required
     public String name;
 
+    /**
+     * the name of the random filepath
+     */
     @Constraints.Required
     public String filepath;
 
+    /**
+     * the extension/type of the file
+     */
     @Constraints.Required
     public String extension;
 
+    /**
+     * Trip the file is apart of
+     */
     @ManyToOne
     @JsonIgnore
     public Node trip;
 
+    /**
+     * owner of the file
+     */
     @ManyToOne
     @JsonIgnore
     public User user;
 
+    /**
+     * Ebean finder object
+     */
     public static final FileFinder find = new FileFinder();
 
+    /**
+     * Getters and Setters
+     */
     public String getName() {
         return name;
     }

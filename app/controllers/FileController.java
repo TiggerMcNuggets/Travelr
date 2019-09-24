@@ -33,9 +33,9 @@ public class FileController extends Controller {
 
     /**
      * Endpoint for uploading of files to a trip. Allows multiple files to be uploaded at once
-     * @param request
-     * @param nodeId
-     * @param userId
+     * @param request request object
+     * @param nodeId id of the node that a file is being added to
+     * @param userId user who is uploading the file
      * @return
      */
     @Authorization.RequireAuthOrAdmin
@@ -54,10 +54,10 @@ public class FileController extends Controller {
 
     /**
      * Endpoint which returns a list of FileDTO objects which displays data about the files
-     * @param request
-     * @param nodeId
-     * @param userId
-     * @return
+     * @param request request object
+     * @param nodeId id of the trip
+     * @param userId id of the user sending the request
+     * @return List of file DTO
      */
     public CompletionStage<Result> getFilesForTrip(Http.Request request, Long nodeId, Long userId) {
         return fileService
@@ -74,11 +74,11 @@ public class FileController extends Controller {
 
     /**
      * Deletes a file by its Id
-     * @param request
-     * @param nodeId
-     * @param fileId
-     * @param userId
-     * @return
+     * @param request request object
+     * @param nodeId id of the trip
+     * @param fileId id of the file
+     * @param userId id of the user sending the request
+     * @return ok response
      */
     public CompletionStage<Result> deleteFileById(Http.Request request, Long nodeId, Long fileId, Long userId) {
         return fileService.deleteFileById(fileId)
@@ -89,10 +89,10 @@ public class FileController extends Controller {
 
     /**
      * Returns the file object and renames it to the old name from the hash
-     * @param request
-     * @param fileId
-     * @param userId
-     * @return
+     * @param request request object
+     * @param fileId id of the file
+     * @param userId id of the user sending the request
+     * @return the file that has been requested
      */
     public CompletionStage<Result> getFile(Http.Request request, Long fileId, Long userId) {
         return fileService.getFileById(fileId).thenApplyAsync(file -> {

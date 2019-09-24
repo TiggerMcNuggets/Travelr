@@ -43,7 +43,7 @@ public class FileService {
 
     /**
      * Gets a list of files for a node
-     * @param tripId
+     * @param tripId of the trip we are getting nodes for
      * @return a list of files for the given node
      */
     public CompletableFuture<List<File>> getFilesForTripNode(Long tripId) {
@@ -52,7 +52,7 @@ public class FileService {
 
     /**
      * Deletes a file by Id
-     * @param fileId
+     * @param fileId id of the file being deleted
      * @return
      */
     public CompletableFuture<Long> deleteFileById(Long fileId) {
@@ -72,8 +72,8 @@ public class FileService {
 
     /**
      * Creates files for the given node
-     * @param files
-     * @return
+     * @param files multipart form data of the files being uploaded
+     * @return a list of file objects
      */
     public CompletableFuture<List<File>> createNewFiles(List<Http.MultipartFormData.FilePart<Files.TemporaryFile>> files, Long nodeId, Long userId) {
         return supplyAsync(() -> {
@@ -111,8 +111,8 @@ public class FileService {
 
     /**
      * Fetchs a file object by its Id
-     * @param fileId
-     * @return
+     * @param fileId the id of the file we are looking for
+     * @return the file found by the Id
      */
     public CompletableFuture<File> getFileById(Long fileId) {
         return supplyAsync(() -> {
@@ -129,7 +129,7 @@ public class FileService {
 
     /**
      * Takes a temporary file and saves it to the server with a hashed name
-     * @param file
+     * @param file a multipartform data file
      * @return a file object ready to insert
      */
     private File createNewFile(Http.MultipartFormData.FilePart<Files.TemporaryFile> file) {
