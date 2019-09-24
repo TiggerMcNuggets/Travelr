@@ -1,40 +1,39 @@
 <template>
-  <!-- <v-hover v-slot:default="{ hover }">
-    <v-card
-      class="file-card"
-      :elevation="hover ? 12 : 2"
-    >
-      <v-img
-        height="100px"
-        src="https://www.canterbury.ac.nz/engineering/contact-us/people/1485116691697_Moffat-Mathews-low.jpg"
-      >
-      </v-img>
-      <v-card-actions
-        class="align-end justify-end">
-        <div>
-          <h4>{{ file.name }}</h4>
-        </div>
-
-        <div class="crud-options">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn icon dark v-on="on">
-                <v-icon color="primary">picture_as_pdf</v-icon>
-              </v-btn>
-            </template>
-            <span>Download trip pdf</span>
-          </v-tooltip>
-        </div>
-      </v-card-actions>
-    </v-card>
-  </v-hover> -->
-
-  <v-card>
+  <v-card class="file-card">
     <v-img
-      height="100px"
-      src="https://www.canterbury.ac.nz/engineering/contact-us/people/1485116691697_Moffat-Mathews-low.jpg"
+      src="http://images.clipartpanda.com/file-clipart-xigKMeMjT.png" height="100" :contain="true"
     >
     </v-img>
+            <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              @click="getFile(file)"
+              color="error"
+              class="download-button"
+              flat
+              fab
+            >
+              <v-icon dark>cloud_download</v-icon>
+            </v-btn>
+          </template>
+          <span>Download file</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              color="error"
+              class="delete-button"
+              flat
+              fab
+            >
+              <v-icon dark>delete</v-icon>
+            </v-btn>
+          </template>
+          <span>Delete file</span>
+        </v-tooltip>
     <v-card-actions>
       <span class="file-name">{{file.name}}</span>
     </v-card-actions>
@@ -42,11 +41,15 @@
 </template>
 
 <style>
-.file-name {
-  text-overflow: ellipsis !important;
-  white-space: nowrap;
-  overflow: hidden;
-}
+  .file-card {
+    padding-top: 10px;
+  }
+
+  .file-name {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 </style>
 
 <script>
@@ -54,7 +57,8 @@
     name: "UserFile",
 
     props: {
-      file: Object
+      file: Object,
+      getFile: Function
     },
 
     components: {},

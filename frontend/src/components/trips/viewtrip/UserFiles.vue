@@ -10,7 +10,7 @@
         >
           <UserFile 
             :file="file"
-            @click.native="getFile(file)"
+            :getFile="getFile"
           />
         </v-flex>
       </v-layout>
