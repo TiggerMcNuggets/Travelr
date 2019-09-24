@@ -5,8 +5,9 @@
                 v-show="showEmojiPicker"
                 title="Pick your emoji..."
                 emoji="point_up"
-                :include="['people']"
+                :include="['custom', 'people']"
                 :sheetSize="32"
+                :custom="customEmojis"
                 @select="addEmoji"
                 set="messenger"
         />
@@ -30,7 +31,33 @@
         },
         data() {
             return {
-                showEmojiPicker: false
+                showEmojiPicker: false,
+                 customEmojis: [
+                    {
+                        name: 'Kappa',
+                        short_names: ['kappa'],
+                        text: 'kappa',
+                        emoticons: [],
+                        keywords: ['kappa'],
+                        imageUrl: 'https://www.dictionary.com/e/wp-content/uploads/2019/04/Screen-Shot-2019-07-05-at-12.20.52-PM.png',
+                    },
+                    {
+                        name: 'Coppat',
+                        short_names: ['coppat'],
+                        text: 'coppat',
+                        emoticons: [],
+                        keywords: ['coppat'],
+                        imageUrl: 'https://i.imgur.com/nEwGDuQ.png',
+                    },
+                    {
+                        name: 'Fabby',
+                        short_names: ['fabby'],
+                        text: 'fabby',
+                        emoticons: [],
+                        keywords: ['fabby'],
+                        imageUrl: 'https://i.imgur.com/BUnwIv3.png',
+                    }
+                ]
             };
         },
         methods: {
@@ -38,7 +65,7 @@
                 this.showEmojiPicker = !this.showEmojiPicker;
             },
             addEmoji(emoji) {
-                this.sendEmojiForComment(this.commentId, emoji.native, this.commentIndex);
+                this.sendEmojiForComment(this.commentId, emoji.native || emoji.imageUrl, this.commentIndex);
                 this.toggleEmojiPicker();
             },
         },
