@@ -1,7 +1,12 @@
 <template>
   <div>
     <h2>User Files</h2>
-    <UserFile />
+    <UserFile 
+      v-for="file in files"
+      :key="file.id"
+      :file="file"
+      @click.native="getFile(file)"
+    />
   </div>
 </template>
 
@@ -12,7 +17,7 @@
   import { RepositoryFactory } from "../../../repository/RepositoryFactory";
   import UserFile from "./UserFile";
   
-  let tripRepository = RepositoryFactory.get("trip");
+  let fileRepository = RepositoryFactory.get("file");
 
   export default {
     name: "UserFiles",
@@ -33,8 +38,26 @@
 
     methods: {
       async getFiles() {
-        const res = await tripRepository.getTripFiles(this.userId, this.tripId);
+        const res = await fileRepository.getFilesForTrip(this.userId, this.tripId);
         this.files = res.data;
+      },
+
+      async getFile(file) {
+        console.log("here");
+        const res = await fileRepository.getFile(this.userId, file.id);
+        this.download(res, file.name);
+      },
+
+      /**
+       * Downloads the file returned by a http response
+       */
+      download(res, filename) {
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
       }
     },
 

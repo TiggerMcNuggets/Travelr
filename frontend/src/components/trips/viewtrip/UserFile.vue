@@ -1,6 +1,5 @@
 <template>
-  <div>
-  </div>
+  <v-card>{{file.name}}</v-card>
 </template>
 
 <style>
@@ -10,7 +9,9 @@
   export default {
     name: "UserFile",
 
-    props: {},
+    props: {
+      file: Object
+    },
 
     components: {},
 
