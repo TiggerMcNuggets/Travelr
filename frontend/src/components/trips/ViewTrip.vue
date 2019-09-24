@@ -16,6 +16,7 @@
     />
 
     <v-layout row wrap class="content">
+
       <TripEditor 
         :updateTrip="updateTrip"
         :hasAdjacentIdentical="hasAdjacentIdentical"
@@ -28,6 +29,7 @@
       />
 
       <TripMap 
+        v-if="isLarge || isExtraLarge"
         :nodes="selectedTrip.trip.nodes"
       />
     </v-layout>
