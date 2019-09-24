@@ -15,7 +15,7 @@
       <v-text-field
         v-if="searchActive"
         v-model="searchValue"
-        label="Trip name"
+        label="Destination name"
         prepend-icon="search"
       ></v-text-field>
 
