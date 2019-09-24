@@ -24,7 +24,7 @@
 
       <TripDetails
         :trip="selectedTrip"
-        :isGroupOwner="isGroupOwner"
+        :hasWritePermissions="hasWritePermissions"
         :updateTrip="updateTrip"
       />
 
@@ -103,6 +103,14 @@ export default {
   },
 
   computed: {
+    /**
+     * Checks if the user is permitted to write to the trip
+     * @return true or false
+     */
+    hasWritePermissions() {
+      return this.isTripOwner || this.isGroupOwner || this.isAdmin
+    },
+
     /**
      * Checks if the user is the trip owner
      * @return true or false: whether the user is the trip owner

@@ -11,6 +11,7 @@
           <UserFile 
             :file="file"
             :getFile="getFile"
+            :hasWritePermissions="hasWritePermissions"
           />
         </v-flex>
       </v-layout>
@@ -31,7 +32,9 @@
   export default {
     name: "UserFiles",
 
-    props: {},
+    props: {
+      hasWritePermissions: Boolean
+    },
 
     components: {
       UserFile

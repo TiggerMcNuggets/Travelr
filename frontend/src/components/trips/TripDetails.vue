@@ -26,7 +26,7 @@
         <v-tab-item :key="4">
           <TripFiles 
             :trip="trip" 
-            :isGroupOwner="isGroupOwner" 
+            :hasWritePermissions="hasWritePermissions"
           />
         </v-tab-item>
 
@@ -57,7 +57,7 @@ export default {
 
   props: {
     trip: Object,
-    isGroupOwner: Boolean,
+    hasWritePermissions: Boolean,
     updateTrip: Function
   },
 

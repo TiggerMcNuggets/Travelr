@@ -12,11 +12,14 @@
     </v-btn>
 
     <!-- Email iCal and PDF button -->
-    <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip()" flat fab small color="error" >
+    <v-btn v-if="hasWritePermissions" @click="emailTrip()" flat fab small color="error" >
       <v-icon>email</v-icon>
     </v-btn>
 
-    <UserFiles v-if="trip.trip.usergroup.length" />
+    <UserFiles 
+      v-if="trip.trip.usergroup.length" 
+      :hasWritePermissions="hasWritePermissions"
+    />
   </div>
 </template>
 
@@ -39,7 +42,7 @@
 
     props: {
       trip: Object,
-      isGroupOwner: Boolean,
+      hasWritePermissions: Boolean,
     },
 
     components: {

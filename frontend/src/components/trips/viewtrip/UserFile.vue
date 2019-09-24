@@ -20,7 +20,7 @@
           <span>Download file</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="hasWritePermissions">
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -58,7 +58,8 @@
 
     props: {
       file: Object,
-      getFile: Function
+      getFile: Function,
+      hasWritePermissions: Boolean
     },
 
     components: {},
