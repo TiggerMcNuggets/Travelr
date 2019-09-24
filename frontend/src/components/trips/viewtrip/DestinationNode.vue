@@ -1,17 +1,23 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-timeline-item outlined>
     <v-expansion-panel :value="node.notCreated ? 0 : undefined">
       <v-expansion-panel-content>
         <template v-slot:header>
-          <div v-on:click.stop>
-            <v-combobox
-              :items="userDestinations"
-              item-text="name"
-              v-model="node.destination"
-              label="Select an existing destination"
-              return-object
-            ></v-combobox>
+          <div class="mr-5" v-on:click.stop>
+            <div>
+              <node-user-attendance
+                      v-if="!node.notCreated"
+                      :node="node"/>
+              <v-combobox
+                :items="userDestinations"
+                item-text="name"
+                v-model="node.destination"
+                label="Select an existing destination"
+                return-object
+              ></v-combobox>
+            </div>
           </div>
+
         </template>
           <v-menu
             v-model="node.arrivalDateMenu"
@@ -80,10 +86,6 @@
 </template>
 
 <style>
-  .v-timeline-destination-item-style {
-    padding: 1.5em 1em 1.5em 1em;
-  }
-
   .date-margin {
     padding: 8px 16px 4px 16px;
   }
@@ -97,10 +99,17 @@
   } from "../../form_rules";
   import { RepositoryFactory}  from "../../../repository/RepositoryFactory";
   let destinationRepository = RepositoryFactory.get("destination");
+  import NodeUserAttendance from './NodeUserAttendance';
+  import StoreTripsMixin from "../../mixins/StoreTripsMixin";
+
 
   export default {
     name: "DestinationNode",
 
+    mixins: [StoreTripsMixin],
+    components: {
+        NodeUserAttendance: NodeUserAttendance
+    },
     props: {
       trip: Object,
       node: Object,
@@ -114,11 +123,12 @@
       return {
         ...rules,
         userId: this.$route.params.id,
-        userDestinations: []
+        userDestinations: [],
       };
     },
 
     computed: {
+
       /**
        * Checks that no same destinations are consecutive
        */
@@ -149,7 +159,8 @@
           .catch(e => {
             console.log(e);
           });
-      }
+      },
+
     },
 
     mounted() {
