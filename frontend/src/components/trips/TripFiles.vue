@@ -14,6 +14,19 @@
     <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip()" flat fab small color="error" >
       <v-icon>email</v-icon>
     </v-btn>
+
+    <!-- Upload Files Button -->
+    <v-btn icon @click="toggleShowFileUpload()" flat small color="error" >
+      <v-icon>attach_file</v-icon>
+    </v-btn>
+
+    <v-dialog v-model="showUploadSection" width="800">
+      <FileUploader
+        :openUploadDialog="toggleShowFileUpload"
+        :closeUploadDialog="toggleShowFileUpload"
+      ></FileUploader>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -26,11 +39,16 @@
 <script>
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import FileUploader from "FileUploader";
 
   let tripRepository = RepositoryFactory.get("trip");
 
   export default {
     name: "TripFiles",
+
+    components: {
+      FileUploader
+    },
 
     props: {
       trip: Object,
@@ -41,7 +59,8 @@
       return {
         userId: this.$route.params.id,
         tripId: this.$route.params.trip_id,
-        isAdmin: store.getters.getIsUserAdmin
+        isAdmin: store.getters.getIsUserAdmin,
+        showUploadSection: false
       };
     },
 
@@ -81,7 +100,14 @@
         link.setAttribute("download", filename);
         document.body.appendChild(link);
         link.click();
-      }
+      },
+
+      /**
+       * controls when file upload ox can be seen
+       */
+      toggleShowFileUpload() {
+        this.showUploadSection = !this.showUploadSection;
+      },
     },
   };
 </script>
