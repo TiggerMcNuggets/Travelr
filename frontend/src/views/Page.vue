@@ -83,16 +83,16 @@
 }
 
 @media screen and (max-width: 1264px) {
-.v-toolbar__content {
-  display: flex;
-  justify-content: space-between;
-}
+  .v-toolbar__content {
+    display: flex;
+    justify-content: space-between;
+  }
 }
 
 @media screen and (min-width: 1264px) {
-.v-toolbar__content {
-  justify-content: flex-end;
-}
+  .v-toolbar__content {
+    justify-content: flex-end;
+  }
 }
 
 .fill-height {
