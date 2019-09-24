@@ -26,6 +26,7 @@
         :trip="selectedTrip"
         :hasWritePermissions="hasWritePermissions"
         :updateTrip="updateTrip"
+        :pushStack="pushStack"
       />
 
       <TripMap 

@@ -27,6 +27,7 @@
           <TripFiles 
             :trip="trip" 
             :hasWritePermissions="hasWritePermissions"
+            :pushStack="pushStack"
           />
         </v-tab-item>
 
@@ -58,7 +59,8 @@ export default {
   props: {
     trip: Object,
     hasWritePermissions: Boolean,
-    updateTrip: Function
+    updateTrip: Function,
+    pushStack: Function
   },
 
   data() {

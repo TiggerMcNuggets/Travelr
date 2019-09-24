@@ -34,7 +34,8 @@
     name: "UserFiles",
 
     props: {
-      hasWritePermissions: Boolean
+      hasWritePermissions: Boolean,
+      pushStack: Function
     },
 
     components: {
@@ -61,8 +62,17 @@
       },
 
       async deleteFile(file) {
+        let checkpoint = {
+          action: async () => await this.deleteAndPopulate(file),
+          reaction: async() => await this.deleteAndPopulate(file)
+        };
+        this.pushStack(checkpoint);
+        this.deleteAndPopulate(file);
+      },
+
+      async deleteAndPopulate(file) {
         const res = await fileRepository.deleteFile(this.userId, this.tripId, file.id);
-        this.getFiles();
+        await this.getFiles();
       }
     },
 

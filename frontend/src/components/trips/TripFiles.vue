@@ -19,6 +19,7 @@
     <UserFiles 
       v-if="trip.trip.usergroup.length" 
       :hasWritePermissions="hasWritePermissions"
+      :pushStack="pushStack"
     />
   </div>
 </template>
@@ -43,6 +44,7 @@
     props: {
       trip: Object,
       hasWritePermissions: Boolean,
+      pushStack: Function
     },
 
     components: {
