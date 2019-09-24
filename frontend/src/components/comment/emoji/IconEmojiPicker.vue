@@ -50,6 +50,14 @@
                         imageUrl: 'https://i.imgur.com/nEwGDuQ.png',
                     },
                     {
+                        name: 'Moffy',
+                        short_names: ['moffy'],
+                        text: 'moffy',
+                        emoticons: [],
+                        keywords: ['moffy'],
+                        imageUrl: 'https://i.imgur.com/x5o4ryo.png',
+                    },
+                    {
                         name: 'Fabby',
                         short_names: ['fabby'],
                         text: 'fabby',
