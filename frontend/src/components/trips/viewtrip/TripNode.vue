@@ -1,6 +1,10 @@
 <template>
   <v-timeline-item color="error">
     <v-card>
+      <node-user-attendance
+              class="user-attendance"
+              v-if="displayUserAttendance"
+              :node="node"/>
       <v-text-field
         class="v-timeline-trip-item-style"
         v-model="node.name"
@@ -32,7 +36,10 @@
 
 <style>
   .v-timeline-trip-item-style {
-    padding: 1.5em 1em 0.7em 1em;
+    padding: 8px 16px 4px 16px;
+  }
+  .user-attendance {
+    padding: 8px 16px 4px 16px;
   }
   .align-with-arrow {
     float: right;
@@ -41,12 +48,16 @@
 
 <script>
   import { rules } from "../../form_rules"
+  import NodeUserAttendance from "./NodeUserAttendance";
 
   export default {
     name: "TripNode",
-
+    components: {
+        NodeUserAttendance: NodeUserAttendance
+    },
     props: {
       node: Object,
+      trip: Object,
       i: Number,
       getSelectedTrip: Function,
       updateTrip: Function,
@@ -58,6 +69,17 @@
       return {
         ...rules
       };
+    },
+
+    computed: {
+
+        /**
+         * The helper method to ensure the user attendance component needs to be displayed
+         * @return {boolean} check if the node is not in creation mdoe and if the trip has a group associated to it
+         */
+        displayUserAttendance() {
+            return !this.node.notCreated && this.trip.trip.usergroup.length;
+        },
     },
 
     methods: {}

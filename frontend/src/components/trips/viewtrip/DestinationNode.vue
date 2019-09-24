@@ -6,7 +6,7 @@
           <div class="mr-5" v-on:click.stop>
             <div>
               <node-user-attendance
-                      v-if="!node.notCreated"
+                      v-if="displayUserAttendance"
                       :node="node"/>
               <v-combobox
                 :items="userDestinations"
@@ -128,6 +128,14 @@
     },
 
     computed: {
+
+      /**
+       * The helper method to ensure the user attendance component needs to be displayed
+       * @return {boolean} check if the node is not in creation mdoe and if the trip has a group associated to it
+       */
+      displayUserAttendance() {
+          return !this.node.notCreated && this.trip.trip.usergroup.length;
+      },
 
       /**
        * Checks that no same destinations are consecutive

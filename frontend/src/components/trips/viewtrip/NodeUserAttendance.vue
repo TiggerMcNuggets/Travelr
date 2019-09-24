@@ -2,7 +2,8 @@
 
     <div class="top-attendance-info">
         <div class="mb-3 d-flex align-center">
-            <div class="d-flex">
+
+            <div>
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
                         <v-chip v-if=isGoing v-on="on" color="success lighten-5">
@@ -17,19 +18,18 @@
                     <span>{{getGoingUsersString}}</span>
                 </v-tooltip>
             </div>
-            <div v-if="!isGoing">
-                <v-tooltip top>
-                    <template v-slot:activator="{ on}">
-                        <v-icon
-                                v-on="on"
-                                v-on:click="() => changeStatus(node, statuses.going)"
-                                left>
-                            check_circle
-                        </v-icon>
-                    </template>
-                    <span>{{getGoingUsersString}}</span>
-                </v-tooltip>
-            </div>
+            <v-tooltip top>
+                <template v-slot:activator="{ on}">
+                    <v-icon
+                            v-if="!isGoing"
+                            v-on="on"
+                            v-on:click="() => changeStatus(node, statuses.going)"
+                            left>
+                        check_circle
+                    </v-icon>
+                </template>
+                <span>{{getGoingUsersString}}</span>
+            </v-tooltip>
 
 
             <div>
@@ -131,6 +131,8 @@
         computed: {
 
             /**
+             * Checks the status of a user and returns an object expressing the user attendance
+             * @return {{status: String}} the object containing the information about a user status for a single node
              */
             userNodeStatus() {
                 const status = {status: undefined};
@@ -189,6 +191,11 @@
         methods: {
 
 
+            /**
+             * Helper method. Accepts a status and returns a string summarising
+             * all the users that have that status on a single node
+             * @param {String} status, the status to check
+             */
             _getListOfUsersForGivenStatus(status) {
                 let names = "";
                 this.node.usergroup.forEach((u) => {
