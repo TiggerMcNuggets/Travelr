@@ -1,6 +1,7 @@
 <template>
   <v-container class="section-container">
-    <SectionHeader :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
+    <SectionHeader v-if="name != null" :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
+    <SectionHeader v-else :title="'No Selected Group'" disableUndoRedo :options="userTableOptions"/>
     <div v-if="addUserActive">
       <v-autocomplete
       :items="users"

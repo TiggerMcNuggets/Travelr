@@ -82,7 +82,7 @@ public class CommentRepository {
      * @param addEmojiReq The emote information
      * @param comment The comment to add the emoji to
      * @param user The user that is reacting
-     * @return The id of the commment emoji
+     * @return The id of the comment emoji
      */
     public CompletableFuture<Long> toggleEmoji(AddEmojiReq addEmojiReq, Comment comment, User user) {
 
@@ -96,6 +96,9 @@ public class CommentRepository {
                 commentEmoji.addUser(user);
             } else if (commentEmoji.getUsers().contains(user)) {
                 commentEmoji.removeUser(user);
+                if (commentEmoji.getUsers().isEmpty()) {
+                    commentEmoji.delete();
+                }
             }
 
             commentEmoji.save();

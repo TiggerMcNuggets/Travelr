@@ -186,6 +186,7 @@ export default {
       input.setAttribute("type", "file");
       input.setAttribute("multiple", true);
       input.style.display = "none";
+      input.accept = "image/*";
       input.addEventListener("change", e => {
         this.triggerCallback(e, callback);
       });

@@ -121,6 +121,7 @@ public class CommonSteps  {
 
     }
 
+
     public static User createUserFromTable(List<Map<String, String>> dataTable) {
         Map<String, String> userInfo = dataTable.get(0);
         User user = new User(

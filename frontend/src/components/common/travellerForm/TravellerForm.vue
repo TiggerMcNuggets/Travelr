@@ -111,7 +111,7 @@ export default {
     return {
       rules,
       //Select lists
-      genderList: ["Male", "Female", "Other"],
+      genderList: ["Male", "Female"],
       typeList: [],
       nationalityList: []
     };
