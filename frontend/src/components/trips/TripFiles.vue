@@ -29,6 +29,7 @@
 <script>
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import { download } from "./trips_destinations_util";
   import UserFiles from "./viewtrip/UserFiles";
 
   let tripRepository = RepositoryFactory.get("trip");
@@ -66,7 +67,7 @@
        */
       downloadICal() {
         tripRepository.downloadICal(this.userId, this.tripId).then(res => {
-          this.download(res, `${this.trip.trip.name}.ics`);
+          download(res, `${this.trip.trip.name}.ics`);
         });
       },
 
@@ -75,20 +76,8 @@
        */
       downloadTripPdf() {
         tripRepository.downloadTripPdf(this.userId, this.tripId).then(res => {
-          this.download(res, `${this.trip.trip.name}.pdf`);
+          download(res, `${this.trip.trip.name}.pdf`);
         })
-      },
-
-      /**
-       * Downloads the file returned by a http response
-       */
-      download(res, filename) {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
       }
     },
   };
