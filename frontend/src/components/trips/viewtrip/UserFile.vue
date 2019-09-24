@@ -24,6 +24,7 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
+              @click="deleteFile(file)"
               color="error"
               class="delete-button"
               flat
@@ -59,6 +60,7 @@
     props: {
       file: Object,
       getFile: Function,
+      deleteFile: Function,
       hasWritePermissions: Boolean
     },
 

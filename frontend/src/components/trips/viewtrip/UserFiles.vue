@@ -11,6 +11,7 @@
           <UserFile 
             :file="file"
             :getFile="getFile"
+            :deleteFile="deleteFile"
             :hasWritePermissions="hasWritePermissions"
           />
         </v-flex>
@@ -57,6 +58,11 @@
       async getFile(file) {
         const res = await fileRepository.getFile(this.userId, file.id);
         download(res, file.name);
+      },
+
+      async deleteFile(file) {
+        const res = await fileRepository.deleteFile(this.userId, this.tripId, file.id);
+        this.getFiles();
       }
     },
 

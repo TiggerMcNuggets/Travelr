@@ -81,7 +81,7 @@
         tripRepository.downloadTripPdf(this.userId, this.tripId).then(res => {
           download(res, `${this.trip.trip.name}.pdf`);
         })
-      }
+      },
     },
   };
 </script>

@@ -27,7 +27,7 @@ export default {
    * @param {*} fileId 
    */
   deleteFile(userId, tripId, fileId) {
-    return Repository.delete(`/users/${userId}}/trips/${tripId}/files/${fileId}`);
+    return Repository.delete(`/users/${userId}/trips/${tripId}/files/${fileId}`);
   },
 
   /**
