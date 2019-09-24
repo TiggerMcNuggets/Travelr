@@ -207,6 +207,9 @@ export default {
       return store.getters.isLoggedIn;
     },
 
+    /**
+     * Checks for the size of the page and calls a function to set variables depending on the size.
+     */
     isSmall() {
       if (this.windowSizes.width >= 1264) {
         this.largeWindow();
@@ -236,6 +239,9 @@ export default {
         }
     },
 
+    /**
+     * Watches expand variable binded to burger menu button and checks to see if the sidebar should be expanded when window is small.
+     */
     expand: function(newExpand) {
       if (newExpand && this.small) {
         this.mini = false;
@@ -246,6 +252,9 @@ export default {
       }
     },
 
+    /**
+     * watches the displayNav attribute and resets expand and mini when window is enlarged
+     */
     displayNav: function(newDisplayNav) {
       if (!newDisplayNav) {
         this.expand = false;
