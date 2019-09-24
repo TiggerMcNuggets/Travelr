@@ -29,8 +29,8 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
-        <v-btn ma-3 color="primary" flat @click="setUserGroup">Set Group</v-btn>
+        <v-btn ma-3 flat v-on:click="closeGroupDialog">Cancel</v-btn>
+        <v-btn ma-3 color="primary" flat v-on:click="setUserGroup">Set Group</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -99,6 +99,7 @@ export default {
       this.isError = false;
       if (this.selectedUserGroup.text == "None") {
         tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id);
+        this.initialUserGroup = {text: "None"};
       } else {
         tripRepository
         .toggleGroupTrip(
@@ -112,6 +113,7 @@ export default {
         .catch(() => {
           this.setErrorMessage("Error adding group to trip.");
         });
+        this.initialUserGroup = this.selectedUserGroup;
       }
     },
 
@@ -130,6 +132,12 @@ export default {
     getUserGroups() {
       userGroupRepository.getGroupsForUser(this.userId).then(result => {
         this.userGroups = result.data;
+        if (this.selectedTrip.root.groupId) {
+          this.initialUserGroup = {
+            text: this.selectedTrip.root.groupName,
+            id: this.selectedTrip.root.groupId
+          };
+        }
       });
     }
   },
@@ -138,8 +146,8 @@ export default {
     selectedTrip: function(newTrip, oldTrip) {
       if (newTrip !== oldTrip) {
         this.selectedUserGroup = {
-        text: this.selectedTrip.root.groupName,
-        id: this.selectedTrip.root.groupId
+          text: this.selectedTrip.root.groupName,
+          id: this.selectedTrip.root.groupId
       };
       this.initialUserGroup = this.selectedUserGroup;
       }
