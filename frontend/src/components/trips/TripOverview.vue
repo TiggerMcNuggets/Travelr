@@ -1,5 +1,3 @@
-
-
 <template>
   <v-layout>
     <v-flex xs12 ma-2 mt-4>

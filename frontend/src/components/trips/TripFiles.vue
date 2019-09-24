@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>General</h2>
     <!-- Download iCal button -->
     <v-btn icon @click="downloadICal()" flat color="error">
       <v-icon>calendar_today</v-icon>
@@ -14,6 +15,8 @@
     <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip()" flat fab small color="error" >
       <v-icon>email</v-icon>
     </v-btn>
+
+    <UserFiles v-if="trip.trip.usergroup.length" />
   </div>
 </template>
 
@@ -26,6 +29,7 @@
 <script>
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import UserFiles from "./viewtrip/UserFiles";
 
   let tripRepository = RepositoryFactory.get("trip");
 
@@ -35,6 +39,10 @@
     props: {
       trip: Object,
       isGroupOwner: Boolean,
+    },
+
+    components: {
+      UserFiles
     },
 
     data() {
