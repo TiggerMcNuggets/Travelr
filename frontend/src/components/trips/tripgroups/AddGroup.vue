@@ -30,7 +30,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn ma-3 flat @click="closeGroupDialog">Cancel</v-btn>
-        <v-btn ma-3 color="primary" flat @click="setUserGroup">Add Group</v-btn>
+        <v-btn ma-3 color="primary" flat @click="setUserGroup">Set Group</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -145,7 +145,7 @@ export default {
       }
     },
     selectedUserGroup: function(newUserGroup) {
-      if ((newUserGroup != this.initialUserGroup) && (this.initialUserGroup.text != "None") && (this.initialUserGroup != null)) {
+      if ((newUserGroup.id != this.initialUserGroup.id) && (this.initialUserGroup.text != "None") && (this.initialUserGroup.id != null)) {
         this.errorMessage = "Changing the group will reset the attendance status of all members."
         this.isError = true;
       } else {
