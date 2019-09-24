@@ -17,6 +17,24 @@ public class MediaRes {
     private String caption;
     private List<AlbumDTO> albums;
 
+    public Long getUserID() {
+        return userID;
+    }
+
+    private Long userID;
+
+    private String uriString;
+
+    public String getUriString() {
+        return uriString;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    private String mediaType;
+
     /**
      *
      * @param media media object to store information about a media item.
@@ -27,6 +45,9 @@ public class MediaRes {
         this.is_public = media.is_public;
         this.type = media.mediaType;
         this.caption = media.caption;
+        this.userID = media.getUser().getId();
+        this.uriString = media.getUriString();
+        this.mediaType = media.getMediaType();
 
         this.albums = new ArrayList<>();
         for (Album album : media.albums) {

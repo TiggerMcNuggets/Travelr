@@ -1,43 +1,43 @@
 @import "./theme.scss";
 
 .trip-breadcrumbs {
-  padding: 0px 0px 20px 0px;
+  padding: 0 0 20px 0;
 }
-
 
 /* ------------- COMMENTS --------------- */
 
 .post-comment-container {
-
   .v-input {
-    margin-top: 0px !important;
-    padding-top: 0px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
-  
 }
 
 .user-comment {
   padding: 15px;
-  margin: 20px 0px;
+  margin: 10px 0;
 
   hr {
     margin-bottom: 15px;
   }
 
   p {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   .comment-header {
-    display:flex;
+    display: flex;
     align-items: center;
     padding-bottom: 10px;
-  
+
     p {
       font-weight: bold;
       margin-bottom: 0px;
-  
+    }
+
+    .sub-text {
+      font-weight: normal;
+      font-size: 13px;
     }
   }
-
 }

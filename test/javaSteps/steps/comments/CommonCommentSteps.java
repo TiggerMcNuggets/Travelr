@@ -32,6 +32,7 @@ public class CommonCommentSteps {
         TripNode tripNode = state.getTrip();
         String message = dataTable.get(0).get("message");
         Comment comment = new Comment(message, tripNode, user);
+        comment.setTimestamp((long) 1569191117);
         comment.insert();
         state.setComment(comment);
     }

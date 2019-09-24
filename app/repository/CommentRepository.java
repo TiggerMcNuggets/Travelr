@@ -82,18 +82,23 @@ public class CommentRepository {
      * @param addEmojiReq The emote information
      * @param comment The comment to add the emoji to
      * @param user The user that is reacting
-     * @return The id of the commment emoji
+     * @return The id of the comment emoji
      */
-    public CompletableFuture<Long> addEmoji(AddEmojiReq addEmojiReq, Comment comment, User user) {
+    public CompletableFuture<Long> toggleEmoji(AddEmojiReq addEmojiReq, Comment comment, User user) {
 
         return supplyAsync(() -> {
             String emoji = addEmojiReq.getEmoji();
 
-            CommentEmoji commentEmoji = CommentEmoji.find.query().where().eq("emoji", emoji).findOne();
+            CommentEmoji commentEmoji = CommentEmoji.find.query().where().eq("comment", comment).eq("emoji", emoji).findOne();
             if (commentEmoji == null) {
                 commentEmoji = new CommentEmoji(emoji, comment, user);
             } else if (!commentEmoji.getUsers().contains(user)) {
                 commentEmoji.addUser(user);
+            } else if (commentEmoji.getUsers().contains(user)) {
+                commentEmoji.removeUser(user);
+                if (commentEmoji.getUsers().isEmpty()) {
+                    commentEmoji.delete();
+                }
             }
 
             commentEmoji.save();

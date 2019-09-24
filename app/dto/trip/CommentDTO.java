@@ -1,7 +1,11 @@
 package dto.trip;
+
 import models.Comment;
+import models.CommentEmoji;
 import models.User;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommentDTO {
     public Long id;
@@ -15,6 +19,10 @@ public class CommentDTO {
     public String comment;
 
     public String profilePhoto;
+
+    public Long timestamp;
+
+    public List<CommentEmojiDTO> emojis;
 
     public Long getId() {
         return id;
@@ -64,6 +72,14 @@ public class CommentDTO {
         this.profilePhoto = profilePhoto;
     }
 
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public CommentDTO(Comment comment) {
         this.setId(comment.getId());
         this.setUserId(comment.getUser().getId());
@@ -71,6 +87,11 @@ public class CommentDTO {
         this.setUserLastName(comment.getUser().getLastName());
         this.setProfilePhoto(comment.getUser().getUserProfilePhoto());
         this.setComment(comment.getMessage());
+        this.setTimestamp(comment.getTimestamp());
+        this.emojis = new ArrayList<CommentEmojiDTO>();
+        for (CommentEmoji emoji : comment.commentEmojis) {
+            emojis.add(new CommentEmojiDTO(emoji.emoji, emoji.users));
+        }
     }
 
 }

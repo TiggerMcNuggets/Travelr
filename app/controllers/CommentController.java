@@ -7,10 +7,8 @@ import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.Comment.CreateCommentReq;
 import controllers.dto.Comment.AddEmojiReq;
-import controllers.dto.Media.UpdateMediaReq;
 import dto.trip.CommentDTO;
-import exceptions.ForbiddenException;
-import exceptions.NotFoundException;
+import dto.trip.CommentListDTO;
 import models.Comment;
 import models.TripNode;
 import models.User;
@@ -20,13 +18,11 @@ import play.libs.Json;
 import play.mvc.Http;
 import play.mvc.Result;
 import repository.CommentRepository;
-import scala.concurrent.Await;
 import service.CommentService;
 import repository.UserRepository;
 import service.TripService;
 import utils.AsyncHandler;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +67,7 @@ public class CommentController {
 
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
-        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkReadPermissionHandler(tripNode, user).join());
 
         // Get tripNode without nesting
         CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
@@ -127,11 +123,11 @@ public class CommentController {
             page = Integer.parseInt(request.getQueryString("page"));
             comments = Integer.parseInt(request.getQueryString("comments"));
         } catch (Error e) {
-            page = 1;
-            comments = 10;
+            page = 0;
+            comments = 5;
         } catch (Exception e) {
-            page = 1;
-            comments = 10;
+            page = 0;
+            comments = 5;
         }
         User user = request.attrs().get(Attrs.ACCESS_USER);
         Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
@@ -144,13 +140,42 @@ public class CommentController {
         }
 
         List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
-        List<CommentDTO> commentDTOList = new ArrayList<>();
-        for (Comment comment: commentList) {
-            CommentDTO commentDTO = new CommentDTO(comment);
-            commentDTOList.add(commentDTO);
-        }
-        return CompletableFuture.completedFuture(ok(Json.toJson(commentDTOList)));
+        int commentCount = Comment.find.getTripCommentsCount(TripNode.find.byId(tripId));
+        CommentListDTO commentListDTO = new CommentListDTO(commentList, commentCount);
+        return CompletableFuture.completedFuture(ok(Json.toJson(commentListDTO)));
     }
+
+
+    /**
+     * returns a http response with a status of 200, 401 or 403 respectively for successfully retrieving comments,
+     * when the user making the request isn't authenticated and when a user does not have permissions to retrieve the comments
+     * @param request the request containing two option query parameters, page and comments
+     * @param tripId the id of the trip object
+     * @param userId the id of the user
+     * @return a 200 http response when the comments for a specific page of a trip is obtained, 401 for unauthorised
+     * and 404 for when the trip cannot be found
+     */
+    @Authorization.RequireAuthOrAdmin
+    public CompletionStage<Result> fetchTripComment(Http.Request request, Long tripId, Long userId, Long commentId) {
+
+        User user = request.attrs().get(Attrs.ACCESS_USER);
+        Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
+
+        if (!tripNode.isPresent()) {
+            return CompletableFuture.completedFuture(notFound(APIResponses.TRIP_NOT_FOUND));
+        }
+        if (!tripService.isPermittedToRead(tripNode.get(), user).join()) {
+            return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
+        }
+
+        Optional<Comment> comment = Comment.find.findById(commentId);
+        if (!comment.isPresent()) {
+            return CompletableFuture.completedFuture(badRequest(APIResponses.NOT_FOUND));
+        }
+        CommentDTO commentDTO = new CommentDTO(comment.get());
+        return CompletableFuture.completedFuture(ok(Json.toJson(commentDTO)));
+    }
+
 
     /**
      * Adds a user emoji react to a comment.
@@ -161,7 +186,7 @@ public class CommentController {
      * @return 201 response if created successfully
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> addUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
+    public CompletionStage<Result> toggleUserEmoji(Http.Request request, Long userId, Long tripId, Long commentId) {
         Form<AddEmojiReq> addEmojiReqForm = formFactory.form(AddEmojiReq.class).bindFromRequest(request);
 
         if (addEmojiReqForm.hasErrors()) {
@@ -177,7 +202,7 @@ public class CommentController {
 
         // Get comment without nesting
         CompletionStage<Comment> combineStage = permissionStage.thenCombineAsync(commentStage, (permission, comment) -> comment);
-        CompletionStage<Long> insertStage = combineStage.thenCombineAsync(userStage, (comment, user) -> commentRepository.addEmoji(addEmojiReq, comment, user).join());
+        CompletionStage<Long> insertStage = combineStage.thenCombineAsync(userStage, (comment, user) -> commentRepository.toggleEmoji(addEmojiReq, comment, user).join());
 
         return insertStage.thenApplyAsync(id -> {
             JsonNodeFactory jsonFactory = JsonNodeFactory.instance;
