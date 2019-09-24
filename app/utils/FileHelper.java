@@ -64,7 +64,4 @@ public class FileHelper {
     String randomUUIDString = uuid.toString();
     return randomUUIDString + "." + getFileExtension(name);
   }
-
-
-
 }
