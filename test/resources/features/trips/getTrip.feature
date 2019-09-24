@@ -109,22 +109,51 @@ Scenario: Get a trip successfully
                  "googleId":null
               },
               "type":"destination",
-              "usergroup": []
-           }
-        ]
-     },
-     "root":{
-        "id":1,
-        "name":"My First Trip",
-        "user":{
-           "firstName":"Test",
-           "lastName":"User",
-           "id":2
-        },
-        "albumId":6,
-        "groupName":"Team 300",
-        "groupId":1
-     }
+              "usergroup": [{
+                "userId":2,
+                "firstName":"Test",
+                "lastName":"User",
+                "status":"NOT ANSWERED",
+                "owner":true
+                },
+                {
+                  "userId":3,
+                  "firstName":"Joe",
+                  "lastName":"Bloggs",
+                  "status":"NOT ANSWERED",
+                  "owner":false
+                 },
+                 {
+                  "userId":4,
+                  "firstName":"John",
+                  "lastName":"Smith",
+                  "status":"NOT ANSWERED",
+                  "owner":true
+                 },
+                 {
+                  "userId":5,
+                  "firstName":"Mary",
+                  "lastName":"Smith",
+                  "status":"NOT ANSWERED",
+                  "owner":false
+                  }
+                ]
+              }
+            ]
+          },
+       "root": {
+          "id":1,
+          "name":"My First Trip",
+          "user": {
+            "firstName":"Test",
+            "lastName":"User",
+            "id":2
+           },
+          "albumId":6,
+          "groupName":"Team 300",
+          "groupId":1
+         }
+       }
   }
   """
 
