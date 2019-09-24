@@ -285,7 +285,6 @@ export default {
 
   watch: {
     selectedTrip: function() {
-      console.log(this.selectedTrip);
       this.updateViewTripPage();
     }
   },
