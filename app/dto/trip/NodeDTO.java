@@ -2,7 +2,9 @@ package dto.trip;
 
 import models.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class NodeDTO {
     public Long id;
@@ -21,8 +23,16 @@ public class NodeDTO {
 
     public List<NodeUserDTO> usergroup;
 
-    public NodeDTO() {
+    public NodeDTO() {}
 
+    public NodeDTO(Node node, Grouping grouping) {
+        this(node);
+
+        this.usergroup = new ArrayList<>();
+        boolean groupingExists = Optional.ofNullable(grouping).isPresent();
+        if (groupingExists) {
+            findUsergroups(grouping, node);
+        }
     }
 
     public NodeDTO(Node node) {
@@ -31,6 +41,7 @@ public class NodeDTO {
         this.arrivalDate = node.getArrivalDate();
         this.departureDate = node.getDepartureDate();
         this.ordinal = node.getOrdinal();
+        this.usergroup = new ArrayList<>();
 
         if (node.getClass() == TripNode.class) {
             this.type = "trip";

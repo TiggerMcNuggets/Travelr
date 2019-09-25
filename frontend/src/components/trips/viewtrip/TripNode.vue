@@ -1,6 +1,7 @@
 <template>
   <v-timeline-item color="error">
     <v-card v-if="canEdit">
+      <node-user-attendance class="user-attendance" v-if="displayUserAttendance" :node="node"/>
       <v-text-field
         class="v-timeline-trip-item-style"
         v-model="node.name"
@@ -9,16 +10,21 @@
         label="Trip Name"
       ></v-text-field>
       <div v-if="!node.notCreated">
-
         <v-btn icon>
           <v-icon color="red lighten-1" @click="deleteNode(i)">delete</v-icon>
         </v-btn>
 
-        <v-btn flat text small color="error" class="align-with-arrow" @click="getSelectedTrip(node.id)">
+        <v-btn
+          flat
+          text
+          small
+          color="error"
+          class="align-with-arrow"
+          @click="getSelectedTrip(node.id)"
+        >
           View Trip
           <v-icon left color="error">arrow_right_alt</v-icon>
         </v-btn>
-
       </div>
       <div v-else>
         <v-btn outline color="error" @click="updateTrip()">Create</v-btn>
@@ -40,36 +46,57 @@
 </template>
 
 <style>
-  .v-timeline-trip-item-style {
-    padding: 1.5em 1em 0.7em 1em;
-  }
-  .align-with-arrow {
-    float: right;
-  }
+.v-timeline-trip-item-style {
+  padding: 8px 16px 4px 16px;
+}
+.user-attendance {
+  padding: 8px 16px 4px 16px;
+}
+.align-with-arrow {
+  float: right;
+}
 </style>
 
 <script>
-  import { rules } from "../../form_rules"
+import { rules } from "../../form_rules";
+import NodeUserAttendance from "./NodeUserAttendance";
 
-  export default {
-    name: "TripNode",
+export default {
+  name: "TripNode",
+  components: {
+    NodeUserAttendance: NodeUserAttendance
+  },
+  props: {
+    node: Object,
+    trip: Object,
+    i: Number,
+    getSelectedTrip: Function,
+    updateTrip: Function,
+    removeNode: Function,
+    deleteNode: Function,
+    canEdit: Boolean
+  },
 
-    props: {
-      node: Object,
-      i: Number,
-      getSelectedTrip: Function,
-      updateTrip: Function,
-      removeNode: Function,
-      deleteNode: Function,
-      canEdit: Boolean
-    },
+  data() {
+    return {
+      ...rules
+    };
+  },
 
-    data() {
-      return {
-        ...rules
-      };
-    },
+  computed: {
+    /**
+     * The helper method to ensure the user attendance component needs to be displayed
+     * @return {boolean} check if the node is not in creation mdoe and if the trip has a group associated to it
+     */
+    displayUserAttendance() {
+      if (this.trip) {
+        return !this.node.notCreated && this.trip.trip.usergroup.length;
+      } else {
+        return false;
+      }
+    }
+  },
 
-    methods: {}
-  };
+  methods: {}
+};
 </script>

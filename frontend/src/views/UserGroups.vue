@@ -135,6 +135,7 @@ export default {
         groupId, 
         memberId
       ).then(() => {
+        this.showInfoSnackbar(this._snackbarMessages.groupUserDeleteSuccess);
         this.getUserGroups();
         this.rollbackCheckpoint(
           "DELETE",
@@ -145,6 +146,9 @@ export default {
             url: url
           }
         );
+      })
+      .catch(() => {
+          this.showErrorSnackbar(this._snackbarMessages.groupUserDeleteFail);
       });
     },
 

@@ -1,10 +1,14 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-timeline-item outlined>
     <v-expansion-panel :value="node.notCreated ? 0 : undefined">
       <v-layout v-if="canEdit">
-        <v-expansion-panel-content>
-          <template v-slot:header>
-            <div v-on:click.stop>
+      <v-expansion-panel-content>
+        <template v-slot:header>
+          <div class="mr-5" v-on:click.stop>
+            <div>
+              <node-user-attendance
+                      v-if="displayUserAttendance"
+                      :node="node"/>
               <v-combobox
                 :items="userDestinations"
                 item-text="name"
@@ -13,20 +17,21 @@
                 return-object
               ></v-combobox>
             </div>
-          </template>
-            <v-menu
-              v-model="node.arrivalDateMenu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              lazy
-              transition="scale-transition"
-              offset-y
-              full-width
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="node.arrivalDate"
+          </div>
+
+        </template>
+          <v-menu
+            v-model="node.arrivalDateMenu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            lazy
+            transition="scale-transition"
+            offset-y
+            full-width
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
                   label="Arrival date"
                   prepend-icon="event"
                   readonly
@@ -91,10 +96,6 @@
 </template>
 
 <style>
-  .v-timeline-destination-item-style {
-    padding: 1.5em 1em 1.5em 1em;
-  }
-
   .date-margin {
     padding: 8px 16px 4px 16px;
   }
@@ -108,10 +109,17 @@
   } from "../../form_rules";
   import { RepositoryFactory}  from "../../../repository/RepositoryFactory";
   let destinationRepository = RepositoryFactory.get("destination");
+  import NodeUserAttendance from './NodeUserAttendance';
+  import StoreTripsMixin from "../../mixins/StoreTripsMixin";
+
 
   export default {
     name: "DestinationNode",
 
+    mixins: [StoreTripsMixin],
+    components: {
+        NodeUserAttendance: NodeUserAttendance
+    },
     props: {
       trip: Object,
       node: Object,
@@ -126,11 +134,20 @@
       return {
         ...rules,
         userId: this.$route.params.id,
-        userDestinations: []
+        userDestinations: [],
       };
     },
 
     computed: {
+
+      /**
+       * The helper method to ensure the user attendance component needs to be displayed
+       * @return {boolean} check if the node is not in creation mdoe and if the trip has a group associated to it
+       */
+      displayUserAttendance() {
+          return !this.node.notCreated && this.trip.trip.usergroup.length;
+      },
+
       /**
        * Checks that no same destinations are consecutive
        */
@@ -161,7 +178,8 @@
           .catch(e => {
             console.log(e);
           });
-      }
+      },
+
     },
 
     mounted() {
