@@ -163,7 +163,7 @@ export default {
             icon: "supervised_user_circle",
             link: "/users"
           },
-          { name: "User Groups",
+          { name: "Groups",
             icon: "group",
             link: "/usergroups"
           }
@@ -181,12 +181,12 @@ export default {
         }
         menuOptions.push(
           {
-            name: "Destination List",
+            name: "Destinations",
             icon: "list",
             link: "/user/" + store.getters.getUser.id + "/destinations"
           },
           {
-            name: "My Trips",
+            name: "Trips",
             icon: "flight",
             link: "/user/" + store.getters.getUser.id + "/trips"
           }
