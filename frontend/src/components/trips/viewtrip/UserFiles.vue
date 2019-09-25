@@ -1,21 +1,21 @@
 <template>
-    <v-container grid-list-md pt-3 pb-3 pl-0 pr-0>
-      <h2 class="user-files">User Files</h2>
-      <v-layout row wrap>
-        <v-flex
-          v-for="file in files" 
-          :key="file.id" 
-          xs6 sm4 md6 lg6
-        >
-          <UserFile 
-            :file="file"
-            :getFile="getFile"
-            :deleteFile="deleteFile"
-            :hasWritePermissions="hasWritePermissions"
-          />
-        </v-flex>
-      </v-layout>
-    </v-container>
+  <v-container grid-list-md pt-3 pb-3 pl-0 pr-0>
+    <h2 class="user-files">User Files</h2>
+    <v-layout row wrap>
+      <v-flex
+        v-for="file in files" 
+        :key="file.id" 
+        xs4
+      >
+        <UserFile 
+          :file="file"
+          :getFile="getFile"
+          :deleteFile="deleteFile"
+          :hasWritePermissions="hasWritePermissions"
+        />
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <style>
