@@ -21,7 +21,7 @@ Feature: Email iCal Trip
     # Change email to yours to check received email. REMEMBER TO CHANGE IT BACK BEFORE PUSHING!
     And the user group has the group member
       | first | last  | email               | dob |
-      | John  | Smith | johnsmith@gmail.com | 1   |
+      | John  | Smith | johnsmith@email.com | 1   |
     When I want to send everyone an iCal email
     And I send the request
     Then I will receive the response code 201
