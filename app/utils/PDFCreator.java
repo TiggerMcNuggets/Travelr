@@ -2,6 +2,7 @@ package utils;
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import models.DestinationNode;
+import models.NodeUserStatus;
 import models.TripNode;
 import models.UserGroup;
 import org.jsoup.*;
@@ -69,9 +70,15 @@ public class PDFCreator {
             html_template = html_template.replace("num_of_travellers", num_of_travellers);
             String traveller_list = "";
             for (UserGroup group : trip.getUserGroup().getUserGroups()) {
+                NodeUserStatus nodeUserStatus = NodeUserStatus.find.query().where().eq("user", group.getUser()).eq("trip", trip).findOne();
+                String userStatus = "Not Decided";
+                if (nodeUserStatus != null) {
+                    userStatus = nodeUserStatus.tripStatus.toString();
+                }
                 traveller_list = traveller_list + "<tr>\n" +
                         "<td>" + group.getUser().getFirstName() + " " + group.getUser().getLastName() + "</td>\n" +
-                        "<td>" + group.getUser().getDateOfBirth() + "</td>\n" +
+                        "<td>" + group.getUser().getEmail() + "</td>\n" +
+                        "<td>" + userStatus + "</td>\n" +
                         "</tr>";
             }
             html_template = html_template.replace("traveller_list", traveller_list);
