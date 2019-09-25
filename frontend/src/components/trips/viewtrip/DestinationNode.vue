@@ -32,12 +32,12 @@
           >
             <template v-slot:activator="{ on }">
               <v-text-field
-                  label="Arrival date"
-                  prepend-icon="event"
-                  readonly
-                  v-on="on"
-                  class="date-margin"
-                  :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
+                label="Arrival date"
+                prepend-icon="event"
+                readonly
+                v-on="on"
+                class="date-margin"
+                :rules="arrivalBeforeDepartureAndDestinationsOneAfterTheOther"
                 ></v-text-field>
               </template>
               <v-date-picker
