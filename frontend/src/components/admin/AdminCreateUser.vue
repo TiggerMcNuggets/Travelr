@@ -23,13 +23,14 @@
       :confirmPassword.sync="confirmPassword"
     />
 
-    <v-layout wrap>
-      <v-flex xs12 sm6 md8 class="margin-left-to-checkbox">
+    <v-layout row wrap align-center>
+      <v-flex>
+        <v-btn class='no-margin' :disabled="!isValid" color="error" @click="handleSignup">Create Profile</v-btn>
+      </v-flex>
+      <v-flex >
         <v-checkbox v-model="checkbox" :label="'Create user as admin'"></v-checkbox>
       </v-flex>
-      <v-flex xs12 sm6 md3>
-        <v-btn :disabled="!isValid" color="primary" @click="handleSignup">Create Profile</v-btn>
-      </v-flex>
+      
     </v-layout>
     <v-alert class="email-alert" :value="emailAlert" color="error">Email already taken</v-alert>
     <v-alert class="success" :value="createdUser" color="success">User created!</v-alert>

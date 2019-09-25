@@ -52,7 +52,7 @@
           ></v-select>
         </v-flex>
         <v-flex xs12 sm12 md12>
-          <v-btn color="error" v-on:click="searchUsers">Search</v-btn>
+          <v-btn class='no-margin' color="error" v-on:click="searchUsers">Search</v-btn>
           <v-btn color="error" outline v-on:click="resetSearch">Reset</v-btn>
         </v-flex>
       </v-layout>
