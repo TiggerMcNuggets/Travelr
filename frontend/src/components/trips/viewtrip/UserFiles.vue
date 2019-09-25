@@ -5,7 +5,7 @@
         <v-flex
           v-for="file in files" 
           :key="file.id" 
-          xs6 sm4 md3 lg4
+          xs6 sm4 md6 lg6
         >
           <UserFile 
             :file="file"
