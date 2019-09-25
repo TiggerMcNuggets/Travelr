@@ -202,7 +202,6 @@ public class MailgunService {
         }
 
         ArrayList<User> recipients = new ArrayList<>();
-
         recipients.addAll(tripNode.getUserGroup().getUsers());
         JsonObject recipientVariables = new JsonObject();
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";

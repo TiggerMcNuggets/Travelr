@@ -19,8 +19,6 @@
         <v-btn color="error" @click="clearAndSubmit">Create New Group</v-btn>
       </v-flex>
     </v-flex>
-    <v-alert type="success" v-model="successful">User group successfully created.</v-alert>
-    <v-alert type="error" v-model="failure">{{failureMessage}}</v-alert>
   </v-container>
 </template>
 
@@ -67,11 +65,11 @@ export default {
           description: this.description
         })
         .then(() => {
-          this.successful = true;
+          this.showSuccessSnackbar(this._snackbarMessages.groupCreateSuccess);
           this.updateUserGroups();
         })
         .catch(error => {
-          this.failure = true;
+          this.showErrorSnackbar(this._snackbarMessages.groupCreateFail);
           this.failureMessage = error.response.data;
         });
     },

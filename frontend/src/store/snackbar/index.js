@@ -6,12 +6,14 @@ export default {
   state: {     
     text: 'Default Text',
     color: 'green',
+    time: undefined
   },
 
   mutations: {
     setSnack(state, snack) {
       state.text = snack.text;
       state.color = snack.color;
+      state.time = snack.time;
     },
     removeSnacky(state) {
       state.text = '';
@@ -28,5 +30,6 @@ export default {
   getters: {
     getSnackbarColor: state => state.color,
     getSnackbarText: state => state.text,
+    getSnackbarTime: state => state.time,
   }
 }
