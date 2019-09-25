@@ -49,16 +49,27 @@
     },
 
     methods: {
+      /**
+       * Fetches files for a trip
+       */
       async getFiles() {
         const res = await fileRepository.getFilesForTrip(this.userId, this.tripId);
         this.files = res.data;
       },
 
+      /**
+       * Downloades the file
+       * @param file the file
+       */
       async getFile(file) {
         const res = await fileRepository.getFile(this.userId, file.id);
         download(res, file.name);
       },
 
+      /**
+       * Deletes the file and updates the undo redo stack
+       * @param file the file
+       */
       async deleteFile(file) {
         let checkpoint = {
           action: async () => await this.deleteAndPopulate(file),
@@ -68,6 +79,10 @@
         this.deleteAndPopulate(file);
       },
 
+      /**
+       * Deletes the file and repopulates the component state
+       * @param file the file
+       */
       async deleteAndPopulate(file) {
         await fileRepository.deleteFile(this.userId, this.tripId, file.id);
         await this.getFiles();
