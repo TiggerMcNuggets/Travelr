@@ -11,13 +11,81 @@
         :canUndo="rollbackCanUndo"
         :options="options"
       />
-
-      <v-text-field
-        v-if="searchActive"
-        v-model="searchValue"
-        label="Destination name"
-        prepend-icon="search"
-      ></v-text-field>
+      <v-layout v-if="searchActive" row wrap>
+        <v-flex md3>
+          <v-text-field
+            v-model="searchValue"
+            label="Destination name"
+            prepend-icon="search"
+          ></v-text-field>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            v-model="selectedDistricts"
+            :items="districtOptions"
+            prepend-icon="location_city"
+            label="City"
+            multiple
+            attach
+            persistent-hint
+            selection
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span
+                v-if="index === 1"
+                class="grey--text caption"
+              >(+{{ selectedDistricts.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            v-model="selectedCountrys"
+            :items="countryOptions"
+            prepend-icon="public"
+            label="Country"
+            multiple
+            attach
+            persistent-hint
+            selection
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span
+                v-if="index === 1"
+                class="grey--text caption"
+              >(+{{ selectedCountrys.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            v-model="selectedTypes"
+            :items="typeOptions"
+            prepend-icon="local_cafe"
+            label="Type"
+            multiple
+            attach
+            persistent-hint
+            selection
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span
+                v-if="index === 1"
+                class="grey--text caption"
+              >(+{{ selectedTypes.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-flex>
+      </v-layout>
 
       <v-container v-bind="{ [`grid-list-lg`]: true }" class="no-margin no-padding" fluid>
         <v-layout row wrap>
@@ -183,6 +251,7 @@ import PageHeader from "../common/header/PageHeader";
 // mixins
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
+import destinations from '../../store/destinations/destinations';
 
 let destinationRepository = RepositoryFactory.get("destination");
 
@@ -207,7 +276,13 @@ export default {
       searchValue: "",
       searchActive: false,
       undoRedoError: false,
-      setPrivateError: false
+      setPrivateError: false,
+      districtOptions: [],
+      selectedDistricts: [],
+      countryOptions: [],
+      selectedCountrys: [],
+      typeOptions: [],
+      selectedTypes: []
     };
   },
 
@@ -236,11 +311,34 @@ export default {
      * Gets destinations filtered by the search
      */
     destinationsFiltered() {
+      for (let i = 0; i < this.destinations.length; i++) {
+        this.districtOptions.push(this.destinations[i].district);
+        this.countryOptions.push(this.destinations[i].country);
+        this.typeOptions.push(this.destinations[i].type);
+      };
+      this.districtOptions = Array.from(new Set(this.districtOptions)).sort();
+      this.countryOptions = Array.from(new Set(this.countryOptions)).sort();
+      this.typeOptions = Array.from(new Set(this.typeOptions)).sort();
+
       const filteredList = this.destinations.filter(
-        destination =>
-          destination.name
+        destination => {
+          let criteria1 = destination.name
             .toLowerCase()
-            .search(this.searchValue.toLowerCase()) !== -1
+            .search(this.searchValue.toLowerCase()) !== -1;
+          let criteria2 = true;
+          if (this.selectedDistricts.length > 0) {
+            criteria2 = this.selectedDistricts.includes(destination.district);
+          }
+          let criteria3 = true;
+          if (this.selectedCountrys.length > 0) {
+            criteria3 = this.selectedCountrys.includes(destination.country);
+          }
+          let criteria4 = true;
+          if (this.selectedTypes.length > 0) {
+            criteria4 = this.selectedTypes.includes(destination.type);
+          }
+          return criteria1 && criteria2 && criteria3 && criteria4;
+        }
       );
 
       //Currently sorting trips by id, in future we will sort trips by creation time
