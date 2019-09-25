@@ -188,16 +188,21 @@ export default {
   methods: {
     createTrip() {
       const tripCreation = { name: "New Trip" };
-      this._postTrip(this.$route.params.id, tripCreation).then(response => {
-        let tripId = response.data.id;
-        let route = `/user/${this.userId}/trips/`;
-        this._getTrip(this.userId, tripId).then(() => {
-          if (this.isMyProfile || store.getters.getIsUserAdmin) {
-            route = `/user/${this.userId}/trips/${tripId}`;
-          }
-          this.$router.push(route);
-        });
-      });
+      this._postTrip(this.$route.params.id, tripCreation)
+          .then(response => {
+            this.showSuccessSnackbar(this._snackbarMessages.tripCreateSuccess, 5000);
+            let tripId = response.data.id;
+            let route = `/user/${this.userId}/trips`;
+            this._getTrip(this.userId, tripId).then(() => {
+              if (this.isMyProfile || store.getters.getIsUserAdmin) {
+                route = `/user/${this.userId}/trips/${tripId}`;
+              }
+              this.$router.push(route);
+            });
+          })
+          .catch(() => {
+              this.showErrorSnackbar(this._snackbarMessages.tripCreateFail);
+          });
     },
 
     /**
