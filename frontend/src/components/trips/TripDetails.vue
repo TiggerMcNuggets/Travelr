@@ -81,8 +81,6 @@ export default {
      * @param tripId The trip id
      */
     getSelectedTrip(tripId) {
-      console.log('here')
-      console.log(this.userId)
       this._getTrip(this.userId, tripId).then(() => {
         let trip = deepCopy(this.selectedTrip);
         this._setSelectedTrip(trip);
