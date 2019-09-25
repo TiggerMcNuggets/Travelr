@@ -55,7 +55,6 @@
             this._showSnackbar(text, "green", time)
           },
           _showSnackbar: function(text, color, time) {
-              console.log(time);
             this.$store.dispatch("setSnackbar", {text:text,color:color, time: time})
           }          
         }        
