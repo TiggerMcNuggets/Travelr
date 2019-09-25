@@ -87,7 +87,7 @@ public class FileController extends Controller {
      * @return ok response
      */
     public CompletionStage<Result> deleteFileById(Http.Request request, Long nodeId, Long fileId, Long userId) {
-        return fileService.deleteFileById(fileId)
+        return fileService.deleteFileById(fileId, nodeId, userId)
                 .thenApplyAsync(output -> {
                     return ok();
                 }).handle(AsyncHandler::handleResult);

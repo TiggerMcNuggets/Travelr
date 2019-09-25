@@ -7,7 +7,7 @@
     </v-breadcrumbs>
 
     <v-form lazy-validation ref="form" v-model="isFormValid">
-      <v-layout flex>
+      <v-layout v-if="canEdit" flex>
         <v-btn @click="addTripNode(false)" outline color="error" class="no-margin">Add Trip</v-btn>
         <v-btn @click="addTripNode(true)" outline color="error" class="add-destination-button">Add Destination</v-btn>
       </v-layout>
@@ -24,6 +24,7 @@
         :getSelectedTrip="getSelectedTrip"
         :setSelectedTrip="_setSelectedTrip"
         :updateTrip="updateTrip"
+        :canEdit="canEdit"
       />
     </v-form>
   </v-flex>
@@ -45,7 +46,8 @@
 
     props: {
       updateTrip: Function,
-      hasAdjacentIdentical: Boolean
+      hasAdjacentIdentical: Boolean,
+      canEdit: Boolean
     },
 
     components: {

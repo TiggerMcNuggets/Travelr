@@ -17,6 +17,7 @@
           :getImgFromUrl="getImgFromUrl"
           :fillerImageURL="fillerImageURL"
           :openElement="() => openElement(item)"
+          :isTrip = isTrip
         ></MediaElement>
       </v-flex>
     </v-layout>
@@ -38,7 +39,11 @@ export default {
     openElement: Function,
     getAllAlbums: Function,
     openEditAlbumDialog: Function,
-    smallGrid: Boolean
+    smallGrid: Boolean,
+    isTrip: {
+      type: Boolean,
+      default: false
+    },
   },
 
   components: {

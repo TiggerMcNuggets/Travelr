@@ -19,6 +19,7 @@
       <TripEditor 
         :updateTrip="updateTrip"
         :hasAdjacentIdentical="hasAdjacentIdentical"
+        :canEdit="canEdit"
       />
 
       <TripDetails
@@ -26,6 +27,7 @@
         :hasWritePermissions="hasWritePermissions"
         :updateTrip="updateTrip"
         :pushStack="pushStack"
+        :canEdit="canEdit"
       />
 
       <TripMap 
@@ -96,6 +98,14 @@ export default {
   },
 
   computed: {
+    /**
+     * Checks if user is on a device large enough to edit trips easy
+     * @return true or false
+     */
+    canEdit() {
+      return !this.isExtraSmall;
+    },
+
     /**
      * Checks if the user is permitted to write to the trip
      * @return true or false

@@ -11,36 +11,33 @@
 
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
     <v-text-field v-if="searchActive" v-model="searchValue" label="Trip name" prepend-icon="search"></v-text-field>
-    <v-layout row wrap>
-      <v-flex
-        class="trips-list-element"
-        v-for="(item, index) in tripsFiltered"
-        :key="index"
-        xs12
-        sm6
-        md6
-        lg4
-        xl3
-      >
-        <v-hover v-slot:default="{ hover }">
-          <v-card :elevation="hover ? 12 : 2">
-            <v-img
-              v-on:click="openTrip(item.id)"
-              class="white--text"
-              height="200px"
-              :src="fillerImageURL"
-            >
-              <v-card-title
-                class="align-end fill-height title error--text"
-                color="red"
-              >{{ item.name }}</v-card-title>
-            </v-img>
-            <v-card-actions class="align-end justify-end">
-              <div class="top-destination-content" v-on:click="openTrip(item.id)">
-                <h2>{{ item.name }}</h2>
-              </div>
 
-              <div class="crud-options">
+    <v-container v-bind="{ [`grid-list-lg`]: true }" class="no-margin no-padding" fluid>
+      <v-layout row wrap>
+        <v-flex
+          v-for="(item, index) in tripsFiltered"
+          :key="index"
+          xs12
+          md4
+          sm6
+          xl3
+          @click="openTrip(item.id)"
+          class="trip-grid-item"
+        >
+          <v-img
+            transition
+            src="http://www.businessarchives.org/wp-content/uploads/2017/09/Business-Travel-11.jpg"
+            class="trip-grid-img"
+            aspect-ratio="1.75"
+          ></v-img>
+
+          <v-layout align-center justify-space-between>
+            <v-flex pt-3 pb-3>
+              <span class="headline">{{ item.name }}</span>
+            </v-flex>
+
+            <v-flex>
+              <v-layout justify-end>
                 <CreateSlackChannelButton v-if="(isMyProfile && hasSlack)" :tripName="item.name"></CreateSlackChannelButton>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
@@ -55,22 +52,22 @@
                 </v-tooltip>
                 <v-btn
                   v-if="(isMyProfile || isAdminUser) && !item.isPublic"
-                  class="align-end justify-end"
                   icon
                   @click="deleteTrip(item.id)"
                 >
                   <v-icon dark color="red lighten-1">delete</v-icon>
                 </v-btn>
-              </div>
-            </v-card-actions>
-          </v-card>
-        </v-hover>
-      </v-flex>
-    </v-layout>
+              </v-layout>
+            </v-flex>
+          </v-layout>
+          <v-divider class="no-margin"></v-divider>
+        </v-flex>
+      </v-layout>
+    </v-container>
   </v-container>
 </template>
 
-<style>
+<style lang="scss">
 @import url("https://fonts.googleapis.com/css?family=Karla:400,700");
 
 .crud-options {
@@ -106,6 +103,14 @@ ul {
 
 .trips-list-element {
   padding: 10px;
+}
+
+.trip-grid-item:hover {
+  cursor: pointer;
+
+  .trip-grid-img {
+    opacity: 0.7;
+  }
 }
 </style>
 
