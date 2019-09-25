@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-flex lg3 md6 sm6 xs12 pa-2 v-if="selectedTrip">
     <v-breadcrumbs :items="selectedTrip.navigation" class="trip-breadcrumbs">
       <template v-slot:item="props">

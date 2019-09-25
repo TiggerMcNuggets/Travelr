@@ -29,10 +29,10 @@
         </v-list-tile-action>
 
         <v-list-tile-action>
-          <v-icon color="success lighten-1" v-if="user.status == 'GOING'">check_circle</v-icon>
-          <v-icon color="error lighten-1" v-if="user.status == 'NOT_GOING'">cancel</v-icon>
-          <v-icon color="warning" v-if="user.status == 'MAYBE'">help</v-icon>
-          <v-icon color="secondary" v-if="user.status == 'NOT ANSWERED'">remove_circle</v-icon>
+          <v-icon color="success lighten-1" v-if="user.status === 'GOING'">check_circle</v-icon>
+          <v-icon color="error lighten-1" v-if="user.status === 'NOT_GOING'">cancel</v-icon>
+          <v-icon color="warning" v-if="user.status === 'MAYBE'">help</v-icon>
+          <v-icon color="secondary" v-if="user.status === 'NOT ANSWERED'">remove_circle</v-icon>
         </v-list-tile-action>
       </v-list-tile>
     </v-list>
@@ -145,7 +145,7 @@ export default {
         this.$store.getters.getIsUserAdmin
       );
     }
-  },
+  }
 };
 </script>
 
