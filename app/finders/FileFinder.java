@@ -27,6 +27,7 @@ public class FileFinder extends Finder<Long, File> {
      */
     public Optional<File> getFileByIdIncludeDeleted(Long fileId){
         return query()
+                .setIncludeSoftDeletes()
                 .where()
                 .eq("id", fileId)
                 .findOneOrEmpty();
