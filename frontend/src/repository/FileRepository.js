@@ -17,7 +17,7 @@ export default {
    * @param {*} tripId 
    */
   getFilesForTrip(userId, tripId) {
-    return Repository.get(`/users/${userId}}/trips/${tripId}/files`);
+    return Repository.get(`/users/${userId}/trips/${tripId}/files`);
   },
 
   /**
@@ -27,7 +27,7 @@ export default {
    * @param {*} fileId 
    */
   deleteFile(userId, tripId, fileId) {
-    return Repository.delete(`/users/${userId}}/trips/${tripId}/files/${fileId}`);
+    return Repository.delete(`/users/${userId}/trips/${tripId}/files/${fileId}`);
   },
 
   /**
@@ -35,7 +35,7 @@ export default {
    * @param {*} userId 
    * @param {*} fileId 
    */
-  getFileURL(userId, fileId) {
-    return Repository.get(`/api/users/${userId}/file/${fileId}`);
+  getFile(userId, fileId) {
+    return Repository.get(`/users/${userId}/file/${fileId}`, {responseType: 'arraybuffer'});
   }
 }

@@ -57,7 +57,6 @@ public class iCalCreator {
             //Manually generating UID - unsure what these are but an error occurs if one is not provided.
             UID++;
         }
-        calendar.validate();
         return calendar;
     }
 }

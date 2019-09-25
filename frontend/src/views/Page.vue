@@ -122,6 +122,18 @@ export default {
     };
   },
   computed: {
+    /**
+     * Decides whether the map options should be displayed
+     */
+    displayMapOption() {
+      if (this.isExtraSmall) {
+        return false;
+      } else if(this.isSmall) {
+        return false;
+      } else {
+        return true;
+      }
+    },
 
     /**
      * Defines the menu options to appear in the side navigation.
@@ -151,14 +163,14 @@ export default {
             icon: "supervised_user_circle",
             link: "/users"
           },
-          { name: "User Groups",
+          { name: "Groups",
             icon: "group",
             link: "/usergroups"
           }
         ];
         
         //Checking the media size to remove from Mobile
-        if (!this.isExtraSmall && !this.isSmall) {
+        if (this.displayMapOption) {
           menuOptions.push(
             {
               name: "Destination Map",
@@ -169,12 +181,12 @@ export default {
         }
         menuOptions.push(
           {
-            name: "Destination List",
+            name: "Destinations",
             icon: "list",
             link: "/user/" + store.getters.getUser.id + "/destinations"
           },
           {
-            name: "My Trips",
+            name: "Trips",
             icon: "flight",
             link: "/user/" + store.getters.getUser.id + "/trips"
           }
@@ -205,23 +217,18 @@ export default {
      */
     loggedIn() {
       return store.getters.isLoggedIn;
-    },
-
-    /**
-     * Checks for the size of the page and calls a function to set variables depending on the size.
-     */
-    isSmall() {
-      if (this.windowSizes.width >= 1264) {
-        this.largeWindow();
-      }
-      if (this.windowSizes.width < 1264) {
-        this.smallWindow();
-      }
-      return true;
-    },
+    }
   },
 
   watch: {
+    isLarge: function() {
+      if (this.isLarge) {
+        this.largeWindow();
+      } else {
+        this.smallWindow();
+      }
+    },
+
     traveller: function(newImage, oldImage) {
       if (this.loggedIn && newImage !== oldImage)
         if (

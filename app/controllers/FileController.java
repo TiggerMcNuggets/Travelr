@@ -2,6 +2,7 @@ package controllers;
 
 import com.typesafe.config.Config;
 import controllers.actions.Authorization;
+import controllers.constants.APIResponses;
 import dto.file.FileDTO;
 import exceptions.BadRequestException;
 import models.File;
@@ -16,6 +17,7 @@ import utils.AsyncHandler;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class FileController extends Controller {
@@ -46,7 +48,11 @@ public class FileController extends Controller {
         List<Http.MultipartFormData.FilePart<Files.TemporaryFile>> fileList;
 
         fileList = mfd.getFiles();
-
+        for (Http.MultipartFormData.FilePart<Files.TemporaryFile> file: fileList) {
+            if (file.getFileSize() > 12000000) {
+                return CompletableFuture.completedFuture(badRequest(APIResponses.FILE_TOO_LARGE));
+            }
+        }
         return fileService.createNewFiles(fileList, nodeId, userId).thenApplyAsync(files -> {
             return ok();
         }).handle(AsyncHandler::handleResult);

@@ -178,6 +178,7 @@ export default {
           destination
         )
           .then(() => {
+            this.showSuccessSnackbar(this._snackbarMessages.destinationUpdateSuccess);
             const url = `/users/${this.userId}/destinations/${
               destination.id
             }`;
@@ -196,15 +197,18 @@ export default {
 
           })
           .catch(err => {
-            console.error(err);
+              this.showErrorSnackbar(this._snackbarMessages.destinationUpdateFail);
+              console.error(err);
           });
       } else {
         this._postDestination(this.userId, destination)
           .then(() => {
-            this.focussedDestination = {};
+              this.showSuccessSnackbar(this._snackbarMessages.destinationCreateSuccess);
+              this.focussedDestination = {};
           })
           .catch(err => {
-            console.error(err);
+              this.showErrorSnackbar(this._snackbarMessages.destinationCreateFail);
+              console.error(err);
           });
       }
     },
