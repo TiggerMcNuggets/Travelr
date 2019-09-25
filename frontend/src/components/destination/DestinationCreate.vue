@@ -138,12 +138,14 @@
         if (this.$refs.form.validate()) {
           this._postDestination(this.userId, this.destination)
                   .then(res => {
+                    this.showSuccessSnackbar(this._snackbarMessages.destinationCreateSuccess);
                     this.$refs.form.reset();
                     this.isError = false;
                     this.$emit('close-map-info-window');
                     this.createDestinationCallback(res.data.id);
                   })
                   .catch((err) => {
+                    this.showErrorSnackbar(this._snackbarMessages.destinationCreateFail);
                     console.log(err);
                     this.isError = true;
                     console.log("error creating destination");

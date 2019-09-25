@@ -125,8 +125,12 @@ export default {
         this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {isOwner: this.isMaintainer}
         )
         .then(() => {
+          this.showSuccessSnackbar(this._snackbarMessages.groupUserAddSuccess);
           this.isMaintainer = false;
           this.getUserGroups();
+        })
+        .catch(() => {
+            this.showErrorSnackbar(this._snackbarMessages.groupUserAddFail);
         });
     },
 
