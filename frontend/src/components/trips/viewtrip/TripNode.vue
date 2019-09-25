@@ -34,7 +34,8 @@
       </div>
     </v-card>
     <v-card v-else>
-      <v-flex ml-2 pt-1>
+      <v-flex ml-3 pt-1>
+        <node-user-attendance v-if="displayUserAttendance" :node="node"/>
         <h2>{{ node.name }}</h2>
         <v-btn flat text small color="error" @click="getSelectedTrip(node.id)">
           View Trip

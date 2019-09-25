@@ -20,6 +20,7 @@
             <trip-node
               v-else
               :node="node"
+              :trip="trip"
               :i="i"
               :getSelectedTrip="getSelectedTrip"
               :updateTrip="updateTrip"

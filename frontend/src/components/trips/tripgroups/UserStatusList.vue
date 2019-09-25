@@ -4,7 +4,7 @@
       <h2>{{selectedTrip.root.groupName}}</h2>
       <p
         class="sub-text"
-      >{{`${getStatusNumber("GOING")} going, ${getStatusNumber("NOT_GOING")} not going and ${getStatusNumber("MAYBE")} maybe`}}</p>
+      >{{this.topSummary}}</p>
     </v-flex>
 
     <p v-if="selectedTrip.trip.usergroup.length === 0">No group added.</p>
@@ -89,6 +89,20 @@ export default {
   },
 
   computed: {
+
+    /**
+     *
+     */
+    topSummary() {
+      return `${
+        this.getStatusNumber("GOING")
+      } going, ${
+        this.getStatusNumber("NOT_GOING")
+      } not going and ${
+        this.getStatusNumber("MAYBE")
+      } interested`;
+    },
+
     /**
      * Gets a list of columns for the table in format {text: String, value: String, align: String, sortable: boolean}
      * If the user is an admin add column delete to list.
