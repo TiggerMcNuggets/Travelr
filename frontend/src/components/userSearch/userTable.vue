@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-flex>
     <v-card-title></v-card-title>
     <v-data-table :headers="getColumns" :items="users" :search="search">
@@ -85,13 +85,13 @@ export default {
           text: "Nationalities",
           value: "nationalities",
           align: "left",
-          sortable: true
+          sortable: false
         },
         {
           text: "Traveller Types",
           value: "types",
           align: "left",
-          sortable: true
+          sortable: false
         }
       ];
       //Checking if user is admin and addind delete button if they are
