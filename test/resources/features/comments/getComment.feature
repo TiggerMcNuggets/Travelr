@@ -19,9 +19,23 @@ Feature: Get Comment
     And I send the request
     Then I will receive the response code 200
     And I will receive the response body
-    """
-    {"commentsLength":1,"comments":[{"id":1,"userId":2,"userFirstName":"Test","userLastName":"User","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
-    """
+      """
+      {
+        "commentsLength": 1,
+        "comments": [
+          {
+            "id": 1,
+            "userId": 2,
+            "userFirstName": "Test",
+            "userLastName": "User",
+            "comment": "Comment",
+            "profilePhoto": "defaultPic.png",
+            "timestamp": 1569191117,
+            "emojis": []
+          }
+        ]
+      }
+      """
 
   Scenario: Retrieve comments of an unassociated trip successfully as an admin
     Given I am authenticated
@@ -43,9 +57,23 @@ Feature: Get Comment
     And I send the request
     Then I will receive the response code 200
     And I will receive the response body
-    """
-    {"commentsLength":1,"comments":[{"id":1,"userId":3,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
-    """
+      """
+      {
+        "commentsLength": 1,
+        "comments": [
+          {
+            "id": 1,
+            "userId": 3,
+            "userFirstName": "John",
+            "userLastName": "Smith",
+            "comment": "Comment",
+            "profilePhoto": "defaultPic.png",
+            "timestamp": 1569191117,
+            "emojis": []
+          }
+        ]
+      }
+      """
 
   Scenario: Retrieve comments of an unassociated trip unsuccessfully as a normal user
     Given I am authenticated
@@ -105,9 +133,23 @@ Feature: Get Comment
     And I send the request
     Then I will receive the response code 200
     And I will receive the response body
-    """
-    {"commentsLength":1,"comments": [{"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
-    """
+      """
+      {
+        "commentsLength": 1,
+        "comments": [
+          {
+            "id": 1,
+            "userId": 2,
+            "userFirstName": "John",
+            "userLastName": "Smith",
+            "comment": "Comment",
+            "profilePhoto": "defaultPic.png",
+            "timestamp": 1569191117,
+            "emojis": []
+          }
+        ]
+      }
+      """
 
 
   Scenario: Retrieve comment given its id of an associated trip successfully as a member of the user group
@@ -115,11 +157,11 @@ Feature: Get Comment
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And They own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |
@@ -130,9 +172,9 @@ Feature: Get Comment
     And I send the request
     Then I will receive the response code 200
     And I will receive the response body
-    """
-    {"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
-    """
+      """
+      {"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[]}]}
+      """
 
 
   Scenario: Retrieve comment a single comment in a trip given its id and having an emojiattached
@@ -140,11 +182,11 @@ Feature: Get Comment
       | first | last  | email               | dob |
       | John  | Smith | johnsmith@email.com | 1   |
     And They own the user group
-      | name         | description         |
-      | Team 300     | The best team eva   |
+      | name     | description       |
+      | Team 300 | The best team eva |
     And They own the trip
-      | name         | description |
-      | My First Trip| A trip      |
+      | name          | description |
+      | My First Trip | A trip      |
     And The trip belongs to the user group
     And the trip has the comment
       | message |
@@ -156,6 +198,26 @@ Feature: Get Comment
     And I send the request
     Then I will receive the response code 200
     And I will receive the response body
-    """
-    {"id":1,"userId":2,"userFirstName":"John","userLastName":"Smith","comment":"Comment","profilePhoto":"defaultPic.png","timestamp":1569191117,"emojis":[{"emoji":":)","users":[{"firstName":"John","lastName":"Smith","id":2}]}]}
-    """
+      """
+      {
+        "id": 1,
+        "userId": 2,
+        "userFirstName": "John",
+        "userLastName": "Smith",
+        "comment": "Comment",
+        "profilePhoto": "defaultPic.png",
+        "timestamp": 1569191117,
+        "emojis": [
+          {
+            "emoji": ":)",
+            "users": [
+              {
+                "firstName": "John",
+                "lastName": "Smith",
+                "id": 2
+              }
+            ]
+          }
+        ]
+      }
+      """
