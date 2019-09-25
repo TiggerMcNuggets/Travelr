@@ -1,7 +1,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-layout row wrap>
     <v-flex xs12 ma-2>
-      <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0" mt-3 mb-3>
+      <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length" mt-3 mb-3>
         <h2>Comments ({{commentsLength}})</h2>
       </v-flex>
       <v-flex v-else>
@@ -23,6 +23,13 @@
           </v-layout>
         </v-layout>
       </v-flex>
+
+      <v-select
+        :items="orderingItems"
+        v-model="order"
+        v-on:change="changeOrdering"
+        label="Order By"
+      ></v-select>
 
       <v-flex
         mt-4
@@ -148,7 +155,11 @@ export default {
       commentsLength: 0,
       page: 0,
       userComments: [],
-      initialCommentsCall: false
+      orderingItems: [
+        { text: "Most Recent First", value: "desc" },
+        { text: "Oldest First", value: "asc" }
+      ],
+      order: "desc"
     };
   },
 
@@ -167,6 +178,12 @@ export default {
   },
 
   methods: {
+    changeOrdering() {
+      this.page = 0;
+      this.userComments = [];
+      this.getComments();
+    },
+
     /**
      * Checks if the user has scrolled to the bottom of the comments.
      */
@@ -233,7 +250,8 @@ export default {
           this.selectedTrip.trip.id,
           {
             page: this.page,
-            comments: 5
+            comments: 5,
+            ordering: this.order
           }
         )
         .then(response => {
