@@ -137,6 +137,10 @@ export default {
             text: this.selectedTrip.root.groupName,
             id: this.selectedTrip.root.groupId
           };
+          this.selectedUserGroup = {
+            text: this.selectedTrip.root.groupName,
+            id: this.selectedTrip.root.groupId
+          };
         }
       });
     }
