@@ -227,8 +227,7 @@ public class MailgunService {
             e.printStackTrace();
         }
 
-        ArrayList<User> recipients = new ArrayList<>();
-        recipients.addAll(tripNode.getUserGroup().getUsers());
+        ArrayList<User> recipients = new ArrayList<>(tripNode.getUserGroup().getUsers());
         JsonObject recipientVariables = new JsonObject();
         String subject = "Travelr - Your trip " + StringUtils.capitalize(tripNode.getName()) + " was recently updated.";
         for (User recipient: recipients) {
