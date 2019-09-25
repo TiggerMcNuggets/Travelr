@@ -68,7 +68,7 @@ export default {
      * @return {boolean} true if there is an action to be undone, false if not
      */
     rollbackCanUndo: function() {
-        return this.rollbackManager.canUndo();
+      return this.rollbackManager.canUndo();
     },
 
     /**
@@ -76,14 +76,14 @@ export default {
      * @return {boolean} true if there is an action to be redone, false if not
      */
     rollbackCanRedo: function() {
-        return this.rollbackManager.canRedo();
+      return this.rollbackManager.canRedo();
     },
 
     /**
      * TODO
      */
     rollbackFlush: function() {
-        return this.rollbackManager.flush();
+      return this.rollbackManager.flush();
     }
   }
 };

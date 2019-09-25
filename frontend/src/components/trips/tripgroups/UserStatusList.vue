@@ -145,7 +145,7 @@ export default {
         this.$store.getters.getIsUserAdmin
       );
     }
-  },
+  }
 };
 </script>
 
