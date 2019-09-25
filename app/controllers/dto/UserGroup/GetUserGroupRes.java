@@ -13,6 +13,7 @@ public class GetUserGroupRes {
     public Long id;
     public String name;
     public String description;
+    public String slackWorkspaceDomain;
     public List<Long> owners;
     public List<GetUserRes> members;
 
@@ -39,6 +40,7 @@ public class GetUserGroupRes {
         this.id = grouping.getId();
         this.name = grouping.getName();
         this.description = grouping.getDescription();
+        this.slackWorkspaceDomain = grouping.getSlackWorkspaceDomain();
         this.owners = new ArrayList<>();
         this.members = new ArrayList<>();
 
@@ -102,6 +104,10 @@ public class GetUserGroupRes {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getSlackWorkspaceDomain() { return slackWorkspaceDomain; }
+
+    public void setSlackWorkspaceDomain(String slackWorkspaceDomain) { this.slackWorkspaceDomain = slackWorkspaceDomain; }
 
     public List<Long> getOwners() {
         return owners;
