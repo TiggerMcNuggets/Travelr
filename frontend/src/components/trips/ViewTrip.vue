@@ -10,30 +10,37 @@
       enableBackButton
     />
 
-    <AddGroup 
-      :closeGroupDialog="closeGroupDialog" 
-      :dialogActive="addUsergroupDialogActive"
-    />
+    <AddGroup :closeGroupDialog="closeGroupDialog" :dialogActive="addUsergroupDialogActive"/>
 
-    <v-layout row wrap class="content">
-      <TripEditor 
-        :updateTrip="updateTrip"
-        :hasAdjacentIdentical="hasAdjacentIdentical"
-        :canEdit="canEdit"
-      />
+    <v-layout row wrap>
+      <v-flex lg5 md6 sm6 xs12 pa-2>
+        <v-card class="content">
+          <TripDetails
+            :trip="selectedTrip"
+            :hasWritePermissions="hasWritePermissions"
+            :updateTrip="updateTrip"
+            :pushStack="pushStack"
+            :canEdit="canEdit"
+          />
+        </v-card>
+      </v-flex>
 
-      <TripDetails
-        :trip="selectedTrip"
-        :hasWritePermissions="hasWritePermissions"
-        :updateTrip="updateTrip"
-        :pushStack="pushStack"
-        :canEdit="canEdit"
-      />
-
-      <TripMap 
-        v-if="isLarge || isExtraLarge"
-        :nodes="selectedTrip.trip.nodes"
-      />
+      <v-flex lg7 md6 sm6 xs12 pa-2 v-if="selectedTrip">
+        <v-card class="content">
+          <v-layout>
+            <v-flex xl6 lg7 md12>
+              <TripEditor
+                :updateTrip="updateTrip"
+                :hasAdjacentIdentical="hasAdjacentIdentical"
+                :canEdit="canEdit"
+              />
+            </v-flex>
+            <v-flex xl6 lg5>
+              <TripMap v-if="isLarge || isExtraLarge" :nodes="selectedTrip.trip.nodes"/>
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </v-flex>
     </v-layout>
     <v-dialog v-model="showUploadSection" width="800">
       <MediaUpload
@@ -48,7 +55,8 @@
 
 <style>
 .content {
-  min-height: calc(100vh - 100px);
+  height: calc(100vh - 250px);
+  flex-grow: 0;
 }
 </style>
 
@@ -111,7 +119,7 @@ export default {
      * @return true or false
      */
     hasWritePermissions() {
-      return this.isTripOwner || this.isGroupOwner || this.isAdmin
+      return this.isTripOwner || this.isGroupOwner || this.isAdmin;
     },
 
     /**
