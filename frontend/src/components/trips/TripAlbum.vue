@@ -7,6 +7,7 @@
           :openElement="openImage"
           :getAllAlbums="() => {}"
           :openEditAlbumDialog="() => {}"
+          v-bind:isTrip='true'
           smallGrid
         ></MediaGrid>
       </v-flex>
