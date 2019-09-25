@@ -35,6 +35,9 @@
                     groupUserAddSuccess: "User added to the group successfully!",
                     groupUserAddFail: "Failed to add the user to the group",
 
+                    emailMePdfAndIcalSuccess: "PDF and iCal file from this trip have been sent successfully to you",
+                    emailGroupPdfAndIcalSuccess: "PDF and iCal file from this trip have been sent successfully to everyone in the group",
+                    failedToSendEmail: "Failed to send email",
                 };
             }
         },

@@ -1,11 +1,10 @@
 <template>
-  <v-card height="830px" flat>
+  <v-card flat>
     <v-layout row wrap pl-2 v-if="createMode || editMode">
       <v-form ref="form" lazy-validation>
         <v-flex xs12 mt-3 pb-2 px-3>
           <p v-if="createMode" class="font-weight-bold dest-heading">Create Destination</p>
-          <p v-if="editMode && !createMode" class="font-weight-bold dest-heading">Edit Destination</p>
-        </v-flex>
+         </v-flex>
         <v-flex xs12 pb-1 px-3>
           <v-text-field
             v-model="destination.name"
@@ -84,10 +83,10 @@
           ></v-text-field>
         </v-flex>
         <v-flex xs12>
-          <v-layout justify-start>
-            <v-btn @click="goToViewDestination" v-if="editMode">Cancel</v-btn>
-            <v-btn color="primary" v-if="editMode" @click="updateDestination">Update</v-btn>
-            <v-btn color="primary" v-else @click="updateDestination">Create</v-btn>
+          <v-layout pl-2 pr-2>
+            <v-btn color="error" v-if="editMode" @click="updateDestination">Update</v-btn>
+            <v-btn color="error" outline @click="goToViewDestination" v-if="editMode">Cancel</v-btn>
+            <v-btn color="error" v-else @click="updateDestination">Create</v-btn>
           </v-layout>
         </v-flex>
       </v-form>
@@ -95,7 +94,6 @@
     <v-layout row wrap px-2 v-if="!createMode && !editMode">
       <v-flex pb-2 px-2>
         <v-layout row justify-space-between align-start>
-          <!-- <h3>{{ focussedDestination.name }}</h3> -->
           <div>
             <h4 class="headline font-weight-normal">{{ focussedDestination.name }}</h4>
             <p
@@ -132,14 +130,15 @@
       <v-flex xs12 pb-1 px-2>
         <v-layout row wrap>
           <v-chip
+          small
             :key="index"
             v-for="(travellerType, index) in focussedDestination.travellerTypes"
           >{{ travellerType.name }}</v-chip>
         </v-layout>
       </v-flex>
       <v-flex>
-        <v-layout justify-start mt-2 px-2>
-          <v-btn color="primary" outline @click="gotoDest">View Destination</v-btn>
+        <v-layout justify-start mt-4>
+          <v-btn color="error" @click="gotoDest">View Destination</v-btn>
         </v-layout>
       </v-flex>
     </v-layout>
@@ -186,34 +185,33 @@ export default {
     allowedToEdit: Boolean
   },
   computed: {
-
-      /**
-       * Is it in create mode or viewing/edit mode
-       */
-      createMode() {
-        if (this.focussedDestination && !this.focussedDestination.id) {
-          return true;
-        } else {
-          return false;
+    /**
+     * Is it in create mode or viewing/edit mode
+     */
+    createMode() {
+      if (this.focussedDestination && !this.focussedDestination.id) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+  watch: {
+    /**
+     * Reset back to viewing mode on destination change
+     */
+    focussedDestination: {
+      handler: function(newValue, oldValue) {
+        if (oldValue.id !== newValue.id) {
+          this.goToViewDestination();
         }
-      }
-    },
-    watch: {
-      /**
-       * Reset back to viewing mode on destination change
-       */
-      focussedDestination: {
-        handler: function(newValue, oldValue) {
-          if(oldValue.id !== newValue.id) {
-            this.goToViewDestination();
-          }
-          if (newValue !== this.destination) {
-            this.destination = this.focussedDestination;
-          }
-        },
-        deep: true
-      }
-    },
+        if (newValue !== this.destination) {
+          this.destination = this.focussedDestination;
+        }
+      },
+      deep: true
+    }
+  },
 
   methods: {
     /**
@@ -250,14 +248,13 @@ export default {
       );
     },
 
-      /**
-       * populated list of traveller types for user to select from
-       **/
-      async populateSelects() {
-        const travellerTypes = await SelectDataRepository.travellerTypes();
-        this.typeList = travellerTypes.data;
-
-      },
+    /**
+     * populated list of traveller types for user to select from
+     **/
+    async populateSelects() {
+      const travellerTypes = await SelectDataRepository.travellerTypes();
+      this.typeList = travellerTypes.data;
+    }
   },
 
   /**
