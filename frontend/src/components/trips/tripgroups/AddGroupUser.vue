@@ -16,7 +16,6 @@
 import { RepositoryFactory } from "../../../repository/RepositoryFactory";
 let userGroupRepository = RepositoryFactory.get("userGroup");
 import StoreTripsMixin from "../../mixins/StoreTripsMixin";
-import UserRepository from '../../../repository/UserRepository';
 
 export default {
   mixins: [StoreTripsMixin],
