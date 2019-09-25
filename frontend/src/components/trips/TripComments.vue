@@ -180,16 +180,16 @@ export default {
       return isOwner || this.$store.getters.getIsUserAdmin || commentUser == this.$store.getters.getUser.id;
     },
 
-<<<<<<< HEAD
-=======
   methods: {
+    /**
+     * Changes the comment ordering
+     */
     changeOrdering() {
       this.page = 0;
       this.userComments = [];
       this.getComments();
     },
 
->>>>>>> 6af8c22822193bb0327cbe3fc9fb86aa330aec24
     /**
      * Checks if the user has scrolled to the bottom of the comments.
      */
