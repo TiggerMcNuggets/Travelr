@@ -26,7 +26,7 @@
 
       <div id="scrollableComments" class="scrollable-y">
         <v-flex
-          mt-4
+          mt-2
           mb-2
           v-for="(comment, commentIndex) in userComments"
           :key="comment.id"
