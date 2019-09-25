@@ -53,15 +53,7 @@
 
           <div class="d-flex justify-space-between">
             <p class="subtext">{{comment.comment}}</p>
-<<<<<<< HEAD
             <v-icon v-if="canDelete(comment.userId)" class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
-=======
-            <v-icon
-              class="justified-end"
-              color="red lighten-1"
-              @click="deleteComment(comment.id)"
-            >delete</v-icon>
->>>>>>> 6af8c22822193bb0327cbe3fc9fb86aa330aec24
           </div>
 
           <icon-emoji-picker
