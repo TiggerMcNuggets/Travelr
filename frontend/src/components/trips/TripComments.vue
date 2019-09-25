@@ -16,19 +16,26 @@
           </v-list-tile-avatar>
 
           <v-layout>
-            <emoji-picker v-model="commentText" />
+            <emoji-picker v-model="commentText"/>
             <v-btn icon @click="postComment">
               <v-icon color="primary lighten-1" :disabled="commentText.length < 1">send</v-icon>
             </v-btn>
           </v-layout>
         </v-layout>
-        </v-flex>
+      </v-flex>
 
-      <v-flex mt-4 mb-2 v-for="(comment, commentIndex) in userComments" :key="comment.id" @mouseover="hoverIndex = commentIndex" @mouseout="hoverIndex = undefined">
+      <v-flex
+        mt-4
+        mb-2
+        v-for="(comment, commentIndex) in userComments"
+        :key="comment.id"
+        @mouseover="hoverIndex = commentIndex"
+        @mouseout="hoverIndex = undefined"
+      >
         <v-card class="user-comment">
           <v-layout class="comment-header">
             <v-list-tile-avatar>
-              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)" />
+              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
             </v-list-tile-avatar>
             <v-flex>
               <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
@@ -37,36 +44,43 @@
           </v-layout>
           <v-divider></v-divider>
 
-
-
-          <div class=" d-flex justify-space-between">
+          <div class="d-flex justify-space-between">
             <p class="subtext">{{comment.comment}}</p>
-            <v-icon class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+            <v-icon
+              class="justified-end"
+              color="red lighten-1"
+              @click="deleteComment(comment.id)"
+            >delete</v-icon>
           </div>
 
-
           <icon-emoji-picker
-                  v-show="hoverIndex === commentIndex"
-                  :commentId="comment.id"
-                  :commentIndex="commentIndex"
-                  :sendEmojiForComment="reactWithCommentEmoji"/>
+            v-show="hoverIndex === commentIndex"
+            :commentId="comment.id"
+            :commentIndex="commentIndex"
+            :sendEmojiForComment="reactWithCommentEmoji"
+          />
         </v-card>
         <div class="d-flex">
-          <div v-for="(emoji, index) in comment.emojis" class="width-restriction" v-bind:key="index">
-            
+          <div
+            v-for="(emoji, index) in comment.emojis"
+            class="width-restriction"
+            v-bind:key="index"
+          >
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <div v-on="on" class="comment-emoji-box hoverable">
-                  <div v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)" class="d-flex align-center">   
+                  <div
+                    v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)"
+                    class="d-flex align-center"
+                  >
                     <h3 v-if="emoji.emoji.length < 10">{{emoji.emoji}}</h3>
-                    <img v-else :src="emoji.emoji" width="24" height="24"/>
+                    <img v-else :src="emoji.emoji" width="24" height="24">
                     <h4>{{emoji.users.length}}</h4>
                   </div>
                 </div>
               </template>
               <span>{{getListOfReactionAuthors(emoji.users)}}</span>
             </v-tooltip>
-
           </div>
         </div>
       </v-flex>
@@ -78,25 +92,25 @@
 
 
 <style>
-  .comment-emoji-box {
-    border: 1px solid #c5cae9;
-    border-radius: 4px;
-    padding: 3px;
-    margin-right: 5px;
-    max-width: 50px
-  }
+.comment-emoji-box {
+  border: 1px solid #c5cae9;
+  border-radius: 4px;
+  padding: 3px;
+  margin-right: 5px;
+  max-width: 50px;
+}
 
-  .comment-emoji-box:hover {
-    background-color: #ced3f0;
-  }
+.comment-emoji-box:hover {
+  background-color: #ced3f0;
+}
 
-  .width-restriction {
-    max-width: 50px !important;
-  }
+.width-restriction {
+  max-width: 50px !important;
+}
 
-  .justified-end {
-    justify-content: flex-end;
-  }
+.justified-end {
+  justify-content: flex-end;
+}
 </style>
 
 
@@ -111,16 +125,15 @@ let commentRepository = RepositoryFactory.get("comment");
 import EmojiPicker from "../comment/emoji/EmojiPicker";
 import IconEmojiPicker from "../comment/emoji/IconEmojiPicker";
 
-import {deepCopy} from "../../tools/deepCopy"
-
+import { deepCopy } from "../../tools/deepCopy";
 
 export default {
   name: "TripComments",
 
   mixins: [StoreTripsMixin],
   components: {
-      EmojiPicker,
-      IconEmojiPicker
+    EmojiPicker,
+    IconEmojiPicker
   },
 
   props: {
@@ -134,7 +147,8 @@ export default {
       loading: false,
       commentsLength: 0,
       page: 0,
-      userComments: []
+      userComments: [],
+      initialCommentsCall: false
     };
   },
 
@@ -169,12 +183,17 @@ export default {
       return false;
     },
 
+    /**
+     * Gets a list of reactions of the authors
+     */
     getListOfReactionAuthors(users) {
-        let listOfNames = "";
-        users.forEach((u, index) => {
-            listOfNames += `${u.firstName} ${u.lastName}${index === (users.length - 1)  ? '' : ', '}`;
-        });
-        return listOfNames;
+      let listOfNames = "";
+      users.forEach((u, index) => {
+        listOfNames += `${u.firstName} ${u.lastName}${
+          index === users.length - 1 ? "" : ", "
+        }`;
+      });
+      return listOfNames;
     },
 
     /**
@@ -241,31 +260,33 @@ export default {
           this.page = 0;
           this.userComments = [];
           this.getComments();
-        })
+        });
     },
 
     reactWithCommentEmoji(commentId, emoji, postIndex) {
-        const e = {emoji: emoji};
-        commentRepository.addEmojiToComment(
+      const e = { emoji: emoji };
+      commentRepository
+        .addEmojiToComment(
+          this.$store.getters.getUser.id,
+          this.trip.trip.id,
+          commentId,
+          e
+        )
+        .then(() => {
+          return commentRepository.getComment(
             this.$store.getters.getUser.id,
             this.trip.trip.id,
-            commentId,
-            e
-        ).then(() => {
-            return commentRepository.getComment(
-                this.$store.getters.getUser.id,
-                this.trip.trip.id,
-                commentId
-            );
-        } ).then((res) => {
-            let commentsCopy = deepCopy(this.userComments);
-            commentsCopy[postIndex] = res.data;
-            this.userComments = commentsCopy;
+            commentId
+          );
         })
+        .then(res => {
+          let commentsCopy = deepCopy(this.userComments);
+          commentsCopy[postIndex] = res.data;
+          this.userComments = commentsCopy;
+        });
     },
 
-
-      /**
+    /**
      * Returns a users profile image file given the profile photo filename and user id.
      */
     getProfileImageURL(userProfilePhoto, userId) {
@@ -282,10 +303,12 @@ export default {
   },
 
   watch: {
-    selectedTrip: function() {
-      this.page = 0;
-      this.userComments = [];
-      this.getComments();
+    selectedTrip: function(newTrip, oldTrip) {
+      if (newTrip.trip.id !== oldTrip.trip.id) {
+        this.page = 0;
+        this.userComments = [];
+        this.getComments();
+      }
     },
     loading: function(loading) {
       if (loading && this.userComments.length < this.commentsLength) {
