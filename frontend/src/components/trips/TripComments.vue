@@ -200,6 +200,9 @@ export default {
       return false;
     },
 
+    /**
+     * Gets a list of reactions of the authors
+     */
     getListOfReactionAuthors(users) {
       let listOfNames = "";
       users.forEach((u, index) => {
@@ -318,10 +321,12 @@ export default {
   },
 
   watch: {
-    selectedTrip: function() {
-      this.page = 0;
-      this.userComments = [];
-      this.getComments();
+    selectedTrip: function(newTrip, oldTrip) {
+      if (newTrip.trip.id !== oldTrip.trip.id) {
+        this.page = 0;
+        this.userComments = [];
+        this.getComments();
+      }
     },
     loading: function(loading) {
       if (loading && this.userComments.length < this.commentsLength) {
