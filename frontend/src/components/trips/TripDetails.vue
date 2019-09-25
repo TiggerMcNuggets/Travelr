@@ -1,5 +1,5 @@
 <template>
-  <v-flex lg4 pa-2>
+  <v-flex lg4 md6 sm6 xs12 pa-2>
     <v-container class="no-padding">
       <v-tabs v-model="active" slider-color="blue">
         <v-tab :key="1" ripple>Overview</v-tab>
@@ -26,7 +26,8 @@
         <v-tab-item :key="4">
           <TripFiles 
             :trip="trip" 
-            :isGroupOwner="isGroupOwner" 
+            :hasWritePermissions="hasWritePermissions"
+            :pushStack="pushStack"
           />
         </v-tab-item>
 
@@ -49,7 +50,7 @@ import TripOverview from "./TripOverview";
 import TripComments from "./TripComments";
 import TripAlbum from "./TripAlbum";
 import TripFiles from "./TripFiles";
-import TripMap from "./TripMap.vue";
+import TripMap from "./TripMap";
 import DeviceSizeMixin from "../mixins/DeviceSizeMixin";
 
 export default {
@@ -57,8 +58,9 @@ export default {
 
   props: {
     trip: Object,
-    isGroupOwner: Boolean,
-    updateTrip: Function
+    hasWritePermissions: Boolean,
+    updateTrip: Function,
+    pushStack: Function
   },
 
   data() {

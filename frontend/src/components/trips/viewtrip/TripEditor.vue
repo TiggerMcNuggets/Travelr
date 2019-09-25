@@ -1,5 +1,5 @@
 <template>
-  <v-flex lg3 pa-2 v-if="selectedTrip">
+  <v-flex lg3 md6 sm6 xs12 pa-2 v-if="selectedTrip">
     <v-breadcrumbs :items="selectedTrip.navigation" class="trip-breadcrumbs">
       <template v-slot:item="props">
         <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
