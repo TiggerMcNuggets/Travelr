@@ -10,6 +10,7 @@ import SelectDataRepository from "./SelectDataRepository";
 import MediaRepository from "./MediaRepository";
 import UserGroupRepository from "./UserGroupRepository";
 import CommentRepository from "./CommentsRepository";
+import FileRepository from "./FileRepository";
 
 // Add all repositories here to access from anywhere
 const repositories = {
@@ -24,7 +25,8 @@ const repositories = {
   selectData: SelectDataRepository,
   media: MediaRepository,
   userGroup: UserGroupRepository,
-  comment: CommentRepository
+  comment: CommentRepository,
+  file: FileRepository
 };
 
 export const RepositoryFactory = {
