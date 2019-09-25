@@ -119,15 +119,19 @@ public class CommentController {
 
         Integer page;
         Integer comments;
+        String ordering;
         try {
             page = Integer.parseInt(request.getQueryString("page"));
             comments = Integer.parseInt(request.getQueryString("comments"));
+            ordering = request.getQueryString("ordering");
         } catch (Error e) {
             page = 0;
             comments = 5;
+            ordering = "desc";
         } catch (Exception e) {
             page = 0;
             comments = 5;
+            ordering = "desc";
         }
         User user = request.attrs().get(Attrs.ACCESS_USER);
         Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
@@ -139,7 +143,7 @@ public class CommentController {
             return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
-        List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
+        List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments, ordering);
         int commentCount = Comment.find.getTripCommentsCount(TripNode.find.byId(tripId));
         CommentListDTO commentListDTO = new CommentListDTO(commentList, commentCount);
         return CompletableFuture.completedFuture(ok(Json.toJson(commentListDTO)));
