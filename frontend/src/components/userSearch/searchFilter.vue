@@ -1,62 +1,62 @@
 <template>
-    <v-form>
-      <v-layout wrap class="side-filter">
-        <v-flex xs12 sm6 md6>
-          <v-text-field v-model="search_params.firstName" label="First Name"></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm6 md6>
-          <v-text-field v-model="search_params.lastName" label="Last Name"></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm6 md6>
-          <v-text-field v-model.number="search_params.minAge" label="Min Age" type="number"></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm6 md6>
-          <v-text-field v-model.number="search_params.maxAge" label="Max Age" type="number"></v-text-field>
-        </v-flex>
-        <v-flex xs12 sm12 md12>
-          <v-select
-            v-model="search_params.gender"
-            :items="['Male', 'Female']"
-            chips
-            attach
-            label="Gender"
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 sm12 md12>
-          <v-select
-            v-model="search_params.nationality"
-            :items="nationalities"
-            attach
-            chips
-            multiple
-            label="Nationality"
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 sm12 md12>
-          <v-select
-            v-model="search_params.travellerType"
-            :items="travellerTypes"
-            attach
-            chips
-            multiple
-            label="Traveller Type"
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 sm12 md12>
-          <v-select
-            v-model="search_params.orderBy"
-            :items="['Nationality', 'Traveller Type']"
-            attach
-            chips
-            label="Order By"
-          ></v-select>
-        </v-flex>
-        <v-flex xs12 sm12 md12>
-          <v-btn class='no-margin' color="error" v-on:click="searchUsers">Search</v-btn>
-          <v-btn color="error" outline v-on:click="resetSearch">Reset</v-btn>
-        </v-flex>
-      </v-layout>
-    </v-form>
+  <v-form>
+    <v-layout wrap class="side-filter">
+      <v-flex xs12 sm6 md6>
+        <v-text-field v-model="search_params.firstName" label="First Name"></v-text-field>
+      </v-flex>
+      <v-flex xs12 sm6 md6>
+        <v-text-field v-model="search_params.lastName" label="Last Name"></v-text-field>
+      </v-flex>
+      <v-flex xs12 sm6 md6>
+        <v-text-field v-model.number="search_params.minAge" label="Min Age" type="number"></v-text-field>
+      </v-flex>
+      <v-flex xs12 sm6 md6>
+        <v-text-field v-model.number="search_params.maxAge" label="Max Age" type="number"></v-text-field>
+      </v-flex>
+      <v-flex xs12 sm12 md12>
+        <v-select
+          v-model="search_params.gender"
+          :items="['Male', 'Female']"
+          chips
+          attach
+          label="Gender"
+        ></v-select>
+      </v-flex>
+      <v-flex xs12 sm12 md12>
+        <v-select
+          v-model="search_params.nationality"
+          :items="nationalities"
+          attach
+          chips
+          multiple
+          label="Nationality"
+        ></v-select>
+      </v-flex>
+      <v-flex xs12 sm12 md12>
+        <v-select
+          v-model="search_params.travellerType"
+          :items="travellerTypes"
+          attach
+          chips
+          multiple
+          label="Traveller Type"
+        ></v-select>
+      </v-flex>
+      <v-flex xs12 sm12 md12>
+        <v-select
+          v-model="search_params.orderBy"
+          :items="['Nationality', 'Traveller Type']"
+          attach
+          chips
+          label="Order By"
+        ></v-select>
+      </v-flex>
+      <v-flex xs12 sm12 md12>
+        <v-btn class="no-margin" color="error" v-on:click="searchUsers">Search</v-btn>
+        <v-btn color="error" outline v-on:click="resetSearch">Reset</v-btn>
+      </v-flex>
+    </v-layout>
+  </v-form>
 </template>
 
 <style>
