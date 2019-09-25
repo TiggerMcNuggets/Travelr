@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h2>General</h2>
     <!-- Download iCal button -->
     <v-btn icon @click="downloadICal()" flat color="error">
       <v-icon>calendar_today</v-icon>
@@ -11,7 +12,7 @@
     </v-btn>
 
     <!-- Email iCal and PDF button -->
-    <v-btn v-if="isGroupOwner || isAdmin" @click="emailTrip()" flat fab small color="error" >
+    <v-btn v-if="hasWritePermissions" @click="emailTrip()" flat fab small color="error" >
       <v-icon>email</v-icon>
     </v-btn>
 
@@ -29,6 +30,12 @@
       ></FileUpload>
     </v-dialog>
 
+
+    <UserFiles 
+      v-if="trip.trip.usergroup.length" 
+      :hasWritePermissions="hasWritePermissions"
+      :pushStack="pushStack"
+    />
   </div>
 </template>
 
@@ -42,6 +49,8 @@
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
   import FileUpload from "./FileUpload";
+  import { download } from "./trips_destinations_util";
+  import UserFiles from "./viewtrip/UserFiles";
 
   let tripRepository = RepositoryFactory.get("trip");
 
@@ -54,7 +63,12 @@
 
     props: {
       trip: Object,
-      isGroupOwner: Boolean,
+      hasWritePermissions: Boolean,
+      pushStack: Function
+    },
+
+    components: {
+      UserFiles
     },
 
     data() {
@@ -79,7 +93,7 @@
        */
       downloadICal() {
         tripRepository.downloadICal(this.userId, this.tripId).then(res => {
-          this.download(res, `${this.trip.trip.name}.ics`);
+          download(res, `${this.trip.trip.name}.ics`);
         });
       },
 
@@ -88,28 +102,16 @@
        */
       downloadTripPdf() {
         tripRepository.downloadTripPdf(this.userId, this.tripId).then(res => {
-          this.download(res, `${this.trip.trip.name}.pdf`);
+          download(res, `${this.trip.trip.name}.pdf`);
         })
       },
-
-      /**
-       * Downloads the file returned by a http response
-       */
-      download(res, filename) {
-        const url = window.URL.createObjectURL(new Blob([res.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-      },
-
       /**
        * controls when file upload ox can be seen
        */
       toggleShowFileUpload() {
         this.showUploadSection = !this.showUploadSection;
       },
+
     },
   };
 </script>

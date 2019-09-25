@@ -35,7 +35,7 @@ export default {
    * @param {*} userId 
    * @param {*} fileId 
    */
-  getFileURL(userId, fileId) {
-    return Repository.get(`/api/users/${userId}/file/${fileId}`);
+  getFile(userId, fileId) {
+    return Repository.get(`/users/${userId}/file/${fileId}`, {responseType: 'arraybuffer'});
   }
 }
