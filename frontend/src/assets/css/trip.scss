@@ -46,3 +46,9 @@
 .user-files {
   padding-bottom: 10px;
 }
+
+.file-name {
+  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
+}

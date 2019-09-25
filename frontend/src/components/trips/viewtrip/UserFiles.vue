@@ -18,9 +18,6 @@
   </v-container>
 </template>
 
-<style>
-</style>
-
 <script>
   import { RepositoryFactory } from "../../../repository/RepositoryFactory";
   import { download } from "../trips_destinations_util";

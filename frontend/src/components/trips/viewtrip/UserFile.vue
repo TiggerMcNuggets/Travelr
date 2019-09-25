@@ -1,6 +1,4 @@
 <template>
-  <!-- <v-card class="file-card"> -->
-
   <div>
     <v-img src="http://images.clipartpanda.com/file-clipart-xigKMeMjT.png" height="100px" :contain="true">
     </v-img>
@@ -38,18 +36,6 @@
     <v-divider></v-divider>
   </div>
 </template>
-
-<style>
-.file-card {
-  padding-top: 10px;
-}
-
-.file-name {
-  text-overflow: ellipsis !important;
-  white-space: nowrap;
-  overflow: hidden;
-}
-</style>
 
 <script>
 export default {
