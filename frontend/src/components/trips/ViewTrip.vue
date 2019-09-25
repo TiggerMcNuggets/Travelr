@@ -10,14 +10,28 @@
       enableBackButton
     />
 
-    <AddGroup :closeGroupDialog="closeGroupDialog" :dialogActive="addUsergroupDialogActive"/>
+    <AddGroup 
+      :closeGroupDialog="closeGroupDialog" 
+      :dialogActive="addUsergroupDialogActive"
+    />
 
     <v-layout row wrap class="content">
-      <TripEditor :updateTrip="updateTrip" :hasAdjacentIdentical="hasAdjacentIdentical"/>
+      <TripEditor 
+        :updateTrip="updateTrip"
+        :hasAdjacentIdentical="hasAdjacentIdentical"
+      />
 
-      <TripDetails :trip="selectedTrip" :isGroupOwner="isGroupOwner" :updateTrip="updateTrip"/>
+      <TripDetails
+        :trip="selectedTrip"
+        :hasWritePermissions="hasWritePermissions"
+        :updateTrip="updateTrip"
+        :pushStack="pushStack"
+      />
 
-      <TripMap v-if="isLarge || isExtraLarge" :nodes="selectedTrip.trip.nodes"/>
+      <TripMap 
+        v-if="isLarge || isExtraLarge"
+        :nodes="selectedTrip.trip.nodes"
+      />
     </v-layout>
     <v-dialog v-model="showUploadSection" width="800">
       <MediaUpload
@@ -31,7 +45,6 @@
 </template>
 
 <style>
-
 .content {
   min-height: calc(100vh - 100px);
 }
@@ -83,6 +96,14 @@ export default {
   },
 
   computed: {
+    /**
+     * Checks if the user is permitted to write to the trip
+     * @return true or false
+     */
+    hasWritePermissions() {
+      return this.isTripOwner || this.isGroupOwner || this.isAdmin
+    },
+
     /**
      * Checks if the user is the trip owner
      * @return true or false: whether the user is the trip owner
