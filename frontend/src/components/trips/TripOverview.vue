@@ -11,6 +11,7 @@
         ></v-text-field>
         <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
       </v-form>
+      <AddGroupUser/>
       <UserStatusList />
     </v-flex>
   </v-layout>
@@ -24,6 +25,7 @@
 
 <script>
   import UserStatusList from "./tripgroups/UserStatusList";
+  import AddGroupUser from "./tripgroups/AddGroupUser";
   import { rules } from "../form_rules";
 
   export default {
@@ -35,7 +37,8 @@
     },
 
     components: {
-      UserStatusList
+      UserStatusList,
+      AddGroupUser
     },
         // if (this.$refs.form.validate()) {
     data() {
