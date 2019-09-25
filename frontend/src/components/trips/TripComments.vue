@@ -162,24 +162,6 @@ export default {
   computed: {
     
   },
-
-  methods: {
-    /**
-     * Checks if a user can delete a comment
-     * @param commentUser the user id of the user associated with the comment.
-     */
-    canDelete(commentUser) {
-      let isOwner = false;
-      if (this.selectedTrip) {
-        this.selectedTrip.trip.usergroup.forEach(user => {
-          if (this.$store.getters.getUser.id === user.userId) {
-            isOwner = user.owner;
-          }
-        });
-      }
-      return isOwner || this.$store.getters.getIsUserAdmin || commentUser == this.$store.getters.getUser.id;
-    },
-
   methods: {
     /**
      * Changes the comment ordering
@@ -323,7 +305,23 @@ export default {
       } else {
         return base_url + "/api/travellers/profile-photo/" + userId;
       }
-    }
+    },
+
+    /**
+     * Checks if a user can delete a comment
+     * @param commentUser the user id of the user associated with the comment.
+     */
+    canDelete(commentUser) {
+      let isOwner = false;
+      if (this.selectedTrip) {
+        this.selectedTrip.trip.usergroup.forEach(user => {
+          if (this.$store.getters.getUser.id === user.userId) {
+            isOwner = user.owner;
+          }
+        });
+      }
+      return isOwner || this.$store.getters.getIsUserAdmin || commentUser == this.$store.getters.getUser.id;
+    },
   },
 
   watch: {
