@@ -1,20 +1,45 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div>
     <h2>General</h2>
     <!-- Download iCal button -->
-    <v-btn icon @click="downloadICal()" flat color="error">
-      <v-icon>calendar_today</v-icon>
-    </v-btn>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" icon @click="downloadICal()" flat fab color="error">
+          <v-icon>calendar_today</v-icon>
+        </v-btn>
+      </template>
+      <span>Export Calendar</span>
+    </v-tooltip>
 
     <!-- Download trip pdf -->
-    <v-btn icon @click="downloadTripPdf()" flat color="error">
-      <v-icon>picture_as_pdf</v-icon>
-    </v-btn>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" icon @click="downloadTripPdf()" flat fab color="error">
+          <v-icon>picture_as_pdf</v-icon>
+        </v-btn>
+      </template>
+      <span>Download Trip PDF</span>
+    </v-tooltip>
+
+
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" v-if="hasWritePermissions" @click="emailTrip()" flat fab color="error" >
+          <v-icon>contact_mail</v-icon>
+        </v-btn>
+      </template>
+      <span>Email Trip & Calendar To Group</span>
+    </v-tooltip>
 
     <!-- Email iCal and PDF button -->
-    <v-btn v-if="hasWritePermissions" @click="emailTrip()" flat fab small color="error" >
-      <v-icon>email</v-icon>
-    </v-btn>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" v-if="hasWritePermissions" @click="emailTrip(true)" flat fab color="error" >
+          <v-icon>email</v-icon>
+        </v-btn>
+      </template>
+      <span>Email Trip & Calendar To You</span>
+    </v-tooltip>
 
     <UserFiles 
       v-if="trip.trip.usergroup.length" 
@@ -63,8 +88,18 @@
       /**
        * Emails the iCal and pdf to all of the users in the group
        */
-      emailTrip() {
-        tripRepository.emailPdfAndICal(this.userId, this.tripId);
+      emailTrip(onlyMe) {
+        tripRepository.emailPdfAndICal(this.userId, this.tripId, onlyMe)
+          .then(() => {
+            this.showSuccessSnackbar(
+              onlyMe ? this._snackbarMessages.emailMePdfAndIcalSuccess : this._snackbarMessages.emailGroupPdfAndIcalSuccess,
+              4500
+            );
+          })
+          .catch(() => {
+            this.showErrorSnackbar(this._snackbarMessages.failedToSendEmail, 4500);
+          })
+        ;
       },
 
       /**

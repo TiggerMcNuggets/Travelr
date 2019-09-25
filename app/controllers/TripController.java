@@ -144,7 +144,7 @@ public class TripController extends Controller {
     }
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId) {
+    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId, boolean onlyMe) {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
         if (middlewareRes != null) return middlewareRes;
 
@@ -154,7 +154,7 @@ public class TripController extends Controller {
 
         // Get tripNode without nesting
         CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
-        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripPdfiCalEmail(user, tripNode, getAllNodes(tripNode)).join());
+        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripPdfiCalEmail(user, tripNode, getAllNodes(tripNode), onlyMe).join());
 
         return testStage.thenApplyAsync(userGroups -> created(APIResponses.ICAL_SUCCESS)).handle(AsyncHandler::handleResult);
     }
