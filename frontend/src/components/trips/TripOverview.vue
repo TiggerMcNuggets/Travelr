@@ -9,7 +9,7 @@
           :counter="60"
           required
         ></v-text-field>
-        <v-btn outline color="error" @click="update()" class="save-btn">Save</v-btn>
+        <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
       </v-form>
       <UserStatusList />
     </v-flex>
