@@ -60,7 +60,10 @@
   </v-timeline>
 </template>
 
-<style>
+<style scoped>
+.list-group {
+  width: 95%;
+}
 </style>
 
 <script>

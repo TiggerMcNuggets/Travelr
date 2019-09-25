@@ -7,15 +7,20 @@
 /* ------------- COMMENTS --------------- */
 
 .post-comment-container {
-  .v-input {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+  .textarea {
+    min-height: 80px !important;
+    height: 80px !important;
   }
+}
+
+#scrollableComments {
+  height: calc(100vh - 530px);
 }
 
 .user-comment {
   padding: 15px;
-  margin: 10px 0;
+  margin: 10px 1px;
+  width: 98%;
 
   hr {
     margin-bottom: 15px;

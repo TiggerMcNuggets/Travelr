@@ -1,15 +1,13 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-flex lg3 md6 sm6 xs12 pa-2 v-if="selectedTrip">
-    <v-breadcrumbs :items="selectedTrip.navigation" class="trip-breadcrumbs">
-      <template v-slot:item="props">
-        <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
-      </template>
-    </v-breadcrumbs>
-
+  <v-container>
     <v-form lazy-validation ref="form" v-model="isFormValid">
-      <v-layout v-if="canEdit" flex>
-        <v-btn @click="addTripNode(false)" outline color="error" class="no-margin">Add Trip</v-btn>
-        <v-btn @click="addTripNode(true)" outline color="error" class="add-destination-button">Add Destination</v-btn>
+      <v-layout row wrap>
+        <v-btn @click="addTripNode(false)" color="error">
+          <v-icon small>airplanemode_active</v-icon>&nbsp; Add Trip
+        </v-btn>
+        <v-btn @click="addTripNode(true)" color="error">
+          <v-icon small>room</v-icon>&nbsp; Add Destination
+        </v-btn>
       </v-layout>
 
       <v-container>
@@ -20,6 +18,7 @@
       </v-container>
 
       <TripTimeline
+        class="scrollable-y"
         :trip="selectedTrip"
         :getSelectedTrip="getSelectedTrip"
         :setSelectedTrip="_setSelectedTrip"
@@ -27,66 +26,60 @@
         :canEdit="canEdit"
       />
     </v-form>
-  </v-flex>
+  </v-container>
 </template>
 
-<style>
-  .add-destination-button {
-    margin: 0px 0px 0px 10px;
-  }
+<style lang="scss">
 </style>
 
 <script>
-  import TripTimeline from "./TripTimeline";
-  import StoreTripsMixin from "../../mixins/StoreTripsMixin";
-  import { deepCopy } from "../../../tools/deepCopy";
+import TripTimeline from "./TripTimeline";
+import StoreTripsMixin from "../../mixins/StoreTripsMixin";
+import { deepCopy } from "../../../tools/deepCopy";
 
-  export default {
-    name: "TripEditor",
+export default {
+  name: "TripEditor",
 
-    props: {
-      updateTrip: Function,
-      hasAdjacentIdentical: Boolean,
-      canEdit: Boolean
+  props: {
+    updateTrip: Function,
+    hasAdjacentIdentical: Boolean,
+    canEdit: Boolean
+  },
+
+  components: {
+    TripTimeline
+  },
+
+  mixins: [StoreTripsMixin],
+
+  data() {
+    return {
+      userId: this.$route.params.id,
+      isFormValid: true
+    };
+  },
+
+  methods: {
+    /**
+     * Adds a node to the trip destinations
+     * @param {boolean} isDestination
+     */
+    addTripNode(isDestination) {
+      let trip = deepCopy(this.selectedTrip);
+      trip.trip.nodes.push({
+        name: "",
+        type: isDestination ? "destination" : "trip",
+        arrivalDate: null,
+        departureDate: null,
+        arrivalDateMenu: false,
+        departureDateMenu: false,
+        destination: {
+          name: null
+        },
+        notCreated: true
+      });
+      this._setSelectedTrip(trip);
     },
-
-    components: {
-      TripTimeline
-    },
-
-    mixins: [
-      StoreTripsMixin
-    ],
-
-    data() {
-      return {
-        userId: this.$route.params.id,
-        isFormValid: true
-      };
-    },
-
-    methods: {
-      /**
-       * Adds a node to the trip destinations
-       * @param {boolean} isDestination
-       */
-      addTripNode(isDestination) {
-        let trip = deepCopy(this.selectedTrip);
-        trip.trip.nodes.push({
-          name: "",
-          type: isDestination ? "destination" : "trip",
-          arrivalDate: null,
-          departureDate: null,
-          arrivalDateMenu: false,
-          departureDateMenu: false,
-          destination: {
-            name: null
-          },
-          notCreated: true
-        });
-        this._setSelectedTrip(trip);
-      },
-
 
     /**
      * Gets the selected trip by its id
@@ -97,7 +90,7 @@
         let trip = deepCopy(this.selectedTrip);
         this._setSelectedTrip(trip);
       });
-    },
     }
-  };
+  }
+};
 </script>
