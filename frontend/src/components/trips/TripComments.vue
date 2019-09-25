@@ -156,7 +156,6 @@ export default {
           }
         });
       }
-      console.log(commentUser == this.$store.getters.getUser.id)
       return isOwner || this.$store.getters.getIsUserAdmin || commentUser == this.$store.getters.getUser.id;
     },
 
