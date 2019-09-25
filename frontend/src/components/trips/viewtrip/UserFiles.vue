@@ -69,7 +69,7 @@
       },
 
       async deleteAndPopulate(file) {
-        const res = await fileRepository.deleteFile(this.userId, this.tripId, file.id);
+        await fileRepository.deleteFile(this.userId, this.tripId, file.id);
         await this.getFiles();
       }
     },
