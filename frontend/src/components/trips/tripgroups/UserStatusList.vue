@@ -1,7 +1,7 @@
 <template>
   <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup">
     <v-flex>
-      <h2>Attendance</h2>
+      <h2>{{selectedTrip.root.groupName}}</h2>
       <p
         class="sub-text"
       >{{`${getStatusNumber("GOING")} going, ${getStatusNumber("NOT_GOING")} not going and ${getStatusNumber("MAYBE")} maybe`}}</p>
