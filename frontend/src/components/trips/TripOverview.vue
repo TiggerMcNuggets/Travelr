@@ -3,12 +3,7 @@
     <v-flex xs12 ma-2 mt-4>
       <h2>Trip Name</h2>
       <v-form ref="form" lazy-validation>
-        <v-text-field
-          v-model="trip.trip.name"
-          :rules="nameRules"
-          :counter="60"
-          required
-        ></v-text-field>
+        <v-text-field v-model="trip.trip.name" :rules="nameRules" :counter="60" required></v-text-field>
         <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
       </v-form>
       <UserStatusList />
@@ -17,42 +12,42 @@
 </template>
 
 <style>
-  .save-btn {
-    margin: 0px 0px 30px 0px;
-  }
+.save-btn {
+  margin: 0px 0px 30px 0px;
+}
 </style>
 
 <script>
-  import UserStatusList from "./tripgroups/UserStatusList";
-  import { rules } from "../form_rules";
+import UserStatusList from "./tripgroups/UserStatusList";
+import { rules } from "../form_rules";
 
-  export default {
-    name: "TripOverview",
+export default {
+  name: "TripOverview",
 
-    props: {
-      trip: Object,
-      updateTrip: Function
-    },
+  props: {
+    trip: Object,
+    updateTrip: Function
+  },
 
-    components: {
-      UserStatusList
-    },
-        // if (this.$refs.form.validate()) {
-    data() {
-      return {
-        ...rules
-      };
-    },
+  components: {
+    UserStatusList
+  },
+  // if (this.$refs.form.validate()) {
+  data() {
+    return {
+      ...rules
+    };
+  },
 
-    methods: {
-      /**
-       * Validates the form and updates the tirp
-       */
-      update() {
-        if (this.$refs.form.validate()) {
-          this.updateTrip();
-        }
+  methods: {
+    /**
+     * Validates the form and updates the tirp
+     */
+    update() {
+      if (this.$refs.form.validate()) {
+        this.updateTrip();
       }
     }
-  };
+  }
+};
 </script>

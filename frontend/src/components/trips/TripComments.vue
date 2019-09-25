@@ -24,81 +24,71 @@
         </v-layout>
       </v-flex>
 
-      <div id='scrollableComments' class='scrollable-y'>
-      <v-flex
-        mt-4
-        mb-2
-        v-for="(comment, commentIndex) in userComments"
-        :key="comment.id"
-        @mouseover="hoverIndex = commentIndex"
-        @mouseout="hoverIndex = undefined"
-      >
-        <v-card class="user-comment">
-          <v-layout class="comment-header">
-            <v-list-tile-avatar>
-              <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)" />
-            </v-list-tile-avatar>
-            <v-flex>
-              <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
-              <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
-            </v-flex>
-          </v-layout>
-          <v-divider></v-divider>
+      <div id="scrollableComments" class="scrollable-y">
+        <v-flex
+          mt-4
+          mb-2
+          v-for="(comment, commentIndex) in userComments"
+          :key="comment.id"
+          @mouseover="hoverIndex = commentIndex"
+          @mouseout="hoverIndex = undefined"
+        >
+          <v-card class="user-comment">
+            <v-layout class="comment-header">
+              <v-list-tile-avatar>
+                <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)" />
+              </v-list-tile-avatar>
+              <v-flex>
+                <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
+                <p class="sub-text">{{formatTimeStamp(comment.timestamp)}}</p>
+              </v-flex>
+            </v-layout>
+            <v-divider></v-divider>
 
-          <div class="d-flex justify-space-between">
-            <p class="subtext">{{comment.comment}}</p>
-            <v-icon
-              class="justified-end"
-              color="red lighten-1"
-              @click="deleteComment(comment.id)"
-            >delete</v-icon>
-          </div>
+            <div class="d-flex justify-space-between">
+              <p class="subtext">{{comment.comment}}</p>
+              <v-icon
+                class="justified-end"
+                color="red lighten-1"
+                @click="deleteComment(comment.id)"
+              >delete</v-icon>
+            </div>
 
-          <!-- <icon-emoji-picker
-            v-show="hoverIndex === commentIndex"
-            :commentId="comment.id"
-            :commentIndex="commentIndex"
-            :sendEmojiForComment="reactWithCommentEmoji"
-          /> -->
-        </v-card>
-        <div class="d-flex">
-          <div
-            v-for="(emoji, index) in comment.emojis"
-            class="width-restriction"
-            v-bind:key="index"
-          >
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <div v-on="on" class="comment-emoji-box hoverable">
-                  <div
-                    v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)"
-                    class="d-flex align-center"
-                  >
-                    <h3 v-if="emoji.emoji.length < 10">{{emoji.emoji}}</h3>
-                    <img v-else :src="emoji.emoji" width="24" height="24" />
-                    <h4>{{emoji.users.length}}</h4>
+            <icon-emoji-picker
+              v-show="hoverIndex === commentIndex"
+              :commentId="comment.id"
+              :commentIndex="commentIndex"
+              :sendEmojiForComment="reactWithCommentEmoji"
+            />
+          </v-card>
+          <div class="d-flex">
+            <div
+              v-for="(emoji, index) in comment.emojis"
+              class="width-restriction"
+              v-bind:key="index"
+            >
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <div v-on="on" class="comment-emoji-box hoverable">
+                    <div
+                      v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)"
+                      class="d-flex align-center"
+                    >
+                      <h3 v-if="emoji.emoji.length < 10">{{emoji.emoji}}</h3>
+                      <img v-else :src="emoji.emoji" width="24" height="24" />
+                      <h4>{{emoji.users.length}}</h4>
+                    </div>
                   </div>
-                </div>
-              </template>
-              <span>{{getListOfReactionAuthors(emoji.users)}}</span>
-            </v-tooltip>
+                </template>
+                <span>{{getListOfReactionAuthors(emoji.users)}}</span>
+              </v-tooltip>
+            </div>
           </div>
-        </div>
-      </v-flex>
-        <v-progress-circular
-      indeterminate
-      v-if="loading"
-      color="primary"
-      small
-    ></v-progress-circular>
-          </div>
-        
-
+        </v-flex>
+        <v-progress-circular indeterminate v-if="loading" color="primary" small></v-progress-circular>
+      </div>
     </v-flex>
-
-
   </v-layout>
-
 </template>
 
 
@@ -181,8 +171,8 @@ export default {
      * Checks if the user has scrolled to the bottom of the comments.
      */
     bottomVisible() {
-        let myDiv = document.getElementById('scrollableComments');
-        return myDiv.offsetHeight + myDiv.scrollTop >= myDiv.scrollHeight
+      let myDiv = document.getElementById("scrollableComments");
+      return myDiv.offsetHeight + myDiv.scrollTop >= myDiv.scrollHeight;
     },
 
     getListOfReactionAuthors(users) {
@@ -304,9 +294,9 @@ export default {
   watch: {
     selectedTrip: function(oldTrip, newTrip) {
       if (oldTrip.trip.id !== newTrip.trip.id) {
-      this.page = 0;
-      this.userComments = [];
-      this.getComments();
+        this.page = 0;
+        this.userComments = [];
+        this.getComments();
       }
     },
     loading: function(loading) {
@@ -318,9 +308,11 @@ export default {
 
   mounted() {
     this.getComments();
-    document.getElementById('scrollableComments').addEventListener("scroll", () => {
-      this.loading = this.bottomVisible();
-    });
+    document
+      .getElementById("scrollableComments")
+      .addEventListener("scroll", () => {
+        this.loading = this.bottomVisible();
+      });
   }
 };
 </script>

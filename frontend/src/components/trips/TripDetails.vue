@@ -45,6 +45,8 @@ import TripAlbum from "./TripAlbum";
 import TripFiles from "./TripFiles";
 import TripMap from "./TripMap";
 import DeviceSizeMixin from "../mixins/DeviceSizeMixin";
+import StoreTripsMixin from "../mixins/StoreTripsMixin";
+import { deepCopy } from "../../tools/deepCopy";
 
 export default {
   name: "TripDetails",
@@ -58,6 +60,7 @@ export default {
 
   data() {
     return {
+      userId: this.$route.params.id,
       active: null
     };
   },
@@ -70,8 +73,21 @@ export default {
     TripMap
   },
 
-  mixins: [DeviceSizeMixin],
+  mixins: [DeviceSizeMixin, StoreTripsMixin],
 
-  methods: {}
+  methods: {
+    /**
+     * Gets the selected trip by its id
+     * @param tripId The trip id
+     */
+    getSelectedTrip(tripId) {
+      console.log('here')
+      console.log(this.userId)
+      this._getTrip(this.userId, tripId).then(() => {
+        let trip = deepCopy(this.selectedTrip);
+        this._setSelectedTrip(trip);
+      });
+    }
+  }
 };
 </script>

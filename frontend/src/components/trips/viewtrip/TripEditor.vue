@@ -3,10 +3,10 @@
     <v-form lazy-validation ref="form" v-model="isFormValid">
       <v-layout row wrap>
         <v-btn @click="addTripNode(false)" color="error">
-          <v-icon small>airplanemode_active</v-icon>&nbsp Add Trip
+          <v-icon small>airplanemode_active</v-icon>&nbsp; Add Trip
         </v-btn>
         <v-btn @click="addTripNode(true)" color="error">
-          <v-icon small>room</v-icon>&nbsp Add Destination
+          <v-icon small>room</v-icon>&nbsp; Add Destination
         </v-btn>
       </v-layout>
 
