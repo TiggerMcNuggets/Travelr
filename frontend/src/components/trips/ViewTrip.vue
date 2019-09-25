@@ -103,7 +103,7 @@ export default {
      * @return true or false
      */
     canEdit() {
-      !this.isExtraSmall
+      return !this.isExtraSmall;
     },
 
     /**
