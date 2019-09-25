@@ -38,7 +38,6 @@
 
             <v-flex>
               <v-layout justify-end>
-                <CreateSlackChannelButton v-if="(isMyProfile && hasSlack)" :tripName="item.name"></CreateSlackChannelButton>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon dark v-on="on">
@@ -117,7 +116,6 @@ ul {
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-
 let tripRepository = RepositoryFactory.get("trip");
 import { store } from "../../store/index";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
@@ -175,13 +173,6 @@ export default {
       return filteredList.sort(function(a, b) {
         return a.id - b.id;
       });
-    },
-
-    /**
-     * Determines if the user has integrated with slack or not
-     */
-    hasSlack() {
-      return store.getters.getUser.slack;
     }
   },
 
