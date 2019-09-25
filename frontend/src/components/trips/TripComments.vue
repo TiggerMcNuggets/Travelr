@@ -41,7 +41,7 @@
 
           <div class=" d-flex justify-space-between">
             <p class="subtext">{{comment.comment}}</p>
-            <v-icon class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+            <v-icon v-if="canDelete(comment.userId)" class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
           </div>
 
 
@@ -139,7 +139,15 @@ export default {
   },
 
   computed: {
-    isAdminOrOwner() {
+    
+  },
+
+  methods: {
+    /**
+     * Checks if a user can delete a comment
+     * @param commentUser the user id of the user associated with the comment.
+     */
+    canDelete(commentUser) {
       let isOwner = false;
       if (this.selectedTrip) {
         this.selectedTrip.trip.usergroup.forEach(user => {
@@ -148,11 +156,10 @@ export default {
           }
         });
       }
-      return isOwner || this.$store.getters.getIsUserAdmin;
-    }
-  },
+      console.log(commentUser == this.$store.getters.getUser.id)
+      return isOwner || this.$store.getters.getIsUserAdmin || commentUser == this.$store.getters.getUser.id;
+    },
 
-  methods: {
     /**
      * Checks if the user has scrolled to the bottom of the comments.
      */
