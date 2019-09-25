@@ -6,23 +6,16 @@
     <v-divider></v-divider>
 
     <v-card-text>
-      <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
-
-
+      <form enctype="multipart/form-data">
         <div class="dropbox">
-          <input type="file" multiple :name="uploadFieldName" :disabled="isSaving"
-                 @change="filesChange($event.target.files); fileCount = $event.target.files.length"
+          <input type="file" multiple :name="uploadFieldName"
+                 @change="filesChange($event.target.files)"
                  class="input-file">
-          <p v-if="isInitial">
+          <p>
             Drag your file(s) here to begin<br> or click to browse
-          </p>
-          <p v-if="isSaving">
-            Uploading {{ fileCount }} files...
           </p>
         </div>
       </form>
-
-
       <!--<v-flex mt-3>-->
       <!--<FileDisplayer :files="files"/>-->
       <!--</v-flex>-->
@@ -47,29 +40,18 @@
 
 <style lang="scss">
 
-  /*#dropzone {*/
-  /*background: white;*/
-  /*border-radius: 5px;*/
-  /*border: 2px dashed rgb(0, 135, 247);*/
-  /*border-image: none;*/
-  /*padding: 50px;*/
-  /*}*/
-
-  /*#dropzone.dragover {*/
-  /*background: rgba(0, 135, 247, 0.4);*/
-  /*}*/
   .dropbox {
     background: white;
     border-radius: 5px;
     border: 2px dashed rgb(0, 135, 247);
     border-image: none;
-    padding: 50px;
+    height: 180px
   }
 
   .input-file {
-    opacity: 0; /* invisible but it's there! */
-    width: 100%;
-    height: 200px;
+    opacity: 0; /* invisible */
+    width: 96%;
+    height: 180px;
     position: absolute;
     cursor: pointer;
   }
@@ -83,6 +65,7 @@
     text-align: center;
     padding: 50px 0;
   }
+
 </style>
 
 
