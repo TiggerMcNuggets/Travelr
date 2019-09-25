@@ -45,12 +45,6 @@
 </template>
 
 <style>
-.temp-map {
-  height: 100%;
-  width: 100%;
-  background-color: lightblue;
-}
-
 .content {
   min-height: calc(100vh - 100px);
 }
