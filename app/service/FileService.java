@@ -6,7 +6,6 @@ import exceptions.NotFoundException;
 import models.File;
 import models.TripNode;
 import models.User;
-import org.apache.commons.io.FilenameUtils;
 import play.libs.Files;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
@@ -14,12 +13,10 @@ import tyrex.services.UUID;
 import utils.FileHelper;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileTypeDetector;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -51,20 +48,24 @@ public class FileService {
     }
 
     /**
-     * Deletes a file by Id
+     * toggles the delete of a file by Id
      * @param fileId id of the file being deleted
      * @return
      */
     public CompletableFuture<Long> deleteFileById(Long fileId) {
 
         return supplyAsync(() -> {
-            File file = File.find.byId(fileId);
+            Optional<File> fileOptional = File.find.getFileByIdIncludeDeleted(fileId);
 
-            if(file == null) {
+            if(!fileOptional.isPresent()) {
                 throw new NotFoundException("File not found");
             }
+            File file = fileOptional.get();
 
-            file.delete();
+            file.setDeleted(!file.isDeleted());
+
+            file.save();
+
 
             return null;
         }, context);
