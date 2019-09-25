@@ -251,7 +251,6 @@ import PageHeader from "../common/header/PageHeader";
 // mixins
 import RollbackMixin from "../mixins/RollbackMixin.vue";
 import StoreDestinationsMixin from "../mixins/StoreDestinationsMixin";
-import destinations from '../../store/destinations/destinations';
 
 let destinationRepository = RepositoryFactory.get("destination");
 
@@ -289,6 +288,16 @@ export default {
   watch: {
     "$route.params.id": function() {
       this.init();
+    },
+    "destinations": function() {
+      for (let i = 0; i < this.destinations.length; i++) {
+        this.districtOptions.push(this.destinations[i].district);
+        this.countryOptions.push(this.destinations[i].country);
+        this.typeOptions.push(this.destinations[i].type);
+      }
+      this.districtOptions = Array.from(new Set(this.districtOptions)).sort();
+      this.countryOptions = Array.from(new Set(this.countryOptions)).sort();
+      this.typeOptions = Array.from(new Set(this.typeOptions)).sort();
     }
   },
 
@@ -311,15 +320,6 @@ export default {
      * Gets destinations filtered by the search
      */
     destinationsFiltered() {
-      for (let i = 0; i < this.destinations.length; i++) {
-        this.districtOptions.push(this.destinations[i].district);
-        this.countryOptions.push(this.destinations[i].country);
-        this.typeOptions.push(this.destinations[i].type);
-      };
-      this.districtOptions = Array.from(new Set(this.districtOptions)).sort();
-      this.countryOptions = Array.from(new Set(this.countryOptions)).sort();
-      this.typeOptions = Array.from(new Set(this.typeOptions)).sort();
-
       const filteredList = this.destinations.filter(
         destination => {
           let criteria1 = destination.name
