@@ -1,7 +1,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-layout row wrap justify-content-center>
     <v-flex xs12 ma-2>
-      <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0" mt-3 mb-3>
+      <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length" mt-3 mb-3>
         <h2>Comments ({{commentsLength}})</h2>
       </v-flex>
       <v-flex v-else>
@@ -12,11 +12,11 @@
       <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0">
         <v-layout class="post-comment-container">
           <v-list-tile-avatar>
-            <img :src="getProfileImageURL()" />
+            <img :src="getProfileImageURL()">
           </v-list-tile-avatar>
 
           <v-layout>
-            <emoji-picker v-model="commentText" />
+            <emoji-picker v-model="commentText"/>
             <v-btn icon @click="postComment">
               <v-icon color="primary lighten-1" :disabled="commentText.length < 1">send</v-icon>
             </v-btn>
@@ -25,6 +25,13 @@
       </v-flex>
 
       <div id="scrollableComments" class="scrollable-y">
+        <v-select
+          v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0"
+          :items="orderingItems"
+          v-model="order"
+          v-on:change="changeOrdering"
+          label="Order By"
+        ></v-select>
         <v-flex
           mt-2
           mb-2
@@ -36,7 +43,7 @@
           <v-card class="user-comment">
             <v-layout class="comment-header">
               <v-list-tile-avatar>
-                <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)" />
+                <img :src="getProfileImageURL(comment.profilePhoto, comment.userId)">
               </v-list-tile-avatar>
               <v-flex>
                 <p>{{`${comment.userFirstName} ${comment.userLastName}`}}</p>
@@ -75,7 +82,7 @@
                       class="d-flex align-center"
                     >
                       <h3 v-if="emoji.emoji.length < 10">{{emoji.emoji}}</h3>
-                      <img v-else :src="emoji.emoji" width="24" height="24" />
+                      <img v-else :src="emoji.emoji" width="24" height="24">
                       <h4>{{emoji.users.length}}</h4>
                     </div>
                   </div>
@@ -148,7 +155,12 @@ export default {
       loading: false,
       commentsLength: 0,
       page: 0,
-      userComments: []
+      userComments: [],
+      orderingItems: [
+        { text: "Most Recent First", value: "desc" },
+        { text: "Oldest First", value: "asc" }
+      ],
+      order: "desc"
     };
   },
 
@@ -167,6 +179,12 @@ export default {
   },
 
   methods: {
+    changeOrdering() {
+      this.page = 0;
+      this.userComments = [];
+      this.getComments();
+    },
+
     /**
      * Checks if the user has scrolled to the bottom of the comments.
      */
@@ -175,6 +193,9 @@ export default {
       return myDiv.offsetHeight + myDiv.scrollTop >= myDiv.scrollHeight;
     },
 
+    /**
+     * Gets a list of reactions of the authors
+     */
     getListOfReactionAuthors(users) {
       let listOfNames = "";
       users.forEach((u, index) => {
@@ -222,7 +243,8 @@ export default {
           this.selectedTrip.trip.id,
           {
             page: this.page,
-            comments: 5
+            comments: 5,
+            ordering: this.order
           }
         )
         .then(response => {

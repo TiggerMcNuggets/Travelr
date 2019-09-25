@@ -1,12 +1,14 @@
 <template>
   <v-layout>
     <v-flex xs12 ma-2 mt-4>
-      <h2>Trip Name</h2>
-      <v-form ref="form" lazy-validation>
-        <v-text-field v-model="trip.trip.name" :rules="nameRules" :counter="60" required></v-text-field>
-        <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
-      </v-form>
-      <UserStatusList />
+      <div v-if="canEdit">
+        <h2>Trip Name</h2>
+        <v-form ref="form" lazy-validation>
+          <v-text-field v-model="trip.trip.name" :rules="nameRules" :counter="60" required></v-text-field>
+          <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
+        </v-form>
+      </div>
+      <UserStatusList/>
     </v-flex>
   </v-layout>
 </template>
@@ -26,13 +28,14 @@ export default {
 
   props: {
     trip: Object,
-    updateTrip: Function
+    updateTrip: Function,
+    canEdit: Boolean
   },
 
   components: {
     UserStatusList
   },
-  // if (this.$refs.form.validate()) {
+
   data() {
     return {
       ...rules

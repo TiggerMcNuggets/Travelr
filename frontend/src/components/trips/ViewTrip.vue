@@ -10,12 +10,9 @@
       enableBackButton
     />
 
-    <AddGroup :closeGroupDialog="closeGroupDialog" :dialogActive="addUsergroupDialogActive" />
-
+    <AddGroup :closeGroupDialog="closeGroupDialog" :dialogActive="addUsergroupDialogActive"/>
 
     <v-layout row wrap>
-
-      
       <v-flex lg5 md6 sm6 xs12 pa-2>
         <v-card class="content">
           <TripDetails
@@ -23,27 +20,27 @@
             :hasWritePermissions="hasWritePermissions"
             :updateTrip="updateTrip"
             :pushStack="pushStack"
+            :canEdit="canEdit"
           />
         </v-card>
       </v-flex>
-
 
       <v-flex lg7 md6 sm6 xs12 pa-2 v-if="selectedTrip">
         <v-card class="content">
           <v-layout>
             <v-flex xl6 lg7 md12>
-              <TripEditor :updateTrip="updateTrip" :hasAdjacentIdentical="hasAdjacentIdentical" />
+              <TripEditor
+                :updateTrip="updateTrip"
+                :hasAdjacentIdentical="hasAdjacentIdentical"
+                :canEdit="canEdit"
+              />
             </v-flex>
-               <v-flex xl6 lg5>
-              <TripMap v-if="isLarge || isExtraLarge" :nodes="selectedTrip.trip.nodes" />
+            <v-flex xl6 lg5>
+              <TripMap v-if="isLarge || isExtraLarge" :nodes="selectedTrip.trip.nodes"/>
             </v-flex>
-            
-         
           </v-layout>
         </v-card>
       </v-flex>
-
-    
     </v-layout>
     <v-dialog v-model="showUploadSection" width="800">
       <MediaUpload
@@ -109,6 +106,14 @@ export default {
   },
 
   computed: {
+    /**
+     * Checks if user is on a device large enough to edit trips easy
+     * @return true or false
+     */
+    canEdit() {
+      return !this.isExtraSmall;
+    },
+
     /**
      * Checks if the user is permitted to write to the trip
      * @return true or false

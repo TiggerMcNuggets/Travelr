@@ -23,6 +23,7 @@
         :getSelectedTrip="getSelectedTrip"
         :setSelectedTrip="_setSelectedTrip"
         :updateTrip="updateTrip"
+        :canEdit="canEdit"
       />
     </v-form>
   </v-container>
@@ -41,7 +42,8 @@ export default {
 
   props: {
     updateTrip: Function,
-    hasAdjacentIdentical: Boolean
+    hasAdjacentIdentical: Boolean,
+    canEdit: Boolean
   },
 
   components: {
