@@ -183,7 +183,7 @@ public class MailgunService {
      * @param tripNode The tripNode
      * @return a response code given by the mailgun API
      */
-    public CompletableFuture<Integer> sendTripPdfiCalEmail(User user, TripNode tripNode, List<HashMap<TripNode, DestinationNode>> tripDestinations) {
+    public CompletableFuture<Integer> sendTripPdfiCalEmail(User user, TripNode tripNode, List<HashMap<TripNode, DestinationNode>> tripDestinations, Boolean onlyMe) {
         PDFCreator pdfCreator = new PDFCreator();
         iCalCreator creator = new iCalCreator();
         Calendar calendar = creator.createCalendarFromTripDestinations(tripNode, tripDestinations);
@@ -203,7 +203,12 @@ public class MailgunService {
 
         ArrayList<User> recipients = new ArrayList<>();
 
-        recipients.addAll(tripNode.getUserGroup().getUsers());
+        if (!onlyMe) {
+            recipients.addAll(tripNode.getUserGroup().getUsers());
+        } else {
+            recipients.add(user);
+        }
+
         JsonObject recipientVariables = new JsonObject();
         String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
         for (User recipient: recipients) {

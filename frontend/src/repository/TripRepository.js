@@ -98,9 +98,11 @@ export default {
    * Updates a user particiption status within a trip.
    * @param {Number} userId The user id
    * @param {Number} tripId The trip id.
+   * @param payload
+   * @param {boolean} onlyMe boolean to decide if emailing only the manager
    */
-  updateGroupTripStatus(userId, tripId, payload) {
-    return Repository.put(`/users/${userId}/trips/${tripId}/status`, payload);
+  updateGroupTripStatus(userId, tripId, payload, onlyMe) {
+    return Repository.put(`/users/${userId}/trips/${tripId}/status${'?onlyMe=' + !!onlyMe}`, payload);
   },
 
   /**
