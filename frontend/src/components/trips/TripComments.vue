@@ -1,5 +1,5 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-layout row wrap>
+  <v-layout row wrap justify-content-center>
     <v-flex xs12 ma-2>
       <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0" mt-3 mb-3>
         <h2>Comments ({{commentsLength}})</h2>
@@ -12,7 +12,7 @@
       <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0">
         <v-layout class="post-comment-container">
           <v-list-tile-avatar>
-            <img :src="getProfileImageURL()">
+            <img :src="getProfileImageURL()" />
           </v-list-tile-avatar>
 
           <v-layout>
@@ -22,9 +22,17 @@
             </v-btn>
           </v-layout>
         </v-layout>
-        </v-flex>
+      </v-flex>
 
-      <v-flex mt-4 mb-2 v-for="(comment, commentIndex) in userComments" :key="comment.id" @mouseover="hoverIndex = commentIndex" @mouseout="hoverIndex = undefined">
+      <div id='scrollableComments' class='scrollable-y'>
+      <v-flex
+        mt-4
+        mb-2
+        v-for="(comment, commentIndex) in userComments"
+        :key="comment.id"
+        @mouseover="hoverIndex = commentIndex"
+        @mouseout="hoverIndex = undefined"
+      >
         <v-card class="user-comment">
           <v-layout class="comment-header">
             <v-list-tile-avatar>
@@ -37,66 +45,83 @@
           </v-layout>
           <v-divider></v-divider>
 
-
-
-          <div class=" d-flex justify-space-between">
+          <div class="d-flex justify-space-between">
             <p class="subtext">{{comment.comment}}</p>
-            <v-icon class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+            <v-icon
+              class="justified-end"
+              color="red lighten-1"
+              @click="deleteComment(comment.id)"
+            >delete</v-icon>
           </div>
 
-
-          <icon-emoji-picker
-                  v-show="hoverIndex === commentIndex"
-                  :commentId="comment.id"
-                  :commentIndex="commentIndex"
-                  :sendEmojiForComment="reactWithCommentEmoji"/>
+          <!-- <icon-emoji-picker
+            v-show="hoverIndex === commentIndex"
+            :commentId="comment.id"
+            :commentIndex="commentIndex"
+            :sendEmojiForComment="reactWithCommentEmoji"
+          /> -->
         </v-card>
         <div class="d-flex">
-          <div v-for="(emoji, index) in comment.emojis" class="width-restriction" v-bind:key="index">
-            
+          <div
+            v-for="(emoji, index) in comment.emojis"
+            class="width-restriction"
+            v-bind:key="index"
+          >
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <div v-on="on" class="comment-emoji-box hoverable">
-                  <div v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)" class="d-flex align-center">   
+                  <div
+                    v-on:click="() => reactWithCommentEmoji(comment.id, emoji.emoji, commentIndex)"
+                    class="d-flex align-center"
+                  >
                     <h3 v-if="emoji.emoji.length < 10">{{emoji.emoji}}</h3>
-                    <img v-else :src="emoji.emoji" width="24" height="24"/>
+                    <img v-else :src="emoji.emoji" width="24" height="24" />
                     <h4>{{emoji.users.length}}</h4>
                   </div>
                 </div>
               </template>
               <span>{{getListOfReactionAuthors(emoji.users)}}</span>
             </v-tooltip>
-
           </div>
         </div>
       </v-flex>
+        <v-progress-circular
+      indeterminate
+      v-if="loading"
+      color="primary"
+      small
+    ></v-progress-circular>
+          </div>
+        
+
     </v-flex>
 
-    <div ref="commentEnd"></div>
+
   </v-layout>
+
 </template>
 
 
 <style>
-  .comment-emoji-box {
-    border: 1px solid #c5cae9;
-    border-radius: 4px;
-    padding: 3px;
-    margin-right: 5px;
-    max-width: 50px
-  }
+.comment-emoji-box {
+  border: 1px solid #c5cae9;
+  border-radius: 4px;
+  padding: 3px;
+  margin-right: 5px;
+  max-width: 50px;
+}
 
-  .comment-emoji-box:hover {
-    background-color: #ced3f0;
-  }
+.comment-emoji-box:hover {
+  background-color: #ced3f0;
+}
 
-  .width-restriction {
-    max-width: 50px !important;
-  }
+.width-restriction {
+  max-width: 50px !important;
+}
 
-  .justified-end {
-    justify-content: flex-end;
-  }
+.justified-end {
+  justify-content: flex-end;
+}
 </style>
 
 
@@ -111,16 +136,15 @@ let commentRepository = RepositoryFactory.get("comment");
 import EmojiPicker from "../comment/emoji/EmojiPicker";
 import IconEmojiPicker from "../comment/emoji/IconEmojiPicker";
 
-import {deepCopy} from "../../tools/deepCopy"
-
+import { deepCopy } from "../../tools/deepCopy";
 
 export default {
   name: "TripComments",
 
   mixins: [StoreTripsMixin],
   components: {
-      EmojiPicker,
-      IconEmojiPicker
+    EmojiPicker,
+    IconEmojiPicker
   },
 
   props: {
@@ -157,24 +181,18 @@ export default {
      * Checks if the user has scrolled to the bottom of the comments.
      */
     bottomVisible() {
-      if (this.$refs.commentEnd) {
-        const rect = this.$refs.commentEnd.getBoundingClientRect();
-        const elemTop = rect.top;
-        const elemBottom = rect.bottom;
-
-        // Element is in view on the screen:
-        const isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
-        return isVisible;
-      }
-      return false;
+        let myDiv = document.getElementById('scrollableComments');
+        return myDiv.offsetHeight + myDiv.scrollTop >= myDiv.scrollHeight
     },
 
     getListOfReactionAuthors(users) {
-        let listOfNames = "";
-        users.forEach((u, index) => {
-            listOfNames += `${u.firstName} ${u.lastName}${index === (users.length - 1)  ? '' : ', '}`;
-        });
-        return listOfNames;
+      let listOfNames = "";
+      users.forEach((u, index) => {
+        listOfNames += `${u.firstName} ${u.lastName}${
+          index === users.length - 1 ? "" : ", "
+        }`;
+      });
+      return listOfNames;
     },
 
     /**
@@ -241,31 +259,33 @@ export default {
           this.page = 0;
           this.userComments = [];
           this.getComments();
-        })
+        });
     },
 
     reactWithCommentEmoji(commentId, emoji, postIndex) {
-        const e = {emoji: emoji};
-        commentRepository.addEmojiToComment(
+      const e = { emoji: emoji };
+      commentRepository
+        .addEmojiToComment(
+          this.$store.getters.getUser.id,
+          this.trip.trip.id,
+          commentId,
+          e
+        )
+        .then(() => {
+          return commentRepository.getComment(
             this.$store.getters.getUser.id,
             this.trip.trip.id,
-            commentId,
-            e
-        ).then(() => {
-            return commentRepository.getComment(
-                this.$store.getters.getUser.id,
-                this.trip.trip.id,
-                commentId
-            );
-        } ).then((res) => {
-            let commentsCopy = deepCopy(this.userComments);
-            commentsCopy[postIndex] = res.data;
-            this.userComments = commentsCopy;
+            commentId
+          );
         })
+        .then(res => {
+          let commentsCopy = deepCopy(this.userComments);
+          commentsCopy[postIndex] = res.data;
+          this.userComments = commentsCopy;
+        });
     },
 
-
-      /**
+    /**
      * Returns a users profile image file given the profile photo filename and user id.
      */
     getProfileImageURL(userProfilePhoto, userId) {
@@ -282,10 +302,12 @@ export default {
   },
 
   watch: {
-    selectedTrip: function() {
+    selectedTrip: function(oldTrip, newTrip) {
+      if (oldTrip.trip.id !== newTrip.trip.id) {
       this.page = 0;
       this.userComments = [];
       this.getComments();
+      }
     },
     loading: function(loading) {
       if (loading && this.userComments.length < this.commentsLength) {
@@ -296,7 +318,7 @@ export default {
 
   mounted() {
     this.getComments();
-    window.addEventListener("scroll", () => {
+    document.getElementById('scrollableComments').addEventListener("scroll", () => {
       this.loading = this.bottomVisible();
     });
   }
