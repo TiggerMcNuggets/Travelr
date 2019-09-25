@@ -24,6 +24,8 @@
       <FileUpload
         :openUploadDialog="toggleShowFileUpload"
         :closeUploadDialog="toggleShowFileUpload"
+        :userId="userId"
+        :tripId="tripId"
       ></FileUpload>
     </v-dialog>
 

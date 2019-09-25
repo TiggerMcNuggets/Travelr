@@ -8,7 +8,7 @@ export default {
    * @param {*} files 
    */
   uploadFiles(userId, tripId, files) {
-    return Repository.post(`/users/${userId}}/trips/${tripId}/files`, files);
+    return Repository.post(`/users/${userId}/trips/${tripId}/files`, files);
   },
 
   /**
@@ -17,7 +17,7 @@ export default {
    * @param {*} tripId 
    */
   getFilesForTrip(userId, tripId) {
-    return Repository.get(`/users/${userId}}/trips/${tripId}/files`);
+    return Repository.get(`/users/${userId}/trips/${tripId}/files`);
   },
 
   /**
@@ -27,7 +27,7 @@ export default {
    * @param {*} fileId 
    */
   deleteFile(userId, tripId, fileId) {
-    return Repository.delete(`/users/${userId}}/trips/${tripId}/files/${fileId}`);
+    return Repository.delete(`/users/${userId}/trips/${tripId}/files/${fileId}`);
   },
 
   /**

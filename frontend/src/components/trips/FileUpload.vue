@@ -11,7 +11,7 @@
 
         <div class="dropbox">
           <input type="file" multiple :name="uploadFieldName" :disabled="isSaving"
-                 @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+                 @change="filesChange($event.target.files); fileCount = $event.target.files.length"
                  class="input-file">
           <p v-if="isInitial">
             Drag your file(s) here to begin<br> or click to browse
@@ -37,6 +37,7 @@
         ma-3
         color="primary"
         flat
+        v-on:click="uploadFilesToTrip()"
       >Upload Files
       </v-btn>
     </v-card-actions>
@@ -47,15 +48,15 @@
 <style lang="scss">
 
   /*#dropzone {*/
-    /*background: white;*/
-    /*border-radius: 5px;*/
-    /*border: 2px dashed rgb(0, 135, 247);*/
-    /*border-image: none;*/
-    /*padding: 50px;*/
+  /*background: white;*/
+  /*border-radius: 5px;*/
+  /*border: 2px dashed rgb(0, 135, 247);*/
+  /*border-image: none;*/
+  /*padding: 50px;*/
   /*}*/
 
   /*#dropzone.dragover {*/
-    /*background: rgba(0, 135, 247, 0.4);*/
+  /*background: rgba(0, 135, 247, 0.4);*/
   /*}*/
   .dropbox {
     background: white;
@@ -88,7 +89,9 @@
 <script>
   import FileDisplayer from "./FileDisplayer"
 
-  const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
+  import {RepositoryFactory} from "../../repository/RepositoryFactory";
+
+  let fileRepository = RepositoryFactory.get("file");
 
   export default {
 
@@ -99,6 +102,8 @@
     props: {
       openUploadDialog: Function,
       closeUploadDialog: Function,
+      userId: String,
+      tripId: String
     },
 
     // local variables
@@ -108,126 +113,12 @@
         uploadError: null,
         currentStatus: null,
         uploadFieldName: 'files',
-        formDataExample: null,
-        fileNames: []
+        filesFormData: null,
+        fileNames: [],
+        fileList: []
       };
     },
 
-    computed: {
-      isInitial() {
-        return this.currentStatus === STATUS_INITIAL;
-      },
-      isSaving() {
-        return this.currentStatus === STATUS_SAVING;
-      },
-      isSuccess() {
-        return this.currentStatus === STATUS_SUCCESS;
-      },
-      isFailed() {
-        return this.currentStatus === STATUS_FAILED;
-      }
-    },
-
-    // methods: {
-    //
-    //   /**
-    //    * Deselects the image and removes from the list of selected images.
-    //    * @param selectedImage The image to remove from the selected images.
-    //    */
-    //   deleteFile(selectedImage) {
-    //     for (let i = 0; i <= this.files.length; i++) {
-    //       if (selectedImage === this.files[i]) {
-    //         this.files.splice(i, 1);
-    //         this.rawFiles.splice(i, 1);
-    //       }
-    //     }
-    //   },
-    //
-    //   triggerCallback(e, callback) {
-    //     let files;
-    //     if (e.dataTransfer) {
-    //       files = e.dataTransfer.files;
-    //     } else if (e.target) {
-    //       files = e.target.files;
-    //     }
-    //     callback.call(null, files);
-    //   },
-    //
-    //   makeDroppable(ele, callback) {
-    //     let input = document.createElement("input");
-    //     input.setAttribute("type", "file");
-    //     input.setAttribute("multiple", true);
-    //     input.style.display = "none";
-    //     // input.accept = "image/*";
-    //     input.addEventListener("change", e => {
-    //       this.triggerCallback(e, callback);
-    //     });
-    //     ele.appendChild(input);
-    //
-    //     ele.addEventListener("dragover", function (e) {
-    //       e.preventDefault();
-    //       e.stopPropagation();
-    //       ele.classList.add("dragover");
-    //     });
-    //
-    //     ele.addEventListener("dragleave", function (e) {
-    //       e.preventDefault();
-    //       e.stopPropagation();
-    //       ele.classList.remove("dragover");
-    //     });
-    //
-    //     ele.addEventListener("drop", e => {
-    //       e.preventDefault();
-    //       e.stopPropagation();
-    //       ele.classList.remove("dragover");
-    //       this.triggerCallback(e, callback);
-    //     });
-    //
-    //     ele.addEventListener("click", function () {
-    //       input.value = null;
-    //       input.click();
-    //     });
-    //   },
-    //
-    //   /**
-    //    * Uploads media to the selected albums if viewing the media page.
-    //    * Uploads media to the currently active album if viewing an individual album.
-    //    */
-    //   uploadFilesAndClearFileBox(rawFiles, selectedAlbums) {
-    //     if (this.activeAlbumMetadata) {
-    //       this.uploadMedia(rawFiles, [this.activeAlbumMetadata]);
-    //     } else {
-    //       this.uploadMedia(rawFiles, selectedAlbums);
-    //     }
-    //     this.rawFiles = [];
-    //     this.files = [];
-    //     this.selectedAlbumNames = [];
-    //   }
-    // },
-
-    // mounted: function () {
-    //   let dropzone = document.getElementById("dropzone");
-    //
-    //   this.makeDroppable(dropzone, files => {
-    //     this.rawFiles = Array.from(files);
-    //     for (let i = 0; i < files.length; i++) {
-    //       let file = files[i];
-    //       let reader = new FileReader();
-    //
-    //       reader.onload = e => {
-    //         this.files.push(e.target.result);
-    //       };
-    //       reader.readAsDataURL(file);
-    //     }
-    //   });
-    // },
-    //
-    // /**
-    //  * Initialises the component with the`image data.
-    //  */
-    // created: function () {
-    //   this.files = [];
-    // },
 
     methods: {
       reset() {
@@ -236,40 +127,40 @@
         this.uploadedFiles = [];
         this.uploadError = null;
       },
-      // save(formData) {
-      //   // upload data to the server
-      //   this.currentStatus = STATUS_SAVING;
-      //   this.uploadedFiles = [].concat(x);
-      //   console.log("added! " + this.uploadedFiles);
-      //
-      //   upload(formData)
-      //     .then(x => {
-      //
-      //       this.currentStatus = STATUS_SUCCESS;
-      //     })
-      //     .catch(err => {
-      //       this.uploadError = err.response;
-      //       this.currentStatus = STATUS_FAILED;
-      //     });
-      // },
 
-      filesChange(fieldName, fileList) {
-
-        // handle file changes
-        const formData = new FormData();
+      filesChange(fileList) {
 
         if (!fileList.length) return;
 
-        // append the files to FormData
+        // append the files to list
         Array
           .from(Array(fileList.length).keys())
           .map(x => {
-            formData.append(fieldName, fileList[x], fileList[x].name);
-            this.fileNames.push(fileList[x].name);
+            this.fileList.push(fileList[x]);
           });
 
-        console.log("form data is " + formData);
-        this.formDataExample = formData;
+      },
+
+      uploadFilesToTrip() {
+
+        const formData = new FormData();
+        // append the files to FormData
+        Array
+          .from(Array(this.fileList.length).keys())
+          .map(x => {
+            console.log(x);
+            console.log(this.fileList[x].name);
+            formData.append(this.uploadFieldName, this.fileList[x], this.fileList[x].name);
+          });
+
+        fileRepository
+          .uploadFiles(Number(this.userId), Number(this.tripId), formData)
+          .then(() => {
+            console.log("successfully uploaded files");
+          })
+          .catch(error => {
+            console.log(error);
+          });
 
       }
     },
