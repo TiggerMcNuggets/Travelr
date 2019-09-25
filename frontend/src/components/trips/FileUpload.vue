@@ -10,6 +10,7 @@
         <div class="dropbox">
           <input type="file" multiple :name="uploadFieldName"
                  @change="filesChange($event.target.files)"
+                 @click="closeErrorMessage()"
                  class="input-file">
           <p>
             Drag your file(s) here to begin<br> or click to browse
@@ -23,6 +24,14 @@
 
     <v-divider></v-divider>
 
+    <div>
+      <v-alert
+        v-model="fileToBig"
+        type="error">
+        File must be less than 12MB!
+      </v-alert>
+    </div>
+
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn ma-3 flat v-on:click="closeUploadDialog()">Cancel</v-btn>
@@ -34,6 +43,8 @@
       >Upload Files
       </v-btn>
     </v-card-actions>
+
+
   </v-card>
 </template>
 
@@ -96,30 +107,36 @@
         uploadError: null,
         currentStatus: null,
         uploadFieldName: 'files',
-        filesFormData: null,
-        fileNames: [],
-        fileList: []
+        fileList: [],
+        fileToBig: false
       };
     },
 
 
     methods: {
-      reset() {
-        // reset form to initial state
-        this.currentStatus = STATUS_INITIAL;
-        this.uploadedFiles = [];
-        this.uploadError = null;
+
+      closeErrorMessage(){
+        this.fileToBig = false;
       },
 
       filesChange(fileList) {
-
         if (!fileList.length) return;
+
 
         // append the files to list
         Array
           .from(Array(fileList.length).keys())
           .map(x => {
-            this.fileList.push(fileList[x]);
+            console.log("file size is " + fileList[x].size);
+
+            // check is file less than 12MB
+            if (fileList[x].size > 12000000){
+              this.fileToBig = true;
+              fileList.splice(x);
+            } else {
+              this.fileList.push(fileList[x]);
+            }
+
           });
 
       },
@@ -131,8 +148,6 @@
         Array
           .from(Array(this.fileList.length).keys())
           .map(x => {
-            console.log(x);
-            console.log(this.fileList[x].name);
             formData.append(this.uploadFieldName, this.fileList[x], this.fileList[x].name);
           });
 
@@ -146,9 +161,6 @@
           });
 
       }
-    },
-    mounted() {
-      this.reset();
     },
   };
 </script>
