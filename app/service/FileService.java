@@ -6,7 +6,6 @@ import exceptions.NotFoundException;
 import models.File;
 import models.TripNode;
 import models.User;
-import org.apache.commons.io.FilenameUtils;
 import play.libs.Files;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
@@ -14,10 +13,7 @@ import tyrex.services.UUID;
 import utils.FileHelper;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileTypeDetector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
