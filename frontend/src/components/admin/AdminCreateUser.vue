@@ -25,12 +25,16 @@
 
     <v-layout row wrap align-center>
       <v-flex>
-        <v-btn class='no-margin' :disabled="!isValid" color="error" @click="handleSignup">Create Profile</v-btn>
+        <v-btn
+          class="no-margin"
+          :disabled="!isValid"
+          color="error"
+          @click="handleSignup"
+        >Create Profile</v-btn>
       </v-flex>
-      <v-flex >
+      <v-flex>
         <v-checkbox v-model="checkbox" :label="'Create user as admin'"></v-checkbox>
       </v-flex>
-      
     </v-layout>
     <v-alert class="email-alert" :value="emailAlert" color="error">Email already taken</v-alert>
     <v-alert class="success" :value="createdUser" color="success">User created!</v-alert>
