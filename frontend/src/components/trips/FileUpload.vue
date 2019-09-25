@@ -89,15 +89,16 @@
 
   export default {
 
+    name: "FileUpload",
+
     components: {
       FileDisplayer
     },
 
     props: {
-      openUploadDialog: Function,
-      closeUploadDialog: Function,
       userId: String,
-      tripId: String
+      tripId: String,
+      getFiles: Function
     },
 
     // local variables
@@ -127,7 +128,6 @@
         Array
           .from(Array(fileList.length).keys())
           .map(x => {
-            console.log("file size is " + fileList[x].size);
 
             // check is file less than 12MB
             if (fileList[x].size > 12000000){
@@ -154,7 +154,9 @@
         fileRepository
           .uploadFiles(Number(this.userId), Number(this.tripId), formData)
           .then(() => {
-            console.log("successfully uploaded files");
+            this.fileList = [];
+            this.getFiles();
+            this.closeUploadDialog();
           })
           .catch(error => {
             console.log(error);

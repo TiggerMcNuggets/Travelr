@@ -17,24 +17,26 @@
     </v-btn>
 
     <!-- Upload Files Button -->
-    <v-btn icon @click="toggleShowFileUpload()" flat small color="error" >
+    <v-btn icon @click="openFileUpload()" flat small color="error" >
       <v-icon>attach_file</v-icon>
     </v-btn>
 
     <v-dialog v-model="showUploadSection" width="800">
       <FileUpload
-        :openUploadDialog="toggleShowFileUpload"
-        :closeUploadDialog="toggleShowFileUpload"
+        :openUploadDialog="openFileUpload"
+        :closeUploadDialog="closeFileUpload"
         :userId="userId"
         :tripId="tripId"
+        :getFiles="getFiles"
       ></FileUpload>
     </v-dialog>
 
 
-    <UserFiles 
-      v-if="trip.trip.usergroup.length" 
+    <UserFiles
       :hasWritePermissions="hasWritePermissions"
       :pushStack="pushStack"
+      :getFiles="getFiles"
+      :files="files"
     />
   </div>
 </template>
@@ -53,12 +55,14 @@
   import UserFiles from "./viewtrip/UserFiles";
 
   let tripRepository = RepositoryFactory.get("trip");
+  let fileRepository = RepositoryFactory.get("file");
 
   export default {
     name: "TripFiles",
 
     components: {
       FileUpload,
+      UserFiles
     },
 
     props: {
@@ -67,20 +71,27 @@
       pushStack: Function
     },
 
-    components: {
-      UserFiles
-    },
-
     data() {
       return {
         userId: this.$route.params.id,
         tripId: this.$route.params.trip_id,
         isAdmin: store.getters.getIsUserAdmin,
-        showUploadSection: false
+        showUploadSection: false,
+        files: []
       };
     },
 
     methods: {
+      /**
+       * Fetches files for a trip
+       */
+      async getFiles() {
+        const res = await fileRepository.getFilesForTrip(this.userId, this.tripId);
+        this.files = res.data;
+        //closes upload box after updating main trip page
+        this.closeFileUpload();
+      },
+
       /**
        * Emails the iCal and pdf to all of the users in the group
        */
@@ -105,11 +116,19 @@
           download(res, `${this.trip.trip.name}.pdf`);
         })
       },
+
       /**
        * controls when file upload ox can be seen
        */
-      toggleShowFileUpload() {
-        this.showUploadSection = !this.showUploadSection;
+      openFileUpload() {
+        this.showUploadSection = true;
+      },
+
+      /**
+       * controls when file upload ox can be seen
+       */
+      closeFileUpload() {
+        this.showUploadSection = false;
       },
 
     },
