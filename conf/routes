@@ -108,6 +108,13 @@ PUT         /api/users/:userId/trips/:tripId/comments/:commentId/toggle_deleted 
 PUT         /api/users/:userId/trips/:tripId/comments/:commentId/emoji              controllers.CommentController.toggleUserEmoji(request: Request, userId: Long, tripId: Long, commentId: Long)
 
 
+# Trip Files
+POST        /api/users/:userId/trips/:nodeId/files                 controllers.FileController.uploadFiles(request: Request, nodeId: Long, userId: Long)
+GET         /api/users/:userId/trips/:nodeId/files                 controllers.FileController.getFilesForTrip(request: Request, nodeId: Long, userId: Long)
+GET         /api/users/:userId/file/:fileId                        controllers.FileController.getFile(request: Request, fileId: Long, userId: Long)
+DELETE      /api/users/:userId/trips/:nodeId/files/:fileId         controllers.FileController.deleteFileById(request: Request, nodeId: Long, fileId: Long, userId: Long)
+
+
 # NEEDED FOR STATIC VUE FILE SENDING DO NOT DELETE
 GET     /assets/images/*file                    controllers.Assets.at(path="/public/images", file)
 GET     /assets/profile_images/*file            controllers.Assets.at(path="/public/profile_images", file)

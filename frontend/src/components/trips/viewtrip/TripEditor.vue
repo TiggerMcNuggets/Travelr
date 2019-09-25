@@ -1,5 +1,5 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-flex md3 pa-2 v-if="selectedTrip">
+  <v-flex lg3 pa-2 v-if="selectedTrip">
     <v-breadcrumbs :items="selectedTrip.navigation" class="trip-breadcrumbs">
       <template v-slot:item="props">
         <v-breadcrumbs-item v-on:click="getSelectedTrip(props.item.id)">{{ props.item.name }}</v-breadcrumbs-item>
