@@ -1,6 +1,6 @@
 <template>
   <v-timeline-item color="error">
-    <v-card>
+    <v-card v-if="canEdit">
       <node-user-attendance class="user-attendance" v-if="displayUserAttendance" :node="node"/>
       <v-text-field
         class="v-timeline-trip-item-style"
@@ -33,6 +33,15 @@
         </v-btn>
       </div>
     </v-card>
+    <v-card v-else>
+      <v-flex ml-2 pt-1>
+        <h2>{{ node.name }}</h2>
+        <v-btn flat text small color="error" @click="getSelectedTrip(node.id)">
+          View Trip
+          <v-icon left color="error">arrow_right_alt</v-icon>
+        </v-btn>
+      </v-flex>
+    </v-card>
   </v-timeline-item>
 </template>
 
@@ -64,7 +73,8 @@ export default {
     getSelectedTrip: Function,
     updateTrip: Function,
     removeNode: Function,
-    deleteNode: Function
+    deleteNode: Function,
+    canEdit: Boolean
   },
 
   data() {
@@ -79,7 +89,11 @@ export default {
      * @return {boolean} check if the node is not in creation mdoe and if the trip has a group associated to it
      */
     displayUserAttendance() {
-      return !this.node.notCreated && this.trip.trip.usergroup.length;
+      if (this.trip) {
+        return !this.node.notCreated && this.trip.trip.usergroup.length;
+      } else {
+        return false;
+      }
     }
   },
 
