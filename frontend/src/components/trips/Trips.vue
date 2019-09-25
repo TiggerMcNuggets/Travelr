@@ -187,7 +187,7 @@ export default {
           .then(response => {
             this.showSuccessSnackbar(this._snackbarMessages.tripCreateSuccess, 5000);
             let tripId = response.data.id;
-            let route = `/user/${this.userId}/trips/`;
+            let route = `/user/${this.userId}/trips`;
             this._getTrip(this.userId, tripId).then(() => {
               if (this.isMyProfile || store.getters.getIsUserAdmin) {
                 route = `/user/${this.userId}/trips/${tripId}`;
