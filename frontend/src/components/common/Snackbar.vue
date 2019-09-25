@@ -15,7 +15,8 @@ export default {
       show: false,
       message: 'If you can see this message something broke!',
       color: 'red',
-      timeout: 3500 // Use this to change global snackbar display time
+      timeout: 3500, // Use this to change global snackbar display time
+      defaultTimeout: 3500,
     }
   },
   /**
@@ -27,6 +28,7 @@ export default {
       if (msg !== '') {        
         this.message = this.$store.getters.getSnackbarText;
         this.color = this.$store.getters.getSnackbarColor;
+        this.timeout = this.$store.getters.getSnackbarTime ? this.$store.getters.getSnackbarTime : this.defaultTimeout;
         this.show = true;
         this.$store.dispatch("resetSnackbar");
       }
