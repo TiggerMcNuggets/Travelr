@@ -99,19 +99,19 @@ export default {
    * @param {Number} userId The user id
    * @param {Number} tripId The trip id.
    * @param payload
-   * @param {boolean} onlyMe boolean to decide if emailing only the manager
    */
-  updateGroupTripStatus(userId, tripId, payload, onlyMe) {
-    return Repository.put(`/users/${userId}/trips/${tripId}/status${'?onlyMe=' + !!onlyMe}`, payload);
+  updateGroupTripStatus(userId, tripId, payload) {
+    return Repository.put(`/users/${userId}/trips/${tripId}/status`, payload);
   },
 
   /**
    * Emails the trip pdf and iCal file to a user
    * @param {Number} userId The user id
    * @param {Number} tripId The trip id
+   * @param {boolean} onlyMe boolean to decide if emailing only the manager
    */
-  emailPdfAndICal(userId, tripId) {
-    return Repository.post(`/users/${userId}/trips/${tripId}/iCal/email`);
+  emailPdfAndICal(userId, tripId, onlyMe) {
+    return Repository.post(`/users/${userId}/trips/${tripId}/iCal/email${'?onlyMe=' + !!onlyMe}`);
   },
 
   /**

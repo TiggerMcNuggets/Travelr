@@ -89,7 +89,17 @@
        * Emails the iCal and pdf to all of the users in the group
        */
       emailTrip(onlyMe) {
-        tripRepository.emailPdfAndICal(this.userId, this.tripId, onlyMe);
+        tripRepository.emailPdfAndICal(this.userId, this.tripId, onlyMe)
+          .then(() => {
+            this.showSuccessSnackbar(
+              onlyMe ? this._snackbarMessages.emailMePdfAndIcalSuccess : this._snackbarMessages.emailGroupPdfAndIcalSuccess,
+              4500
+            );
+          })
+          .catch(() => {
+            this.showErrorSnackbar(this._snackbarMessages.failedToSendEmail, 4500);
+          })
+        ;
       },
 
       /**
