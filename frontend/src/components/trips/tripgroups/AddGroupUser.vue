@@ -14,9 +14,9 @@
 
 <script>
 import { RepositoryFactory } from "../../../repository/RepositoryFactory";
-let tripRepository = RepositoryFactory.get("trip");
 let userGroupRepository = RepositoryFactory.get("userGroup");
 import StoreTripsMixin from "../../mixins/StoreTripsMixin";
+import UserRepository from '../../../repository/UserRepository';
 
 export default {
   mixins: [StoreTripsMixin],
@@ -43,18 +43,30 @@ export default {
 
   methods: {
     /**
+     * Updates the selectedUserId variable to the given user id
+     */
+    selectUser(userId) {
+      this.selectedUserId = userId;
+    },
+
+    /**
     * Sends a request to add the selected user to the group
     */
     addUserToGroup() {
+      console.log(this.selectedUserId);
       userGroupRepository.addUserToUserGroup(
-        this.$store.getters.getUser.id, this.selectedTrip.trip.usergroup.id, this.selectedUserId, {isOwner: false}
+        this.$store.getters.getUser.id, this.selectedTrip.root.groupId, this.selectedUserId, {isOwner: false}
         )
         .then(() => {
-          this.isMaintainer = false;
+          this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
           this.getUserGroups();
         });
     },
   },
+
+  mounted: async function() {
+    await this.$store.dispatch("getUsers", false);
+  }
 };
 </script>
 
