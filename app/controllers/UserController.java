@@ -24,11 +24,13 @@ import service.MailgunService;
 import service.SlackService;
 import service.TripService;
 import utils.AsyncHandler;
+import repository.UserGroupRepository;
 
 import javax.inject.Inject;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -39,14 +41,16 @@ public class UserController extends Controller {
     FormFactory formFactory;
 
     private UserRepository userRepository;
+    private UserGroupRepository userGroupRepository;
     private final MailgunService mailgunService;
     private final SlackService slackService;
     private final TripService tripService;
 
 
     @Inject
-    public UserController(UserRepository userRepository, MailgunService mailgunService, SlackService slackService, TripService tripService) {
+    public UserController(UserRepository userRepository, UserGroupRepository userGroupRepository, MailgunService mailgunService, SlackService slackService, TripService tripService) {
         this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
         this.mailgunService = mailgunService;
         this.slackService = slackService;
         this.tripService = tripService;
@@ -292,7 +296,7 @@ public class UserController extends Controller {
      * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
-    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId, Long tripId) {
+    public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
 
         SlackUser groupOwner = SlackUser.find.findByUserId(userId);
         if (groupOwner == null) {
@@ -300,7 +304,9 @@ public class UserController extends Controller {
         }
 
         Optional<String> channelName = Optional.ofNullable(request.body().asJson().get("channelName").asText());
-        if (!channelName.isPresent()) {
+        OptionalLong tripId = OptionalLong.of(request.body().asJson().get("tripId").asLong());
+
+        if (!channelName.isPresent() || !tripId.isPresent()) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_CHANNEL_MALFORMED_REQUEST));
         }
 
@@ -316,7 +322,7 @@ public class UserController extends Controller {
 
         CompletionStage<ResponseHandler> slackChannelStage = slackService.requestPrivateChannel(groupOwner, sanitizedChannelName);
         CompletionStage<ResponseHandler> slackServerInfoStage = slackService.requestServerInfo(groupOwner);
-        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId.getAsLong());
 
         /**
          * Wait for Slack channel to be created and for the server information to be fetched.
@@ -344,6 +350,7 @@ public class UserController extends Controller {
         });
 
         return tripStage.thenCombineAsync(slackServerStage, (trip, domain) -> {
+            userGroupRepository.setGroupSlackWorkspaceDomain(trip.id, domain);
             mailgunService.sendSlackChannelEmail(trip, domain);
             return ok(APIResponses.SLACK_CHANNEL_CREATED);
         }).handle(AsyncHandler::handleResult);
