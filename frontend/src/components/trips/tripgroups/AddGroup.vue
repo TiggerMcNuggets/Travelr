@@ -98,7 +98,10 @@ export default {
     setUserGroup() {
       this.isError = false;
       if (this.selectedUserGroup.text == "None") {
-        tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id);
+        tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id)
+        .then(() => {
+          this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
+        });
         this.initialUserGroup = {text: "None"};
       } else {
         tripRepository
