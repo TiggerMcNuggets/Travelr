@@ -1,8 +1,7 @@
 <template>
   <v-btn class="slack-button"
-    v-on:click="createSlackChannel"
-          color="error"
-    v-on="on">
+         v-on:click="createSlackChannel"
+         color="error">
     <v-avatar size="26">
       <img src="../../../assets/slack_logo_circle.png">
     </v-avatar>
@@ -17,7 +16,8 @@
 </style>
 
 <script>
-  import { RepositoryFactory } from "../../../repository/RepositoryFactory";
+  import {RepositoryFactory} from "../../../repository/RepositoryFactory";
+
   let userRepository = RepositoryFactory.get("user");
 
   export default {
@@ -28,10 +28,16 @@
 
     methods: {
       createSlackChannel() {
-        userRepository.createSlackChannel(this.$route.params.id, {channelName: this.trip.trip.name, tripId: this.trip.trip.id})
-          .then(response => {
-            console.log(response)
-          });
+        userRepository.createSlackChannel(this.$route.params.id, {
+          channelName: this.trip.trip.name,
+          tripId: this.trip.trip.id
+        })
+        .then(() => {
+          this.showSuccessSnackbar(this._snackbarMessages.slackChannelCreateSuccess, 5000);
+        })
+        .catch(() => {
+          this.showErrorSnackbar(this._snackbarMessages.slackChannelAlreadyExists, 5000);
+        });
       }
     }
   };
