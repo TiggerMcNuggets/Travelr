@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.spi.FileTypeDetector;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -55,17 +56,23 @@ public class FileService {
      * @param fileId id of the file being deleted
      * @return
      */
-    public CompletableFuture<Long> deleteFileById(Long fileId) {
+    public CompletableFuture<Long> deleteFileById(Long fileId, Long tripId, Long userId) {
 
         return supplyAsync(() -> {
             File file = File.find.byId(fileId);
-
+            TripNode tripNode = TripNode.find.byId(tripId);
+            User user = User.find.findById(userId);
+            if (tripNode == null) {
+                throw new NotFoundException("Trip not found");
+            }
+            if (user == null) {
+                throw new NotFoundException("Trip not found");
+            }
             if(file == null) {
                 throw new NotFoundException("File not found");
             }
-
+            tripService.isPermittedToWrite(tripNode, user);
             file.delete();
-
             return null;
         }, context);
     }
