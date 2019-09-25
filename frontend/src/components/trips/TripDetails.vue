@@ -12,6 +12,7 @@
           <TripOverview 
             :trip="trip" 
             :updateTrip="updateTrip"
+            :canEdit="canEdit"
           />
         </v-tab-item>
 
@@ -20,7 +21,10 @@
         </v-tab-item>
 
         <v-tab-item :key="3">
-          <TripAlbum :trip="trip" />
+          <TripAlbum 
+            :trip="trip"
+            :canEdit="canEdit"
+          />
         </v-tab-item>
 
         <v-tab-item :key="4">
@@ -60,7 +64,8 @@ export default {
     trip: Object,
     hasWritePermissions: Boolean,
     updateTrip: Function,
-    pushStack: Function
+    pushStack: Function,
+    canEdit: Boolean
   },
 
   data() {
