@@ -1,28 +1,28 @@
 @import "./theme.scss";
 
 .trip-breadcrumbs {
-  padding: 0px 0px 20px 0px;
+  padding: 0 0 20px 0;
 }
 
 /* ------------- COMMENTS --------------- */
 
 .post-comment-container {
   .v-input {
-    margin-top: 0px !important;
-    padding-top: 0px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 }
 
 .user-comment {
   padding: 15px;
-  margin: 20px 0px;
+  margin: 10px 0;
 
   hr {
     margin-bottom: 15px;
   }
 
   p {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   .comment-header {
@@ -40,4 +40,15 @@
       font-size: 13px;
     }
   }
+}
+
+/* ------------- FILES --------------- */
+.user-files {
+  padding-bottom: 10px;
+}
+
+.file-name {
+  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
 }

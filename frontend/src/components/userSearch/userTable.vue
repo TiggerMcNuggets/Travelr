@@ -23,7 +23,7 @@
             </li>
           </ul>
         </td>
-        <td v-if="isAdmin" class="text-xs-right">
+        <td v-if="isAdmin && props.item.id != 1" class="text-xs-right">
           <v-btn flat icon color="red lighten-2" v-on:click="deleteUser(props.item.id)">
             <v-icon>delete</v-icon>
           </v-btn>

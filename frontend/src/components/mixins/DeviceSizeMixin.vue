@@ -40,7 +40,7 @@ export default {
      * and less than 1080px, false if nott
      */
     isSmall() {
-      return this.windowSizes.width >= 600 && this.windowSizes.width < 1080;
+      return this.windowSizes.width >= 600 && this.windowSizes.width < 960;
     },
 
     /**
@@ -49,16 +49,25 @@ export default {
      * and less than 1536px, false if not
      */
     isMedium() {
-      return this.windowSizes.width >= 1080 && this.windowSizes.width < 1536;
+      return this.windowSizes.width >= 960 && this.windowSizes.width < 1264;
     },
 
     /**
-     * Checks to see whether the screen size is small
+     * Checks to see whether the screen size is large
      * @return {boolean} true if screen is greater than or equal to 
      * 1536px , false if not
      */
     isLarge() {
-      return this.windowSizes.width >= 1536;
+      return this.windowSizes.width >= 1264;
+    },
+
+    /**
+     * Checks to see whether the screen size is extra large
+     * @return {boolean} true if screen is greater than or equal to 
+     * 1536px , false if not
+     */
+    isExtraLarge() {
+      return this.windowSizes.width >= 1904;
     }
   }
 };

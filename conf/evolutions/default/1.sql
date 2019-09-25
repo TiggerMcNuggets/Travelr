@@ -1,7 +1,4 @@
-# --- Created by Ebean DDL
-# To stop Ebean DDL generation, remove this comment and start using Evolutions
-
-# --- !Ups
+-- !Ups
 
 create table album (
   id                            bigint auto_increment not null,
@@ -88,6 +85,17 @@ create table destination_photo (
   is_public                     boolean default 0 not null,
   deleted                       boolean default false not null,
   constraint pk_destination_photo primary key (id)
+);
+
+create table file (
+  id                            bigint auto_increment not null,
+  name                          varchar(255),
+  filepath                      varchar(255),
+  extension                     varchar(255),
+  trip_id                       bigint,
+  user_id                       bigint,
+  deleted                       boolean default false not null,
+  constraint pk_file primary key (id)
 );
 
 create table grouping (
@@ -274,6 +282,12 @@ alter table destination_photo add constraint fk_destination_photo_user_id foreig
 create index ix_destination_photo_destination_id on destination_photo (destination_id);
 alter table destination_photo add constraint fk_destination_photo_destination_id foreign key (destination_id) references destination (id) on delete restrict on update restrict;
 
+create index ix_file_trip_id on file (trip_id);
+alter table file add constraint fk_file_trip_id foreign key (trip_id) references node (id) on delete restrict on update restrict;
+
+create index ix_file_user_id on file (user_id);
+alter table file add constraint fk_file_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
+
 create index ix_media_user_id on media (user_id);
 alter table media add constraint fk_media_user_id foreign key (user_id) references user (id) on delete restrict on update restrict;
 
@@ -329,7 +343,7 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
-# --- !Downs
+-- !Downs
 
 alter table album drop constraint if exists fk_album_user_id;
 drop index if exists ix_album_user_id;
@@ -385,6 +399,12 @@ drop index if exists ix_destination_photo_user_id;
 
 alter table destination_photo drop constraint if exists fk_destination_photo_destination_id;
 drop index if exists ix_destination_photo_destination_id;
+
+alter table file drop constraint if exists fk_file_trip_id;
+drop index if exists ix_file_trip_id;
+
+alter table file drop constraint if exists fk_file_user_id;
+drop index if exists ix_file_user_id;
 
 alter table media drop constraint if exists fk_media_user_id;
 drop index if exists ix_media_user_id;
@@ -459,6 +479,8 @@ drop table if exists destination_edit_request;
 drop table if exists destination_edit_request_traveller_type;
 
 drop table if exists destination_photo;
+
+drop table if exists file;
 
 drop table if exists grouping;
 

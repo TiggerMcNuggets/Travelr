@@ -231,7 +231,7 @@ public class TripController extends Controller {
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
             if (!tripNodeOptional.isPresent()) {
-                throw new CustomException(404, "Trip not found");
+                throw new CustomException(404, APIResponses.TRIP_NOT_FOUND);
             }
 
             Node trip = tripNodeOptional.get();
@@ -244,11 +244,13 @@ public class TripController extends Controller {
             dto.setName(trip.getName());
             dto.setId(trip.getId());
 
+            Grouping grouping = tripService.getRootTripGrouping(tripId);
+
             // Format trip's children
             List<NodeDTO> childrenDTO = new ArrayList<>();
 
             for (Node node : children) {
-                childrenDTO.add(new NodeDTO(node));
+                childrenDTO.add(new NodeDTO(node, grouping));
             }
 
             dto.setNodes(childrenDTO);
@@ -256,8 +258,6 @@ public class TripController extends Controller {
 
             // Format trip's usergroup
             List<NodeUserDTO> usergroupDTO = new ArrayList<>();
-            Grouping grouping = tripService.getRootTripGrouping(tripId);
-
 
             if (grouping != null) {
                 for (UserGroup user : grouping.getUserGroups()) {
@@ -372,8 +372,10 @@ public class TripController extends Controller {
      */
     @Authorization.RequireAuthOrAdmin
     public CompletionStage<Result> softDeleteTrip(Http.Request request, Long tripId, Long userId) {
+        Optional<Node> trip = Optional.ofNullable(Node.find.byId(tripId));
+        Optional<User> user = Optional.ofNullable(User.find.byId(userId));
 
-        return tripService.toggleTripDeleted(tripId).thenApplyAsync(deleted -> {
+        return tripService.toggleTripDeleted(tripId, user.get()).thenApplyAsync(deleted -> {
             return ok(Json.toJson(deleted));
         });
     }

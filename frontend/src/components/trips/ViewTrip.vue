@@ -1,7 +1,6 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-container fluid>
+  <v-container fluid v-if="selectedTrip">
     <PageHeader
-      v-if="selectedTrip"
       :title="selectedTrip.trip.name"
       :undo="undo"
       :redo="redo"
@@ -12,7 +11,7 @@
     />
 
     <AddGroup 
-      :closeGroupDialog="closeGroupDialog"
+      :closeGroupDialog="closeGroupDialog" 
       :dialogActive="addUsergroupDialogActive"
     />
 
@@ -23,26 +22,29 @@
       />
 
       <TripDetails
-        v-if="selectedTrip"
         :trip="selectedTrip"
-        :isGroupOwner="isGroupOwner"
+        :hasWritePermissions="hasWritePermissions"
         :updateTrip="updateTrip"
+        :pushStack="pushStack"
       />
 
-      <v-flex v-if="!isSmall" md4 pa-2>
-        <div class="temp-map"></div>
-      </v-flex>
+      <TripMap 
+        v-if="isLarge || isExtraLarge"
+        :nodes="selectedTrip.trip.nodes"
+      />
     </v-layout>
+    <v-dialog v-model="showUploadSection" width="800">
+      <MediaUpload
+        :uploadMedia="uploadMedia"
+        :openUploadDialog="toggleShowUploadPhoto"
+        :closeUploadDialog="toggleShowUploadPhoto"
+        :hasNoAlbums="true"
+      ></MediaUpload>
+    </v-dialog>
   </v-container>
 </template>
 
 <style>
-.temp-map {
-  height: 100%;
-  width: 100%;
-  background-color: lightblue;
-}
-
 .content {
   min-height: calc(100vh - 100px);
 }
@@ -54,10 +56,18 @@ import RollbackMixin from "../mixins/RollbackMixin";
 import StoreTripsMixin from "../mixins/StoreTripsMixin";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
+import TripMap from "./TripMap";
 import AddGroup from "./tripgroups/AddGroup";
 import TripEditor from "./viewtrip/TripEditor";
+import MediaUpload from "../media/MediaUpload";
 import { store } from "../../store/index";
-import { tripAssembler, noAdjacentIdenticalDestinations } from "./trips_destinations_util";
+import {
+  tripAssembler,
+  noAdjacentIdenticalDestinations
+} from "./trips_destinations_util";
+import { RepositoryFactory } from "../../repository/RepositoryFactory";
+
+let mediaRepository = RepositoryFactory.get("media");
 
 export default {
   store,
@@ -65,14 +75,12 @@ export default {
     PageHeader,
     TripDetails,
     AddGroup,
-    TripEditor
+    TripEditor,
+    TripMap,
+    MediaUpload
   },
 
-  mixins: [
-    RollbackMixin, 
-    StoreTripsMixin,
-    DeviceSizeMixin
-  ],
+  mixins: [RollbackMixin, StoreTripsMixin, DeviceSizeMixin],
 
   // local variables
   data() {
@@ -82,11 +90,20 @@ export default {
       isAdmin: store.getters.getIsUserAdmin,
       userId: this.$route.params.id,
       hasAdjacentIdentical: false,
-      previousTripId: Number(this.$route.params.trip_id)
+      previousTripId: Number(this.$route.params.trip_id),
+      showUploadSection: false
     };
   },
 
   computed: {
+    /**
+     * Checks if the user is permitted to write to the trip
+     * @return true or false
+     */
+    hasWritePermissions() {
+      return this.isTripOwner || this.isGroupOwner || this.isAdmin
+    },
+
     /**
      * Checks if the user is the trip owner
      * @return true or false: whether the user is the trip owner
@@ -95,19 +112,19 @@ export default {
       return this.selectedTrip.root.user.id === this.$store.getters.getUser.id;
     },
 
-  /**
-   * Checks if the user is the group owner
-   * @return true or false: whether the user is the group owner
-   */
+    /**
+     * Checks if the user is the group owner
+     * @return true or false: whether the user is the group owner
+     */
     isGroupOwner() {
       let isOwn = false;
-      if (this.selectedTrip) {
-        this.selectedTrip.trip.usergroup.forEach(user => {
-          if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
-            isOwn = true;
-          }
-        });
-      }
+      if (!this.selectedTrip) return isOwn;
+
+      this.selectedTrip.trip.usergroup.forEach(user => {
+        if (user.userId === this.$store.getters.getUser.id && user.owner) {
+          isOwn = true;
+        }
+      });
       return isOwn;
     },
 
@@ -144,10 +161,46 @@ export default {
               title: "Add Photos"
             }
           ];
-    },
+    }
   },
-
   methods: {
+    /**
+     * Sends a request to the backend containing formdata with the image to be added to a specified album
+     * given an user id and an album id.
+     */
+    uploadToAlbum(albumId, file) {
+      let formData = new FormData();
+      formData.append("picture", file);
+
+      mediaRepository
+        .uploadMediaToAlbum(this.userId, albumId, formData)
+        .then(() => {
+          this._getTrip(this.userId, this.tripId).then(() => {
+            this.rollbackSetPreviousBody(tripAssembler(this.selectedTrip));
+          });
+        });
+    },
+
+    /**
+     * Toggles whether or not to display the photo upload section
+     */
+    toggleShowUploadPhoto() {
+      this.showUploadSection = !this.showUploadSection;
+    },
+
+    /**
+     * Uploads the given media files to the backend.
+     */
+    uploadMedia(files) {
+      let albumId = this.selectedTrip.root.albumId;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        this.uploadToAlbum(albumId, file);
+      }
+
+      this.toggleShowUploadPhoto();
+    },
+
     /**
      * Opens the group dialog
      */
@@ -221,7 +274,7 @@ export default {
       let trip = this.selectedTrip;
 
       // Sorts the destinations ensure they are in the order of their ordinal
-      let orderedDests = trip.trip.nodes.sort(function(a, b) {
+      let orderedDests = this.selectedTrip.trip.nodes.sort(function(a, b) {
         return a.ordinal - b.ordinal;
       });
 
@@ -243,7 +296,13 @@ export default {
     redo: function() {
       const actions = [];
       this.rollbackRedo(actions);
-    },
+    }
+  },
+
+  watch: {
+    selectedTrip: function() {
+      this.updateViewTripPage();
+    }
   },
 
   /**
@@ -255,10 +314,9 @@ export default {
     if (!this.isMyProfile && !this.isAdmin) {
       this.$router.go(-1);
     }
-
     this._getTrip(this.userId, this.tripId).then(() => {
       this.rollbackSetPreviousBody(tripAssembler(this.selectedTrip));
     });
-  },
+  }
 };
 </script>

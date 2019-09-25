@@ -1,6 +1,7 @@
 <template>
   <v-container class="section-container">
-    <SectionHeader :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
+    <SectionHeader v-if="name != null" :title="name + ' members'" disableUndoRedo :options="userTableOptions"/>
+    <SectionHeader v-else :title="'No Selected Group'" disableUndoRedo :options="userTableOptions"/>
     <div v-if="addUserActive">
       <v-autocomplete
       :items="users"
@@ -124,8 +125,12 @@ export default {
         this.$store.getters.getUser.id, this.selectedGroup.id, this.selectedUserId, {isOwner: this.isMaintainer}
         )
         .then(() => {
+          this.showSuccessSnackbar(this._snackbarMessages.groupUserAddSuccess);
           this.isMaintainer = false;
           this.getUserGroups();
+        })
+        .catch(() => {
+            this.showErrorSnackbar(this._snackbarMessages.groupUserAddFail);
         });
     },
 
