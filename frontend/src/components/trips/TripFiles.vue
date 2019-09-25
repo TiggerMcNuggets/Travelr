@@ -23,7 +23,6 @@
 
     <v-dialog v-model="showUploadSection" width="800">
       <FileUpload
-        :openUploadDialog="openFileUpload"
         :closeUploadDialog="closeFileUpload"
         :userId="userId"
         :tripId="tripId"

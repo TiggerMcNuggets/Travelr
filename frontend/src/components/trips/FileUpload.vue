@@ -17,9 +17,35 @@
           </p>
         </div>
       </form>
-      <!--<v-flex mt-3>-->
-      <!--<FileDisplayer :files="files"/>-->
-      <!--</v-flex>-->
+      <v-layout row wrap>
+        <v-flex
+          v-for="(file, index) in fileList"
+          :key="file.id"
+          xs4
+        >
+          <div class="file-element">
+            <v-img src="http://images.clipartpanda.com/file-clipart-xigKMeMjT.png" height="100px" :contain="true">
+            </v-img>
+            <v-layout pa-1 column align-center>
+              <span class="file-name">{{file.name}}</span>
+              <v-card-actions>
+                <v-layout>
+                  <v-flex>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" @click="removeFile(index)" color="error" class="delete-button" flat fab small>
+                          <v-icon dark>delete</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Delete file</span>
+                    </v-tooltip>
+                  </v-flex>
+                </v-layout>
+              </v-card-actions>
+            </v-layout>
+          </div>
+        </v-flex>
+      </v-layout>
     </v-card-text>
 
     <v-divider></v-divider>
@@ -77,6 +103,16 @@
     padding: 50px 0;
   }
 
+  .file-name {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .file-element {
+    padding-top: 20px;
+  }
+
 </style>
 
 
@@ -96,6 +132,7 @@
     },
 
     props: {
+      closeUploadDialog: Function,
       userId: String,
       tripId: String,
       getFiles: Function
@@ -116,10 +153,23 @@
 
     methods: {
 
-      closeErrorMessage(){
+      /**
+       * removes a file from the list of files user wants to upload
+       */
+      removeFile(index) {
+        this.fileList.splice(index,1);
+      },
+
+      /**
+       * closes error message for files that are too large
+       */
+      closeErrorMessage() {
         this.fileToBig = false;
       },
 
+      /**
+       * updates list of files we want to add to trip
+       */
       filesChange(fileList) {
         if (!fileList.length) return;
 
@@ -130,7 +180,7 @@
           .map(x => {
 
             // check is file less than 12MB
-            if (fileList[x].size > 12000000){
+            if (fileList[x].size > 12000000) {
               this.fileToBig = true;
               fileList.splice(x);
             } else {
@@ -141,6 +191,9 @@
 
       },
 
+      /**
+       * uploads files to trip
+       */
       uploadFilesToTrip() {
 
         const formData = new FormData();
