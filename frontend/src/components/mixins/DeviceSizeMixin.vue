@@ -58,7 +58,7 @@ export default {
      * 1536px , false if not
      */
     isLarge() {
-      return this.windowSizes.width >= 1264 && this.windowSizes.width < 1904;
+      return this.windowSizes.width >= 1264;
     },
 
     /**
