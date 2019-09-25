@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <h2>User Files</h2>
-    <v-container grid-list-md class="no-padding">
+    <v-container grid-list-md pt-3 pb-3 pl-0 pr-0>
+      <h2 class="user-files">User Files</h2>
       <v-layout row wrap>
         <v-flex
           v-for="file in files" 
@@ -17,7 +16,6 @@
         </v-flex>
       </v-layout>
     </v-container>
-  </div>
 </template>
 
 <style>
