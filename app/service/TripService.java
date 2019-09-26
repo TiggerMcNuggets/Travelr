@@ -220,7 +220,7 @@ public class TripService {
                 if (trip.getUserGroup() != null) {
                     Optional<UserGroup> userGroup = UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id);
                     if (userGroup.isPresent() || user.isAdmin()) {
-                        if (!UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id).get().isOwner) {
+                        if (!UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id).get().isOwner && !user.isAdmin()) {
                             throw new CustomException(Http.Status.FORBIDDEN,
                                     "You do not have permission to update this trip");
                         }
