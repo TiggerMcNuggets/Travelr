@@ -9,7 +9,7 @@
                 src="https://images.pexels.com/photos/747964/pexels-photo-747964.jpeg?cs=srgb&dl=background-calm-clouds-747964.jpg&fm=jpg"
                 :height="halfImageHeight"
               >
-                <v-card-title class="fill-height align-start tile-overlay">
+                <v-card-title class="fill-height align-end tile-overlay">
                   <h2
                     v-if="isMyProfile"
                     class="headline font-weight-light tile-heading text--white"
