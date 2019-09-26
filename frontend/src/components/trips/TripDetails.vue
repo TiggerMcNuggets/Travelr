@@ -13,7 +13,7 @@
       <v-tab :key="5" ripple v-if="isExtraSmall || isSmall || isMedium">Map</v-tab>
 
       <v-tab-item class="scrollable-y" :key="1">
-        <TripOverview :trip="trip" :updateTrip="updateTrip" :canEdit="canEdit"/>
+        <TripOverview :trip="trip" :updateTrip="updateTrip" :canEdit="canEdit" :hasWritePermissions="hasWritePermissions"/>
       </v-tab-item>
 
       <v-tab-item :key="2">

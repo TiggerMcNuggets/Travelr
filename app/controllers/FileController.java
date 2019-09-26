@@ -34,6 +34,8 @@ public class FileController extends Controller {
     @Inject
     public FileController(Config config, FileService fileService, TripService tripService, UserRepository userRepository) {
         this.fileService = fileService;
+        this.tripService = tripService;
+        this.userRepository = userRepository;
         String rootPath = System.getProperty("user.home");
         filesPath = rootPath + config.getString("filesPath");
     }
