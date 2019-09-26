@@ -58,7 +58,7 @@ export default {
       isError: false,
       userId: this.$route.params.id,
       selectedUserGroup: {text: "None"},
-      initialUserGroup: this.selectedUserGroup,
+      initialUserGroup: {id: null, name: undefined}
     };
   },
 
@@ -98,11 +98,15 @@ export default {
     setUserGroup() {
       this.isError = false;
       if (this.selectedUserGroup.text == "None") {
-        tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id)
-        .then(() => {
-          this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
-        });
+        // Check if the initial user group is a group or not before trying to remove
+        if (this.initialUserGroup.id !== null) {
+          tripRepository.removeGroupTrip(this.userId, this.tripId, this.initialUserGroup.id)
+          .then(() => {
+            this._getTrip(this.$store.getters.getUser.id, this.tripId).then(() => this.closeGroupDialog());
+          });
+        }
         this.initialUserGroup = {text: "None"};
+        this.closeGroupDialog()
       } else {
         tripRepository
         .toggleGroupTrip(
