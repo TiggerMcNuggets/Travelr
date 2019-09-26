@@ -20,6 +20,9 @@
                     tripCreateSuccess: "Trip created successfully!",
                     tripCreateFail: "Failed to create trip",
 
+                    tripUpdateSuccess: "Trip updated successfully!",
+                    tripUpdateFail: "Failed to update trip",
+
                     destinationCreateSuccess: "Destination created successfully!",
                     destinationCreateFail: "Failed to create the destination",
 
