@@ -7,6 +7,14 @@
           <v-text-field v-model="trip.trip.name" :rules="nameRules" :counter="60" required></v-text-field>
           <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
         </v-form>
+        <v-layout md12 row wrap mb-3>
+          <v-flex lg4 xl3>
+            <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
+          </v-flex>
+          <v-flex lg8 xl9 v-if="hasSlack && groupAddedToTrip && !groupSlackWorkspace">
+            <CreateSlackChannelButton :trip="trip"/>
+          </v-flex>
+        </v-layout>
       </div>
       <UserStatusList/>
     </v-flex>
@@ -20,12 +28,18 @@
 </style>
 
 <script>
-import UserStatusList from "./tripgroups/UserStatusList";
-import { rules } from "../form_rules";
+  import { store } from "../../store/index";
+  import { rules } from "../form_rules";
+  import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  let userGroupRepository = RepositoryFactory.get("userGroup");
+
+  import UserStatusList from "./tripgroups/UserStatusList";
+  import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
+  import StoreTripsMixin from "../mixins/StoreTripsMixin";
 
 export default {
   name: "TripOverview",
-
+  mixins: [StoreTripsMixin],
   props: {
     trip: Object,
     updateTrip: Function,
@@ -33,18 +47,20 @@ export default {
   },
 
   components: {
-    UserStatusList
+    UserStatusList,
+    CreateSlackChannelButton
   },
 
   data() {
     return {
-      ...rules
+      ...rules,
+      slackWorkspaceDomain: null
     };
   },
 
   methods: {
     /**
-     * Validates the form and updates the tirp
+     * Validates the form and updates the trip
      */
     update() {
       if (this.$refs.form.validate()) {
@@ -52,27 +68,39 @@ export default {
       }
     },
 
-    computed: {
-      /**
-       * Determines if the user has integrated with slack or not
-       */
-      hasSlack() {
-        return store.getters.getUser.slack;
-      },
+    /**
+     * Determines if the current trip's group has a Slack workspace.
+     */
+    getSlackWorkspaceDomain(tripId) {
+      userGroupRepository
+        .getGroupingForTrip(this.$store.getters.getUser.id, tripId)
+        .then(result => {
+          console.log(result);
+          return result;
+        });
+    }
+  },
 
-      /**
-       * Determines if the current trip has a group attached to it.
-       */
-      groupAddedToTrip() {
-        return this.selectedTrip.trip.usergroup.length > 0
-      }
+  computed: {
+    /**
+     * Determines if the user has integrated with slack or not
+     */
+    hasSlack() {
+      return store.getters.getUser.slack;
     },
 
-    watch: {
-      trip: function () {
-        if (this.groupAddedToTrip) {
-          this.slackWorkspaceDomain = this.getSlackWorkspaceDomain(this.trip.root.id);
-        }
+    /**
+     * Determines if the current trip has a group attached to it.
+     */
+    groupAddedToTrip() {
+      return this.selectedTrip.trip.usergroup.length > 0
+    }
+  },
+
+  watch: {
+    trip: function () {
+      if (this.groupAddedToTrip) {
+        this.slackWorkspaceDomain = this.getSlackWorkspaceDomain(this.trip.root.id);
       }
     }
   }
