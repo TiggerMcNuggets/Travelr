@@ -93,13 +93,15 @@ public class CommentController {
     public CompletionStage<Result> toggleDeleteComment(Http.Request request, Long userId,Long tripId, Long commentId) {
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
-        CompletionStage<User> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> {
-            tripService.checkWritePermissionHandler(tripNode, user).join();
-            return user;
-        });
+        CompletionStage<Boolean> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.isPermittedToWrite(tripNode, user).join());
 
-        CompletionStage<Comment> isUserComment = permissionStage.thenComposeAsync(
-                (currentUser) -> commentService.isUserComment(commentId, currentUser));
+        CompletionStage<Comment> isUserComment = userStage.thenCombineAsync(permissionStage, (currentUser, isPermitted) -> {
+            if (isPermitted) {
+                return commentService.getUserComment(commentId).join();
+            } else {
+                return commentService.isUserComment(commentId, currentUser).join();
+            }
+        });
 
         CompletionStage<Long> deleted = isUserComment.thenComposeAsync(commentRepository::delete);
         return deleted.thenApplyAsync(id -> ok(id.toString())).handle(AsyncHandler::handleResult);
