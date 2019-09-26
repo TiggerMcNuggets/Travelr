@@ -3,11 +3,20 @@
     <v-flex xs12 ma-2>
       <v-flex >
         <MediaGrid
+          v-if="canEdit"
           :filteredMedia="files"
           :openElement="openImage"
           :getAllAlbums="() => {}"
           :openEditAlbumDialog="() => {}"
           v-bind:isTrip='true'
+          smallGrid
+        ></MediaGrid>
+        <MediaGrid
+          v-else
+          :filteredMedia="files"
+          :openElement="() => {}"
+          :getAllAlbums="() => {}"
+          :openEditAlbumDialog="() => {}"
           smallGrid
         ></MediaGrid>
       </v-flex>
@@ -55,7 +64,8 @@ export default {
   },
 
   props: {
-    trip: Object
+    trip: Object,
+    canEdit: Boolean
   },
 
   data() {

@@ -8,7 +8,7 @@ export default {
    * @param {*} files 
    */
   uploadFiles(userId, tripId, files) {
-    return Repository.post(`/users/${userId}}/trips/${tripId}/files`, files);
+    return Repository.post(`/users/${userId}/trips/${tripId}/files`, files);
   },
 
   /**
