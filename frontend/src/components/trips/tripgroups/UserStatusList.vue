@@ -94,7 +94,7 @@ export default {
   computed: {
 
     /**
-     *
+     * @return {string} the string summarising who is going, interested and not going
      */
     topSummary() {
       return `${
