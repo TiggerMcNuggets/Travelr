@@ -8,7 +8,6 @@
         <h2>Comments</h2>
         <p>Please add a group first.</p>
       </v-flex>
-
       <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup.length !== 0">
         <v-layout class="post-comment-container">
           <v-list-tile-avatar>
@@ -320,7 +319,7 @@ export default {
 
   watch: {
     selectedTrip: function(oldTrip, newTrip) {
-      if (oldTrip.trip.id !== newTrip.trip.id) {
+      if (oldTrip.trip.id !== newTrip.trip.id || oldTrip.trip.usergroup !== newTrip.trip.usergroup) {
         this.page = 0;
         this.userComments = [];
         this.getComments();

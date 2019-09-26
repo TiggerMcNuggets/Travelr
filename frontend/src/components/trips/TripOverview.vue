@@ -16,6 +16,7 @@
           </v-layout>
         </v-form>
       </div>
+      <AddGroupUser :hasWritePermissions="hasWritePermissions"/>
       <UserStatusList/>
     </v-flex>
   </v-layout>
@@ -28,6 +29,7 @@
 </style>
 
 <script>
+  import AddGroupUser from "./tripgroups/AddGroupUser";
   import { store } from "../../store/index";
   import { rules } from "../form_rules";
 
@@ -42,11 +44,12 @@ export default {
   props: {
     trip: Object,
     updateTrip: Function,
-    canEdit: Boolean
+    canEdit: Boolean,
+    hasWritePermissions: Boolean
   },
 
-  components: {
-    UserStatusList,
+    components: {
+      UserStatusList,
     CreateSlackChannelButton,
     JoinSlackChannelButton
   },

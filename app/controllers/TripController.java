@@ -319,6 +319,12 @@ public class TripController extends Controller {
 
             GetTripDTO dto = new GetTripDTO();
 
+            // update name of trip's album
+            String albumName = trip.getName() + " Album";
+            trip.getDefaultAlbum().setName(albumName);
+            trip.getDefaultAlbum().save();
+
+
             // Trip Details
             dto.setName(trip.getName());
             dto.setId(trip.getId());
@@ -455,6 +461,14 @@ public class TripController extends Controller {
     }
 
     /**
+     * Deletes all comments on the trip provided
+     * @param tNode
+     */
+    public void deleteTripComments(TripNode tNode) {
+        Comment.find.query().where().eq("tripNode.id", tNode.getId()).delete();
+    }
+
+    /**
      * Toggles a relation between a trip and a group
      *
      * @param request the http request
@@ -497,6 +511,8 @@ public class TripController extends Controller {
 
         // Deletes the relating user status relating to the group to delete.
         this.deleteTripUserStatus(group.get(), (TripNode) node.get());
+
+        this.deleteTripComments((TripNode) node.get());
 
         // Now delete the group from the trip.
         return tripService.deleteGroupFromTrip(node.get())

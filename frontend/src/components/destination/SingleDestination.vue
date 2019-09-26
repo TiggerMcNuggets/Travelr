@@ -37,7 +37,7 @@
           </div>
         </div>
       </v-flex>
-      <v-flex md10>
+      <v-flex xs12 md10>
 
         <MediaGrid
           v-if="files.length"
