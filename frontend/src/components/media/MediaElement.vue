@@ -1,9 +1,9 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-card flat tile hover class="media-element" @click="openElement">
     <v-icon v-if="!media.is_public" class="lock-icon" left>lock</v-icon>
-    <v-icon class="lock-icon" left>group</v-icon>
+    <v-icon v-if="media.is_public && isTrip" class="lock-icon" left>group</v-icon>
     <div v-if="!media.is_public" class="triangle"></div>
-    <div class="green-triangle"></div>
+    <div v-if="media.is_public && isTrip" class="green-triangle"></div>
     <v-img 
       :src="getImgFromUrl(media.filename)"
       :lazy-src="fillerImageURL"
