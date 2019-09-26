@@ -1,7 +1,7 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-container>
     <v-form lazy-validation ref="form" v-model="isFormValid">
-      <v-layout row wrap>
+      <v-layout row wrap v-if="canEdit">
         <v-btn @click="addTripNode(false)" color="error">
           <v-icon small>airplanemode_active</v-icon>&nbsp; Add Trip
         </v-btn>
