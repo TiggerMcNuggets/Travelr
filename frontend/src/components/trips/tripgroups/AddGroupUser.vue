@@ -1,5 +1,5 @@
 <template>
-  <v-flex :v-if="selectedTrip && selectedTrip.trip.usergroup && isOwnerOrAdmin">
+  <v-flex :v-if="selectedTrip && selectedTrip.trip.usergroup && hasWritePermissions">
     <v-flex>
         <h2>Add User</h2>
     </v-flex>
@@ -19,6 +19,10 @@ import StoreTripsMixin from "../../mixins/StoreTripsMixin";
 
 export default {
   mixins: [StoreTripsMixin],
+
+  props: {
+    hasWritePermissions: Boolean
+  },
 
   data() {
     return {

@@ -11,7 +11,7 @@
         ></v-text-field>
         <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
       </v-form>
-      <AddGroupUser/>
+      <AddGroupUser :hasWritePermissions="hasWritePermissions"/>
       <UserStatusList />
     </v-flex>
   </v-layout>
@@ -34,7 +34,8 @@ export default {
   props: {
     trip: Object,
     updateTrip: Function,
-    canEdit: Boolean
+    canEdit: Boolean,
+    hasWritePermissions: Boolean
   },
 
     components: {
