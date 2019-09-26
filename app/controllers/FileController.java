@@ -67,15 +67,15 @@ public class FileController extends Controller {
      */
     public CompletionStage<Result> getFilesForTrip(Http.Request request, Long nodeId, Long userId) {
         return fileService
-                .getFilesForTripNode(nodeId).thenApplyAsync(files -> {
-                    List<FileDTO> fileDTOS = new ArrayList<>();
+            .getFilesForTripNode(nodeId).thenApplyAsync(files -> {
+                List<FileDTO> fileDTOS = new ArrayList<>();
 
-                    for(File file : files) {
-                        fileDTOS.add(new FileDTO(file));
-                    }
+                for(File file : files) {
+                    fileDTOS.add(new FileDTO(file));
+                }
 
-                    return ok(Json.toJson(fileDTOS));
-                }).handle(AsyncHandler::handleResult);
+                return ok(Json.toJson(fileDTOS));
+            }).handle(AsyncHandler::handleResult);
     }
 
     /**
@@ -88,9 +88,7 @@ public class FileController extends Controller {
      */
     public CompletionStage<Result> deleteFileById(Http.Request request, Long nodeId, Long fileId, Long userId) {
         return fileService.deleteFileById(fileId, nodeId, userId)
-                .thenApplyAsync(output -> {
-                    return ok();
-                }).handle(AsyncHandler::handleResult);
+            .thenApplyAsync(output -> ok()).handle(AsyncHandler::handleResult);
     }
 
     /**
@@ -105,7 +103,6 @@ public class FileController extends Controller {
             try {
 
                 java.io.File returnFile = new java.io.File(this.filesPath + file.getFilepath());
-                System.out.println(file.getName());
                 return ok(returnFile).withHeaders("Content-Disposition", String.format("attachment; filename=%s", file.getName()));
 
             } catch (Exception e) {
@@ -115,6 +112,4 @@ public class FileController extends Controller {
 
         }).handle(AsyncHandler::handleResult);
     }
-
-
 }
