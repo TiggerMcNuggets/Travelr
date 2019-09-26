@@ -83,7 +83,11 @@ public class MailgunService {
      * @return an integer response code from the Mailgun API
      */
     private CompletionStage<Integer> sendMailgunRequest(WSRequest request) {
-        return request.post("").thenApplyAsync(WSResponse::getStatus);
+        return request.post("").thenApplyAsync(res -> {
+            System.out.println(res);
+            return res.getStatus();
+        });
+
     }
 
     /**
@@ -151,7 +155,7 @@ public class MailgunService {
 
         for (User recipient: recipients) {
             JsonObject recipientVariableFields = new JsonObject();
-            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.firstName));
+            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
             recipientVariableFields.addProperty("tripName", StringUtils.capitalize(tripNode.getName()));
             recipientVariableFields.addProperty("slackURL", "https://" + slackServerDomain + ".slack.com");
             recipientVariables.add(recipient.getEmail(), recipientVariableFields);

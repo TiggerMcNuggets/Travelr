@@ -139,6 +139,7 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       isAdmin: store.getters.getIsUserAdmin,
+      hasSlack: false,
       isMyProfile: false,
       isAdminUser: false,
       userId: this.$route.params.id,
@@ -173,7 +174,14 @@ export default {
       return filteredList.sort(function(a, b) {
         return a.id - b.id;
       });
-    }
+    },
+
+    /**
+     * Determines if the user has integrated with slack or not
+     */
+    hasSlack() {
+      return store.getters.getUser.slack;
+    },
   },
 
   methods: {

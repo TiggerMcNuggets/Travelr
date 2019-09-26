@@ -11,7 +11,7 @@
 
 <style>
   .slack-button {
-    margin: 0;
+    margin: 0 0 10px 0;
   }
 </style>
 
