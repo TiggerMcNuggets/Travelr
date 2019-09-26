@@ -23,7 +23,7 @@ export default {
   data() {
     return {
       selectedUserId: 0,
-      userId: this.$route.params.id
+      userId: this.$store.getters.getUser.id
     };
   },
 
@@ -52,7 +52,6 @@ export default {
     * Sends a request to add the selected user to the group
     */
     addUserToGroup() {
-      console.log(this.selectedUserId);
       userGroupRepository.addUserToUserGroup(
         this.$store.getters.getUser.id, this.selectedTrip.root.groupId, this.selectedUserId, {isOwner: false}
         )
