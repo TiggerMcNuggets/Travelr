@@ -328,7 +328,7 @@ public class UserController extends Controller {
          * Wait for Slack channel to be created and for the server information to be fetched.
          * Then send the mailout
          */
-        CompletionStage<String> slackServerStage = slackChannelStage.thenCombineAsync(slackServerInfoStage, (channelStageRes, serverInfoRes) -> {
+        CompletionStage<SlackRes> slackServerStage = slackChannelStage.thenCombineAsync(slackServerInfoStage, (channelStageRes, serverInfoRes) -> {
             Optional<JsonElement> channelStageSuccess = Optional.ofNullable(channelStageRes.getBody().get("ok"));
             Optional<JsonElement> serverInfoStageSuccess = Optional.ofNullable(channelStageRes.getBody().get("ok"));
 
@@ -346,13 +346,21 @@ public class UserController extends Controller {
                 throw new BadRequestException(APIResponses.SLACK_CHANNEL_DOMAIN_MALFORMED);
             }
 
-            return slackServerDomain.get().getAsString();
+            SlackRes slackRes = new SlackRes();
+            slackRes.slackServerDomain = slackServerDomain.get().getAsString();
+            slackRes.slackChannelId = channelStageRes.getBody().get("channel").getAsJsonObject().get("id").toString();
+            return slackRes;
         });
-
-        return tripStage.thenCombineAsync(slackServerStage, (trip, domain) -> {
-            userGroupRepository.setGroupSlackWorkspaceDomain(trip.id, domain);
-            mailgunService.sendSlackChannelEmail(trip, domain);
-            return ok(APIResponses.SLACK_CHANNEL_CREATED);
+        return tripStage.thenCombineAsync(slackServerStage, (trip, slackRes) -> {
+            userGroupRepository.setGroupSlackWorkspaceDomain(trip.getUserGroup().getId(), slackRes.slackServerDomain);
+            return mailgunService.sendSlackChannelEmail(trip, slackRes.slackServerDomain).thenApplyAsync(res -> {
+                return ok(APIResponses.SLACK_CHANNEL_CREATED);
+            });
         }).handle(AsyncHandler::handleResult);
+    }
+
+    class SlackRes {
+        String slackServerDomain;
+        String slackChannelId;
     }
 }

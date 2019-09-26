@@ -34,6 +34,7 @@
         })
         .then(() => {
           this.showSuccessSnackbar(this._snackbarMessages.slackChannelCreateSuccess, 5000);
+          this.$store.dispatch("getTrip", { userId: this.$store.getters.getUser.id, tripId: this.trip.trip.id });
         })
         .catch(() => {
           this.showErrorSnackbar(this._snackbarMessages.slackChannelAlreadyExists, 5000);

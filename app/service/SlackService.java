@@ -4,13 +4,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.typesafe.config.ConfigFactory;
 import dto.HttpHandlerModels.ResponseHandler;
+import models.Grouping;
 import models.SlackUser;
+import models.User;
+import models.UserGroup;
 import play.api.Configuration;
 import play.libs.ws.WSClient;
 import play.libs.ws.WSRequest;
 import repository.DatabaseExecutionContext;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -71,6 +76,32 @@ public class SlackService {
         request.addQueryParameter("token", groupOwner.getAccessToken());
         request.addQueryParameter("name", groupName);
         return sendSlackRequest(request).toCompletableFuture();
+    }
+
+    /**
+     * Deprecated method, uses legacy token :(
+     * @param groupOwner
+     * @param grouping
+     * @param channelId
+     * @return
+     */
+    public CompletableFuture<Void> inviteUsersToWorkspace(SlackUser groupOwner, Grouping grouping, String channelId) {
+        String slackURL = slackApiURL + "/users.admin.invite";
+        WSRequest request = ws.url(slackURL).setContentType("application/x-www-form-urlencoded");
+
+        List<UserGroup> recipients = grouping.getUserGroups();
+        CompletableFuture itHurtsToDoItThisWay[] = new CompletableFuture[recipients.size()];
+
+        int index = 0;
+        for (UserGroup recipient: recipients) {
+            String email = recipient.getUser().getEmail();
+            request.addQueryParameter("token", groupOwner.getAccessToken());
+            request.addQueryParameter("email", email);
+            request.addQueryParameter("channels", channelId);
+            itHurtsToDoItThisWay[index++] = sendSlackRequest(request).toCompletableFuture();
+        }
+
+        return CompletableFuture.allOf(itHurtsToDoItThisWay);
     }
 
     /**

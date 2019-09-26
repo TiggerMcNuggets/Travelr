@@ -9,8 +9,9 @@
             <v-flex lg4 xl3>
               <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
             </v-flex>
-            <v-flex lg8 xl9 v-if="hasSlack && groupAddedToTrip && !groupSlackWorkspace">
-              <CreateSlackChannelButton :trip="trip"/>
+            <v-flex lg8 xl9 v-if="groupAddedToTrip">
+              <CreateSlackChannelButton v-if="hasSlack" :trip="trip"/>
+              <JoinSlackChannelButton v-if="slackWorkspaceDomain" :slackWorkspaceDomain="slackWorkspaceDomain"/>
             </v-flex>
           </v-layout>
         </v-form>
@@ -29,11 +30,10 @@
 <script>
   import { store } from "../../store/index";
   import { rules } from "../form_rules";
-  import { RepositoryFactory } from "../../repository/RepositoryFactory";
-  let userGroupRepository = RepositoryFactory.get("userGroup");
 
   import UserStatusList from "./tripgroups/UserStatusList";
   import CreateSlackChannelButton from "../common/slack/CreateSlackChannelButton";
+  import JoinSlackChannelButton from "../common/slack/JoinSlackChannelButton";
   import StoreTripsMixin from "../mixins/StoreTripsMixin";
 
 export default {
@@ -47,13 +47,13 @@ export default {
 
   components: {
     UserStatusList,
-    CreateSlackChannelButton
+    CreateSlackChannelButton,
+    JoinSlackChannelButton
   },
 
   data() {
     return {
-      ...rules,
-      slackWorkspaceDomain: null
+      ...rules
     };
   },
 
@@ -65,18 +65,6 @@ export default {
       if (this.$refs.form.validate()) {
         this.updateTrip();
       }
-    },
-
-    /**
-     * Determines if the current trip's group has a Slack workspace.
-     */
-    getSlackWorkspaceDomain(tripId) {
-      userGroupRepository
-        .getGroupingForTrip(this.$store.getters.getUser.id, tripId)
-        .then(result => {
-          console.log(result);
-          return result;
-        });
     }
   },
 
@@ -93,14 +81,13 @@ export default {
      */
     groupAddedToTrip() {
       return this.selectedTrip.trip.usergroup.length > 0
-    }
-  },
+    },
 
-  watch: {
-    trip: function () {
-      if (this.groupAddedToTrip) {
-        this.slackWorkspaceDomain = this.getSlackWorkspaceDomain(this.trip.root.id);
-      }
+    /**
+     * Determines if the current trip's group has a Slack workspace.
+     */
+    slackWorkspaceDomain() {
+      return this.selectedTrip.root.slackWorkspaceDomain;
     }
   }
 };
