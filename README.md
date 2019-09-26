@@ -40,7 +40,7 @@ To run the project for **development**:
 ## Admin Login:
 
 Username: admin@admin.com  
-Password: sprint5
+Password: sprint7
 
 ## Running the Project Locally with MySQL Database
 
