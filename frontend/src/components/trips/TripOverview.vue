@@ -4,10 +4,16 @@
       <div v-if="canEdit">
         <h2>Trip Name</h2>
         <v-form ref="form" lazy-validation>
-          <v-text-field v-model="trip.trip.name" :rules="nameRules" :counter="60" required></v-text-field>
+          <v-text-field
+          v-model="trip.trip.name"
+          :rules="nameRules"
+          :counter="60"
+          required
+          ></v-text-field>
           <v-btn outline color="error" @click="update()" class="save-btn">Save Name</v-btn>
         </v-form>
       </div>
+      <AddGroupUser :hasWritePermissions="hasWritePermissions"/>
       <UserStatusList/>
     </v-flex>
   </v-layout>
@@ -20,8 +26,9 @@
 </style>
 
 <script>
-import UserStatusList from "./tripgroups/UserStatusList";
-import { rules } from "../form_rules";
+  import UserStatusList from "./tripgroups/UserStatusList";
+  import AddGroupUser from "./tripgroups/AddGroupUser";
+  import { rules } from "../form_rules";
 
 export default {
   name: "TripOverview",
@@ -29,12 +36,14 @@ export default {
   props: {
     trip: Object,
     updateTrip: Function,
-    canEdit: Boolean
+    canEdit: Boolean,
+    hasWritePermissions: Boolean
   },
 
-  components: {
-    UserStatusList
-  },
+    components: {
+      UserStatusList,
+      AddGroupUser
+    },
 
   data() {
     return {
