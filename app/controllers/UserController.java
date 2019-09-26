@@ -352,11 +352,10 @@ public class UserController extends Controller {
             return slackRes;
         });
         return tripStage.thenCombineAsync(slackServerStage, (trip, slackRes) -> {
-            userGroupRepository.setGroupSlackWorkspaceDomain(trip.getUserGroup().getId(), slackRes.slackServerDomain);
-            return mailgunService.sendSlackChannelEmail(trip, slackRes.slackServerDomain).thenApplyAsync(res -> {
-                return ok(APIResponses.SLACK_CHANNEL_CREATED);
-            });
-        }).handle(AsyncHandler::handleResult);
+            userGroupRepository.setGroupSlackWorkspaceDomain(trip.getUserGroup().getId(), slackRes.slackServerDomain).join();
+            mailgunService.sendSlackChannelEmail(trip, slackRes.slackServerDomain).join();
+            return ok(APIResponses.SLACK_CHANNEL_CREATED);
+        });
     }
 
     class SlackRes {
