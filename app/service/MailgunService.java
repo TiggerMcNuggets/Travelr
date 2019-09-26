@@ -32,15 +32,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import play.mvc.Http.MultipartFormData.*;
 
-
 /**
  * A service which holds the email notification logic using the MailGun API
  */
 public class MailgunService {
 
     private DatabaseExecutionContext context;
-
-
     private String websiteUrl;
     private WSClient ws;
     private String mailgunApi = "https://api.mailgun.net/v3/sandboxc7b3b2d7b248471d9e3c50aa8687d1c4.mailgun.org/messages";
@@ -77,7 +74,6 @@ public class MailgunService {
         return request;
     }
 
-
     /**
      * This methods handles the sending of emails to the Mailgun API. It requires
      * a built request to be sent, and returns the status code to the caller
@@ -87,7 +83,11 @@ public class MailgunService {
      * @return an integer response code from the Mailgun API
      */
     private CompletionStage<Integer> sendMailgunRequest(WSRequest request) {
-        return request.post("").thenApplyAsync(WSResponse::getStatus);
+        return request.post("").thenApplyAsync(res -> {
+            System.out.println(res);
+            return res.getStatus();
+        });
+
     }
 
     /**
@@ -107,7 +107,6 @@ public class MailgunService {
 
         return request.post(Source.from(Arrays.asList(fp, fp2))).thenApplyAsync(WSResponse::getStatus);
     }
-
 
     /**
      * Composes and sends a welcome email to the given email address. This function
@@ -134,6 +133,38 @@ public class MailgunService {
                 welcomeEmailSubject,
                 "welcome-email",
                 recipientVariable);
+        return sendMailgunRequest(request).toCompletableFuture();
+    }
+
+    /**
+     * Composes and sends a notification email to the given email address. This function
+     * uses the 'slack-channel-creation' template on our Mailgun account and provides the
+     * user's first name, trip name and Slack channel URL to the template's placeholder fields.
+     *
+     * @param tripNode a trip object
+     * @param slackServerDomain the domain of the Slack server
+     * @return a response code from the Mailgun API which is useful for testing.
+     */
+    public CompletableFuture<Integer> sendSlackChannelEmail(TripNode tripNode, String slackServerDomain) {
+        String mailSubject = "Travelr - " + StringUtils.capitalize(tripNode.getName()) + " has a Slack Channel!";
+
+        ArrayList<User> recipients = new ArrayList<>();
+        recipients.addAll(tripNode.getUserGroup().getUsers());
+
+        JsonObject recipientVariables = new JsonObject();
+
+        for (User recipient: recipients) {
+            JsonObject recipientVariableFields = new JsonObject();
+            recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
+            recipientVariableFields.addProperty("tripName", StringUtils.capitalize(tripNode.getName()));
+            recipientVariableFields.addProperty("slackURL", "https://" + slackServerDomain + ".slack.com");
+            recipientVariables.add(recipient.getEmail(), recipientVariableFields);
+        }
+
+        WSRequest request = buildMailgunRequest(recipients,
+                mailSubject,
+                "slack-channel-creation",
+                recipientVariables);
         return sendMailgunRequest(request).toCompletableFuture();
     }
 
@@ -173,7 +204,6 @@ public class MailgunService {
         return sendMailgunRequest(request).toCompletableFuture();
     }
 
-
     /**
      * Creates a http request for the mailgun api endpoint to compose an email regarding the update of a trip to
      * a user following the trip. This function uses the "trip-update-email" template on the mailgun account
@@ -210,7 +240,7 @@ public class MailgunService {
         }
 
         JsonObject recipientVariables = new JsonObject();
-        String subject = "Travelr - Your trip " + tripNode.getName() + " was recently updated.";
+        String subject = "Travelr - Your trip " + StringUtils.capitalize(tripNode.getName()) + " was recently updated.";
         for (User recipient: recipients) {
             JsonObject recipientVariableFields = new JsonObject();
 

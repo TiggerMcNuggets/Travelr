@@ -12,7 +12,7 @@ public class RootNodeDTO {
 
     public String groupName = "";
     public Long groupId = null;
-
+    public String slackWorkspaceDomain = "";
 
     public RootNodeDTO(TripNode node) {
         this.id = node.getId();
@@ -23,6 +23,7 @@ public class RootNodeDTO {
         if (node.getUserGroup() != null) {
             this.groupName = node.getUserGroup().getName();
             this.groupId = node.getUserGroup().getId();
+            this.slackWorkspaceDomain = node.getUserGroup().getSlackWorkspaceDomain();
         }
 
     }
@@ -55,7 +56,9 @@ public class RootNodeDTO {
         return groupName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
+    public void setGroupName(String groupName) { this.groupName = groupName; }
+
+    public String getSlackWorkspaceDomain(String slackWorkspaceDomain) { return slackWorkspaceDomain; }
+
+    public void setSlackWorkspaceDomain(String slackWorkspaceDomain) { this.slackWorkspaceDomain = slackWorkspaceDomain; }
 }

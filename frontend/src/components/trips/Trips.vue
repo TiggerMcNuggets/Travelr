@@ -38,7 +38,6 @@
 
             <v-flex>
               <v-layout justify-end>
-                <CreateSlackChannelButton v-if="(isMyProfile && hasSlack)" :tripName="item.name"></CreateSlackChannelButton>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon dark v-on="on">
@@ -117,7 +116,6 @@ ul {
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
-
 let tripRepository = RepositoryFactory.get("trip");
 import { store } from "../../store/index";
 import RollbackMixin from "../mixins/RollbackMixin.vue";
@@ -182,7 +180,7 @@ export default {
      */
     hasSlack() {
       return store.getters.getUser.slack;
-    }
+    },
   },
 
   methods: {

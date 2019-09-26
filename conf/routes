@@ -85,6 +85,7 @@ PUT         /api/users/:user_id/group/:group_id/toggle_deleted                  
 GET         /api/users/:user_id/group/:group_id                                     controllers.UserGroupController.getSingleGroup(request: Request, user_id: Long, group_id: Long)
 POST        /api/users/:user_id/group                                               controllers.UserGroupController.createUserGroup(request: Request, user_id: Long)
 GET         /api/users/:user_id/group                                               controllers.UserGroupController.getUserGroups(request: Request, user_id: Long)
+GET         /api/users/:user_id/getGroupingFromTrip/:trip_id                        controllers.UserGroupController.getGroupingFromTrip(request: Request, user_id: Long, trip_id: Long)
 
 
 # Trips (trips within trips)

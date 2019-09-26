@@ -23,14 +23,11 @@ public class SlackUser extends BaseModel  {
     @NotNull
     @Constraints.Required
     @Column(length = 300)
-    public String accessToken;
-
-    public List<String> slackChannelsOwned;
+    private String accessToken;
 
     public SlackUser(@Constraints.Required User user, @Constraints.Required String accessToken) {
         this.user = user;
         this.accessToken = accessToken;
-        this.slackChannelsOwned = new ArrayList<String>();
     }
 
     public User getUser() {
@@ -47,22 +44,6 @@ public class SlackUser extends BaseModel  {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public void addOwnedChannel(String channelName){
-        this.slackChannelsOwned.add(channelName);
-    }
-
-    public void removeOwnedGroupName(String groupName){
-        this.slackChannelsOwned.remove(groupName);
-    }
-
-    public List<String> getSlackChannelsOwned() {
-        return slackChannelsOwned;
-    }
-
-    public void setSlackChannelsOwned(List<String> slackChannelsOwned) {
-        this.slackChannelsOwned = slackChannelsOwned;
     }
 
 }

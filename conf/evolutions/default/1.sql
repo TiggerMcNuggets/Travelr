@@ -1,4 +1,7 @@
--- !Ups
+# --- Created by Ebean DDL
+# To stop Ebean DDL generation, remove this comment and start using Evolutions
+
+# --- !Ups
 
 create table album (
   id                            bigint auto_increment not null,
@@ -102,6 +105,7 @@ create table grouping (
   id                            bigint auto_increment not null,
   name                          varchar(250),
   description                   varchar(300),
+  slack_workspace_domain        varchar(300),
   deleted                       boolean default false not null,
   constraint pk_grouping primary key (id)
 );
@@ -343,7 +347,7 @@ create index ix_user_nationality_nationality_id on user_nationality (nationality
 alter table user_nationality add constraint fk_user_nationality_nationality_id foreign key (nationality_id) references nationality (id) on delete restrict on update restrict;
 
 
--- !Downs
+# --- !Downs
 
 alter table album drop constraint if exists fk_album_user_id;
 drop index if exists ix_album_user_id;

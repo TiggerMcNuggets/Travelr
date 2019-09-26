@@ -91,6 +91,27 @@ public class UserGroupRepository {
     }
 
     /**
+     * Set a usergroup's Slack workspace domain
+     * @param id the id of the group
+     * @param slackWorkspaceDomain the Slack workspace's domain
+     * @return completable future of list of userGroups
+     */
+    public CompletableFuture<Void> setGroupSlackWorkspaceDomain(Long id, String slackWorkspaceDomain) {
+        return supplyAsync(() -> {
+            Grouping group = Grouping.find.byId(id);
+
+            // Not found check
+            if (group == null) throw new NotFoundException(APIResponses.GROUP_NOT_FOUND);
+            if (slackWorkspaceDomain.isEmpty()) throw new NotFoundException(APIResponses.SLACK_CHANNEL_DOMAIN_MALFORMED);
+
+            group.setSlackWorkspaceDomain(slackWorkspaceDomain);
+            group.update();
+
+            return null;
+        }, context);
+    }
+
+    /**
      * Updates a user group
      * @param userId The user's id
      * @param groupId The user group id to be updated

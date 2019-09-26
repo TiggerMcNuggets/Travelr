@@ -28,4 +28,12 @@ public class GroupingFinder extends Finder<Long, Grouping> {
         return query().setIncludeSoftDeletes().where().eq("id", id).findOne();
     }
 
+    /**
+     * Retrieves the Grouping for given a trip
+     * @param tripId the ID of the trip
+     * @return the grouping
+     */
+    public Grouping findGroupingGivenTripId(Long tripId) {
+        return query().where().eq("associatedTrips.id", tripId).findOne();
+    }
 }

@@ -58,6 +58,8 @@ public class APIResponses {
     public static final String SLACK_CHANNEL_CREATION_FAILURE = "Request to Slack to create the channel failed";
     public static final String SLACK_MISSING_ACCESS_TOKEN = "Missing Slack access token";
     public static final String SLACK_MISSING_CODE = "Missing temporary Slack code";
+    public static final String SLACK_CHANNEL_NAME_TAKEN = "Slack channel name already taken";
+    public static final String SLACK_CHANNEL_DOMAIN_MALFORMED = "Slack server domain address is malformed";
 
     // Files
     public static final String FILE_TOO_LARGE = "One or more of your files is too large";
