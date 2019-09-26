@@ -11,77 +11,158 @@
         :canUndo="rollbackCanUndo"
         :options="options"
       />
+      <v-layout v-if="searchActive" row wrap>
+        <v-flex md3>
+          <v-text-field
+            v-model="searchValue"
+            label="Destination name"
+            prepend-icon="search"
+          ></v-text-field>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            v-model="selectedDistricts"
+            :items="districtOptions"
+            prepend-icon="location_city"
+            label="City"
+            multiple
+            attach
+            persistent-hint
+            selection
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span
+                v-if="index === 1"
+                class="grey--text caption"
+              >(+{{ selectedDistricts.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            v-model="selectedCountrys"
+            :items="countryOptions"
+            prepend-icon="public"
+            label="Country"
+            multiple
+            attach
+            persistent-hint
+            selection
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span
+                v-if="index === 1"
+                class="grey--text caption"
+              >(+{{ selectedCountrys.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-flex>
+        <v-flex md3>
+          <v-select
+            v-model="selectedTypes"
+            :items="typeOptions"
+            prepend-icon="local_cafe"
+            label="Type"
+            multiple
+            attach
+            persistent-hint
+            selection
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip v-if="index === 0">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span
+                v-if="index === 1"
+                class="grey--text caption"
+              >(+{{ selectedTypes.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-flex>
+      </v-layout>
 
-      <v-text-field
-        v-if="searchActive"
-        v-model="searchValue"
-        label="Trip name"
-        prepend-icon="search"
-      ></v-text-field>
+      <v-container v-bind="{ [`grid-list-lg`]: true }" class="no-margin no-padding" fluid>
+        <v-layout row wrap>
+          <v-flex
+            v-for="item in destinationsFiltered"
+            :value="item.value"
+            :key="item.value"
+            xs12
+            md4
+            sm6
+            xl3
+          >
+            <v-img src="https://www.praguepost.com/wp-content/uploads/2018/03/business-buildings.jpg" aspect-ratio="1.75"></v-img>
 
-      <div class="scrollable list-height">
-        <li
-          class="destination-list-element"
-          v-for="item in destinationsFiltered"
-          :value="item.value"
-          :key="item.value"
-        >
-          <v-card class="top-destination-content destination-container">
-            <div class="row-container">
-              <div
-                class="private-public-side-bar side-border"
-                v-bind:class="{ 'blue-background': item.isPublic, 'pink-background': !item.isPublic }"
-              ></div>
-              <div class="hoverable destination-container" v-on:click="viewDestination(item.id)">
-                <h2>{{item.name}} | {{item.country}} | {{item.district}}</h2>
-                <div class="row-container">
-                  <h3>Lat: {{item.latitude}} | Lng: {{item.longitude}}</h3>
-                </div>
-                <div class="row-container">
-                  <h3>Type: {{item.type}}</h3>
-                </div>
-                <div class="row-container">
-                  <h3>Traveller Types:</h3>
+            <v-card-title class="align-end">
+              <div>
+                <span class="headline">{{ item.name }}</span>
+                <div class="grey--text font-weight-light">{{item.district}}, {{item.country}}</div>
+                <v-spacer></v-spacer>
+                <div class="grey--text font-weight-light">{{ item.type }}</div>
+              </div>
+              <v-spacer></v-spacer>
+
+              <v-layout column align-end>
+                <v-flex pa-0 ma-0 v-if="item.ownerId === parseInt(userId)">
+                  <v-btn
+                    v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
+                    icon
+                    @click="deleteDestination(item.id)"
+                  >
+                    <v-icon color="red lighten-1">delete</v-icon>
+                  </v-btn>
+                  <v-btn
+                    v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
+                    icon
+                    @click="editDestination(item.id)"
+                  >
+                    <v-icon color="orange lighten-1">edit</v-icon>
+                  </v-btn>
+                  <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
+                    <v-icon color="blue lighten-1">lock</v-icon>
+                  </v-btn>
+                  <v-btn
+                    v-if="item.isPublic && item.ownerId === parseInt(userId)"
+                    color="#FF69B4"
+                    flat
+                    icon
+                    @click="makePrivate(item.id)"
+                  >
+                    <v-icon color="hotpink lighten-1">lock_open</v-icon>
+                  </v-btn>
+                </v-flex>
+                <v-flex>
+                  <v-btn
+                    class="no-margin view-button"
+                    @click="viewDestination(item.id)"
+                    outline
+                    small
+                    color="primary"
+                  >View</v-btn>
+                </v-flex>
+              </v-layout>
+            </v-card-title>
+            <v-divider class="no-margin"></v-divider>
+
+            <v-card-actions>
                   <v-list v-for="type in item.travellerTypes" :value="type.id" :key="type.id">
                     <v-chip small>{{type.name}}</v-chip>
                   </v-list>
-                </div>
-              </div>
-            </div>
-            <div>
-              <v-btn
-                v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
-                icon
-                @click="deleteDestination(item.id)"
-              >
-                <v-icon color="red lighten-1">delete</v-icon>
-              </v-btn>
-              <v-btn
-                v-if="(isMyProfile || isAdminUser) && item.ownerId === parseInt(userId)"
-                icon
-                @click="editDestination(item.id)"
-              >
-                <v-icon color="orange lighten-1">edit</v-icon>
-              </v-btn>
-              <v-btn v-if="!item.isPublic" icon @click="makePublic(item.id)">
-                <v-icon color="blue lighten-1">lock</v-icon>
-              </v-btn>
-              <v-btn
-                v-if="item.isPublic && item.ownerId === parseInt(userId)"
-                color="#FF69B4"
-                flat
-                icon
-                @click="makePrivate(item.id)"
-              >
-                <v-icon color="hotpink lighten-1">lock_open</v-icon>
-              </v-btn>
-            </div>
-          </v-card>
-        </li>
-      </div>
+               
+            </v-card-actions>
+          </v-flex>
+        </v-layout>
+      </v-container>
 
       <v-dialog v-model="dialog" width="800">
-        <destination-create :createDestinationCallback="createDestinationCallback"/>
+        <destination-create :createDestinationCallback="createDestinationCallback" />
       </v-dialog>
     </v-container>
     <v-alert :value="undoRedoError" type="error">Cannot undo or redo</v-alert>
@@ -194,13 +275,29 @@ export default {
       searchValue: "",
       searchActive: false,
       undoRedoError: false,
-      setPrivateError: false
+      setPrivateError: false,
+      districtOptions: [],
+      selectedDistricts: [],
+      countryOptions: [],
+      selectedCountrys: [],
+      typeOptions: [],
+      selectedTypes: []
     };
   },
 
   watch: {
     "$route.params.id": function() {
       this.init();
+    },
+    "destinations": function() {
+      for (let i = 0; i < this.destinations.length; i++) {
+        this.districtOptions.push(this.destinations[i].district);
+        this.countryOptions.push(this.destinations[i].country);
+        this.typeOptions.push(this.destinations[i].type);
+      }
+      this.districtOptions = Array.from(new Set(this.districtOptions)).sort();
+      this.countryOptions = Array.from(new Set(this.countryOptions)).sort();
+      this.typeOptions = Array.from(new Set(this.typeOptions)).sort();
     }
   },
 
@@ -224,10 +321,24 @@ export default {
      */
     destinationsFiltered() {
       const filteredList = this.destinations.filter(
-        destination =>
-          destination.name
+        destination => {
+          let criteria1 = destination.name
             .toLowerCase()
-            .search(this.searchValue.toLowerCase()) !== -1
+            .search(this.searchValue.toLowerCase()) !== -1;
+          let criteria2 = true;
+          if (this.selectedDistricts.length > 0) {
+            criteria2 = this.selectedDistricts.includes(destination.district);
+          }
+          let criteria3 = true;
+          if (this.selectedCountrys.length > 0) {
+            criteria3 = this.selectedCountrys.includes(destination.country);
+          }
+          let criteria4 = true;
+          if (this.selectedTypes.length > 0) {
+            criteria4 = this.selectedTypes.includes(destination.type);
+          }
+          return criteria1 && criteria2 && criteria3 && criteria4;
+        }
       );
 
       //Currently sorting trips by id, in future we will sort trips by creation time
@@ -292,9 +403,7 @@ export default {
     deleteDestination: function(destId) {
       this.clearAlerts();
       this._deleteDestination(this.userId, destId).then(() => {
-        const url = `/users/${
-          this.userId
-        }/destinations/${destId}/toggle_deleted`;
+        const url = `/users/${this.userId}/destinations/${destId}/toggle_deleted`;
         this.rollbackCheckpoint(
           "DELETE",
           {

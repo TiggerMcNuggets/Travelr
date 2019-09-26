@@ -84,9 +84,10 @@
 </template>
 
 <style>
-    .no-media-icon {
-      font-size: 90px;
-    }
+  .no-media-icon {
+    font-size: 90px;
+  }
+  
   .add-image-btn-block {
     display: flex;
     flex-direction: column;

@@ -18,9 +18,9 @@
 </template>
 
 <style>
-  .save-btn {
-    margin: 0px 0px 30px 0px;
-  }
+.save-btn {
+  margin: 0px 0px 30px 0px;
+}
 </style>
 
 <script>
@@ -28,34 +28,35 @@
   import AddGroupUser from "./tripgroups/AddGroupUser";
   import { rules } from "../form_rules";
 
-  export default {
-    name: "TripOverview",
+export default {
+  name: "TripOverview",
 
-    props: {
-      trip: Object,
-      updateTrip: Function
-    },
+  props: {
+    trip: Object,
+    updateTrip: Function,
+    canEdit: Boolean
+  },
 
     components: {
       UserStatusList,
       AddGroupUser
     },
-        // if (this.$refs.form.validate()) {
-    data() {
-      return {
-        ...rules
-      };
-    },
 
-    methods: {
-      /**
-       * Validates the form and updates the tirp
-       */
-      update() {
-        if (this.$refs.form.validate()) {
-          this.updateTrip();
-        }
+  data() {
+    return {
+      ...rules
+    };
+  },
+
+  methods: {
+    /**
+     * Validates the form and updates the tirp
+     */
+    update() {
+      if (this.$refs.form.validate()) {
+        this.updateTrip();
       }
     }
-  };
+  }
+};
 </script>

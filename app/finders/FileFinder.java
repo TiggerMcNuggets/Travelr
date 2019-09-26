@@ -5,6 +5,7 @@ import io.ebean.Query;
 import models.File;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FileFinder extends Finder<Long, File> {
 
@@ -19,5 +20,16 @@ public class FileFinder extends Finder<Long, File> {
                 .where()
                 .eq("trip.id", tripId)
                 .findList();
+    }
+
+    /*
+        Returns a file by id including the deleted files
+     */
+    public Optional<File> getFileByIdIncludeDeleted(Long fileId){
+        return query()
+                .setIncludeSoftDeletes()
+                .where()
+                .eq("id", fileId)
+                .findOneOrEmpty();
     }
 }

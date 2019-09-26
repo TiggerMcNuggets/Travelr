@@ -35,7 +35,7 @@
           </label>
         </div>
         <v-btn :disabled="!isValid" large color="error" @click="handleEdit">Save</v-btn>
-        <v-btn @click="submitFile" large outline color="error">Upload Photo</v-btn>
+        <v-btn @click="submitFile" large outline color="error">Set Profile Photo</v-btn>
         <v-alert :value="editErrorAlert" type="error">Cannot edit profile</v-alert>
         <v-alert :value="undoRedoErrorAlert" type="error">Cannot undo or redo</v-alert>
       </v-flex>
