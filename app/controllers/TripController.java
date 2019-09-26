@@ -319,6 +319,12 @@ public class TripController extends Controller {
 
             GetTripDTO dto = new GetTripDTO();
 
+            // update name of trip's album
+            String albumName = trip.getName() + " Album";
+            trip.getDefaultAlbum().setName(albumName);
+            trip.getDefaultAlbum().save();
+
+
             // Trip Details
             dto.setName(trip.getName());
             dto.setId(trip.getId());
