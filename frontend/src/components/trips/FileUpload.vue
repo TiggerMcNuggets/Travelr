@@ -117,8 +117,6 @@
 
 
 <script>
-  import FileDisplayer from "./FileDisplayer"
-
   import {RepositoryFactory} from "../../repository/RepositoryFactory";
 
   let fileRepository = RepositoryFactory.get("file");
@@ -126,10 +124,6 @@
   export default {
 
     name: "FileUpload",
-
-    components: {
-      FileDisplayer
-    },
 
     props: {
       closeUploadDialog: Function,
