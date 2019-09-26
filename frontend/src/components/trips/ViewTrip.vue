@@ -63,6 +63,7 @@
 <script>
 import DeviceSizeMixin from "../mixins/DeviceSizeMixin.vue";
 import RollbackMixin from "../mixins/RollbackMixin";
+import SnackbarMixin from "../mixins/SnackbarMixin";
 import StoreTripsMixin from "../mixins/StoreTripsMixin";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
@@ -90,7 +91,7 @@ export default {
     MediaUpload
   },
 
-  mixins: [RollbackMixin, StoreTripsMixin, DeviceSizeMixin],
+  mixins: [RollbackMixin, StoreTripsMixin, DeviceSizeMixin, SnackbarMixin],
 
   // local variables
   data() {
@@ -262,7 +263,7 @@ export default {
         this.hasAdjacentIdentical = false;
         try {
           await this.updateTripAndPopulate(userId, tripId, trip);
-
+          this.showSuccessSnackbar(this._snackbarMessages.tripUpdateSuccess, 1000);
           // Add to undo redo stack
           let checkpoint = {
             action: async () =>
