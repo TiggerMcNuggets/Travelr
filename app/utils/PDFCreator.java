@@ -71,9 +71,11 @@ public class PDFCreator {
             String traveller_list = "";
             for (UserGroup group : trip.getUserGroup().getUserGroups()) {
                 NodeUserStatus nodeUserStatus = NodeUserStatus.find.query().where().eq("user", group.getUser()).eq("trip", trip).findOne();
-                String userStatus = "Not Decided";
+                String userStatus = "Not decided";
                 if (nodeUserStatus != null) {
-                    userStatus = nodeUserStatus.tripStatus.toString();
+                    userStatus = nodeUserStatus.tripStatus.toString().substring(0, 1) +
+                            nodeUserStatus.tripStatus.toString().substring(1).toLowerCase();
+                    userStatus = userStatus.replace("_", " ");
                 }
                 traveller_list = traveller_list + "<tr>\n" +
                         "<td>" + group.getUser().getFirstName() + " " + group.getUser().getLastName() + "</td>\n" +

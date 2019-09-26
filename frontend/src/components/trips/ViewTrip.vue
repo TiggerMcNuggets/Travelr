@@ -111,7 +111,7 @@ export default {
      * @return true or false
      */
     canEdit() {
-      return !this.isExtraSmall;
+      return !this.isExtraSmall && this.hasWritePermissions;
     },
 
     /**
