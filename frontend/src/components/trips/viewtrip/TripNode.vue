@@ -48,22 +48,6 @@
   </v-timeline-item>
 </template>
 
-<style>
-.trip-node-name {
-  padding: 15px;
-}
-
-.v-timeline-trip-item-style {
-  padding: 16px 16px 4px 16px;
-}
-.user-attendance {
-  padding: 8px 16px 4px 16px;
-}
-.align-with-arrow {
-  float: right;
-}
-</style>
-
 <script>
 import { rules } from "../../form_rules";
 import NodeUserAttendance from "./NodeUserAttendance";
