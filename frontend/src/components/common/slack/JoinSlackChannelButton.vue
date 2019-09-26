@@ -5,7 +5,7 @@
     <v-avatar size="26">
       <img src="../../../assets/slack_logo_circle.png">
     </v-avatar>
-     JOIN SLACK CHANNEL
+    JOIN SLACK CHANNEL
   </v-btn>
 </template>
 

@@ -5,7 +5,7 @@
     <v-avatar size="26">
       <img src="../../../assets/slack_logo_circle.png">
     </v-avatar>
-     CREATE SLACK CHANNEL
+    CREATE SLACK CHANNEL
   </v-btn>
 </template>
 

@@ -29,7 +29,6 @@
 </style>
 
 <script>
-  import AddGroupUser from "./tripgroups/AddGroupUser";
   import { store } from "../../store/index";
   import { rules } from "../form_rules";
 
