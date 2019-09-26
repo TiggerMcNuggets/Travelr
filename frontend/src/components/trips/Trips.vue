@@ -139,7 +139,6 @@ export default {
       showCreateTrip: false,
       searchValue: "",
       isAdmin: store.getters.getIsUserAdmin,
-      hasSlack: false,
       isMyProfile: false,
       isAdminUser: false,
       userId: this.$route.params.id,
