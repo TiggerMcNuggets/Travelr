@@ -1,15 +1,17 @@
 <template>
-  <v-flex :v-if="selectedTrip && selectedTrip.trip.usergroup && hasWritePermissions">
-    <v-flex>
-        <h2>Add User</h2>
+  <div v-if="hasWritePermissions">
+    <v-flex :v-if="selectedTrip && selectedTrip.trip.usergroup && hasWritePermissions">
+      <v-flex>
+          <h2>Add User</h2>
+      </v-flex>
+      <v-autocomplete
+      :items="users"
+      :v-model="selectedUserId"
+      v-on:change="selectUser"
+      ></v-autocomplete>
+      <v-btn outline color="error" v-on:click="addUserToGroup" class="save-btn">Add User to Group</v-btn>
     </v-flex>
-    <v-autocomplete
-    :items="users"
-    :v-model="selectedUserId"
-    v-on:change="selectUser"
-    ></v-autocomplete>
-    <v-btn outline color="error" v-on:click="addUserToGroup" class="save-btn">Add User to Group</v-btn>
-  </v-flex>
+  </div>
 </template>
 
 <script>
