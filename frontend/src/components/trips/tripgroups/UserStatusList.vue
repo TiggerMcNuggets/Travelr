@@ -1,13 +1,16 @@
 <template>
   <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup">
-    <v-flex>
+    <v-flex v-if="selectedTrip.trip.usergroup.length">
       <h2>{{selectedTrip.root.groupName}}</h2>
       <p
         class="sub-text"
       >{{this.topSummary}}</p>
     </v-flex>
 
-    <p v-if="selectedTrip.trip.usergroup.length === 0">No group added.</p>
+    <v-flex v-else>
+      <h2>User Group</h2>
+      <p class="sub-text">No group added.</p>
+    </v-flex>
 
     <v-list class="pa-0" v-for="user in selectedTrip.trip.usergroup" :key="user.userId" wrap>
       <v-list-tile class="status-list">

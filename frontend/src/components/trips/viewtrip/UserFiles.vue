@@ -30,7 +30,9 @@
 
     props: {
       hasWritePermissions: Boolean,
-      pushStack: Function
+      pushStack: Function,
+      getFiles: Function,
+      files: Array
     },
 
     components: {
@@ -40,19 +42,12 @@
     data() {
       return {
         userId: this.$route.params.id,
-        tripId: this.$route.params.trip_id,
-        files: []
+        tripId: this.$route.params.trip_id
       };
     },
 
     methods: {
-      /**
-       * Fetches files for a trip
-       */
-      async getFiles() {
-        const res = await fileRepository.getFilesForTrip(this.userId, this.tripId);
-        this.files = res.data;
-      },
+
 
       /**
        * Downloades the file

@@ -41,10 +41,26 @@
       <span>Email Trip & Calendar To You</span>
     </v-tooltip>
 
-    <UserFiles 
-      v-if="trip.trip.usergroup.length" 
+    <!-- Upload Files Button -->
+    <v-btn icon @click="openFileUpload()" flat small color="error" >
+      <v-icon>attach_file</v-icon>
+    </v-btn>
+
+    <v-dialog v-model="showUploadSection" width="800">
+      <FileUpload
+        :closeUploadDialog="closeFileUpload"
+        :userId="userId"
+        :tripId="tripId"
+        :getFiles="getFiles"
+      ></FileUpload>
+    </v-dialog>
+
+
+    <UserFiles
       :hasWritePermissions="hasWritePermissions"
       :pushStack="pushStack"
+      :getFiles="getFiles"
+      :files="files"
     />
   </div>
 </template>
@@ -58,13 +74,20 @@
 <script>
   import { store } from "../../store/index";
   import { RepositoryFactory } from "../../repository/RepositoryFactory";
+  import FileUpload from "./FileUpload";
   import { download } from "./trips_destinations_util";
   import UserFiles from "./viewtrip/UserFiles";
 
   let tripRepository = RepositoryFactory.get("trip");
+  let fileRepository = RepositoryFactory.get("file");
 
   export default {
     name: "TripFiles",
+
+    components: {
+      FileUpload,
+      UserFiles
+    },
 
     props: {
       trip: Object,
@@ -72,19 +95,27 @@
       pushStack: Function
     },
 
-    components: {
-      UserFiles
-    },
-
     data() {
       return {
         userId: this.$route.params.id,
         tripId: this.$route.params.trip_id,
-        isAdmin: store.getters.getIsUserAdmin
+        isAdmin: store.getters.getIsUserAdmin,
+        showUploadSection: false,
+        files: []
       };
     },
 
     methods: {
+      /**
+       * Fetches files for a trip
+       */
+      async getFiles() {
+        const res = await fileRepository.getFilesForTrip(this.userId, this.tripId);
+        this.files = res.data;
+        //closes upload box after updating main trip page
+        this.closeFileUpload();
+      },
+
       /**
        * Emails the iCal and pdf to all of the users in the group
        */
@@ -119,6 +150,21 @@
           download(res, `${this.trip.trip.name}.pdf`);
         })
       },
+
+      /**
+       * controls when file upload ox can be seen
+       */
+      openFileUpload() {
+        this.showUploadSection = true;
+      },
+
+      /**
+       * controls when file upload ox can be seen
+       */
+      closeFileUpload() {
+        this.showUploadSection = false;
+      },
+
     },
   };
 </script>
