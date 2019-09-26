@@ -151,7 +151,8 @@ Scenario: Get a trip successfully
            },
           "albumId":6,
           "groupName":"Team 300",
-          "groupId":1
+          "groupId":1,
+          "slackWorkspaceDomain":null
          }
        }
   }
@@ -264,7 +265,8 @@ Scenario: Get another user's trip as an admin
         },
         "albumId":7,
         "groupName":"",
-        "groupId":null
+        "groupId":null,
+        "slackWorkspaceDomain": ""
      }
   }
   """

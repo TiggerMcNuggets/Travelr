@@ -15,6 +15,7 @@ Feature: Get User Group
          "id":1,
          "name":"Team 300",
          "description":"The best team eva",
+         "slackWorkspaceDomain":null,
          "owners":[
             2
          ],
@@ -61,6 +62,7 @@ Feature: Get User Group
          "id":1,
          "name":"Team 300",
          "description":"The best team eva",
+         "slackWorkspaceDomain":null,
          "owners":[
             3
          ],
