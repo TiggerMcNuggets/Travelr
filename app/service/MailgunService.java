@@ -218,7 +218,7 @@ public class MailgunService {
             recipientVariableFields.addProperty("firstName", StringUtils.capitalize(recipient.getFirstName()));
             recipientVariableFields.addProperty("tripName", tripNode.getName());
             recipientVariableFields.addProperty("tripURL", websiteUrl + "user/"
-                    + user.getId() + "/trips/" + tripNode.getId());
+                    + recipient.getId() + "/trips/" + tripNode.getId());
             recipientVariables.add(recipient.getEmail(), recipientVariableFields);
         }
         request = buildMailgunRequest(recipients,
