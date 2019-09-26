@@ -54,11 +54,8 @@
 
             <div class="d-flex justify-space-between">
               <p class="subtext">{{comment.comment}}</p>
-              <v-icon
-                class="justified-end"
-                color="red lighten-1"
-                @click="deleteComment(comment.id)"
-              >delete</v-icon>
+              <v-icon v-if="canDelete(comment.userId)" class="justified-end" color="red lighten-1" @click="deleteComment(comment.id)">delete</v-icon>
+
             </div>
 
             <icon-emoji-picker
@@ -165,20 +162,12 @@ export default {
   },
 
   computed: {
-    isAdminOrOwner() {
-      let isOwner = false;
-      if (this.selectedTrip) {
-        this.selectedTrip.trip.usergroup.forEach(user => {
-          if (this.$store.getters.getUser.id === user.userId) {
-            isOwner = user.owner;
-          }
-        });
-      }
-      return isOwner || this.$store.getters.getIsUserAdmin;
-    }
+    
   },
-
   methods: {
+    /**
+     * Changes the comment ordering
+     */
     changeOrdering() {
       this.page = 0;
       this.userComments = [];
@@ -310,7 +299,23 @@ export default {
       } else {
         return base_url + "/api/travellers/profile-photo/" + userId;
       }
-    }
+    },
+
+    /**
+     * Checks if a user can delete a comment
+     * @param commentUser the user id of the user associated with the comment.
+     */
+    canDelete(commentUser) {
+      let isOwner = false;
+      if (this.selectedTrip) {
+        this.selectedTrip.trip.usergroup.forEach(user => {
+          if (this.$store.getters.getUser.id === user.userId) {
+            isOwner = user.owner;
+          }
+        });
+      }
+      return isOwner || this.$store.getters.getIsUserAdmin || commentUser == this.$store.getters.getUser.id;
+    },
   },
 
   watch: {
