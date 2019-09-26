@@ -98,14 +98,12 @@
 
 <script>
 import MediaGridWithDelete from "../media/MediaGridWIthDelete";
-import AlbumElement from "./AlbumElement";
 import AlbumCreate from "./AlbumCreate";
 import base_url from "../../repository/BaseUrl";
 
 export default {
   components: {
     MediaGridWithDelete,
-    AlbumElement,
     AlbumCreate
   },
 
