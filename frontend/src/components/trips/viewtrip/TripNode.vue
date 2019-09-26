@@ -2,7 +2,15 @@
   <v-timeline-item color="error">
     <v-card v-if="canEdit">
       <node-user-attendance class="user-attendance" v-if="displayUserAttendance" :node="node"/>
-      <h2 class="trip-node-name">{{ node.name }}</h2>
+      <v-text-field
+        v-if="node.notCreated"
+        class="v-timeline-trip-item-style"
+        v-model="node.name"
+        :rules="nameRules"
+        :counter="60"
+        label="Trip Name"
+      ></v-text-field>
+      <h2 v-else class="trip-node-name">{{ node.name }}</h2>
       <div v-if="!node.notCreated">
         <v-btn icon>
           <v-icon color="red lighten-1" @click="deleteNode(i)">delete</v-icon>
@@ -46,7 +54,7 @@
 }
 
 .v-timeline-trip-item-style {
-  padding: 8px 16px 4px 16px;
+  padding: 16px 16px 4px 16px;
 }
 .user-attendance {
   padding: 8px 16px 4px 16px;
