@@ -59,9 +59,13 @@ public class CommentFinder extends Finder<Long, Comment> {
     /**
      * Finds all comments of a trip for a 'page' if each page has a number of 'comments'
      */
-    public List<Comment> findByTripAndPageAndComments(TripNode tripNode, Integer page, Integer comments) {
-        return commentFetcher().where().eq("tripNode", tripNode).orderBy().desc("id").setFirstRow(page*comments).setMaxRows(comments).findList();
-    }
+    public List<Comment> findByTripAndPageAndComments(TripNode tripNode, Integer page, Integer comments, String ordering) {
+        if (ordering.equals("asc")) {
+            return commentFetcher().where().eq("tripNode", tripNode).orderBy().asc("id").setFirstRow(page * comments).setMaxRows(comments).findList();
+        } else {
+            return commentFetcher().where().eq("tripNode", tripNode).orderBy().desc("id").setFirstRow(page * comments).setMaxRows(comments).findList();
+        }
+        }
 
     /**
      * Fetches the emojis and emoji users related to a comment

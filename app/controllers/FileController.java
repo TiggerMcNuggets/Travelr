@@ -6,12 +6,16 @@ import controllers.constants.APIResponses;
 import dto.file.FileDTO;
 import exceptions.BadRequestException;
 import models.File;
+import models.TripNode;
+import models.User;
 import play.libs.Files;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import repository.UserRepository;
 import service.FileService;
+import service.TripService;
 import utils.AsyncHandler;
 
 import javax.inject.Inject;
@@ -23,11 +27,12 @@ import java.util.concurrent.CompletionStage;
 public class FileController extends Controller {
 
     private FileService fileService;
+    private TripService tripService;
+    private UserRepository userRepository;
     private String filesPath;
 
     @Inject
-    public FileController(Config config, FileService fileService) {
-
+    public FileController(Config config, FileService fileService, TripService tripService, UserRepository userRepository) {
         this.fileService = fileService;
         String rootPath = System.getProperty("user.home");
         filesPath = rootPath + config.getString("filesPath");
@@ -67,15 +72,15 @@ public class FileController extends Controller {
      */
     public CompletionStage<Result> getFilesForTrip(Http.Request request, Long nodeId, Long userId) {
         return fileService
-                .getFilesForTripNode(nodeId).thenApplyAsync(files -> {
-                    List<FileDTO> fileDTOS = new ArrayList<>();
+            .getFilesForTripNode(nodeId).thenApplyAsync(files -> {
+                List<FileDTO> fileDTOS = new ArrayList<>();
 
-                    for(File file : files) {
-                        fileDTOS.add(new FileDTO(file));
-                    }
+                for(File file : files) {
+                    fileDTOS.add(new FileDTO(file));
+                }
 
-                    return ok(Json.toJson(fileDTOS));
-                }).handle(AsyncHandler::handleResult);
+                return ok(Json.toJson(fileDTOS));
+            }).handle(AsyncHandler::handleResult);
     }
 
     /**
@@ -87,10 +92,12 @@ public class FileController extends Controller {
      * @return ok response
      */
     public CompletionStage<Result> deleteFileById(Http.Request request, Long nodeId, Long fileId, Long userId) {
-        return fileService.deleteFileById(fileId)
-                .thenApplyAsync(output -> {
-                    return ok();
-                }).handle(AsyncHandler::handleResult);
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(nodeId);
+        CompletionStage<User> userStage = userRepository.getUserHandler(userId);
+        CompletionStage<Void> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.checkWritePermissionHandler(tripNode, user).join());
+
+        return permissionStage.thenComposeAsync(permission -> fileService.deleteFileById(fileId, nodeId, userId))
+            .thenApplyAsync(output -> ok()).handle(AsyncHandler::handleResult);
     }
 
     /**
@@ -105,7 +112,6 @@ public class FileController extends Controller {
             try {
 
                 java.io.File returnFile = new java.io.File(this.filesPath + file.getFilepath());
-                System.out.println(file.getName());
                 return ok(returnFile).withHeaders("Content-Disposition", String.format("attachment; filename=%s", file.getName()));
 
             } catch (Exception e) {
@@ -115,6 +121,4 @@ public class FileController extends Controller {
 
         }).handle(AsyncHandler::handleResult);
     }
-
-
 }

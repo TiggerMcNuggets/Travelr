@@ -93,13 +93,15 @@ public class CommentController {
     public CompletionStage<Result> toggleDeleteComment(Http.Request request, Long userId,Long tripId, Long commentId) {
         CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId);
         CompletionStage<User> userStage = userRepository.getUserHandler(userId);
-        CompletionStage<User> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> {
-            tripService.checkWritePermissionHandler(tripNode, user).join();
-            return user;
-        });
+        CompletionStage<Boolean> permissionStage = tripStage.thenCombineAsync(userStage, (tripNode, user) -> tripService.isPermittedToWrite(tripNode, user).join());
 
-        CompletionStage<Comment> isUserComment = permissionStage.thenComposeAsync(
-                (currentUser) -> commentService.isUserComment(commentId, currentUser));
+        CompletionStage<Comment> isUserComment = userStage.thenCombineAsync(permissionStage, (currentUser, isPermitted) -> {
+            if (isPermitted) {
+                return commentService.getUserComment(commentId).join();
+            } else {
+                return commentService.isUserComment(commentId, currentUser).join();
+            }
+        });
 
         CompletionStage<Long> deleted = isUserComment.thenComposeAsync(commentRepository::delete);
         return deleted.thenApplyAsync(id -> ok(id.toString())).handle(AsyncHandler::handleResult);
@@ -119,15 +121,19 @@ public class CommentController {
 
         Integer page;
         Integer comments;
+        String ordering;
         try {
             page = Integer.parseInt(request.getQueryString("page"));
             comments = Integer.parseInt(request.getQueryString("comments"));
+            ordering = request.getQueryString("ordering");
         } catch (Error e) {
             page = 0;
             comments = 5;
+            ordering = "desc";
         } catch (Exception e) {
             page = 0;
             comments = 5;
+            ordering = "desc";
         }
         User user = request.attrs().get(Attrs.ACCESS_USER);
         Optional<TripNode> tripNode = Optional.ofNullable(TripNode.find.byId(tripId));
@@ -139,7 +145,7 @@ public class CommentController {
             return CompletableFuture.completedFuture(forbidden(APIResponses.FORBIDDEN));
         }
 
-        List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments);
+        List<Comment> commentList = Comment.find.findByTripAndPageAndComments(TripNode.find.byId(tripId), page, comments, ordering);
         int commentCount = Comment.find.getTripCommentsCount(TripNode.find.byId(tripId));
         CommentListDTO commentListDTO = new CommentListDTO(commentList, commentCount);
         return CompletableFuture.completedFuture(ok(Json.toJson(commentListDTO)));

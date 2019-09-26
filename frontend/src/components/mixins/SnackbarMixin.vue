@@ -35,7 +35,10 @@
           groupUserAddFail: "Failed to add the user to the group",
 
           slackChannelCreateSuccess: "Slack channel created successfully! ",
-          slackChannelAlreadyExists: "A Slack channel already exists for this trip"
+          slackChannelAlreadyExists: "A Slack channel already exists for this trip",
+                    emailMePdfAndIcalSuccess: "PDF and iCal file from this trip have been sent successfully to you",
+                    emailGroupPdfAndIcalSuccess: "PDF and iCal file from this trip have been sent successfully to everyone in the group",
+                    failedToSendEmail: "Failed to send email"
         };
       }
     },
