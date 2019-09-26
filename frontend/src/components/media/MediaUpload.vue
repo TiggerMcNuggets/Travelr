@@ -44,20 +44,6 @@
       </v-layout>
     </div>
 
-    <div class="selected-albums">
-      <v-layout row wrap>
-        <v-flex v-for="item in selectedAlbums" v-bind:key="item.id" xs12 sm6 class="album-element">
-          <AlbumElement
-            v-if="item.content"
-            :album="item"
-            disableTitle
-            :getImgFromUrl="getImgFromUrl"
-            :openElement="() => {}"
-          ></AlbumElement>
-        </v-flex>
-      </v-layout>
-    </div>
-
     <v-divider></v-divider>
 
     <v-card-actions>
@@ -284,10 +270,7 @@ export default {
       let selectedAlbums = [];
       if (!this.hasNoAlbums) {
         for (let i = 0; i < this.allAlbums.length; i++) {
-          if (
-            this.selectedAlbumNames.includes(this.allAlbums[i].name) &&
-            !this.allAlbums[i].isPermanant
-          ) {
+          if (this.selectedAlbumNames.includes(this.allAlbums[i].name)) {
             selectedAlbums.push(this.allAlbums[i]);
           }
         }
