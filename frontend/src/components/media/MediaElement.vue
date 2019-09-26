@@ -3,7 +3,7 @@
     <v-icon v-if="!media.is_public" class="lock-icon" left>lock</v-icon>
     <v-icon v-if="media.is_public && isTrip" class="lock-icon" left>group</v-icon>
     <div v-if="!media.is_public" class="triangle"></div>
-    <div v-if="!media.is_public && isTrip" class="green-triangle"></div>
+    <div v-if="media.is_public && isTrip" class="green-triangle"></div>
     <v-img 
       :src="getImgFromUrl(media.filename)"
       :lazy-src="fillerImageURL"
