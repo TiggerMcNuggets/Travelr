@@ -83,7 +83,10 @@
         </v-expansion-panel-content>
       </v-layout>
       <v-layout v-else column align-start>
-        <v-flex ml-2 pt-1>
+        <v-flex ml-3 pt-1>
+          <node-user-attendance
+                  v-if="displayUserAttendance"
+                  :node="node"/>
           <h2>{{ node.destination.name }}</h2>
           <p v-if="node.arrivalDate" class="sub-text">Arrival Date: {{ node.arrivalDate }}</p>
           <p v-else class="sub-text">Arrival Date: N/A</p>
