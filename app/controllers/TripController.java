@@ -144,7 +144,7 @@ public class TripController extends Controller {
     }
 
     @Authorization.RequireAuth
-    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId) {
+    public CompletionStage<Result> emailICalFile(Http.Request req, Long userId, Long tripId, boolean onlyMe) {
         CompletionStage<Result> middlewareRes = Authorization.userIdRequiredMiddlewareStack(req, userId);
         if (middlewareRes != null) return middlewareRes;
 
@@ -154,7 +154,7 @@ public class TripController extends Controller {
 
         // Get tripNode without nesting
         CompletionStage<TripNode> combineStage = permissionStage.thenCombineAsync(tripStage, (permission, tripNode) -> tripNode);
-        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripPdfiCalEmail(user, tripNode, getAllNodes(tripNode)).join());
+        CompletionStage<Integer> testStage = combineStage.thenCombineAsync(userStage, (tripNode, user) -> mailgunService.sendTripPdfiCalEmail(user, tripNode, getAllNodes(tripNode), onlyMe).join());
 
         return testStage.thenApplyAsync(userGroups -> created(APIResponses.ICAL_SUCCESS)).handle(AsyncHandler::handleResult);
     }
@@ -231,7 +231,7 @@ public class TripController extends Controller {
         CompletionStage<GetTripDTO> tripDtoStage = tripStage.thenCombineAsync(childrenStage, (tripNodeOptional, children) -> {
 
             if (!tripNodeOptional.isPresent()) {
-                throw new CustomException(404, "Trip not found");
+                throw new CustomException(404, APIResponses.TRIP_NOT_FOUND);
             }
 
             Node trip = tripNodeOptional.get();
@@ -244,11 +244,13 @@ public class TripController extends Controller {
             dto.setName(trip.getName());
             dto.setId(trip.getId());
 
+            Grouping grouping = tripService.getRootTripGrouping(tripId);
+
             // Format trip's children
             List<NodeDTO> childrenDTO = new ArrayList<>();
 
             for (Node node : children) {
-                childrenDTO.add(new NodeDTO(node));
+                childrenDTO.add(new NodeDTO(node, grouping));
             }
 
             dto.setNodes(childrenDTO);
@@ -256,8 +258,6 @@ public class TripController extends Controller {
 
             // Format trip's usergroup
             List<NodeUserDTO> usergroupDTO = new ArrayList<>();
-            Grouping grouping = tripService.getRootTripGrouping(tripId);
-
 
             if (grouping != null) {
                 for (UserGroup user : grouping.getUserGroups()) {
@@ -318,6 +318,12 @@ public class TripController extends Controller {
 
 
             GetTripDTO dto = new GetTripDTO();
+
+            // update name of trip's album
+            String albumName = trip.getName() + " Album";
+            trip.getDefaultAlbum().setName(albumName);
+            trip.getDefaultAlbum().save();
+
 
             // Trip Details
             dto.setName(trip.getName());
@@ -455,6 +461,14 @@ public class TripController extends Controller {
     }
 
     /**
+     * Deletes all comments on the trip provided
+     * @param tNode
+     */
+    public void deleteTripComments(TripNode tNode) {
+        Comment.find.query().where().eq("tripNode.id", tNode.getId()).delete();
+    }
+
+    /**
      * Toggles a relation between a trip and a group
      *
      * @param request the http request
@@ -497,6 +511,8 @@ public class TripController extends Controller {
 
         // Deletes the relating user status relating to the group to delete.
         this.deleteTripUserStatus(group.get(), (TripNode) node.get());
+
+        this.deleteTripComments((TripNode) node.get());
 
         // Now delete the group from the trip.
         return tripService.deleteGroupFromTrip(node.get())

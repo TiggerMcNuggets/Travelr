@@ -10,55 +10,60 @@
       enableBackButton
     />
 
-    <AddGroup 
-      :closeGroupDialog="closeGroupDialog"
-      :dialogActive="addUsergroupDialogActive"
-    />
+    <AddGroup :closeGroupDialog="closeGroupDialog" :dialogActive="addUsergroupDialogActive"/>
 
-    <v-layout row wrap class="content">
+    <v-layout row wrap>
+      <v-flex lg5 md6 sm6 xs12 pa-2>
+        <v-card class="content">
+          <TripDetails
+            :trip="selectedTrip"
+            :hasWritePermissions="hasWritePermissions"
+            :updateTrip="updateTrip"
+            :pushStack="pushStack"
+            :canEdit="canEdit"
+          />
+        </v-card>
+      </v-flex>
 
-      <TripEditor 
-        :updateTrip="updateTrip"
-        :hasAdjacentIdentical="hasAdjacentIdentical"
-      />
-
-      <TripDetails
-        :trip="selectedTrip"
-        :isGroupOwner="isGroupOwner"
-        :updateTrip="updateTrip"
-      />
-
-      <TripMap 
-        v-if="isLarge || isExtraLarge"
-        :nodes="selectedTrip.trip.nodes"
-      />
+      <v-flex lg7 md6 sm6 xs12 pa-2 v-if="selectedTrip">
+        <v-card class="content">
+          <v-layout>
+            <v-flex xl6 lg7 md12>
+              <TripEditor
+                :updateTrip="updateTrip"
+                :hasAdjacentIdentical="hasAdjacentIdentical"
+                :canEdit="canEdit"
+              />
+            </v-flex>
+            <v-flex xl6 lg5>
+              <TripMap v-if="isLarge || isExtraLarge" :nodes="selectedTrip.trip.nodes"/>
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </v-flex>
     </v-layout>
     <v-dialog v-model="showUploadSection" width="800">
-        <MediaUpload
-          :uploadMedia="uploadMedia"
-          :openUploadDialog="toggleShowUploadPhoto"
-          :closeUploadDialog="toggleShowUploadPhoto"
-          :hasNoAlbums="true"
-        ></MediaUpload>
-      </v-dialog>
+      <MediaUpload
+        :uploadMedia="uploadMedia"
+        :openUploadDialog="toggleShowUploadPhoto"
+        :closeUploadDialog="toggleShowUploadPhoto"
+        :hasNoAlbums="true"
+      ></MediaUpload>
+    </v-dialog>
   </v-container>
 </template>
 
 <style>
-.temp-map {
-  height: 100%;
-  width: 100%;
-  background-color: lightblue;
-}
-
 .content {
-  min-height: calc(100vh - 100px);
+  height: calc(100vh - 250px);
+  flex-grow: 0;
 }
 </style>
 
 <script>
 import DeviceSizeMixin from "../mixins/DeviceSizeMixin.vue";
 import RollbackMixin from "../mixins/RollbackMixin";
+import SnackbarMixin from "../mixins/SnackbarMixin";
 import StoreTripsMixin from "../mixins/StoreTripsMixin";
 import PageHeader from "../common/header/PageHeader";
 import TripDetails from "./TripDetails";
@@ -67,7 +72,10 @@ import AddGroup from "./tripgroups/AddGroup";
 import TripEditor from "./viewtrip/TripEditor";
 import MediaUpload from "../media/MediaUpload";
 import { store } from "../../store/index";
-import { tripAssembler, noAdjacentIdenticalDestinations } from "./trips_destinations_util";
+import {
+  tripAssembler,
+  noAdjacentIdenticalDestinations
+} from "./trips_destinations_util";
 import { RepositoryFactory } from "../../repository/RepositoryFactory";
 
 let mediaRepository = RepositoryFactory.get("media");
@@ -83,11 +91,7 @@ export default {
     MediaUpload
   },
 
-  mixins: [
-    RollbackMixin, 
-    StoreTripsMixin,
-    DeviceSizeMixin
-  ],
+  mixins: [RollbackMixin, StoreTripsMixin, DeviceSizeMixin, SnackbarMixin],
 
   // local variables
   data() {
@@ -104,6 +108,22 @@ export default {
 
   computed: {
     /**
+     * Checks if user is on a device large enough to edit trips easy
+     * @return true or false
+     */
+    canEdit() {
+      return !this.isExtraSmall && this.hasWritePermissions;
+    },
+
+    /**
+     * Checks if the user is permitted to write to the trip
+     * @return true or false
+     */
+    hasWritePermissions() {
+      return this.isTripOwner || this.isGroupOwner || this.isAdmin;
+    },
+
+    /**
      * Checks if the user is the trip owner
      * @return true or false: whether the user is the trip owner
      */
@@ -111,17 +131,16 @@ export default {
       return this.selectedTrip.root.user.id === this.$store.getters.getUser.id;
     },
 
-  /**
-   * Checks if the user is the group owner
-   * @return true or false: whether the user is the group owner
-   */
+    /**
+     * Checks if the user is the group owner
+     * @return true or false: whether the user is the group owner
+     */
     isGroupOwner() {
-
       let isOwn = false;
       if (!this.selectedTrip) return isOwn;
 
       this.selectedTrip.trip.usergroup.forEach(user => {
-        if ((user.userId === this.$store.getters.getUser.id) && user.owner) {
+        if (user.userId === this.$store.getters.getUser.id && user.owner) {
           isOwn = true;
         }
       });
@@ -134,37 +153,36 @@ export default {
      */
     headerOptions() {
       return this.selectedTrip &&
-      this.selectedTrip.trip.id == this.selectedTrip.root.id &&
-      (this.isTripOwner || this.isGroupOwner || this.isAdmin)
-              ? [
-                {
-                  action: () => {
-                    this.openGroupDialog();
-                  },
-                  icon: "people_alt",
-                  title: "Manage Group"
-                },
-                {
-                  action: () => {
-                    this.toggleShowUploadPhoto();
-                  },
-                  icon: "add_photo_alternate",
-                  title: "Add Photos"
-                }
-              ]
-              : [
-                {
-                  action: () => {
-                    this.toggleShowUploadPhoto();
-                  },
-                  icon: "add_photo_alternate",
-                  title: "Add Photos"
-                }
-              ];
-    },
+        this.selectedTrip.trip.id == this.selectedTrip.root.id &&
+        (this.isTripOwner || this.isGroupOwner || this.isAdmin)
+        ? [
+            {
+              action: () => {
+                this.openGroupDialog();
+              },
+              icon: "people_alt",
+              title: "Manage Group"
+            },
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
+            }
+          ]
+        : [
+            {
+              action: () => {
+                this.toggleShowUploadPhoto();
+              },
+              icon: "add_photo_alternate",
+              title: "Add Photos"
+            }
+          ];
+    }
   },
   methods: {
-
     /**
      * Sends a request to the backend containing formdata with the image to be added to a specified album
      * given an user id and an album id.
@@ -245,7 +263,7 @@ export default {
         this.hasAdjacentIdentical = false;
         try {
           await this.updateTripAndPopulate(userId, tripId, trip);
-
+          this.showSuccessSnackbar(this._snackbarMessages.tripUpdateSuccess, 1000);
           // Add to undo redo stack
           let checkpoint = {
             action: async () =>
@@ -297,7 +315,13 @@ export default {
     redo: function() {
       const actions = [];
       this.rollbackRedo(actions);
-    },
+    }
+  },
+
+  watch: {
+    selectedTrip: function() {
+      this.updateViewTripPage();
+    }
   },
 
   /**
@@ -312,6 +336,6 @@ export default {
     this._getTrip(this.userId, this.tripId).then(() => {
       this.rollbackSetPreviousBody(tripAssembler(this.selectedTrip));
     });
-  },
+  }
 };
 </script>

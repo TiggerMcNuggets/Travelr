@@ -8,51 +8,38 @@
     <v-card-text>
       <div id="dropzone">Drag photos or click to open file explorer.</div>
       <v-flex mt-3>
-        <MediaGridWithDelete :media="files" :deletePhoto="deleteImage"/>
+        <MediaGridWithDelete :media="files" :deletePhoto="deleteImage" />
       </v-flex>
     </v-card-text>
 
     <div class="album-select" v-if="!activeAlbumMetadata && !hasNoAlbums">
       <v-divider></v-divider>
+      <v-flex ml-3 mb-3>
+        <h3>Select Albums</h3>
+      </v-flex>
+      <v-layout row wrap align-center ml-3>
+        <v-flex>
+          <v-select
+            :items="albumNames"
+            label="Select"
+            v-model="selectedAlbumNames"
+            attach
+            multiple
+            chips
+          ></v-select>
+        </v-flex>
 
-      <v-card-title primary-title>
-        <h3 class="media">Select Albums</h3>
-      </v-card-title>
+        <v-spacer></v-spacer>
 
-      <div>
-        <v-layout wrap>
-          <v-flex class="album-element" xs12 md6>
-            <v-select
-              :items="albumNames"
-              label="Select"
-              v-model="selectedAlbumNames"
-              attach
-              multiple
-              chips
-            ></v-select>
-          </v-flex>
-
-          <v-flex xs12 md4 offset-md2>
-            <div v-if="hasNoAlbums">
-            </div>
-            <div v-else>
-              <v-btn v-model="hasNoAlbums" @click="openCreateAlbumDialog">Create new album</v-btn>
-            </div>
-          </v-flex>
-        </v-layout>
-      </div>
-    </div>
-
-    <div class="selected-albums">
-      <v-layout row wrap>
-        <v-flex v-for="item in selectedAlbums" v-bind:key="item.id" xs12 sm6 class="album-element">
-          <AlbumElement
-            v-if="item.content"
-            :album="item"
-            disableTitle
-            :getImgFromUrl="getImgFromUrl"
-            :openElement="() => {}"
-          ></AlbumElement>
+        <v-flex>
+          <div v-if="hasNoAlbums"></div>
+          <div v-else>
+            <v-btn
+              v-model="hasNoAlbums"
+              color="error"
+              @click="openCreateAlbumDialog"
+            >Create new album</v-btn>
+          </div>
         </v-flex>
       </v-layout>
     </div>
@@ -111,14 +98,12 @@
 
 <script>
 import MediaGridWithDelete from "../media/MediaGridWIthDelete";
-import AlbumElement from "./AlbumElement";
 import AlbumCreate from "./AlbumCreate";
 import base_url from "../../repository/BaseUrl";
 
 export default {
   components: {
     MediaGridWithDelete,
-    AlbumElement,
     AlbumCreate
   },
 
@@ -135,8 +120,8 @@ export default {
     activeAlbumMetadata: Object,
     hasNoAlbums: {
       default: false,
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
 
   // local variables
@@ -264,10 +249,12 @@ export default {
     albumNames() {
       let albumNames = [];
       if (!this.hasNoAlbums) {
-      for (let i = 0; i < this.allAlbums.length; i++) {
-        if (!this.allAlbums[i].isPermanent && (this.allAlbums[i].name.toLowerCase() !== ('all'))
-        ) {
-          albumNames.push(this.allAlbums[i].name);
+        for (let i = 0; i < this.allAlbums.length; i++) {
+          if (
+            !this.allAlbums[i].isPermanent &&
+            this.allAlbums[i].name.toLowerCase() !== "all"
+          ) {
+            albumNames.push(this.allAlbums[i].name);
           }
         }
       }
@@ -281,10 +268,7 @@ export default {
       let selectedAlbums = [];
       if (!this.hasNoAlbums) {
         for (let i = 0; i < this.allAlbums.length; i++) {
-          if (
-            this.selectedAlbumNames.includes(this.allAlbums[i].name) &&
-            !this.allAlbums[i].isPermanant
-          ) {
+          if (this.selectedAlbumNames.includes(this.allAlbums[i].name)) {
             selectedAlbums.push(this.allAlbums[i]);
           }
         }

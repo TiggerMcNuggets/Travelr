@@ -1,13 +1,16 @@
 <template>
   <v-flex v-if="selectedTrip && selectedTrip.trip.usergroup">
-    <v-flex>
-      <h2>Attendance</h2>
+    <v-flex v-if="selectedTrip.trip.usergroup.length">
+      <h2>{{selectedTrip.root.groupName}}</h2>
       <p
         class="sub-text"
-      >{{`${getStatusNumber("GOING")} going, ${getStatusNumber("NOT_GOING")} not going and ${getStatusNumber("MAYBE")} maybe`}}</p>
+      >{{this.topSummary}}</p>
     </v-flex>
 
-    <p v-if="selectedTrip.trip.usergroup.length === 0">No group added.</p>
+    <v-flex v-else>
+      <h2>User Group</h2>
+      <p class="sub-text">No group added.</p>
+    </v-flex>
 
     <v-list class="pa-0" v-for="user in selectedTrip.trip.usergroup" :key="user.userId" wrap>
       <v-list-tile class="status-list">
@@ -29,10 +32,10 @@
         </v-list-tile-action>
 
         <v-list-tile-action>
-          <v-icon color="success lighten-1" v-if="user.status == 'GOING'">check_circle</v-icon>
-          <v-icon color="error lighten-1" v-if="user.status == 'NOT_GOING'">cancel</v-icon>
-          <v-icon color="warning" v-if="user.status == 'MAYBE'">help</v-icon>
-          <v-icon color="secondary" v-if="user.status == 'NOT ANSWERED'">remove_circle</v-icon>
+          <v-icon color="success lighten-1" v-if="user.status === 'GOING'">check_circle</v-icon>
+          <v-icon color="error lighten-1" v-if="user.status === 'NOT_GOING'">cancel</v-icon>
+          <v-icon color="warning" v-if="user.status === 'MAYBE'">help</v-icon>
+          <v-icon color="secondary" v-if="user.status === 'NOT ANSWERED'">remove_circle</v-icon>
         </v-list-tile-action>
       </v-list-tile>
     </v-list>
@@ -89,6 +92,20 @@ export default {
   },
 
   computed: {
+
+    /**
+     * @return {string} the string summarising who is going, interested and not going
+     */
+    topSummary() {
+      return `${
+        this.getStatusNumber("GOING")
+      } going, ${
+        this.getStatusNumber("NOT_GOING")
+      } not going and ${
+        this.getStatusNumber("MAYBE")
+      } interested`;
+    },
+
     /**
      * Gets a list of columns for the table in format {text: String, value: String, align: String, sortable: boolean}
      * If the user is an admin add column delete to list.
@@ -145,7 +162,7 @@ export default {
         this.$store.getters.getIsUserAdmin
       );
     }
-  },
+  }
 };
 </script>
 

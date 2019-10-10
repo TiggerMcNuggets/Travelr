@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import finders.GroupingFinder;
 import io.ebean.Finder;
 import play.data.validation.Constraints;
@@ -27,6 +28,12 @@ public class Grouping extends BaseModel {
      */
     @Column(length = 300)
     public String description;
+
+    /**
+     * The Slack workspace name which is used by Slack as a domain.
+     */
+    @Column(length = 300)
+    public String slackWorkspaceDomain;
 
     /**
      * The user groups
@@ -82,6 +89,17 @@ public class Grouping extends BaseModel {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /**
+     * Gets the grouping's Slack workspace domain
+     */
+    public String getSlackWorkspaceDomain() { return slackWorkspaceDomain; }
+
+    /**
+     * Sets the grouping's Slack workspace domain
+     * @param slackWorkspaceDomain the grouping's Slack workspace domain
+     */
+    public void setSlackWorkspaceDomain(String slackWorkspaceDomain) { this.slackWorkspaceDomain = slackWorkspaceDomain; }
 
     /**
      * Gets the user groups

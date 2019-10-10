@@ -1,5 +1,5 @@
 <template>
-  <v-flex lg5 pa-2>
+ 
     <v-layout>
       <v-flex class="map-flex">
         <GmapMap
@@ -24,13 +24,13 @@
         </GmapMap>
       </v-flex>
     </v-layout>
-  </v-flex>
+
 </template>
 
 <style>
   .destination-main-map {
     width: 100%;
-    height: 830px;
+    height: calc(100vh - 250px);
   }
 </style>
 

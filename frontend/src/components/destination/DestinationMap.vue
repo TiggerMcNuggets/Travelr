@@ -1,17 +1,17 @@
 <template>
   <v-layout>
     <div class="destination-overlayed">
-      <div>
-        <v-btn @click="openDestinationNav" small fab>
+            <v-layout row align-center ma-3>
+        <v-btn @click="openDestinationNav" small fab color="error">
           <v-icon>view_list</v-icon>
         </v-btn>
-      </div>
-      <div>
-        <v-btn fab small @click="toggleDarkMode">
+  
+        <v-btn fab small @click="toggleDarkMode" color="error">
           <v-icon>brightness_2</v-icon>
         </v-btn>
-      </div>
-      <div>
+   
+
+     
         <GmapAutocomplete
           placeholder="Search"
           @place_changed="onSearch"
@@ -19,8 +19,10 @@
           :select-first-on-enter="true"
           @keydown.native.enter.prevent
         ></GmapAutocomplete>
-        <i aria-hidden="true" class="v-icon material-icons destination-search-btn">search</i>
-      </div>
+      
+          <v-icon class="destination-search-btn">search</v-icon>
+      
+      </v-layout>
     </div>
     <v-flex class="map-flex">
       <GmapMap
@@ -69,11 +71,12 @@
   width: 200px;
 }
 .destination-search-box {
-  margin-left: 15px;
-  margin-top: 15px;
+  margin-top: 0px;
   padding: 12px;
-  padding-right: 40px;
-  background-color: whitesmoke;
+  padding-right: 40px; 
+  vertical-align: center;
+  margin-left: 20px;
+  background-color: white;
   border-radius: 4px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
   width: 300px;

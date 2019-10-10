@@ -33,3 +33,25 @@ main {
 .sub-text {
   color: $sub-text;
 }
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.no-margin {
+  margin: 0px !important;
+}
+
+.scrollable-y {
+  overflow-y: scroll;
+  overflow-x: visible;
+  height: calc(100vh - 400px);
+
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+
+  ::-webkit-scrollbar {
+    width: 0px !important;
+    background: transparent !important; /* make scrollbar transparent */
+  }
+}

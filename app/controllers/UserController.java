@@ -9,7 +9,10 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.User.*;
+import dto.HttpHandlerModels.ResponseHandler;
+import exceptions.BadRequestException;
 import models.SlackUser;
+import models.TripNode;
 import models.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -19,11 +22,15 @@ import play.mvc.Result;
 import repository.UserRepository;
 import service.MailgunService;
 import service.SlackService;
+import service.TripService;
+import utils.AsyncHandler;
+import repository.UserGroupRepository;
 
 import javax.inject.Inject;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -34,16 +41,19 @@ public class UserController extends Controller {
     FormFactory formFactory;
 
     private UserRepository userRepository;
+    private UserGroupRepository userGroupRepository;
     private final MailgunService mailgunService;
     private final SlackService slackService;
+    private final TripService tripService;
 
 
     @Inject
-    public UserController(UserRepository userRepository, MailgunService mailgunService, SlackService slackService) {
+    public UserController(UserRepository userRepository, UserGroupRepository userGroupRepository, MailgunService mailgunService, SlackService slackService, TripService tripService) {
         this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
         this.mailgunService = mailgunService;
         this.slackService = slackService;
-
+        this.tripService = tripService;
     }
 
     /**
@@ -280,21 +290,23 @@ public class UserController extends Controller {
     }
 
     /**
-     *
+     * Creates a slack channel and informs all group members of it's creation.
      * @param request the http request
      * @param userId the user's id
-     * @param groupName
      * @return 200 if the request is executed
      */
     @Authorization.RequireAuth
     public CompletionStage<Result> slackCreatePrivateChannel(Http.Request request, Long userId) {
+
         SlackUser groupOwner = SlackUser.find.findByUserId(userId);
         if (groupOwner == null) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_USER_NOT_FOUND));
         }
 
         Optional<String> channelName = Optional.ofNullable(request.body().asJson().get("channelName").asText());
-        if (!channelName.isPresent()) {
+        OptionalLong tripId = OptionalLong.of(request.body().asJson().get("tripId").asLong());
+
+        if (!channelName.isPresent() || !tripId.isPresent()) {
             return CompletableFuture.completedFuture(badRequest(APIResponses.SLACK_CHANNEL_MALFORMED_REQUEST));
         }
 
@@ -302,24 +314,52 @@ public class UserController extends Controller {
         hyphens, and underscores, and must be 80 characters or less. Slack will return specific errors
         if this is given */
 
-        return slackService.requestPrivateChannel(groupOwner, channelName.get()).thenApplyAsync(resHandler -> {
-            Optional<User> user = Optional.ofNullable(User.find.findById(userId));
-            if (!user.isPresent()) {
-                return badRequest(APIResponses.USER_NOT_FOUND);
+        // Convert all spaces to '-'.
+        String dashedChannelName = channelName.get().replaceAll(" ", "-").toLowerCase();
+
+        // Remove special characters
+        String sanitizedChannelName = dashedChannelName.replaceAll("[^a-zA-Z0-9\\-\\_]+","");
+
+        CompletionStage<ResponseHandler> slackChannelStage = slackService.requestPrivateChannel(groupOwner, sanitizedChannelName);
+        CompletionStage<ResponseHandler> slackServerInfoStage = slackService.requestServerInfo(groupOwner);
+        CompletionStage<TripNode> tripStage = tripService.getTripByIdHandler(tripId.getAsLong());
+
+        /**
+         * Wait for Slack channel to be created and for the server information to be fetched.
+         * Then send the mailout
+         */
+        CompletionStage<SlackRes> slackServerStage = slackChannelStage.thenCombineAsync(slackServerInfoStage, (channelStageRes, serverInfoRes) -> {
+            Optional<JsonElement> channelStageSuccess = Optional.ofNullable(channelStageRes.getBody().get("ok"));
+            Optional<JsonElement> serverInfoStageSuccess = Optional.ofNullable(channelStageRes.getBody().get("ok"));
+
+            if (!serverInfoStageSuccess.isPresent() || !serverInfoStageSuccess.get().getAsBoolean()) {
+                throw new BadRequestException(APIResponses.SLACK_CHANNEL_NAME_TAKEN);
             }
 
-            Optional<JsonElement> success = Optional.ofNullable(resHandler.getBody().get("ok"));
-            if (!(success.get().getAsBoolean())) {
-                return badRequest(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
+            if (!channelStageSuccess.isPresent() || !channelStageSuccess.get().getAsBoolean()) {
+                throw new BadRequestException(APIResponses.SLACK_CHANNEL_CREATION_FAILURE);
             }
 
-            Optional<JsonElement> slackGroupName = Optional.ofNullable(resHandler.getBody().get("group.name"));
+            Optional<JsonElement> slackServerDomain = Optional.ofNullable(serverInfoRes.getBody().get("team").getAsJsonObject().get("domain"));
 
-            // store group name with slack user and update
-            groupOwner.addOwnedChannel(slackGroupName.get().getAsString());
-            groupOwner.update();
+            if (!slackServerDomain.isPresent()) {
+                throw new BadRequestException(APIResponses.SLACK_CHANNEL_DOMAIN_MALFORMED);
+            }
 
+            SlackRes slackRes = new SlackRes();
+            slackRes.slackServerDomain = slackServerDomain.get().getAsString();
+            slackRes.slackChannelId = channelStageRes.getBody().get("channel").getAsJsonObject().get("id").toString();
+            return slackRes;
+        });
+        return tripStage.thenCombineAsync(slackServerStage, (trip, slackRes) -> {
+            userGroupRepository.setGroupSlackWorkspaceDomain(trip.getUserGroup().getId(), slackRes.slackServerDomain).join();
+            mailgunService.sendSlackChannelEmail(trip, slackRes.slackServerDomain).join();
             return ok(APIResponses.SLACK_CHANNEL_CREATED);
         });
+    }
+
+    class SlackRes {
+        String slackServerDomain;
+        String slackChannelId;
     }
 }

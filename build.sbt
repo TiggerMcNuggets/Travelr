@@ -44,7 +44,7 @@ libraryDependencies += "org.jsoup" % "jsoup" % "1.12.1"
 
 // Dependecy for iCal4j
 // https://mvnrepository.com/artifact/org.mnode.ical4j/ical4j
-libraryDependencies += "org.mnode.ical4j" % "ical4j" % "3.0.0"
+libraryDependencies += "org.mnode.ical4j" % "ical4j" % "3.0.10"
 
 
 // Dependencies for cucumber tests

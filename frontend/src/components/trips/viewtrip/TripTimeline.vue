@@ -1,8 +1,39 @@
 <template>
   <v-timeline align-top dense>
-    <draggable class="list-group" tag="ul" v-model="trip.trip.nodes" @change="updateTrip()">
-      <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-        <li
+    <div v-if="canEdit">
+      <draggable class="list-group" tag="ul" v-model="trip.trip.nodes" @change="updateTrip()">
+        <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+          <li
+            v-for="(node, i) in trip.trip.nodes"
+            :key="i"
+          >
+            <destination-node 
+              v-if="node.type.toLowerCase() === 'destination'" 
+              :trip="trip"
+              :node="node"
+              :i="i"
+              :updateTrip="updateTrip"
+              :removeNode="removeNode"
+              :deleteNode="deleteNode"
+              :canEdit="canEdit"
+            />
+            <trip-node
+              v-else
+              :node="node"
+              :trip="trip"
+              :i="i"
+              :getSelectedTrip="getSelectedTrip"
+              :updateTrip="updateTrip"
+              :removeNode="removeNode"
+              :deleteNode="deleteNode"
+              :canEdit="canEdit"
+            />
+          </li>
+        </transition-group>
+      </draggable>
+    </div>
+    <div v-else>
+      <li
           v-for="(node, i) in trip.trip.nodes"
           :key="i"
         >
@@ -18,6 +49,7 @@
           <trip-node
             v-else
             :node="node"
+            :trip="trip"
             :i="i"
             :getSelectedTrip="getSelectedTrip"
             :updateTrip="updateTrip"
@@ -25,12 +57,14 @@
             :deleteNode="deleteNode"
           />
         </li>
-      </transition-group>
-    </draggable>
+    </div>
   </v-timeline>
 </template>
 
-<style>
+<style scoped>
+.list-group {
+  width: 95%;
+}
 </style>
 
 <script>
@@ -47,6 +81,7 @@
       updateTrip: Function,
       getSelectedTrip: Function,
       setSelectedTrip: Function,
+      canEdit: Boolean
     },
 
     components: {

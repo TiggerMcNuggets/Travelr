@@ -7,15 +7,20 @@
 /* ------------- COMMENTS --------------- */
 
 .post-comment-container {
-  .v-input {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+  .textarea {
+    min-height: 80px !important;
+    height: 80px !important;
   }
+}
+
+#scrollableComments {
+  height: calc(100vh - 530px);
 }
 
 .user-comment {
   padding: 15px;
-  margin: 10px 0;
+  margin: 10px 1px;
+  width: 98%;
 
   hr {
     margin-bottom: 15px;
@@ -40,4 +45,33 @@
       font-size: 13px;
     }
   }
+}
+
+/* ------------- FILES --------------- */
+.user-files {
+  padding-bottom: 10px;
+}
+
+.file-name {
+  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* ------------- TIMELINE --------------- */
+
+.trip-node-name {
+  padding: 15px;
+}
+
+.v-timeline-trip-item-style {
+  padding: 16px 16px 4px 16px;
+}
+
+.user-attendance {
+  padding: 8px 16px 4px 16px;
+}
+
+.align-with-arrow {
+  float: right;
 }

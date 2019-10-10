@@ -9,7 +9,7 @@
     />
 
     <v-layout row wrap>
-      <v-flex md2 pr-3>
+      <v-flex xs12 md2 pl-4 pr-5>
         <div class>
           <div class="field-section">
             <p class="caption font-weight-light field-title">DESTINATION TYPE</p>
@@ -37,13 +37,28 @@
           </div>
         </div>
       </v-flex>
-      <v-flex md10>
+      <v-flex xs12 md10>
+
         <MediaGrid
+          v-if="files.length"
           :filteredMedia="files"
           :openElement="() => {}"
           :getAllAlbums="() => {}"
           :openEditAlbumDialog="() => {}"
         ></MediaGrid>
+
+
+        <v-layout justify-center align-center fill-height v-else>
+          <div class="d-flex">
+            <v-icon color="error" class="no-media-icon">add_photo_alternate</v-icon>
+            <div class="add-image-btn-block">
+              <v-btn flat v-on:click="uploadExisting">Upload Existing</v-btn>
+              <v-btn flat v-on:click="toggleShowUploadPhoto">Upload New</v-btn>
+            </div>
+          </div>
+        </v-layout>
+
+
       </v-flex>
 
       <suggest-traveller-types
@@ -67,6 +82,18 @@
     </v-layout>
   </v-container>
 </template>
+
+<style>
+  .no-media-icon {
+    font-size: 90px;
+  }
+  
+  .add-image-btn-block {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+</style>
 
 <script>
 import { RepositoryFactory } from "../../repository/RepositoryFactory";

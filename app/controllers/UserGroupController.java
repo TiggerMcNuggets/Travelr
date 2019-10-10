@@ -6,10 +6,10 @@ import controllers.actions.Attrs;
 import controllers.actions.Authorization;
 import controllers.constants.APIResponses;
 import controllers.dto.UserGroup.*;
-import models.Grouping;
+import finders.GroupingFinder;
+import finders.TripNodeFinder;
+import models.*;
 import controllers.dto.UserGroup.GetUserGroupRes;
-import models.User;
-import models.UserGroup;
 import play.data.Form;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -337,5 +338,23 @@ public class UserGroupController extends Controller {
         });
     }
 
+    /**
+     *
+     * @param request The request object
+     * @param userId The id of the user who owns the group
+     * @return 200 with the grouping data
+     */
+    @Authorization.RequireAuth
+    public Result getGroupingFromTrip(Http.Request request, Long userId, Long tripId) {
+        Optional<TripNode> trip = Optional.ofNullable(TripNode.find.byId(tripId));
 
+        if (!trip.isPresent()) {
+            return notFound(APIResponses.TRIP_NOT_FOUND);
+        }
+
+        Grouping grouping = trip.get().getUserGroup();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonResponse = mapper.valueToTree(grouping.getSlackWorkspaceDomain());
+        return ok(jsonResponse);
+    }
 }

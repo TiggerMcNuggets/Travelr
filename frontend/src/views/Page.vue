@@ -1,15 +1,18 @@
 <template>
   <v-app id="inspire">
-    <v-toolbar fixed app clipped-right class="main-header">
-      <router-link to="/" class="primary-logo">
-        <v-toolbar-title class="fill-height toolbar toolbar-title">
-          <img class="fill-height" src="../assets/logo2_white.png">
-        </v-toolbar-title>
-      </router-link>
+    <v-toolbar fixed app class='main-header' >
+          <v-btn text icon v-on:click="expand = !expand" v-if="small">
+            <v-icon color="white" v-model="small">menu</v-icon>
+          </v-btn>
+            <router-link to="/" class="primary-logo">
+              <v-toolbar-title class="fill-height toolbar toolbar-title">
+                <img class="fill-height" src="../assets/logo2_white.png">
+              </v-toolbar-title>
+            </router-link>
     </v-toolbar>
-    <v-navigation-drawer fixed app :mini-variant="mini" hide-overlay>
-      <v-toolbar flat class="transparent">
-        <v-list class="pa-0">
+    <v-navigation-drawer disable-resize-watcher fixed app :mini-variant="mini" v-model="displayNav" hide-overlay>
+      <v-toolbar flat class='transparent profile-icon' >
+      <v-list class="pa-0">
           <v-list-tile avatar>
             <v-list-tile-avatar>
               <img :src="url">
@@ -20,8 +23,7 @@
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
-      </v-toolbar>
-
+            </v-toolbar>
       <v-list class="pt-0">
         <v-divider></v-divider>
         <v-list-tile v-for="item in menuOptions" :key="item.name" :to="item.link">
@@ -39,7 +41,7 @@
       </v-list>
 
       <v-list class="pt-0 pb-0 collapse">
-        <v-list-tile @click.stop="mini = !mini">
+        <v-list-tile @click.stop="mini = !mini" v-if="!this.small">
           <v-list-tile-action>
             <v-icon v-if="mini">chevron_right</v-icon>
             <v-icon v-else>chevron_left</v-icon>
@@ -72,13 +74,25 @@
   width: 100%;
 }
 
+.profile-icon .v-toolbar__content {
+  justify-content: normal !important 
+}
+
 .primary-logo {
   height: 50%;
 }
 
-.main-header {
-  display: flex;
-  justify-content: flex-end;
+@media screen and (max-width: 1264px) {
+  .v-toolbar__content {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (min-width: 1264px) {
+  .v-toolbar__content {
+    justify-content: flex-end;
+  }
 }
 
 .fill-height {
@@ -99,12 +113,28 @@ export default {
   mixins: [DeviceSizeMixin],
   data() {
     return {
-      mini: true,
+      displayNav: true,
+      expand: false,
+      small: true,
+      mini: false,
       right: null,
       url: ""
     };
   },
   computed: {
+    /**
+     * Decides whether the map options should be displayed
+     */
+    displayMapOption() {
+      if (this.isExtraSmall) {
+        return false;
+      } else if(this.isSmall) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+
     /**
      * Defines the menu options to appear in the side navigation.
      */
@@ -133,14 +163,14 @@ export default {
             icon: "supervised_user_circle",
             link: "/users"
           },
-          { name: "User Groups",
+          { name: "Groups",
             icon: "group",
             link: "/usergroups"
           }
         ];
         
         //Checking the media size to remove from Mobile
-        if (!this.isExtraSmall && !this.isSmall) {
+        if (this.displayMapOption) {
           menuOptions.push(
             {
               name: "Destination Map",
@@ -151,12 +181,12 @@ export default {
         }
         menuOptions.push(
           {
-            name: "Destination List",
+            name: "Destinations",
             icon: "list",
             link: "/user/" + store.getters.getUser.id + "/destinations"
           },
           {
-            name: "My Trips",
+            name: "Trips",
             icon: "flight",
             link: "/user/" + store.getters.getUser.id + "/trips"
           }
@@ -191,6 +221,14 @@ export default {
   },
 
   watch: {
+    isLarge: function() {
+      if (this.isLarge) {
+        this.largeWindow();
+      } else {
+        this.smallWindow();
+      }
+    },
+
     traveller: function(newImage, oldImage) {
       if (this.loggedIn && newImage !== oldImage)
         if (
@@ -206,7 +244,31 @@ export default {
             "?" +
             new Date().getTime();
         }
+    },
+
+    /**
+     * Watches expand variable binded to burger menu button and checks to see if the sidebar should be expanded when window is small.
+     */
+    expand: function(newExpand) {
+      if (newExpand && this.small) {
+        this.mini = false;
+        this.displayNav = true;
+      } else if (!newExpand && this.small) {
+        this.mini = false;
+        this.displayNav = false;
+      }
+    },
+
+    /**
+     * watches the displayNav attribute and resets expand and mini when window is enlarged
+     */
+    displayNav: function(newDisplayNav) {
+      if (!newDisplayNav) {
+        this.expand = false;
+        this.mini = true;
+      }
     }
+
   },
 
   methods: {
@@ -222,6 +284,22 @@ export default {
         .catch(() => {
           this.$router.push("/login");
         });
+    },
+
+    /**
+     * sets mini(sidebar) and small(window) to false and true respectively when window is resized to a smaller size.
+     */
+    smallWindow() {
+      this.mini = false;
+      this.small = true;
+    },
+
+    /**
+     * sets small(window) and displayNav(sidebar) to false and true respectively when window is resized to a larger size.
+     */
+    largeWindow() {
+      this.small = false;
+      this.displayNav = true;
     }
   },
 

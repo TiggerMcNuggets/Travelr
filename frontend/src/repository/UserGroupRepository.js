@@ -27,6 +27,15 @@ export default {
   },
 
   /**
+   * Gets Slack workspace domain for a grouping
+   * @param {number} userId The user's id
+   * @param {number} tripId The trip's id
+   */
+  getGroupingForTrip(userId, tripId) {
+    return Repository.get(`/users/${userId}/getGroupingFromTrip/${tripId}`);
+  },
+
+  /**
    *
    * @param {number} userId The user id
    * @param {number} groupId The user group id

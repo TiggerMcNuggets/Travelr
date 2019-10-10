@@ -2,11 +2,12 @@ package service;
 
 import com.typesafe.config.Config;
 import exceptions.BadRequestException;
+import exceptions.CustomException;
 import exceptions.NotFoundException;
 import models.File;
 import models.TripNode;
 import models.User;
-import org.apache.commons.io.FilenameUtils;
+import models.UserGroup;
 import play.libs.Files;
 import play.mvc.Http;
 import repository.DatabaseExecutionContext;
@@ -14,12 +15,10 @@ import tyrex.services.UUID;
 import utils.FileHelper;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.spi.FileTypeDetector;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -51,20 +50,51 @@ public class FileService {
     }
 
     /**
-     * Deletes a file by Id
+     * toggles the delete of a file by Id
      * @param fileId id of the file being deleted
      * @return
      */
-    public CompletableFuture<Long> deleteFileById(Long fileId) {
+    public CompletableFuture<Long> deleteFileById(Long fileId, Long tripId, Long userId) {
 
         return supplyAsync(() -> {
-            File file = File.find.byId(fileId);
+            Optional<File> fileOptional = File.find.getFileByIdIncludeDeleted(fileId);
 
-            if(file == null) {
+            if(!fileOptional.isPresent()) {
                 throw new NotFoundException("File not found");
             }
+            User user = User.find.findById(userId);
+            Optional<TripNode> tripNodeOptional = TripNode.find.findByIdIncludeDeleted(tripId);
 
-            file.delete();
+            /**
+             * Check Trip Exists
+             */
+            if (!tripNodeOptional.isPresent()) {
+                throw new CustomException(Http.Status.NOT_FOUND, "Trip not found");
+            }
+
+            TripNode trip = tripNodeOptional.get();
+
+            /**
+             * Check User can edit
+             */
+            if (trip.getUserGroup() != null) {
+                Optional<UserGroup> userGroup = UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id);
+                if (userGroup.isPresent() || user.isAdmin()) {
+                    if (!UserGroup.find.findByUserAndGroupId(user.getId(), trip.getUserGroup().id).get().isOwner) {
+                        throw new CustomException(Http.Status.FORBIDDEN,
+                                "You do not have permission to update this trip");
+                    }
+                }
+            } else if(trip.getUser().getId() != user.getId()) {
+                throw new CustomException(Http.Status.FORBIDDEN,
+                        "You do not have permission to update this trip");
+            }
+            File file = fileOptional.get();
+
+            file.setDeleted(!file.isDeleted());
+
+            file.save();
+
 
             return null;
         }, context);
