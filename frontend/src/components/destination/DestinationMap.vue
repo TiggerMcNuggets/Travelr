@@ -221,6 +221,7 @@ import blueMarker from "../../assets/blue-google-maps-marker.svg";
           latitude: destinationData.latitude,
           longitude: destinationData.longitude
         };
+        console.log(searchData);
 
         if (searchData.name) {
           destinationData.name = searchData.name;
@@ -242,14 +243,15 @@ import blueMarker from "../../assets/blue-google-maps-marker.svg";
           destinationData.country = searchData.address_components.filter(x => {
             return x.types.includes("country");
           })[0].long_name;
-
-          this.focusDestination(destinationData);
-          this.placeNewMarker(coordinates);
-          this.panAndZoom(coordinates);
+          
           destinationData.district = searchData.address_components.filter(x => {
             return x.types.includes("administrative_area_level_1");
           })[0].long_name;
         }
+        console.log(destinationData);
+        this.focusDestination(destinationData);
+        // this.placeNewMarker(coordinates);
+        this.panAndZoom(coordinates);
       }
     },
 

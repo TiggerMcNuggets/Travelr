@@ -8,7 +8,7 @@ import SnackbarMixin from "./components/mixins/SnackbarMixin";
 
 Vue.use(VueGoogleMaps, {
     load: {
-        key: '',
+        key: 'AIzaSyDbtNqS7JfJwUJ-YyFEwQVWWLsMLcPhPDQ',
         libraries: 'places', // This is required if you use the Autocomplete plugin
         // OR: libraries: 'places,drawing'
         // OR: libraries: 'places,drawing,visualization'
