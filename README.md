@@ -1,5 +1,16 @@
 # Readme
 
+### Project Introduction
+This single-page application was developed by the following team of 8 software engineering students at the University of Canterbury for SENG302:
+Adam Conway
+Caleb Wenborn
+Dana Lambert
+Fergus Meldrum
+Flynn Doherty
+Lorenzo Fasano
+Marvin Goesmann
+Tiger Huang
+
 ### NOTE: please refer to the wiki for the user guide
 
 ### Project Structure
