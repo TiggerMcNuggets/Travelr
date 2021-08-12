@@ -1,7 +1,7 @@
 # Readme
 
 ### Project Introduction
-This single-page application was developed by the following team of 8 software engineering students at the University of Canterbury for SENG302:
+This single-page application was developed by the following team of 8 software engineering students at the University of Canterbury for SENG302:  
 Adam Conway  
 Caleb Wenborn  
 Dana Lambert  
